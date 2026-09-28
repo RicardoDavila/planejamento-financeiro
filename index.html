@@ -1,0 +1,2829 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <title>Planejamento Financeiro - Banco de Dados com IDs - v2.1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.onerror=null;this.src='https://unpkg.com/@supabase/supabase-js@2';"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            body { background: white !important; font-size: 10px; color: black !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .shadow-sm, .shadow-xl { box-shadow: none !important; }
+            input, select { border: none !important; background: transparent !important; padding: 0 !important; font-size: 9px !important; }
+            table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed !important; }
+            th, td { border-bottom: 1px solid #ddd !important; padding: 4px !important; word-wrap: break-word !important; }
+            .max-w-7xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+        }
+        .print-only { display: none; }
+
+        /* Sincronização em nuvem / uso em celular */
+        .status-nuvem { font-size: 11px; }
+        @media (max-width: 640px) {
+            body { font-size: 14px; overflow-x: hidden; }
+            #appConteudo > .max-w-7xl { padding-left: 10px !important; padding-right: 10px !important; }
+            .botao-acao { min-height: 42px; }
+            #painelGerencial { padding: 12px !important; }
+            #painelResumoGerencial { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+            #painelResumoGerencial > div { min-height: 72px; }
+            input, select, button { font-size: 14px !important; }
+            #tabelaLancamentosWrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            #tabelaLancamentosWrapper table { min-width: 980px; }
+            #modal > div, #modalGraficos > div, #modalRelatorioGerencial > div {
+                max-height: calc(100dvh - 24px);
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .auth-card { max-height: calc(100dvh - 24px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+            #authSetupView, #authRecoveryView, #authLoginView { padding-bottom: 6px; }
+        }
+
+        /* Proteção de acesso por senha */
+        body.auth-pendente #appConteudo { visibility: hidden !important; pointer-events: none !important; }
+        #telaProtecaoAcesso { z-index: 1000; }
+        .auth-card { box-shadow: 0 25px 70px rgba(15,23,42,.22); }
+        @media print { #telaProtecaoAcesso, #modalConfiguracaoSeguranca { display:none !important; } }
+
+        /* Impressão/PDF exclusiva dos Gráficos Evolutivos */
+        @media print {
+            body.imprimir-graficos > * { display: none !important; }
+            body.imprimir-graficos #modalGraficos {
+                display: flex !important;
+                position: static !important;
+                inset: auto !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+                background: white !important;
+                padding: 0 !important;
+            }
+            body.imprimir-graficos #modalGraficos > div {
+                width: 100% !important;
+                max-width: none !important;
+                max-height: none !important;
+                overflow: visible !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                padding: 8px !important;
+            }
+            body.imprimir-graficos #modalGraficos .no-print { display: none !important; }
+            body.imprimir-graficos #modalGraficos canvas {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+            @page {
+                size: A4 landscape;
+                margin: 8mm;
+            }
+            body.imprimir-graficos #modalGraficos .grid.grid-cols-1.lg\:grid-cols-2 {
+                display: grid !important;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+                gap: 10px !important;
+                width: 100% !important;
+                margin-bottom: 10px !important;
+            }
+            body.imprimir-graficos #modalGraficos .grafico-print-bloco {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                break-before: auto !important;
+                page-break-before: auto !important;
+                margin-bottom: 12px !important;
+            }
+            body.imprimir-graficos #modalGraficos .grafico-print-bloco + .grafico-print-bloco {
+                break-before: auto !important;
+                page-break-before: auto !important;
+            }
+            body.imprimir-graficos #modalGraficos .relative.h-72 {
+                height: 215px !important;
+            }
+            body.imprimir-graficos #modalGraficos .grafico-print-bloco canvas {
+                width: 100% !important;
+                height: 215px !important;
+            }
+            /* Relatório PDF: somente cabeçalho, gráficos e resumo executivo. */
+            body.imprimir-graficos #modalGraficos .graficos-controles,
+            body.imprimir-graficos #modalGraficos .graficos-acoes,
+            body.imprimir-graficos #modalGraficos .fechamento-graficos {
+                display: none !important;
+            }
+            body.imprimir-graficos #modalGraficos .print-graficos-header {
+                display: block !important;
+                text-align: center !important;
+                border-bottom: 1px solid #cbd5e1 !important;
+                padding: 0 0 10px !important;
+                margin: 0 0 14px !important;
+            }
+            body.imprimir-graficos #modalGraficos .print-graficos-header h1 {
+                font-size: 18px !important;
+                font-weight: 700 !important;
+                color: #0f172a !important;
+                margin: 0 !important;
+            }
+            body.imprimir-graficos #modalGraficos .print-graficos-header p {
+                font-size: 10px !important;
+                color: #475569 !important;
+                margin: 4px 0 0 !important;
+            }
+            body.imprimir-graficos #modalGraficos .grafico-print-bloco {
+                background: #fff !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 8px !important;
+                box-shadow: none !important;
+                padding: 10px !important;
+            }
+            body.imprimir-graficos #modalGraficos .grafico-print-bloco h4 {
+                font-size: 12px !important;
+                margin-bottom: 8px !important;
+                text-align: left !important;
+                color: #334155 !important;
+            }
+            body.imprimir-graficos #modalGraficos #comparacaoTotaisGraficos {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                background: #f8fafc !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 8px !important;
+                margin-top: 10px !important;
+            }
+            body.imprimir-graficos #modalGraficos #comparacaoTotaisGraficos > h4 {
+                margin-bottom: 8px !important;
+                color: #334155 !important;
+            }
+        }
+    </style>
+
+<style>
+/* Ajustes exclusivos da exportação/impressão em PDF: evita página inicial vazia e quebras artificiais. */
+@media print {
+    @page { size: A4 landscape; margin: 10mm; }
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+    .no-print, #modalRelatorioGerencial { display: none !important; }
+    #painelGerencial {
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+    }
+    .print-only {
+        break-before: auto !important;
+        page-break-before: auto !important;
+    }
+    /* O Fluxo de Caixa permanece visível na tela, mas nunca é levado para o PDF. */
+    .fluxo-caixa-apenas-tela {
+        display: none !important;
+    }
+}
+</style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
+
+    <!-- Tela de bloqueio/autenticação -->
+    <div id="telaProtecaoAcesso" class="fixed inset-0 bg-slate-950/95 flex items-center justify-center p-4">
+        <div class="auth-card bg-white rounded-2xl w-full max-w-md overflow-hidden border border-slate-200">
+            <div class="bg-slate-900 px-6 py-6 text-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center"><i class="fa-solid fa-shield-halved text-xl"></i></div>
+                    <div><h2 class="text-xl font-bold">Acesso protegido</h2><p class="text-xs text-slate-300">Planejamento Financeiro</p></div>
+                </div>
+            </div>
+            <div class="p-6">
+                <div id="authLoginView">
+                    <p class="text-sm text-slate-600 mb-4">Digite sua senha para abrir a aplicação.</p>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Senha de acesso</label>
+                    <div class="relative">
+                        <input id="authSenha" type="password" autocomplete="current-password" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 pr-10 text-sm focus:ring-2 focus:ring-blue-500 outline-none" onkeydown="if(event.key==='Enter') autenticarAcesso()">
+                        <button type="button" onclick="alternarVisibilidadeSenha('authSenha',this)" class="absolute right-2 top-2.5 text-slate-400"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                    <p id="authErro" class="hidden text-xs text-red-600 mt-2"></p>
+                    <button onclick="autenticarAcesso()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-lock-open mr-1"></i> Entrar</button>
+                    <button onclick="mostrarRecuperacaoSenha()" class="w-full mt-3 text-sm text-blue-600 hover:text-blue-800 font-semibold">Esqueci minha senha</button>
+                    
+                </div>
+
+                <div id="authRecoveryView" class="hidden">
+                    <div class="flex items-center justify-between mb-3"><h3 class="font-bold text-slate-800">Recuperar senha</h3><button onclick="mostrarLoginAcesso()" class="text-xs text-blue-600">Voltar</button></div>
+                    <p class="text-xs text-slate-500 mb-4">Informe o e-mail cadastrado. Um código de verificação será enviado para esse endereço.</p>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail de recuperação</label>
+                    <input id="recoveryEmail" type="email" autocomplete="email" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="enviarCodigoRecuperacao()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2.5 text-sm font-semibold">Enviar código</button>
+                    <p id="recoveryMsg" class="text-xs mt-3"></p>
+                    <div id="recoveryCodeArea" class="hidden mt-4 border-t pt-4">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Código recebido</label>
+                        <input id="recoveryCode" inputmode="numeric" maxlength="6" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm tracking-[.35em] text-center font-bold outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 mt-3">Nova senha</label>
+                        <input id="recoveryNewPassword" type="password" autocomplete="new-password" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 mt-3">Confirmar nova senha</label>
+                        <input id="recoveryConfirmPassword" type="password" autocomplete="new-password" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button onclick="redefinirSenhaComCodigo()" class="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2.5 text-sm font-semibold">Redefinir senha</button>
+                    </div>
+                </div>
+
+                <div id="authSetupView" class="hidden">
+                    <div class="flex items-center justify-between mb-3"><h3 id="tituloConfigSeguranca" class="font-bold text-slate-800">Configuração inicial obrigatória</h3></div>
+                    <p class="text-xs text-slate-500 mb-4">Cadastre o e-mail de recuperação e a senha que será exigida para abrir o sistema.</p>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail de recuperação</label>
+                    <input id="configRecoveryEmail" type="email" autocomplete="email" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 mt-3">Senha de acesso</label>
+                    <input id="configPassword" type="password" autocomplete="new-password" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 mt-3">Confirmar senha</label>
+                    <input id="configPasswordConfirm" type="password" autocomplete="new-password" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <div id="configCurrentPasswordWrap" class="hidden mt-3"><label class="block text-xs font-semibold text-slate-600 mb-1">Senha atual</label><input id="configCurrentPassword" type="password" autocomplete="current-password" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <div class="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-600 leading-relaxed"><strong>Recuperação por e-mail:</strong> para o envio automático do código, informe também os dados do serviço EmailJS abaixo. Eles podem ser deixados em branco somente se a recuperação por e-mail for configurada posteriormente.</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                        <div><label class="block text-[11px] font-semibold text-slate-600 mb-1">EmailJS Public Key</label><input id="configEmailJsPublicKey" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs" value="phpHxlna2sJ_UQARo"></div>
+                        <div><label class="block text-[11px] font-semibold text-slate-600 mb-1">Service ID</label><input id="configEmailJsServiceId" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs" value="default_service"></div>
+                        <div class="md:col-span-2"><label class="block text-[11px] font-semibold text-slate-600 mb-1">Template ID</label><input id="configEmailJsTemplateId" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs" value="template_txy2pic"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2">O template OTP do EmailJS deve aceitar: email, passcode e time. O sistema também envia to_email, verification_code, app_name e expires_in para compatibilidade.</p>
+                    <p id="configMsg" class="text-xs mt-3"></p>
+                    <button onclick="salvarConfiguracaoSeguranca()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-shield-check mr-1"></i> Salvar e ativar proteção</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuração de segurança após o login -->
+    <div id="modalConfiguracaoSeguranca" class="fixed inset-0 bg-black/60 z-[950] hidden items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
+            <div class="px-6 py-4 border-b flex items-center justify-between"><div><h3 class="text-lg font-bold text-slate-800">Segurança e acesso</h3><p class="text-xs text-slate-500">Atualize senha, e-mail e recuperação.</p></div><button onclick="fecharConfiguracaoSeguranca()" class="text-slate-400 hover:text-slate-700 text-xl">&times;</button></div>
+            <div class="p-6"><div id="configInternaMsg" class="text-xs mb-3"></div><div class="grid md:grid-cols-2 gap-3"><div><label class="block text-xs font-semibold text-slate-600 mb-1">E-mail de recuperação</label><input id="configInternaEmail" type="email" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Senha atual</label><input id="configInternaAtual" type="password" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Nova senha</label><input id="configInternaNova" type="password" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Confirmar nova senha</label><input id="configInternaConfirmar" type="password" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">EmailJS Public Key</label><input id="configInternaPublicKey" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Service ID</label><input id="configInternaServiceId" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div class="md:col-span-2"><label class="block text-xs font-semibold text-slate-600 mb-1">Template ID</label><input id="configInternaTemplateId" class="w-full border rounded-lg px-3 py-2 text-sm"></div></div><div class="flex justify-end gap-2 mt-5"><button onclick="fecharConfiguracaoSeguranca()" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700">Cancelar</button><button onclick="salvarConfiguracaoInterna()" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold">Salvar alterações</button></div></div>
+        </div>
+    </div>
+
+    <div id="appConteudo" class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Cabeçalho específico para Impressão / PDF -->
+        <div class="print-only mb-4 text-center border-b pb-3">
+            <h1 class="text-xl font-bold uppercase tracking-wide text-slate-900">RELATÓRIO FINANCEIRO MES - DESPESAS E RECEITAS</h1>
+            <p id="printMesAnoHeader" class="text-sm font-semibold text-gray-700 mt-1"></p>
+            <p id="printRubricaHeader" class="text-base font-bold text-slate-900 mt-1 uppercase"></p>
+            <p id="printPeriodoInfo" class="text-xs text-gray-500 mt-0.5"></p>
+        </div>
+
+        <!-- Alertas de Vencimento -->
+        <div id="alertaVencimentoHoje" class="hidden no-print mb-4 bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl shadow-sm">
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex items-start gap-3 min-w-0">
+                    <div class="text-amber-600 text-2xl pt-0.5">
+                        <i class="fa-solid fa-triangle-exclamation animate-pulse"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-amber-800">Atenção dcto vencendo hoje</h3>
+                        <p id="textoAlertaVencimento" class="text-sm text-amber-700 mt-1"></p>
+                        <div class="overflow-x-auto mt-3">
+                            <table class="w-full text-xs">
+                                <thead>
+                                    <tr class="text-left text-amber-900 border-b border-amber-200">
+                                        <th class="py-1.5 pr-4 font-semibold">DESCRIÇÃO</th>
+                                        <th class="py-1.5 pr-4 font-semibold">DT VCTO</th>
+                                        <th class="py-1.5 pr-4 font-semibold text-right">Valor (R$)</th>
+                                        <th class="py-1.5 font-semibold">Situação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaVencimentoHoje"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="fecharAlerta('hoje')" class="shrink-0 text-amber-500 hover:text-amber-700 font-bold text-sm px-3 py-1 rounded" title="Fechar aviso">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="alertaVencido" class="hidden no-print mb-6 bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-xl shadow-sm">
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex items-start gap-3 min-w-0">
+                    <div class="text-rose-600 text-2xl pt-0.5">
+                        <i class="fa-solid fa-circle-exclamation animate-pulse"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-rose-800">Atenção dcto vencido</h3>
+                        <p id="textoAlertaVencido" class="text-sm text-rose-700 mt-1"></p>
+                        <div class="overflow-x-auto mt-3">
+                            <table class="w-full text-xs">
+                                <thead>
+                                    <tr class="text-left text-rose-900 border-b border-rose-200">
+                                        <th class="py-1.5 pr-4 font-semibold">DESCRIÇÃO</th>
+                                        <th class="py-1.5 pr-4 font-semibold">DT VCTO</th>
+                                        <th class="py-1.5 font-semibold text-right">Valor (R$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaVencidos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="fecharAlerta('vencido')" class="shrink-0 text-rose-500 hover:text-rose-700 font-bold text-sm px-3 py-1 rounded" title="Fechar aviso">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <style>
+/* Organização profissional da barra de ações */
+.acoes-profissionais { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.6rem; padding:.75rem; border:1px solid #e2e8f0; border-radius:1rem; background:linear-gradient(135deg,#f8fafc,#ffffff); box-shadow:0 4px 14px rgba(15,23,42,.06); }
+.botao-acao { min-height:42px; border:1px solid rgba(148,163,184,.22); border-radius:.7rem; padding:.65rem .8rem; box-shadow:0 2px 5px rgba(15,23,42,.08); font-size:.72rem; font-weight:600; letter-spacing:.01em; transition:transform .15s ease,box-shadow .15s ease,filter .15s ease; }
+.botao-acao:hover { transform:translateY(-1px); box-shadow:0 5px 12px rgba(15,23,42,.12); filter:brightness(1.03); }
+.botao-acao:active { transform:translateY(0); }
+@media (min-width:640px){ .acoes-profissionais{grid-template-columns:repeat(3,minmax(0,1fr));} }
+@media (min-width:1024px){ .acoes-profissionais{grid-template-columns:repeat(4,minmax(0,1fr)); max-width:760px;} }
+@media (max-width:639px){ .botao-acao{font-size:.68rem; padding:.55rem .5rem;} }
+</style>
+<header class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between border-b pb-4 no-print gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-wallet text-blue-600"></i> Planejamento Financeiro
+                </h1>
+                <p id="subtituloMesAno" class="text-sm font-semibold text-blue-600 mt-1 uppercase tracking-wide"></p>
+            </div>
+            <div class="acoes-profissionais">
+                <button onclick="openModal()" class="botao-acao bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Novo Lançamento
+                </button>
+                <button onclick="adicionarNovaRubricaPrompt()" class="botao-acao bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-folder-plus"></i> NOVA RUBRICA
+                </button>
+                <button onclick="adicionarNovoSubItemPrompt()" class="botao-acao bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-circle-plus"></i> NOVO SUB-ITEM
+                </button>
+                <button onclick="exportToExcel()" class="botao-acao bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Exportar Banco de Dados Excel com IDs Relacionais">
+                    <i class="fa-solid fa-file-excel"></i> Exportar Excel (DB)
+                </button>
+                <button onclick="document.getElementById('inputImportExcel').click()" class="botao-acao bg-lime-700 hover:bg-lime-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Importar e Atualizar dados via Excel">
+                    <i class="fa-solid fa-file-arrow-up"></i> Importar Excel
+                </button>
+                <input type="file" id="inputImportExcel" accept=".xlsx, .xls" class="hidden" onchange="importFromExcel(event)">
+                <button onclick="fazerBackup()" class="botao-acao bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Fazer Backup dos Dados">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Backup
+                </button>
+                <button onclick="abrirAlertaPreRestauracao()" class="botao-acao bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Restaurar Backup">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Restaurar
+                </button>
+                <input type="file" id="inputRestaurar" accept=".json" class="hidden" onchange="restaurarBackup(event)">
+                <button onclick="sincronizarRecarregarDados()" class="botao-acao bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Sincronizar e recarregar dados do banco mestre sem apagar lançamentos">
+                    <i class="fa-solid fa-database"></i> Sincronizar/Recarregar Dados
+                </button>
+                <button onclick="exportToPDF()" class="botao-acao bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i> Exportar PDF
+                </button>
+                <button onclick="exportToCSV()" class="botao-acao bg-slate-700 hover:bg-slate-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Exportar CSV
+                </button>
+                <button onclick="openGraficosModal()" class="botao-acao bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i> Gráficos Evolutivos
+                </button>
+                <button onclick="abrirConfiguracaoSeguranca(false)" class="botao-acao bg-blue-700 hover:bg-blue-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Configurar proteção por senha e recuperação">
+                    <i class="fa-solid fa-shield-halved"></i> Segurança e Acesso
+                </button>
+                <button onclick="abrirConfiguracaoNuvem()" class="botao-acao bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Sincronizar dados entre computador e celular">
+                    <i class="fa-solid fa-cloud"></i> Nuvem <span id="statusNuvemBadge" class="opacity-90">Local</span>
+                </button>
+                <button onclick="abrirSegurancaBanco('historico')" class="botao-acao bg-slate-600 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Histórico de alterações">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Histórico
+                </button>
+                <button onclick="abrirSegurancaBanco('lixeira')" class="botao-acao bg-orange-600 hover:bg-orange-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Lixeira e recuperação">
+                    <i class="fa-solid fa-trash-can"></i> Lixeira
+                </button>
+            </div>
+        </header>
+
+        <div id="infoBancoSeguranca" class="text-[11px] text-slate-500 mb-4 px-1"></div>
+        <div id="infoNuvem" class="text-[11px] text-slate-500 mb-3 px-1 hidden"></div>
+
+        <!-- Modal Sincronização em Nuvem -->
+        <div id="modalConfiguracaoNuvem" class="fixed inset-0 bg-black/50 z-[110] hidden items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                <div class="bg-emerald-700 px-5 py-4 text-white flex items-center justify-between">
+                    <div><h2 class="font-bold text-lg">Sincronização em Nuvem</h2><p class="text-xs text-emerald-100">Computador ↔ celular</p></div>
+                    <button onclick="fecharConfiguracaoNuvem()" class="text-white text-xl">&times;</button>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div id="nuvemStatusMsg" class="text-xs rounded-lg bg-slate-50 border p-3 text-slate-600">Configure sua conta de sincronização do Supabase para usar o mesmo banco em seus dispositivos.</div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail da sincronização</label>
+                        <input id="nuvemEmail" type="email" autocomplete="username" class="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="seu@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Senha da sincronização</label>
+                        <input id="nuvemSenha" type="password" autocomplete="current-password" class="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Senha da conta Supabase Auth">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="entrarNuvem()" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-right-to-bracket mr-1"></i> Entrar / Sincronizar</button>
+                        <button onclick="criarContaNuvem()" class="bg-slate-700 hover:bg-slate-800 text-white rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-user-plus mr-1"></i> Criar conta</button>
+                    </div>
+                    <button onclick="sincronizarAgoraNuvem()" class="w-full border border-emerald-600 text-emerald-700 hover:bg-emerald-50 rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-arrows-rotate mr-1"></i> Sincronizar agora</button>
+                    <button onclick="sairNuvem()" class="w-full text-xs text-red-600 hover:text-red-800 font-semibold">Desconectar este dispositivo da nuvem</button>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">A senha de acesso do aplicativo continua independente. A conta acima é usada somente para identificar seu banco na nuvem e permitir que computador e celular compartilhem os mesmos dados.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Segurança do Banco -->
+        <div id="modalSegurancaBanco" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[85vh] overflow-hidden">
+                <div class="flex items-center justify-between px-5 py-4 border-b">
+                    <h2 id="tituloSegurancaBanco" class="text-lg font-bold text-slate-800">Segurança do Banco</h2>
+                    <button onclick="fecharSegurancaBanco()" class="text-slate-500 hover:text-slate-800 text-xl">&times;</button>
+                </div>
+                <div id="corpoSegurancaBanco" class="p-5"></div>
+            </div>
+        </div>
+
+        <!-- Cards Resumo — ocultos visualmente, mantendo os elementos e funções internas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 hidden">
+            <div class="flex flex-col gap-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase">Prev de Receita</p>
+                        <h3 id="cardPrevReceita" class="text-base font-bold text-emerald-600 mt-1">R$ 0,00</h3>
+                    </div>
+                    <div class="w-8 h-8 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 text-sm">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase">INVESTIMENTO MÊS</p>
+                        <h3 id="cardInvestimento" class="text-base font-bold text-purple-600 mt-1">R$ 0,00</h3>
+                    </div>
+                    <div class="w-8 h-8 bg-purple-50 rounded-full flex items-center justify-center text-purple-600 text-sm">
+                        <i class="fa-solid fa-piggy-bank"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase">Rec Recebidas</p>
+                    <h3 id="cardRecRecebidas" class="text-base font-bold text-emerald-700 mt-1">R$ 0,00</h3>
+                </div>
+                <div class="w-8 h-8 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-700 text-sm">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase">Total de Despesas</p>
+                    <h3 id="cardDespesas" class="text-base font-bold text-rose-600 mt-1">R$ 0,00</h3>
+                </div>
+                <div class="w-8 h-8 bg-rose-50 rounded-full flex items-center justify-center text-rose-600 text-sm">
+                    <i class="fa-solid fa-arrow-trend-down"></i>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase">Total Pendente</p>
+                    <h3 id="cardPendente" class="text-base font-bold text-amber-600 mt-1">R$ 0,00</h3>
+                </div>
+                <div class="w-8 h-8 bg-amber-50 rounded-full flex items-center justify-center text-amber-600 text-sm">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between lg:col-start-4">
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase">Saldo Líquido</p>
+                    <h3 id="cardSaldo" class="text-base font-bold text-blue-600 mt-1">R$ 0,00</h3>
+                </div>
+                <div class="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 text-sm">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Gerencial -->
+        <section id="painelGerencial" class="mb-6 bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                <div><h2 class="text-lg font-bold text-slate-800">Painel Gerencial</h2><p id="periodoPainelGerencial" class="text-xs text-slate-500">Visão consolidada do banco e projeção dos próximos 30 dias.</p></div>
+                <div class="flex gap-2 no-print"><button onclick="atualizarPainelGerencial()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-arrows-rotate"></i> Atualizar</button><button onclick="abrirRelatorioGerencial()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-file-pdf"></i> Relatório</button></div>
+            </div>
+            <div id="painelResumoGerencial" class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 mb-5">
+                <div class="bg-emerald-50 rounded-lg p-3"><p class="text-[10px] font-bold text-emerald-700 uppercase">PREV RECEITAS</p><p id="pgReceitas" class="text-sm font-bold text-emerald-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-blue-50 rounded-lg p-3"><p class="text-[10px] font-bold text-blue-700 uppercase">REC RECEBIDAS</p><p id="pgRecebido" class="text-sm font-bold text-blue-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-rose-50 rounded-lg p-3"><p class="text-[10px] font-bold text-rose-700 uppercase">Despesas</p><p id="pgDespesas" class="text-sm font-bold text-rose-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-amber-50 rounded-lg p-3"><p class="text-[10px] font-bold text-amber-700 uppercase">A Vencer</p><p id="pgAVencer" class="text-sm font-bold text-amber-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-red-50 rounded-lg p-3"><p class="text-[10px] font-bold text-red-700 uppercase">Vencido</p><p id="pgVencido" class="text-sm font-bold text-red-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-purple-50 rounded-lg p-3"><p class="text-[10px] font-bold text-purple-700 uppercase">Investimentos</p><p id="pgInvestimentos" class="text-sm font-bold text-purple-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-slate-50 rounded-lg p-3"><p class="text-[10px] font-bold text-slate-700 uppercase">Saldo Previsto</p><p id="pgSaldo" class="text-sm font-bold text-slate-800 mt-1">R$ 0,00</p></div>
+                <div id="pgSemaforo" class="rounded-lg p-3 bg-emerald-50"><p class="text-[10px] font-bold uppercase">Situação</p><p id="pgSituacao" class="text-sm font-bold mt-1">Controlada</p></div>
+            </div>
+            <div id="painelDetalhesGerencial" class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                <div id="fluxoCaixaApenasTela" class="fluxo-caixa-apenas-tela"><h3 class="text-sm font-bold text-slate-700 mb-2">Fluxo de caixa por data</h3><div class="overflow-auto max-h-64 border rounded-lg"><table class="w-full text-xs"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-2 text-left">Data</th><th class="p-2 text-right">Receitas</th><th class="p-2 text-right">Despesas</th><th class="p-2 text-right">Saldo</th><th class="p-2 text-right">Acumulado</th></tr></thead><tbody id="tabelaFluxoCaixa"></tbody></table></div></div>
+                <div><h3 class="text-sm font-bold text-slate-700 mb-2">Previsão dos próximos 30 dias</h3><div class="overflow-auto max-h-64 border rounded-lg"><table class="w-full text-xs"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-2 text-left">Data</th><th class="p-2 text-left">Descrição</th><th class="p-2 text-right">Valor</th><th class="p-2 text-center">Status</th></tr></thead><tbody id="tabelaPrevisao30"></tbody></table></div></div>
+            </div>
+            <div id="painelFiltroAtivo" class="hidden mt-5"></div>
+        </section>
+
+        <!-- Filtros e Tabela -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 overflow-hidden">
+            <div class="flex flex-col gap-4 mb-6 no-print">
+                <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
+                    <h2 class="text-lg font-bold text-slate-800">Lançamentos, Rúbricas e Sub-Itens</h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 bg-slate-50 p-4 rounded-xl border border-gray-200 items-end">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Filtrar por Tipo</label>
+                        <select id="filtroTipo" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Todos">Todos os Tipos</option>
+                            <option value="Despesa">Despesa</option>
+                            <option value="Receita">Receita</option>
+                            <option value="Investimentos">Investimentos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Rubrica</label>
+                        <select id="filtroRubrica" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Todas">Todas as Rubricas</option>
+                        </select>
+                        <input type="search" id="filtroBuscaRubrica" oninput="renderTable()" autocomplete="off" placeholder="Pesquisar rubrica..." class="w-full mt-1.5 border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Sub-Item</label>
+                        <select id="filtroSubItem" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Todos">Todos os Sub-Itens</option>
+                        </select>
+                        <input type="search" id="filtroBuscaSubItem" oninput="renderTable()" autocomplete="off" placeholder="Pesquisar sub-item..." class="w-full mt-1.5 border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Filtrar Descrição</label>
+                        <input type="text" id="filtroDescricao" oninput="renderTable()" placeholder="Ex: Aluguel, Luz..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="lg:col-start-1">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Vencimento Início</label>
+                        <input type="date" id="filtroDataInicio" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Vencimento Fim</label>
+                        <input type="date" id="filtroDataFim" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="lg:col-start-5 lg:row-start-1">
+                        <button onclick="limparFiltros()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-rotate-left"></i> Limpar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 text-xs uppercase tracking-wider">
+                            <th class="p-2.5 font-semibold">DT VCTO</th>
+                            <th class="p-2.5 font-semibold">Dt Pg</th>
+                            <th class="p-2.5 font-semibold">Tipo</th>
+                            <th class="p-2.5 font-semibold">Rubrica</th>
+                            <th class="p-2.5 font-semibold">Sub-Item</th>
+                            <th class="p-2.5 font-semibold">Descrição</th>
+                            <th class="p-2.5 font-semibold text-right">Valor (R$)</th>
+                            <th class="p-2.5 font-semibold text-center">Status</th>
+                            <th class="p-2.5 font-semibold">Observação</th>
+                            <th class="p-2.5 font-semibold text-center no-print">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaCorpo" class="divide-y divide-gray-200 text-xs"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- Modal Novo / Editar Lançamento -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50 no-print">
+        <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl">
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-800">Novo Lançamento</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="formLancamento" onsubmit="salvarLancamento(event)" class="space-y-4">
+                <input type="hidden" id="editId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Data do Vencimento</label>
+                        <input type="date" id="vencimento" onchange="verificarStatusAutomaticoModal()" required class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Data do Pg / Recebimento</label>
+                        <input type="date" id="dataPg" oninput="verificarStatusAutomaticoModal(this.value)" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
+                        <select id="tipo" onchange="atualizarStatusTipoModal()" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500">
+                            <option value="Despesa">Despesa</option>
+                            <option value="Receita">Receita</option>
+                            <option value="Investimentos">Investimentos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Rubrica</label>
+                        <select id="categoria" required class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500 bg-white">
+                            <!-- Preenchido dinamicamente -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Sub-Item</label>
+                        <select id="subItem" required class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500 bg-white">
+                            <!-- Preenchido dinamicamente -->
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Descrição</label>
+                    <input type="text" id="descricao" required placeholder="Ex: Aluguel..." class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Valor (R$)</label>
+                        <input type="number" step="0.01" id="valor" required placeholder="0,00" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Status</label>
+                        <select id="status" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500">
+                            <option value="Pago">Pago</option>
+                            <option value="Recebido">Recebido</option>
+                            <option value="Não Recebido">Não Recebido</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Vencido">Vencido</option>
+                            <option value="A Vencer">A Vencer</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Observação</label>
+                    <input type="text" id="observacao" placeholder="Observações..." class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex justify-end gap-3 pt-4 border-t">
+                    <button type="button" onclick="closeModal()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-xs font-medium transition">Cancelar</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-medium transition">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Gráficos Evolutivos com Abas Individuais -->
+    <div id="modalGraficos" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50 no-print">
+        <div class="bg-white rounded-xl max-w-7xl w-full p-6 shadow-xl max-h-[92vh] overflow-y-auto">
+            <div id="printGraficosHeader" class="print-only print-graficos-header">
+                <h1>RELATÓRIO GRÁFICO FINANCEIRO</h1>
+                <p id="printGraficosPeriodo">Período: conforme filtros selecionados</p>
+            </div>
+            <div class="flex justify-between items-center mb-4 border-b pb-3 no-print">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-purple-600"></i> Gráficos Evolutivos e Análise Comparativa Individual
+                </h3>
+                <div class="flex items-center gap-2 no-print graficos-acoes">
+                    <button type="button" onclick="salvarGraficosPDF()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-2 shadow" title="Abrir a impressão para salvar os gráficos em PDF">
+                        <i class="fa-solid fa-file-pdf"></i> Salvar em PDF
+                    </button>
+                    <button type="button" onclick="imprimirGraficos()" class="bg-slate-700 hover:bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-2 shadow" title="Imprimir os Gráficos Evolutivos">
+                        <i class="fa-solid fa-print"></i> Imprimir
+                    </button>
+                    <button onclick="closeGraficosModal()" class="text-gray-400 hover:text-gray-600 ml-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+            </div>
+
+            <!-- Abas de Navegação das Métricas -->
+            <div class="flex flex-wrap gap-2 mb-4 border-b pb-3 graficos-controles no-print">
+                <button onclick="mudarAbaGrafico('prevReceita')" id="tabBtnPrevReceita" class="px-4 py-2 rounded-lg text-xs font-bold bg-purple-600 text-white transition shadow flex items-center gap-1.5"><i class="fa-solid fa-arrow-trend-up"></i> Prev de Receita</button>
+                <button onclick="mudarAbaGrafico('recRecebidas')" id="tabBtnRecRecebidas" class="px-4 py-2 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Rec Recebidas</button>
+                <button onclick="mudarAbaGrafico('totalDespesas')" id="tabBtnTotalDespesas" class="px-4 py-2 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-trend-down"></i> Total de Despesas</button>
+                <button onclick="mudarAbaGrafico('comparativo')" id="tabBtnComparativo" class="px-4 py-2 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition flex items-center gap-1.5"><i class="fa-solid fa-chart-column"></i> Comparativo Geral</button>
+            </div>
+
+            <!-- Painel de Filtros Individuais para a Aba Ativa -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-gray-200 mb-6 items-end graficos-controles no-print">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Período Início</label>
+                    <input type="date" id="graficoDataInicio" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Período Fim</label>
+                    <input type="date" id="graficoDataFim" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div class="lg:col-start-1">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Rubrica</label>
+                    <select id="graficoRubrica" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option value="Todas">Todas as Rubricas</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Sub-Item</label>
+                    <select id="graficoSubItem" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option value="Todos">Todos os Sub-Itens</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Descrição</label>
+                    <input type="text" id="graficoDescricao" placeholder="Filtrar descrição..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 lg:col-span-2">
+                    <button onclick="atualizarGraficos()" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow">
+                        <i class="fa-solid fa-chart-line"></i> Gerar Gráfico
+                    </button>
+                    <button onclick="gerarComparativoReceitasDespesas()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow">
+                        <i class="fa-solid fa-chart-column"></i> Comparativa Receitas X Despesas
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas dos Gráficos -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm grafico-print-bloco">
+                    <h4 id="tituloGraficoEvolucao" class="text-sm font-bold text-slate-700 mb-3 text-center">Evolução Temporal</h4>
+                    <div class="relative h-72">
+                        <canvas id="chartEvolucao"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm grafico-print-bloco">
+                    <h4 id="tituloGraficoRubricas" class="text-sm font-bold text-slate-700 mb-3 text-center">Distribuição por Rubrica</h4>
+                    <div class="relative h-72">
+                        <canvas id="chartRubricas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="comparacaoTotaisGraficos" class="mt-5 border border-slate-200 rounded-xl p-4 bg-slate-50 grafico-print-bloco resumo-executivo-print">
+                <h4 class="text-sm font-bold text-slate-700 mb-3 text-center">Resumo Executivo — Total de Receitas x Total de Despesas</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 flex items-center justify-between">
+                        <span class="text-xs font-bold text-emerald-700">Total de Receitas</span>
+                        <strong id="graficoTotalReceitas" class="text-sm text-emerald-800">R$ 0,00</strong>
+                    </div>
+                    <div class="rounded-lg border border-rose-200 bg-rose-50 p-3 flex items-center justify-between">
+                        <span class="text-xs font-bold text-rose-700">Total de Despesas</span>
+                        <strong id="graficoTotalDespesas" class="text-sm text-rose-800">R$ 0,00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t no-print fechamento-graficos">
+                <button type="button" onclick="closeGraficosModal()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-xs font-medium transition">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal de segurança para restauração -->
+    <div id="modalPreRestauracao" class="fixed inset-0 bg-black/50 z-[200] items-center justify-center p-4 no-print" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200">
+            <div class="px-6 py-5 border-b bg-amber-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Atenção</h3>
+                </div>
+            </div>
+            <div class="px-6 py-5">
+                <p class="text-sm text-slate-700 leading-relaxed">ATENÇÃO: Para a segurança do sistema, faça um backup dos dados atuais.</p>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="cancelarPreRestauracao()" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition">Não</button>
+                    <button type="button" onclick="confirmarBackupAntesRestauracao()" class="px-5 py-2.5 rounded-lg bg-emerald-600 text-white font-semibold text-sm hover:bg-emerald-700 transition">Sim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalContinuarRestauracao" class="fixed inset-0 bg-black/50 z-[210] items-center justify-center p-4 no-print" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-emerald-200">
+            <div class="px-6 py-5 border-b bg-emerald-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                        <i class="fa-solid fa-shield-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Backup concluído</h3>
+                </div>
+            </div>
+            <div class="px-6 py-5">
+                <p class="text-sm text-slate-700 leading-relaxed">O backup dos dados atuais foi concluído com sucesso. Deseja continuar com a restauração?</p>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="cancelarContinuarRestauracao()" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition">Não</button>
+                    <button type="button" onclick="continuarRestauracao()" class="px-5 py-2.5 rounded-lg bg-cyan-600 text-white font-semibold text-sm hover:bg-cyan-700 transition">Continuar com a Restauração</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PWA: registra o Service Worker quando o projeto estiver hospedado em HTTPS.
+        if (location.protocol === 'https:' || location.hostname === 'localhost') {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+            }
+        }
+    </script>
+    <script>
+        /* ==================== PROTEÇÃO DE ACESSO ==================== */
+        const CHAVE_PROTECAO_ACESSO = 'pf_protecao_acesso_v1';
+        let protecaoAutenticada = false;
+        let modoConfigInicial = false;
+        let codigoRecuperacaoAtual = null;
+        const PBKDF2_ITERACOES = 120000;
+
+        function obterConfigProtecao() {
+            try { return JSON.parse(localStorage.getItem(CHAVE_PROTECAO_ACESSO) || 'null'); } catch(e) { return null; }
+        }
+        function salvarConfigProtecao(cfg) { localStorage.setItem(CHAVE_PROTECAO_ACESSO, JSON.stringify(cfg)); }
+        function bufferHex(buffer) { return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2,'0')).join(''); }
+        function hexBuffer(hex) { const a = new Uint8Array(hex.length/2); for(let i=0;i<a.length;i++) a[i]=parseInt(hex.substr(i*2,2),16); return a; }
+        function gerarSalt() { const a = new Uint8Array(16); crypto.getRandomValues(a); return bufferHex(a); }
+        async function derivarSenha(senha, saltHex) {
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(senha), 'PBKDF2', false, ['deriveBits']);
+            const bits = await crypto.subtle.deriveBits({name:'PBKDF2', salt:hexBuffer(saltHex), iterations:PBKDF2_ITERACOES, hash:'SHA-256'}, keyMaterial, 256);
+            return bufferHex(bits);
+        }
+        async function criarCredencial(senha) { const salt=gerarSalt(); return {salt, hash:await derivarSenha(senha,salt)}; }
+        async function validarSenha(senha,cfg) { return !!cfg && (await derivarSenha(senha,cfg.salt)) === cfg.hash; }
+        function mensagemAuth(id,texto,tipo='erro') { const el=document.getElementById(id); if(!el)return; el.textContent=texto; el.className='text-xs mt-3 '+(tipo==='ok'?'text-emerald-600':'text-red-600'); }
+        function alternarVisibilidadeSenha(id,btn){ const el=document.getElementById(id); if(!el)return; el.type=el.type==='password'?'text':'password'; btn.innerHTML=el.type==='password'?'<i class="fa-solid fa-eye"></i>':'<i class="fa-solid fa-eye-slash"></i>'; }
+        function mostrarLoginAcesso(){
+            if(!obterConfigProtecao()?.ativo){ abrirConfiguracaoSeguranca(true); return; }
+            document.getElementById('authLoginView').classList.remove('hidden');
+            document.getElementById('authRecoveryView').classList.add('hidden');
+            document.getElementById('authSetupView').classList.add('hidden');
+            document.getElementById('authSenha').focus();
+        }
+        function mostrarRecuperacaoSenha(){
+            if(!obterConfigProtecao()?.ativo){ abrirConfiguracaoSeguranca(true); return; }
+            document.getElementById('authLoginView').classList.add('hidden');
+            document.getElementById('authRecoveryView').classList.remove('hidden');
+            document.getElementById('authSetupView').classList.add('hidden');
+            document.getElementById('recoveryEmail').value=obterConfigProtecao()?.email||'';
+            document.getElementById('recoveryEmail').focus();
+        }
+        function abrirConfiguracaoSeguranca(inicial=false){
+            const cfg=obterConfigProtecao();
+            if(inicial){
+                modoConfigInicial=true;
+                document.getElementById('authLoginView').classList.add('hidden');
+                document.getElementById('authRecoveryView').classList.add('hidden');
+                document.getElementById('authSetupView').classList.remove('hidden');
+                document.getElementById('tituloConfigSeguranca').textContent='Configuração inicial obrigatória';
+                document.getElementById('configCurrentPasswordWrap').classList.add('hidden');
+                document.getElementById('configRecoveryEmail').focus();
+            }
+            else {
+                if(!protecaoAutenticada){ mostrarLoginAcesso(); return; }
+                document.getElementById('modalConfiguracaoSeguranca').classList.remove('hidden'); document.getElementById('modalConfiguracaoSeguranca').classList.add('flex');
+                document.getElementById('configInternaEmail').value=cfg?.email||''; document.getElementById('configInternaPublicKey').value=cfg?.emailjsPublicKey||''; document.getElementById('configInternaServiceId').value=cfg?.emailjsServiceId||''; document.getElementById('configInternaTemplateId').value=cfg?.emailjsTemplateId||'';
+            }
+        }
+        function fecharConfiguracaoSeguranca(){ const m=document.getElementById('modalConfiguracaoSeguranca'); m.classList.add('hidden'); m.classList.remove('flex'); }
+        async function salvarConfiguracaoSeguranca(){
+            const email=document.getElementById('configRecoveryEmail').value.trim().toLowerCase(), senha=document.getElementById('configPassword').value, conf=document.getElementById('configPasswordConfirm').value;
+            if(!/^\S+@\S+\.\S+$/.test(email)) return mensagemAuth('configMsg','Informe um e-mail válido.');
+            if(senha.length<6) return mensagemAuth('configMsg','A senha deve ter pelo menos 6 caracteres.');
+            if(senha!==conf) return mensagemAuth('configMsg','A confirmação da senha não confere.');
+            const cred=await criarCredencial(senha), cfg={versao:1,ativo:true,email,salt:cred.salt,hash:cred.hash,emailjsPublicKey:document.getElementById('configEmailJsPublicKey').value.trim(),emailjsServiceId:document.getElementById('configEmailJsServiceId').value.trim(),emailjsTemplateId:document.getElementById('configEmailJsTemplateId').value.trim(),criadoEm:new Date().toISOString()};
+            salvarConfigProtecao(cfg);
+            protecaoAutenticada=true;
+            modoConfigInicial=false;
+            document.body.classList.remove('auth-pendente');
+            document.getElementById('telaProtecaoAcesso').classList.add('hidden');
+            document.getElementById('authSetupView').classList.add('hidden');
+            document.getElementById('authLoginView').classList.remove('hidden');
+            mensagemAuth('configMsg','Proteção ativada com sucesso. A partir da próxima abertura, a senha será solicitada.','ok');
+            iniciarAplicacao();
+        }
+        async function autenticarAcesso(){
+            const cfg=obterConfigProtecao(), senha=document.getElementById('authSenha').value;
+            if(!cfg?.ativo){ abrirConfiguracaoSeguranca(true); return; }
+            if(!senha) return mensagemAuth('authErro','Informe a senha.');
+            const ok=await validarSenha(senha,cfg);
+            if(!ok) return mensagemAuth('authErro','Senha incorreta.');
+            protecaoAutenticada=true;
+            document.body.classList.remove('auth-pendente');
+            document.getElementById('telaProtecaoAcesso').classList.add('hidden');
+            document.getElementById('authSenha').value='';
+            iniciarAplicacao();
+        }
+        function gerarCodigo6(){ return String(Math.floor(100000+Math.random()*900000)); }
+        async function enviarCodigoRecuperacao(){
+            const cfg=obterConfigProtecao(), email=document.getElementById('recoveryEmail').value.trim().toLowerCase();
+            if(!cfg?.ativo) return mensagemAuth('recoveryMsg','A proteção ainda não foi configurada.');
+            if(email!==cfg.email) return mensagemAuth('recoveryMsg','O e-mail informado não corresponde ao e-mail de recuperação cadastrado.');
+            if(!cfg.emailjsPublicKey||!cfg.emailjsServiceId||!cfg.emailjsTemplateId) return mensagemAuth('recoveryMsg','O envio automático ainda não está configurado. Abra “Segurança e Acesso” após entrar no sistema e informe os dados do EmailJS.');
+            try {
+                if(window.emailjs) emailjs.init({publicKey:cfg.emailjsPublicKey}); else throw new Error('Serviço de e-mail indisponível.');
+                const codigo=gerarCodigo6(); codigoRecuperacaoAtual={codigo,expira:Date.now()+10*60*1000};
+                sessionStorage.setItem('pf_codigo_recuperacao',JSON.stringify(codigoRecuperacaoAtual));
+                const destinatario = String(cfg.email || email || '').trim().toLowerCase();
+                // Template OTP novo: substitui automaticamente o template anterior de redefinição por link.
+                const templateRecuperacao = cfg.emailjsTemplateId === 'template_r0jgzjj' ? 'template_txy2pic' : cfg.emailjsTemplateId;
+                if(!destinatario) throw new Error('O e-mail de recuperação está vazio. Abra Segurança e Acesso e cadastre um e-mail válido.');
+                await emailjs.send(cfg.emailjsServiceId,templateRecuperacao,{
+                    to_email:destinatario,
+                    email:destinatario,
+                    verification_code:codigo,
+                    passcode:codigo,
+                    app_name:'Planejamento Financeiro',
+                    expires_in:'10 minutos',
+                    time:'10 minutos'
+                });
+                document.getElementById('recoveryCodeArea').classList.remove('hidden'); mensagemAuth('recoveryMsg','Código enviado para o e-mail cadastrado. Ele expira em 10 minutos.','ok');
+            } catch(e){
+                console.error('EmailJS - falha no envio:', e);
+                let detalhe = '';
+                if (e && e.text) detalhe = String(e.text);
+                else if (e && e.message) detalhe = String(e.message);
+                else if (e) detalhe = JSON.stringify(e);
+                if (detalhe.length > 220) detalhe = detalhe.slice(0,220) + '...';
+                mensagemAuth('recoveryMsg','Não foi possível enviar o código. EmailJS: ' + (detalhe || 'erro desconhecido') + ' Verifique o serviço Gmail e o template.');
+            }
+        }
+        async function redefinirSenhaComCodigo(){
+            const registro=JSON.parse(sessionStorage.getItem('pf_codigo_recuperacao')||'null'), codigo=document.getElementById('recoveryCode').value.trim(), nova=document.getElementById('recoveryNewPassword').value, conf=document.getElementById('recoveryConfirmPassword').value, cfg=obterConfigProtecao();
+            if(!registro||Date.now()>registro.expira) return mensagemAuth('recoveryMsg','Código expirado. Solicite um novo código.');
+            if(codigo!==registro.codigo) return mensagemAuth('recoveryMsg','Código de verificação inválido.');
+            if(nova.length<6) return mensagemAuth('recoveryMsg','A nova senha deve ter pelo menos 6 caracteres.');
+            if(nova!==conf) return mensagemAuth('recoveryMsg','A confirmação da nova senha não confere.');
+            const cred=await criarCredencial(nova); cfg.salt=cred.salt; cfg.hash=cred.hash; cfg.ativo=true; cfg.alteradoEm=new Date().toISOString(); salvarConfigProtecao(cfg); sessionStorage.removeItem('pf_codigo_recuperacao'); codigoRecuperacaoAtual=null; mostrarLoginAcesso(); document.getElementById('authSenha').value=nova; document.getElementById('authRecoveryView').classList.add('hidden'); document.getElementById('authLoginView').classList.remove('hidden'); mensagemAuth('authErro','Senha redefinida. Digite a nova senha para entrar.','ok'); document.getElementById('authSenha').value='';
+        }
+        async function salvarConfiguracaoInterna(){
+            const cfg=obterConfigProtecao(); if(!cfg)return;
+            const atual=document.getElementById('configInternaAtual').value, nova=document.getElementById('configInternaNova').value, conf=document.getElementById('configInternaConfirmar').value, email=document.getElementById('configInternaEmail').value.trim().toLowerCase();
+            if(!(await validarSenha(atual,cfg))) return mensagemAuth('configInternaMsg','Senha atual incorreta.');
+            if(!/^\S+@\S+\.\S+$/.test(email)) return mensagemAuth('configInternaMsg','Informe um e-mail válido.');
+            if(nova && nova.length<6) return mensagemAuth('configInternaMsg','A nova senha deve ter pelo menos 6 caracteres.');
+            if(nova!==conf) return mensagemAuth('configInternaMsg','A confirmação da nova senha não confere.');
+            cfg.email=email; cfg.emailjsPublicKey=document.getElementById('configInternaPublicKey').value.trim(); cfg.emailjsServiceId=document.getElementById('configInternaServiceId').value.trim(); cfg.emailjsTemplateId=document.getElementById('configInternaTemplateId').value.trim();
+            if(nova){ const cred=await criarCredencial(nova); cfg.salt=cred.salt; cfg.hash=cred.hash; }
+            cfg.alteradoEm=new Date().toISOString(); salvarConfigProtecao(cfg); mensagemAuth('configInternaMsg','Configurações de segurança salvas.','ok'); document.getElementById('configInternaAtual').value=''; document.getElementById('configInternaNova').value=''; document.getElementById('configInternaConfirmar').value='';
+        }
+        function inicializarProtecaoAcesso(){
+            const cfg=obterConfigProtecao();
+            document.body.classList.add('auth-pendente');
+            document.getElementById('telaProtecaoAcesso').classList.remove('hidden');
+            if(cfg?.ativo){
+                mostrarLoginAcesso();
+            } else {
+                abrirConfiguracaoSeguranca(true);
+            }
+        }
+
+        const dadosPadraoCompletos = [
+            {id: 101, vencimento: "2026-09-01", dataPg: "2026-09-01", tipo: "Receita", categoria: "RECEITA", subItem: "Receita", descricao: "Japeri", valor: 7900.00, status: "Recebido", observacao: ""},
+            {id: 102, vencimento: "2026-09-01", dataPg: "2026-09-01", tipo: "Receita", categoria: "RECEITA", subItem: "Receita", descricao: "Queimados", valor: 3900.00, status: "Recebido", observacao: ""},
+            {id: 103, vencimento: "2026-09-17", dataPg: "2026-09-17", tipo: "Receita", categoria: "RECEITA", subItem: "Receita", descricao: "Guapimirim", valor: 17363.74, status: "Recebido", observacao: ""},
+
+            {id: 1, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "DESPESAS PAI", subItem: "Condomínio", descricao: "cond Escrit Pai", valor: 506.20, status: "Pago", observacao: ""},
+            {id: 2, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "DESPESAS PAI", subItem: "IPTU", descricao: "Parc Iptu Pai", valor: 330.82, status: "Pago", observacao: ""},
+            {id: 3, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "DESPESAS PAI", subItem: "IPTU", descricao: "Parc Iptu Pai 2", valor: 90.00, status: "Pago", observacao: ""},
+            {id: 4, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "DESPESAS PAI", subItem: "IPTU", descricao: "Iptu Escrit Pai", valor: 396.58, status: "Pago", observacao: ""},
+            {id: 5, vencimento: "2026-09-15", dataPg: "2026-09-15", tipo: "Despesa", categoria: "DESPESAS PAI", subItem: "Luz", descricao: "Luz Escrit Pai", valor: 145.25, status: "Pago", observacao: ""},
+            {id: 6, vencimento: "2026-09-07", dataPg: "2026-09-07", tipo: "Despesa", categoria: "CELULAR", subItem: "Celular", descricao: "Cel Valentina", valor: 75.00, status: "Pago", observacao: ""},
+            {id: 7, vencimento: "2026-09-07", dataPg: "2026-09-07", tipo: "Despesa", categoria: "CELULAR", subItem: "Celular", descricao: "Cel Antonia", valor: 65.00, status: "Pago", observacao: ""},
+            {id: 8, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "CELULAR", subItem: "Celular", descricao: "Cel Ric/Lú", valor: 143.98, status: "Pago", observacao: ""},
+
+            {id: 20, vencimento: "2026-09-07", dataPg: "2026-09-07", tipo: "Despesa", categoria: "ICARAÍ", subItem: "Condomínio", descricao: "Cond Escritório", valor: 780.51, status: "Pago", observacao: ""},
+            {id: 21, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "WM", subItem: "Honorários", descricao: "Hon contador WM", valor: 1190.00, status: "Pago", observacao: ""},
+            {id: 22, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "WM", subItem: "IPTU", descricao: "Iptu Escrit", valor: 77.54, status: "Pago", observacao: ""},
+            {id: 23, vencimento: "2026-09-15", dataPg: "2026-09-15", tipo: "Despesa", categoria: "WM", subItem: "Luz", descricao: "Luz Escrit", valor: 46.71, status: "Pago", observacao: ""},
+            {id: 24, vencimento: "2026-09-18", dataPg: "2026-09-18", tipo: "Despesa", categoria: "WM", subItem: "WM", descricao: "INSS", valor: 360.00, status: "Pago", observacao: ""},
+            {id: 25, vencimento: "2026-09-01", dataPg: "", tipo: "Despesa", categoria: "WM", subItem: "WM", descricao: "Parc simples 1", valor: 140.00, status: "Pendente", observacao: ""},
+            {id: 26, vencimento: "2026-09-01", dataPg: "", tipo: "Despesa", categoria: "WM", subItem: "WM", descricao: "Parc simples 2", valor: 1400.00, status: "Pendente", observacao: ""},
+            {id: 27, vencimento: "2026-09-05", dataPg: "2026-09-05", tipo: "Despesa", categoria: "PLANO SAÚDE", subItem: "P Saúde", descricao: "Plano Saude Lu", valor: 1074.00, status: "Pago", observacao: ""},
+            {id: 28, vencimento: "2026-09-05", dataPg: "2026-09-05", tipo: "Despesa", categoria: "PLANO SAÚDE", subItem: "P Saúde", descricao: "Plano Saude Ric", valor: 1402.00, status: "Pago", observacao: ""},
+
+            {id: 40, vencimento: "2026-09-01", dataPg: "2026-09-01", tipo: "Despesa", categoria: "CARTÃO", subItem: "CartãoPF", descricao: "cartão pessoa física", valor: 1016.61, status: "Pago", observacao: ""},
+            {id: 41, vencimento: "2026-09-21", dataPg: "2026-09-21", tipo: "Despesa", categoria: "CARTÃO", subItem: "CartãoPF", descricao: "Cartão Porto", valor: 1712.79, status: "Pago", observacao: ""},
+            {id: 42, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "IPTU", subItem: "IPTU", descricao: "Iptu SG", valor: 65.76, status: "Pago", observacao: ""},
+
+            {id: 60, vencimento: "2026-09-08", dataPg: "2026-09-08", tipo: "Despesa", categoria: "ARARUAMA", subItem: "Agua", descricao: "Água Araruama", valor: 138.18, status: "Pago", observacao: ""},
+            {id: 61, vencimento: "2026-09-15", dataPg: "", tipo: "Despesa", categoria: "ICARAÍ", subItem: "Gás", descricao: "gas icarai", valor: 80.86, status: "Pendente", observacao: ""},
+            {id: 62, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "ARARUAMA", subItem: "Internet", descricao: "Internet Araruama", valor: 120.84, status: "Pago", observacao: ""},
+            {id: 63, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "ARARUAMA", subItem: "Luz", descricao: "Luz Araruama", valor: 67.98, status: "Pago", observacao: ""},
+            {id: 64, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "ICARAÍ", subItem: "Luz", descricao: "Luz Icarai", valor: 358.47, status: "Pago", observacao: ""},
+            {id: 65, vencimento: "2026-09-15", dataPg: "2026-09-15", tipo: "Despesa", categoria: "ICARAÍ", subItem: "Internet", descricao: "Internete Icarai", valor: 137.90, status: "Pago", observacao: ""},
+            {id: 66, vencimento: "2026-09-07", dataPg: "2026-09-07", tipo: "Despesa", categoria: "ICARAÍ", subItem: "Aluguel", descricao: "Aluguel", valor: 2652.83, status: "Pago", observacao: ""},
+            {id: 67, vencimento: "2026-09-22", dataPg: "", tipo: "Despesa", categoria: "LUZ", subItem: "Luz", descricao: "Luz Prin Isabel", valor: 228.78, status: "Pendente", observacao: ""},
+
+            {id: 200, vencimento: "2026-09-25", dataPg: "", tipo: "Investimentos", categoria: "INVESTIMENTOS", subItem: "Investimentos", descricao: "Aporte Tesouro Direto", valor: 1500.00, status: "Pendente", observacao: ""}
+        ];
+
+        // Gerador interno de ID estruturado para exportação e banco de dados
+        function gerarIdTexto(prefixo, texto) {
+            if (!texto) return `${prefixo}-00`;
+            let hash = 0;
+            const str = texto.toString().trim().toUpperCase();
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return `${prefixo}-${Math.abs(hash) % 900 + 100}`;
+        }
+
+        const CHAVE_BANCO_MESTRE = 'planejamento_financeiro_banco_mestre_v1';
+        const CHAVE_DATA_ABERTURA = 'planejamento_financeiro_data_abertura';
+        const CHAVE_HISTORICO = 'planejamento_financeiro_historico_v1';
+        const CHAVE_LIXEIRA = 'planejamento_financeiro_lixeira_v1';
+        const CHAVE_ULTIMO_BACKUP = 'planejamento_financeiro_ultimo_backup_v1';
+
+        function getChaveStorageAtual() {
+            const agora = new Date();
+            const anoAtual = agora.getFullYear();
+            const mesAtual = String(agora.getMonth() + 1).padStart(2, '0');
+            return `planejamento_financeiro_${anoAtual}_${mesAtual}`;
+        }
+
+        function escaparHtml(valor) {
+            return String(valor ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function normalizarTransacoes(lista) {
+            return (Array.isArray(lista) ? lista : []).map((t, idx) => {
+                const item = { ...t };
+                if (!item.id) item.id = idx + 1;
+                item.vencimento = item.vencimento ? String(item.vencimento).slice(0, 10) : '';
+                item.dataPg = item.dataPg ? String(item.dataPg).slice(0, 10) : '';
+                item.tipo = item.tipo ? String(item.tipo) : 'Despesa';
+                item.categoria = item.categoria ? String(item.categoria) : 'GERAL';
+                item.subItem = item.subItem ? String(item.subItem) : 'Geral';
+                item.descricao = item.descricao ? String(item.descricao) : '';
+                item.valor = Number(item.valor) || 0;
+                item.status = item.status ? String(item.status) : (item.tipo === 'Receita' ? 'Não Recebido' : 'Pendente');
+                item.observacao = item.observacao ? String(item.observacao) : '';
+                if (item.tipo === 'Receita' && item.status === 'Pendente') item.status = 'Não Recebido';
+                // IDs permanentes das tabelas de referência. Se o valor for alterado,
+                // o ID relacional correspondente também precisa acompanhar a alteração.
+                item.idTipo = item.idTipo || gerarIdTexto('TIP', item.tipo);
+                item.idRubrica = item.idRubrica || gerarIdTexto('RUB', item.categoria);
+                item.idSubItem = item.idSubItem || gerarIdTexto('SUB', item.subItem);
+                item.idDescricao = item.idDescricao || gerarIdTexto('DSC', item.descricao);
+                item.idStatus = item.idStatus || gerarIdTexto('STA', item.status);
+                return item;
+            });
+        }
+
+        // O banco mestre é a fonte principal dos dados.
+        // A base original continua embutida no HTML e é usada na primeira abertura.
+        // Bases antigas separadas por mês são migradas sem apagar registros existentes.
+        function carregarTransacoes() {
+            let mestre = null;
+            try {
+                const salvoMestre = localStorage.getItem(CHAVE_BANCO_MESTRE);
+                if (salvoMestre) {
+                    const parsed = JSON.parse(salvoMestre);
+                    if (Array.isArray(parsed)) mestre = normalizarTransacoes(parsed);
+                }
+            } catch (e) {
+                mestre = null;
+            }
+
+            if (!mestre || mestre.length === 0) {
+                mestre = normalizarTransacoes(dadosPadraoCompletos);
+
+                // Migra, uma única vez, os dados que estavam guardados na chave mensal antiga.
+                try {
+                    const legado = JSON.parse(localStorage.getItem(getChaveStorageAtual()) || 'null');
+                    if (Array.isArray(legado) && legado.length > 0) {
+                        const porId = new Map(mestre.map(t => [String(t.id), t]));
+                        legado.forEach(item => {
+                            const t = normalizarTransacoes([item])[0];
+                            const chave = String(t.id);
+                            // Se o mesmo ID existir, preserva a versão que estava no banco do usuário.
+                            porId.set(chave, t);
+                        });
+                        mestre = Array.from(porId.values());
+                    }
+                } catch (e) {}
+
+                localStorage.setItem(CHAVE_BANCO_MESTRE, JSON.stringify(mestre));
+            } else {
+                // Garante que o banco mestre contenha os registros originais que possam ter
+                // sido acrescentados ao HTML em uma atualização, sem duplicar IDs.
+                const porId = new Map(mestre.map(t => [String(t.id), t]));
+                normalizarTransacoes(dadosPadraoCompletos).forEach(t => {
+                    if (!porId.has(String(t.id))) porId.set(String(t.id), t);
+                });
+                mestre = Array.from(porId.values());
+                localStorage.setItem(CHAVE_BANCO_MESTRE, JSON.stringify(mestre));
+            }
+
+            return JSON.parse(JSON.stringify(mestre));
+        }
+
+        let transacoes = carregarTransacoes();
+
+        // Data de abertura persistente: é criada apenas na primeira abertura do projeto.
+        // Assim, ela não muda quando o arquivo HTML for aberto novamente em outro dia.
+        function obterDataLocalISO() {
+            const agora = new Date();
+            const ano = agora.getFullYear();
+            const mes = String(agora.getMonth() + 1).padStart(2, '0');
+            const dia = String(agora.getDate()).padStart(2, '0');
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        function obterDataAberturaProjeto() {
+            let data = localStorage.getItem(CHAVE_DATA_ABERTURA);
+            if (!data) {
+                data = obterDataLocalISO();
+                localStorage.setItem(CHAVE_DATA_ABERTURA, data);
+            }
+            return data;
+        }
+
+        let DATA_ABERTURA_PROJETO = obterDataAberturaProjeto();
+
+        // Regra automática de STATUS para DESPESAS sem DT PG:
+        // DT VCTO < abertura = Vencido; = abertura = Pendente; > abertura = A Vencer.
+        // Se houver DT PG preenchida, o status informado/pago não é sobrescrito.
+        function atualizarStatusDespesasAutomaticamente(lista) {
+            const dados = Array.isArray(lista) ? lista : [];
+            let alterou = false;
+
+            dados.forEach(t => {
+                if (!t || t.tipo !== 'Despesa' || !t.vencimento) return;
+                const temDataPagamento = !!(t.dataPg && String(t.dataPg).trim() !== '');
+                if (temDataPagamento) return;
+
+                let novoStatus = 'Pendente';
+                if (t.vencimento < DATA_ABERTURA_PROJETO) novoStatus = 'Vencido';
+                else if (t.vencimento > DATA_ABERTURA_PROJETO) novoStatus = 'A Vencer';
+
+                if (t.status !== novoStatus) {
+                    t.status = novoStatus;
+                    t.idStatus = gerarIdTexto('STA', novoStatus);
+                    alterou = true;
+                }
+            });
+
+            return alterou;
+        }
+
+        // Aplica a regra ao banco carregado sem alterar IDs dos lançamentos.
+        if (atualizarStatusDespesasAutomaticamente(transacoes)) {
+            salvarLocalStorage();
+        }
+
+        function getRubricasCadastradas() {
+            const padrao = ["CARTÃO", "PLANO SAÚDE", "WM", "CELULAR", "ICARAÍ", "ARARUAMA", "DESPESAS PAI", "IPTU", "LUZ", "DESPESAS EXTRAS", "TRANSFERÊNCIAS", "INVESTIMENTOS", "RECEITA"];
+            const transRubricas = [...new Set(transacoes.map(t => t.categoria))].filter(Boolean);
+            const extras = JSON.parse(localStorage.getItem('rubricas_extras') || '[]');
+            return [...new Set([...padrao, ...transRubricas, ...extras])].sort();
+        }
+
+        function getSubItensCadastrados() {
+            const padrao = ["CartãoPF", "P Saúde", "Condomínio", "Celular", "Aluguel", "Agua", "Luz", "Internet", "Honorários", "IPTU", "Gás", "WM", "Desp Extras", "Transf Luciane", "Investimentos", "Receita"];
+            const transSub = [...new Set(transacoes.map(t => t.subItem))].filter(Boolean);
+            const extras = JSON.parse(localStorage.getItem('subitens_extras') || '[]');
+            return [...new Set([...padrao, ...transSub, ...extras])].sort();
+        }
+
+        function popularSelectsDinamicos() {
+            const rubricaFiltro = document.getElementById('filtroRubrica');
+            const subItemFiltro = document.getElementById('filtroSubItem');
+            const rubricaModal = document.getElementById('categoria');
+            const subItemModal = document.getElementById('subItem');
+
+            const rubricaAtualSel = rubricaFiltro.value;
+            const subItemAtualSel = subItemFiltro.value;
+            const rubricaModalSel = rubricaModal ? rubricaModal.value : '';
+            const subItemModalSel = subItemModal ? subItemModal.value : '';
+
+            const rubricas = getRubricasCadastradas();
+            const subItens = getSubItensCadastrados();
+
+            rubricaFiltro.innerHTML = '<option value="Todas">Todas as Rubricas</option>';
+            rubricas.forEach(r => {
+                rubricaFiltro.innerHTML += `<option value="${escaparHtml(r)}">${escaparHtml(r)}</option>`;
+            });
+            if (rubricas.includes(rubricaAtualSel)) rubricaFiltro.value = rubricaAtualSel;
+
+            subItemFiltro.innerHTML = '<option value="Todos">Todos os Sub-Itens</option>';
+            subItens.forEach(s => {
+                subItemFiltro.innerHTML += `<option value="${escaparHtml(s)}">${escaparHtml(s)}</option>`;
+            });
+            if (subItens.includes(subItemAtualSel)) subItemFiltro.value = subItemAtualSel;
+
+            if (rubricaModal) {
+                rubricaModal.innerHTML = '';
+                rubricas.forEach(r => {
+                    rubricaModal.innerHTML += `<option value="${escaparHtml(r)}">${escaparHtml(r)}</option>`;
+                });
+                if (rubricas.includes(rubricaModalSel)) rubricaModal.value = rubricaModalSel;
+            }
+
+            if (subItemModal) {
+                subItemModal.innerHTML = '';
+                subItens.forEach(s => {
+                    subItemModal.innerHTML += `<option value="${escaparHtml(s)}">${escaparHtml(s)}</option>`;
+                });
+                if (subItens.includes(subItemModalSel)) subItemModal.value = subItemModalSel;
+            }
+        }
+
+        function adicionarNovaRubricaPrompt() {
+            const nova = prompt("Digite o nome da Nova Rubrica:");
+            if (nova && nova.trim() !== "") {
+                const nomeFormatado = nova.trim().toUpperCase();
+                let extras = JSON.parse(localStorage.getItem('rubricas_extras') || '[]');
+                if (!extras.includes(nomeFormatado)) {
+                    extras.push(nomeFormatado);
+                    localStorage.setItem('rubricas_extras', JSON.stringify(extras));
+                    popularSelectsDinamicos();
+                    alert(`Rubrica "${nomeFormatado}" adicionada com sucesso!`);
+                } else {
+                    alert("Esta rubrica já existe.");
+                }
+            }
+        }
+
+        function adicionarNovoSubItemPrompt() {
+            const novo = prompt("Digite o nome do Novo Sub-Item:");
+            if (novo && novo.trim() !== "") {
+                const nomeFormatado = novo.trim();
+                let extras = JSON.parse(localStorage.getItem('subitens_extras') || '[]');
+                if (!extras.includes(nomeFormatado)) {
+                    extras.push(nomeFormatado);
+                    localStorage.setItem('subitens_extras', JSON.stringify(extras));
+                    popularSelectsDinamicos();
+                    alert(`Sub-Item "${nomeFormatado}" adicionado com sucesso!`);
+                } else {
+                    alert("Este sub-item já existe.");
+                }
+            }
+        }
+
+        function obterTabelasReferencia() {
+            const unicos = (campo) => [...new Set(transacoes.map(t => t[campo]).filter(v => v !== undefined && v !== null && String(v) !== ''))];
+            return {
+                tipos: [...new Set(['Despesa', 'Receita', 'Investimentos', ...unicos('tipo')])].map(v => ({ ID_Tipo: gerarIdTexto('TIP', v), Tipo: v })),
+                rubricas: getRubricasCadastradas().map(v => ({ ID_Rubrica: gerarIdTexto('RUB', v), Rubrica: v })),
+                subItens: getSubItensCadastrados().map(v => ({ ID_SubItem: gerarIdTexto('SUB', v), SubItem: v })),
+                status: [...new Set(['Pendente', 'A Vencer', 'Vencido', 'Pago', 'Recebido', 'Não Recebido', ...unicos('status')])].map(v => ({ ID_Status: gerarIdTexto('STA', v), Status: v })),
+                descricoes: unicos('descricao').map(v => ({ ID_Descricao: gerarIdTexto('DSC', v), Descricao: v }))
+            };
+        }
+
+        function exportToExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert('A biblioteca de Excel não foi carregada. Use o Backup JSON, que funciona sem essa biblioteca.');
+                return;
+            }
+
+            const dadosExcel = transacoes.map(t => ({
+                ID_Item: t.id,
+                Vencimento: t.vencimento || '',
+                DataPagamento: t.dataPg || '',
+                ID_Tipo: t.idTipo || gerarIdTexto('TIP', t.tipo),
+                Tipo: t.tipo || '',
+                ID_Rubrica: t.idRubrica || gerarIdTexto('RUB', t.categoria),
+                Rubrica: t.categoria || '',
+                ID_SubItem: t.idSubItem || gerarIdTexto('SUB', t.subItem),
+                SubItem: t.subItem || '',
+                ID_Descricao: t.idDescricao || gerarIdTexto('DSC', t.descricao),
+                Descricao: t.descricao || '',
+                Valor: t.valor || 0,
+                ID_Status: t.idStatus || gerarIdTexto('STA', t.status),
+                Status: t.status || '',
+                Observacao: t.observacao || ''
+            }));
+
+            const refs = obterTabelasReferencia();
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dadosExcel), 'Lancamentos_DB');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(refs.tipos), 'Tabela_Tipos');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(refs.rubricas), 'Tabela_Rubricas');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(refs.subItens), 'Tabela_SubItens');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(refs.status), 'Tabela_Status');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(refs.descricoes), 'Tabela_Descricoes');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{
+                Sistema: 'Planejamento Financeiro',
+                VersaoBanco: 2,
+                DataAberturaProjeto: DATA_ABERTURA_PROJETO,
+                DataExportacao: new Date().toISOString(),
+                TotalLancamentos: transacoes.length
+            }]), 'Controle_Banco');
+
+            XLSX.writeFile(wb, `banco_dados_financeiro_${obterDataLocalISO()}.xlsx`);
+        }
+
+        function importFromExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    if (typeof XLSX === 'undefined') throw new Error('Biblioteca XLSX indisponível.');
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const nomeAba = workbook.SheetNames.includes('Lancamentos_DB') ? 'Lancamentos_DB' : workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[nomeAba];
+                    const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+                    if (!rows.length) throw new Error('A planilha de lançamentos está vazia.');
+
+                    // Backup automático antes de alterar a base atual.
+                    baixarBackupJSON('backup_automatico_antes_importacao');
+
+                    const porId = new Map(transacoes.map(t => [String(t.id), t]));
+                    let maiorId = Math.max(0, ...transacoes.map(t => Number(t.id) || 0));
+                    let processados = 0;
+
+                    rows.forEach(row => {
+                        const idExcel = row.ID_Item ?? row.ID ?? row.id;
+                        const idNumerico = Number(idExcel);
+                        if (!Number.isFinite(idNumerico) || idNumerico <= 0) return;
+
+                        const tipo = row.Tipo || row.tipo || 'Despesa';
+                        const categoria = row.Rubrica || row.categoria || 'GERAL';
+                        const subItem = row.SubItem || row.subItem || 'Geral';
+                        const descricao = row.Descricao || row.descricao || '';
+                        const item = {
+                            id: idNumerico,
+                            vencimento: row.Vencimento || row.vencimento || '',
+                            dataPg: row.DataPagamento || row.dataPg || '',
+                            tipo, categoria, subItem, descricao,
+                            valor: Number(row.Valor ?? row.valor) || 0,
+                            status: row.Status || row.status || (tipo === 'Receita' ? 'Não Recebido' : 'Pendente'),
+                            observacao: row.Observacao || row.observacao || '',
+                            idTipo: row.ID_Tipo || gerarIdTexto('TIP', tipo),
+                            idRubrica: row.ID_Rubrica || gerarIdTexto('RUB', categoria),
+                            idSubItem: row.ID_SubItem || gerarIdTexto('SUB', subItem),
+                            idDescricao: row.ID_Descricao || gerarIdTexto('DSC', descricao),
+                            idStatus: row.ID_Status || gerarIdTexto('STA', row.Status || row.status || 'Pendente')
+                        };
+                        porId.set(String(idNumerico), item);
+                        maiorId = Math.max(maiorId, idNumerico);
+                        processados++;
+                    });
+
+                    transacoes = normalizarTransacoes(Array.from(porId.values()));
+                    atualizarStatusDespesasAutomaticamente(transacoes);
+                    salvarLocalStorage();
+                    popularSelectsDinamicos();
+                    renderTable();
+                    alert(`Importação Excel concluída. ${processados} lançamento(s) processado(s), sem duplicação de IDs.`);
+                } catch(err) {
+                    console.error(err);
+                    alert('Erro ao processar o ficheiro Excel: ' + err.message);
+                }
+                event.target.value = '';
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function montarBackupCompleto() {
+            const refs = obterTabelasReferencia();
+            return {
+                sistema: 'Planejamento Financeiro',
+                versao_banco: 2,
+                data_backup: new Date().toISOString(),
+                data_abertura_projeto: DATA_ABERTURA_PROJETO,
+                transacoes: normalizarTransacoes(transacoes),
+                tabelas: refs,
+                rubricas_extras: JSON.parse(localStorage.getItem('rubricas_extras') || '[]'),
+                subitens_extras: JSON.parse(localStorage.getItem('subitens_extras') || '[]')
+            };
+        }
+
+        function baixarBackupJSON(prefixo = 'backup_planejamento_financeiro') {
+            const dadosBackup = montarBackupCompleto();
+            const blob = new Blob([JSON.stringify(dadosBackup, null, 2)], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${prefixo}_${obterDataLocalISO()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        function obterHistorico() {
+            try { return JSON.parse(localStorage.getItem(CHAVE_HISTORICO) || '[]'); } catch(e) { return []; }
+        }
+
+        function registrarHistorico(acao, id, detalhes) {
+            const historico = obterHistorico();
+            historico.unshift({ data: new Date().toISOString(), acao, id: id ?? '', detalhes: detalhes || '' });
+            localStorage.setItem(CHAVE_HISTORICO, JSON.stringify(historico.slice(0, 500)));
+        }
+
+        function obterLixeira() {
+            try { return JSON.parse(localStorage.getItem(CHAVE_LIXEIRA) || '[]'); } catch(e) { return []; }
+        }
+
+        function enviarParaLixeira(item) {
+            const lixeira = obterLixeira();
+            lixeira.unshift({ excluidoEm: new Date().toISOString(), item: { ...item } });
+            localStorage.setItem(CHAVE_LIXEIRA, JSON.stringify(lixeira.slice(0, 200)));
+        }
+
+        function formatarDataHora(data) {
+            const d = new Date(data);
+            return isNaN(d) ? '-' : d.toLocaleString('pt-BR');
+        }
+
+        function atualizarInfoBanco() {
+            const el = document.getElementById('infoBancoSeguranca');
+            if (!el) return;
+            const ultimo = localStorage.getItem(CHAVE_ULTIMO_BACKUP);
+            el.textContent = `Banco: ${transacoes.length} lançamento(s) | Último backup: ${ultimo ? formatarDataHora(ultimo) : 'ainda não realizado'}`;
+        }
+
+        function abrirSegurancaBanco(tipo) {
+            const modal = document.getElementById('modalSegurancaBanco');
+            const titulo = document.getElementById('tituloSegurancaBanco');
+            const corpo = document.getElementById('corpoSegurancaBanco');
+            modal.classList.remove('hidden');
+            if (tipo === 'historico') {
+                titulo.textContent = 'Histórico de alterações';
+                const dados = obterHistorico();
+                corpo.innerHTML = dados.length ? `<div class="overflow-auto max-h-[60vh]"><table class="w-full text-xs"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-2 text-left">Data</th><th class="p-2 text-left">Ação</th><th class="p-2 text-left">ID</th><th class="p-2 text-left">Detalhes</th></tr></thead><tbody>${dados.map(h => `<tr class="border-b"><td class="p-2">${formatarDataHora(h.data)}</td><td class="p-2 font-semibold">${h.acao}</td><td class="p-2">${h.id}</td><td class="p-2">${h.detalhes}</td></tr>`).join('')}</tbody></table></div>` : '<p class="text-slate-500">Nenhuma alteração registrada.</p>';
+            } else {
+                titulo.textContent = 'Lixeira — recuperar lançamentos';
+                const dados = obterLixeira();
+                corpo.innerHTML = dados.length ? `<div class="overflow-auto max-h-[60vh]"><table class="w-full text-xs"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-2 text-left">Excluído em</th><th class="p-2">ID</th><th class="p-2 text-left">Descrição</th><th class="p-2 text-right">Valor</th><th class="p-2">Ação</th></tr></thead><tbody>${dados.map((h,i) => `<tr class="border-b"><td class="p-2">${formatarDataHora(h.excluidoEm)}</td><td class="p-2 text-center">${h.item.id}</td><td class="p-2">${h.item.descricao || ''}</td><td class="p-2 text-right">${formatarMoeda(Number(h.item.valor)||0)}</td><td class="p-2 text-center"><button onclick="recuperarDaLixeira(${i})" class="bg-emerald-600 text-white px-2 py-1 rounded">Recuperar</button></td></tr>`).join('')}</tbody></table></div>` : '<p class="text-slate-500">A lixeira está vazia.</p>';
+            }
+        }
+
+        function fecharSegurancaBanco() { document.getElementById('modalSegurancaBanco').classList.add('hidden'); }
+
+        function recuperarDaLixeira(indice) {
+            const lixeira = obterLixeira();
+            const registro = lixeira[indice];
+            if (!registro) return;
+            if (transacoes.some(t => String(t.id) === String(registro.item.id))) { alert('Não foi possível recuperar: o ID já existe no banco.'); return; }
+            transacoes.push(normalizarTransacoes([registro.item])[0]);
+            lixeira.splice(indice, 1);
+            localStorage.setItem(CHAVE_LIXEIRA, JSON.stringify(lixeira));
+            salvarLocalStorage();
+            registrarHistorico('RECUPERAÇÃO', registro.item.id, `Lançamento recuperado: ${registro.item.descricao || ''}`);
+            popularSelectsDinamicos(); renderTable(); abrirSegurancaBanco('lixeira');
+        }
+
+        function fazerBackup() {
+            baixarBackupJSON('backup_planejamento_financeiro');
+            localStorage.setItem(CHAVE_ULTIMO_BACKUP, new Date().toISOString());
+            registrarHistorico('BACKUP', '', 'Backup JSON exportado.');
+            atualizarInfoBanco();
+        }
+
+        function validarBackup(conteudo) {
+            if (!conteudo || typeof conteudo !== 'object') throw new Error('Estrutura JSON inválida.');
+            if (conteudo.sistema && conteudo.sistema !== 'Planejamento Financeiro') throw new Error('Este arquivo não pertence ao Planejamento Financeiro.');
+            if (!Array.isArray(conteudo.transacoes)) throw new Error('O backup não contém a tabela de transações.');
+            const ids = new Set();
+            conteudo.transacoes.forEach((t, i) => {
+                if (t == null || t.id === undefined || t.id === null || String(t.id).trim() === '') throw new Error(`Lançamento na posição ${i + 1} sem ID.`);
+                const chave = String(t.id);
+                if (ids.has(chave)) throw new Error(`ID duplicado no backup: ${t.id}`);
+                ids.add(chave);
+            });
+            return true;
+        }
+
+        let backupRestauracaoPendente = null;
+
+        function abrirAlertaPreRestauracao() {
+            document.getElementById('modalPreRestauracao').style.display = 'flex';
+        }
+
+        function cancelarPreRestauracao() {
+            document.getElementById('modalPreRestauracao').style.display = 'none';
+            backupRestauracaoPendente = null;
+        }
+
+        function confirmarBackupAntesRestauracao() {
+            try {
+                // Gera e baixa imediatamente um backup dos dados atuais.
+                baixarBackupJSON('backup_automatico_antes_restauracao');
+                localStorage.setItem(CHAVE_ULTIMO_BACKUP, new Date().toISOString());
+                registrarHistorico('BACKUP', '', 'Backup de segurança criado antes da restauração.');
+                atualizarInfoBanco();
+
+                document.getElementById('modalPreRestauracao').style.display = 'none';
+                document.getElementById('modalContinuarRestauracao').style.display = 'flex';
+            } catch (err) {
+                alert('Não foi possível concluir o backup de segurança. A restauração foi cancelada.');
+                console.error(err);
+            }
+        }
+
+        function cancelarContinuarRestauracao() {
+            document.getElementById('modalContinuarRestauracao').style.display = 'none';
+            backupRestauracaoPendente = null;
+            const input = document.getElementById('inputRestaurar');
+            if (input) input.value = '';
+        }
+
+        function continuarRestauracao() {
+            document.getElementById('modalContinuarRestauracao').style.display = 'none';
+
+            // O backup de segurança já foi concluído. Agora o usuário seleciona
+            // o arquivo JSON que deseja restaurar.
+            const input = document.getElementById('inputRestaurar');
+            if (input) {
+                input.value = '';
+                input.click();
+            }
+        }
+
+        function executarRestauracaoBackup(conteudo) {
+            try {
+                transacoes = normalizarTransacoes(conteudo.transacoes);
+                    if (conteudo.data_abertura_projeto && /^\d{4}-\d{2}-\d{2}$/.test(conteudo.data_abertura_projeto)) {
+                        localStorage.setItem(CHAVE_DATA_ABERTURA, conteudo.data_abertura_projeto);
+                        DATA_ABERTURA_PROJETO = conteudo.data_abertura_projeto;
+                    }
+                    if (Array.isArray(conteudo.rubricas_extras)) localStorage.setItem('rubricas_extras', JSON.stringify(conteudo.rubricas_extras));
+                    if (Array.isArray(conteudo.subitens_extras)) localStorage.setItem('subitens_extras', JSON.stringify(conteudo.subitens_extras));
+
+                    atualizarStatusDespesasAutomaticamente(transacoes);
+                    salvarLocalStorage();
+                    popularSelectsDinamicos();
+                    renderTable();
+                    alert(`Banco restaurado com sucesso: ${transacoes.length} lançamento(s), IDs preservados e sem duplicação.`);
+            } catch(err) {
+                console.error(err);
+                alert('Erro ao restaurar o backup: ' + err.message);
+            }
+        }
+
+        function restaurarBackup(event) {
+            const arquivo = event.target.files[0];
+            if (!arquivo) return;
+            const leitor = new FileReader();
+            leitor.onload = function(e) {
+                try {
+                    const conteudo = JSON.parse(e.target.result);
+                    validarBackup(conteudo);
+                    executarRestauracaoBackup(conteudo);
+                } catch(err) {
+                    console.error(err);
+                    alert('Erro ao ler o backup: ' + err.message);
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            leitor.readAsText(arquivo, 'UTF-8');
+        }
+
+        // ==================== SUPABASE / SINCRONIZAÇÃO EM NUVEM ====================
+        const SUPABASE_URL = 'https://oflbclvieeknffjtndxo.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_n_k8Yggb0xq8ESLo0rYVsw_SZ5LTSpJ';
+        const CHAVE_ULTIMA_ALTERACAO_LOCAL = 'planejamento_financeiro_ultima_alteracao_local';
+        const CHAVE_ULTIMA_SINCRONIZACAO = 'planejamento_financeiro_ultima_sincronizacao_nuvem';
+        let supabaseCliente = null;
+        let sincronizacaoNuvemTimer = null;
+        let sincronizacaoNuvemEmAndamento = false;
+
+        function inicializarSupabaseCliente() {
+            try {
+                if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+                    console.error('Biblioteca Supabase JS não foi carregada.');
+                    return false;
+                }
+                supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true,
+                        storageKey: 'planejamento-financeiro-supabase-auth'
+                    },
+                    global: { headers: { 'x-client-info': 'planejamento-financeiro' } }
+                });
+                return true;
+            } catch (e) {
+                supabaseCliente = null;
+                console.error('Supabase não pôde ser inicializado:', e);
+                return false;
+            }
+        }
+
+        // A biblioteca normalmente é carregada pelo CDN antes deste script.
+        // A segunda verificação evita que o sistema confunda erro de carregamento
+        // da biblioteca com erro da conta/tabela do banco.
+        inicializarSupabaseCliente();
+
+        function atualizarStatusNuvem(texto, ok=false) {
+            const badge = document.getElementById('statusNuvemBadge');
+            const msg = document.getElementById('nuvemStatusMsg');
+            if (badge) badge.textContent = ok ? 'Online' : texto;
+            if (msg) {
+                msg.textContent = texto;
+                msg.className = 'text-xs rounded-lg border p-3 ' + (ok ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-600');
+            }
+        }
+
+        async function obterSessaoNuvem() {
+            if (!supabaseCliente) return null;
+            const { data, error } = await supabaseCliente.auth.getSession();
+            if (error) { console.error(error); return null; }
+            return data?.session || null;
+        }
+
+        function coletarPacoteNuvem() {
+            return {
+                versao: 1,
+                sistema: 'Planejamento Financeiro',
+                atualizado_localmente_em: localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || new Date().toISOString(),
+                data_abertura_projeto: DATA_ABERTURA_PROJETO,
+                transacoes: normalizarTransacoes(transacoes),
+                rubricas_extras: JSON.parse(localStorage.getItem('rubricas_extras') || '[]'),
+                subitens_extras: JSON.parse(localStorage.getItem('subitens_extras') || '[]'),
+                lixeira: obterLixeira(),
+                historico: obterHistorico()
+            };
+        }
+
+        function aplicarPacoteNuvem(payload) {
+            if (!payload || !Array.isArray(payload.transacoes)) throw new Error('Banco da nuvem inválido.');
+            transacoes = normalizarTransacoes(payload.transacoes);
+            localStorage.setItem(CHAVE_BANCO_MESTRE, JSON.stringify(transacoes));
+            localStorage.setItem(getChaveStorageAtual(), JSON.stringify(transacoes));
+            if (payload.data_abertura_projeto && /^\d{4}-\d{2}-\d{2}$/.test(payload.data_abertura_projeto)) {
+                DATA_ABERTURA_PROJETO = payload.data_abertura_projeto;
+                localStorage.setItem(CHAVE_DATA_ABERTURA, DATA_ABERTURA_PROJETO);
+            }
+            if (Array.isArray(payload.rubricas_extras)) localStorage.setItem('rubricas_extras', JSON.stringify(payload.rubricas_extras));
+            if (Array.isArray(payload.subitens_extras)) localStorage.setItem('subitens_extras', JSON.stringify(payload.subitens_extras));
+            if (Array.isArray(payload.lixeira)) localStorage.setItem(CHAVE_LIXEIRA, JSON.stringify(payload.lixeira));
+            if (Array.isArray(payload.historico)) localStorage.setItem(CHAVE_HISTORICO, JSON.stringify(payload.historico));
+        }
+
+        async function carregarPacoteNuvem() {
+            const session = await obterSessaoNuvem();
+            if (!session) return null;
+            const { data, error } = await supabaseCliente
+                .from('planejamento_financeiro_sync')
+                .select('payload,updated_at')
+                .eq('user_id', session.user.id)
+                .maybeSingle();
+            if (error) throw error;
+            return data || null;
+        }
+
+        async function salvarPacoteNuvem(forcar=false) {
+            const session = await obterSessaoNuvem();
+            if (!session) return false;
+            const pacote = coletarPacoteNuvem();
+            const { error } = await supabaseCliente
+                .from('planejamento_financeiro_sync')
+                .upsert({ user_id: session.user.id, payload: pacote, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+            if (error) throw error;
+            localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, new Date().toISOString());
+            atualizarStatusNuvem('Dados sincronizados com a nuvem.', true);
+            return true;
+        }
+
+        function agendarSincronizacaoNuvem() {
+            clearTimeout(sincronizacaoNuvemTimer);
+            sincronizacaoNuvemTimer = setTimeout(async () => {
+                try {
+                    const session = await obterSessaoNuvem();
+                    if (session) await salvarPacoteNuvem();
+                } catch (e) {
+                    console.error('Erro ao salvar na nuvem:', e);
+                    atualizarStatusNuvem('Alteração salva no dispositivo; sincronização pendente.');
+                }
+            }, 700);
+        }
+
+        function resumirErroSupabase(e) {
+            if (!e) return 'erro desconhecido';
+            const partes = [e.message, e.details, e.hint, e.code].filter(Boolean);
+            return partes.join(' | ') || String(e);
+        }
+
+        async function sincronizarNuvemAoAbrir() {
+            try {
+                if (!supabaseCliente && !inicializarSupabaseCliente()) {
+                    atualizarStatusNuvem('Biblioteca da nuvem não carregada; os dados locais estão sendo usados.');
+                    return;
+                }
+                const session = await obterSessaoNuvem();
+                if (!session) {
+                    atualizarStatusNuvem('Local — configure a conta da nuvem no botão Nuvem.');
+                    return;
+                }
+                const remoto = await carregarPacoteNuvem();
+                const ultimaAlteracaoLocal = localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
+                const ultimaSincronizacao = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
+                if (ultimaAlteracaoLocal && (!ultimaSincronizacao || ultimaAlteracaoLocal > ultimaSincronizacao)) {
+                    await salvarPacoteNuvem();
+                    return;
+                }
+                if (remoto?.payload) {
+                    aplicarPacoteNuvem(remoto.payload);
+                    localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, remoto.updated_at || new Date().toISOString());
+                    atualizarStatusNuvem('Banco carregado da nuvem e atualizado neste dispositivo.', true);
+                } else {
+                    await salvarPacoteNuvem(true);
+                }
+            } catch (e) {
+                console.error('Falha na sincronização inicial:', e);
+                atualizarStatusNuvem('Nuvem indisponível: ' + resumirErroSupabase(e) + ' — usando os dados locais.');
+            }
+        }
+
+        async function sincronizarAgoraNuvem() {
+            try {
+                const session = await obterSessaoNuvem();
+                if (!session) { abrirConfiguracaoNuvem(); return; }
+                await salvarPacoteNuvem(true);
+                popularSelectsDinamicos(); renderTable(); atualizarPainelGerencial(); atualizarInfoBanco();
+                alert('Sincronização concluída. O mesmo banco poderá ser carregado no celular e no computador.');
+            } catch (e) {
+                console.error(e);
+                alert('Não foi possível sincronizar: ' + (e.message || 'erro de conexão'));
+            }
+        }
+
+        async function entrarNuvem() {
+            if (!supabaseCliente && !inicializarSupabaseCliente()) return alert('Serviço de nuvem não foi carregado. Verifique a conexão com a internet.');
+            const email = document.getElementById('nuvemEmail').value.trim().toLowerCase();
+            const password = document.getElementById('nuvemSenha').value;
+            if (!email || !password) return alert('Informe o e-mail e a senha da conta de sincronização.');
+            const { error } = await supabaseCliente.auth.signInWithPassword({ email, password });
+            if (error) return alert('Não foi possível entrar na nuvem: ' + error.message);
+            await sincronizarNuvemAoAbrir();
+            popularSelectsDinamicos(); renderTable(); atualizarPainelGerencial(); atualizarInfoBanco();
+            document.getElementById('nuvemSenha').value='';
+        }
+
+        async function criarContaNuvem() {
+            if (!supabaseCliente && !inicializarSupabaseCliente()) return alert('Serviço de nuvem não foi carregado. Verifique a conexão com a internet.');
+            const email = document.getElementById('nuvemEmail').value.trim().toLowerCase();
+            const password = document.getElementById('nuvemSenha').value;
+            if (!/^\S+@\S+\.\S+$/.test(email)) return alert('Informe um e-mail válido.');
+            if (password.length < 6) return alert('A senha da conta de nuvem deve ter pelo menos 6 caracteres.');
+            const { data, error } = await supabaseCliente.auth.signUp({ email, password });
+            if (error) return alert('Não foi possível criar a conta: ' + error.message);
+            if (!data.session) {
+                alert('Conta criada. Verifique o e-mail de confirmação da Supabase e depois entre por este botão.');
+            } else {
+                await sincronizarNuvemAoAbrir();
+                alert('Conta de nuvem criada e banco sincronizado.');
+            }
+            document.getElementById('nuvemSenha').value='';
+        }
+
+        async function sairNuvem() {
+            if (!supabaseCliente) return;
+            await supabaseCliente.auth.signOut();
+            atualizarStatusNuvem('Desconectado da nuvem. Os dados locais permanecem neste dispositivo.');
+            document.getElementById('statusNuvemBadge').textContent='Local';
+        }
+
+        function abrirConfiguracaoNuvem() {
+            const modal = document.getElementById('modalConfiguracaoNuvem');
+            if (!modal) return;
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            obterSessaoNuvem().then(async session => {
+                if (session) {
+                    document.getElementById('nuvemEmail').value = session.user.email || '';
+                    atualizarStatusNuvem('Dispositivo conectado à nuvem. Use “Sincronizar agora” para confirmar o estado atual.', true);
+                } else atualizarStatusNuvem('Nenhuma conta de nuvem conectada neste dispositivo.');
+            });
+        }
+        function fecharConfiguracaoNuvem() {
+            const modal = document.getElementById('modalConfiguracaoNuvem');
+            if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        }
+
+        // ==================== FIM SUPABASE ====================
+
+        function salvarLocalStorage() {
+            const dados = normalizarTransacoes(transacoes);
+            transacoes = dados;
+            // O banco mestre é a fonte persistente principal.
+            localStorage.setItem(CHAVE_BANCO_MESTRE, JSON.stringify(dados));
+            // Mantém também uma cópia mensal por compatibilidade com versões anteriores.
+            localStorage.setItem(getChaveStorageAtual(), JSON.stringify(dados));
+            localStorage.setItem(CHAVE_ULTIMA_ALTERACAO_LOCAL, new Date().toISOString());
+            agendarSincronizacaoNuvem();
+        }
+
+        function sincronizarRecarregarDados() {
+            try {
+                const salvo = localStorage.getItem(CHAVE_BANCO_MESTRE);
+                if (salvo) {
+                    const dados = JSON.parse(salvo);
+                    if (Array.isArray(dados)) {
+                        transacoes = normalizarTransacoes(dados);
+                    }
+                }
+                atualizarStatusDespesasAutomaticamente(transacoes);
+                popularSelectsDinamicos();
+                renderTable();
+                atualizarPainelGerencial();
+                verificarContasVencendoHoje();
+                atualizarInfoBanco();
+                registrarHistorico('SINCRONIZAÇÃO', '', 'Banco mestre recarregado sem substituir os dados.');
+            } catch (e) {
+                console.error('Erro ao sincronizar banco:', e);
+                alert('Não foi possível sincronizar o banco de dados. Os dados atuais foram mantidos.');
+            }
+        }
+
+        function formatarMoeda(valor) {
+            if (!valor || isNaN(valor)) valor = 0;
+            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function definirMesCorrentePadrao() {
+            const agora = new Date();
+            const ano = agora.getFullYear();
+            const mes = String(agora.getMonth() + 1).padStart(2, '0');
+            const ultimoDia = new Date(ano, agora.getMonth() + 1, 0).getDate();
+            
+            document.getElementById('filtroDataInicio').value = `${ano}-${mes}-01`;
+            document.getElementById('filtroDataFim').value = `${ano}-${mes}-${ultimoDia}`;
+            atualizarCabecalhoMesAno(ano, parseInt(mes));
+        }
+
+        function atualizarCabecalhoMesAno(ano, mesNum) {
+            const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            const nomeMes = mesesNomes[mesNum - 1] || "Mês Atual";
+            const texto = `MÊS VIGENTE: ${nomeMes.toUpperCase()} DE ${ano}`;
+            document.getElementById('subtituloMesAno').innerText = texto;
+            document.getElementById('printMesAnoHeader').innerText = texto;
+            atualizarTituloRubricaPDF();
+        }
+
+        // Controle do período e sincronização das métricas do Painel Gerencial.
+        // O período padrão é sempre o mês vigente. Quando o usuário altera qualquer
+        // filtro, todas as métricas passam a refletir exatamente o conjunto filtrado.
+        let filtrosPainelAtivadosPeloUsuario = false;
+
+        function atualizarTituloRubricaPDF() {
+            const el = document.getElementById('printRubricaHeader');
+            if (!el) return;
+            const valor = String(document.getElementById('filtroRubrica')?.value || '').trim();
+            const ativo = valor && valor.toLowerCase() !== 'todas' && valor.toLowerCase() !== 'todos';
+            el.innerText = ativo ? valor.toUpperCase() : '';
+            el.style.display = ativo ? 'block' : 'none';
+        }
+
+        function obterPeriodoFiltroPainel() {
+            const inicio = document.getElementById('filtroDataInicio')?.value || '';
+            const fim = document.getElementById('filtroDataFim')?.value || '';
+            const formatar = (data) => data ? data.split('-').reverse().join('/') : '';
+            if (inicio && fim) return `Período de referência: ${formatar(inicio)} a ${formatar(fim)}`;
+            if (inicio) return `Período de referência: a partir de ${formatar(inicio)}`;
+            if (fim) return `Período de referência: até ${formatar(fim)}`;
+            return 'Período de referência: todos os lançamentos';
+        }
+
+        function atualizarPeriodoPainelGerencial() {
+            const el = document.getElementById('periodoPainelGerencial');
+            if (!el) return;
+            el.innerText = obterPeriodoFiltroPainel();
+        }
+
+        function atualizarPainelGerencial() {
+            // As métricas sempre usam exatamente os filtros atuais.
+            // Na abertura, os filtros de data já foram preenchidos com o mês vigente.
+            const filtradasPainel = getFilteredTransactions();
+            atualizarPeriodoPainelGerencial();
+
+            const resumo = document.getElementById('painelResumoGerencial');
+            const detalhes = document.getElementById('painelDetalhesGerencial');
+            const painelFiltro = document.getElementById('painelFiltroAtivo');
+            const n = v => Number(v) || 0;
+            const moeda = v => formatarMoeda(v);
+
+            // As oito métricas permanecem sempre visíveis, inclusive quando
+            // filtros personalizados são aplicados.
+            resumo.classList.remove('hidden');
+            detalhes.classList.remove('hidden');
+
+            if (filtrosPainelAtivadosPeloUsuario && verificarFiltrosAtivosPainel()) {
+                painelFiltro.classList.remove('hidden');
+                const subtotalFiltrado = filtradasPainel.reduce((total, t) => total + n(t.valor), 0);
+                painelFiltro.innerHTML = `
+                    <div class="border border-blue-100 rounded-xl overflow-hidden bg-blue-50/30">
+                        <div class="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                            <div>
+                                <p class="text-[11px] font-bold text-blue-700 uppercase tracking-wide">Filtros aplicados ao Painel</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">${obterPeriodoFiltroPainel()} • ${filtradasPainel.length} lançamento(s)</p>
+                            </div>
+                            <button onclick="limparFiltros()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 no-print">
+                                <i class="fa-solid fa-filter-circle-xmark"></i> Limpar Filtros
+                            </button>
+                        </div>
+                        <div class="px-4 pb-3 text-[11px] text-slate-500">
+                            Subtotal dos lançamentos filtrados: <strong class="text-blue-700">${moeda(subtotalFiltrado)}</strong>
+                        </div>
+                    </div>`;
+            } else {
+                painelFiltro.classList.add('hidden');
+                painelFiltro.innerHTML = '';
+            }
+
+            let receitas=0, despesas=0, recebido=0, investimentos=0, aVencer=0, vencido=0;
+            const hoje=new Date(); hoje.setHours(0,0,0,0);
+            const fim=new Date(hoje); fim.setDate(fim.getDate()+30);
+            const fluxo={};
+
+            filtradasPainel.forEach(t=>{
+                const val=n(t.valor), tipo=t.tipo||'';
+                if(tipo==='Receita'){ receitas+=val; if(t.status!=='Não Recebido') recebido+=val; }
+                if(tipo==='Despesa') despesas+=val;
+                if(tipo==='Investimentos'||t.categoria==='INVESTIMENTOS') investimentos+=val;
+                if(t.status==='A Vencer') aVencer+=val;
+                if(t.status==='Vencido') vencido+=val;
+                if(t.vencimento){
+                    const d=t.vencimento;
+                    if(!fluxo[d]) fluxo[d]={r:0,d:0};
+                    if(tipo==='Receita') fluxo[d].r+=val;
+                    else if(tipo==='Despesa'||tipo==='Investimentos') fluxo[d].d+=val;
+                }
+            });
+
+            const saldo=receitas-despesas-investimentos;
+            ['pgReceitas','pgDespesas','pgAVencer','pgVencido','pgRecebido','pgInvestimentos','pgSaldo']
+                .forEach((id,i)=>document.getElementById(id).innerText=moeda([receitas,despesas,aVencer,vencido,recebido,investimentos,saldo][i]));
+
+            const sem=document.getElementById('pgSemaforo'), sit=document.getElementById('pgSituacao');
+            if(vencido>0){
+                sem.className='rounded-lg p-3 bg-red-50'; sit.innerText='Atenção: há vencidos'; sit.className='text-sm font-bold mt-1 text-red-700';
+            } else if(aVencer>0){
+                sem.className='rounded-lg p-3 bg-amber-50'; sit.innerText='Atenção: há valores a vencer'; sit.className='text-sm font-bold mt-1 text-amber-700';
+            } else {
+                sem.className='rounded-lg p-3 bg-emerald-50'; sit.innerText='Controlada'; sit.className='text-sm font-bold mt-1 text-emerald-700';
+            }
+
+            const datas=Object.keys(fluxo).sort();
+            const tbody=document.getElementById('tabelaFluxoCaixa');
+            let acum=0;
+            tbody.innerHTML=datas.map(d=>{
+                const x=fluxo[d], sal=x.r-x.d; acum+=sal;
+                return `<tr class="border-t"><td class="p-2">${d.split('-').reverse().join('/')}</td><td class="p-2 text-right text-emerald-700">${moeda(x.r)}</td><td class="p-2 text-right text-rose-700">${moeda(x.d)}</td><td class="p-2 text-right">${moeda(sal)}</td><td class="p-2 text-right font-semibold">${moeda(acum)}</td></tr>`;
+            }).join('') || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sem movimentações para o período selecionado.</td></tr>';
+
+            const hojeISO=obterDataLocalISO();
+            const fimISO=fim.toISOString().slice(0,10);
+            const prev=filtradasPainel.filter(t=>t.vencimento && t.vencimento>=hojeISO && t.vencimento<=fimISO && (t.status==='A Vencer'||t.status==='Vencido'||t.status==='Pendente'||t.status==='Não Recebido')).sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
+            document.getElementById('tabelaPrevisao30').innerHTML=prev.map(t=>`<tr class="border-t"><td class="p-2">${t.vencimento.split('-').reverse().join('/')}</td><td class="p-2">${t.descricao||''}</td><td class="p-2 text-right">${moeda(t.valor)}</td><td class="p-2 text-center">${t.status}</td></tr>`).join('') || '<tr><td colspan="4" class="p-4 text-center text-slate-400">Nenhum lançamento nos próximos 30 dias dentro do período/filtros selecionados.</td></tr>';
+        }
+
+        function abrirRelatorioGerencial(){
+            atualizarPainelGerencial();
+            const w=window.open('', '_blank');
+            if(!w){alert('Permita janelas pop-up para gerar o relatório.');return;}
+
+            const data=new Date().toLocaleString('pt-BR');
+            const filtroRubrica=(document.getElementById('filtroRubrica')?.value || 'Todas').trim();
+            const filtroAtivoRubrica = filtroRubrica && filtroRubrica !== 'Todas';
+            const tituloRubrica = filtroAtivoRubrica ? filtroRubrica : '';
+            const tituloRubricaHtml = tituloRubrica
+                ? `<div class="titulo-rubrica">${tituloRubrica}</div>`
+                : '';
+
+            const previsaoHtml = document.getElementById('tabelaPrevisao30').parentElement.outerHTML;
+
+            w.document.write(`<html><head><title>Relatório Gerencial</title><style>
+                body{font-family:Arial,sans-serif;padding:30px;color:#1e293b}
+                h1{font-size:20px;margin-bottom:8px}
+                h2{font-size:16px;margin-top:22px}
+                table{width:100%;border-collapse:collapse;margin-top:18px}
+                th,td{border:1px solid #ddd;padding:7px;font-size:12px}
+                th{background:#f1f5f9}
+                .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+                .card{border:1px solid #ddd;padding:10px;border-radius:6px}
+                .v{font-weight:bold;font-size:15px}
+                .titulo-rubrica{text-align:center;font-size:22px;font-weight:700;text-transform:uppercase;margin:12px 0 20px}
+                .comparacao{margin-top:20px}.comparacao h2{margin-bottom:10px}.comparacao-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.comparacao-card{border:1px solid #ddd;padding:12px;border-radius:6px;display:flex;justify-content:space-between;align-items:center}.comparacao-card span{font-size:12px;font-weight:700}.comparacao-card strong{font-size:16px}.comparacao-card.receita{background:#ecfdf5;border-color:#a7f3d0}.comparacao-card.despesa{background:#fff1f2;border-color:#fecdd3}
+                .relatorio-bloco{break-inside:avoid;page-break-inside:avoid}
+                @page{size:landscape;margin:10mm}
+                @media print{.no-print{display:none!important}button{display:none!important}.relatorio-bloco{break-inside:avoid!important;page-break-inside:avoid!important}}
+            </style></head><body>
+                <h1>RELATÓRIO GERENCIAL — PLANEJAMENTO FINANCEIRO</h1>
+                ${tituloRubricaHtml}
+                <p>Gerado em ${data}</p>
+                <div class="cards relatorio-bloco">
+                    <div class="card">PREV RECEITAS<div class="v">${document.getElementById('pgReceitas').innerText}</div></div>
+                    <div class="card">Despesas<div class="v">${document.getElementById('pgDespesas').innerText}</div></div>
+                    <div class="card">A Vencer<div class="v">${document.getElementById('pgAVencer').innerText}</div></div>
+                    <div class="card">Vencido<div class="v">${document.getElementById('pgVencido').innerText}</div></div>
+                    <div class="card">REC RECEBIDAS<div class="v">${document.getElementById('pgRecebido').innerText}</div></div>
+                    <div class="card">Investimentos<div class="v">${document.getElementById('pgInvestimentos').innerText}</div></div>
+                    <div class="card">Saldo Previsto<div class="v">${document.getElementById('pgSaldo').innerText}</div></div>
+                    <div class="card">Situação<div class="v">${document.getElementById('pgSituacao').innerText}</div></div>
+                </div>
+                <div class="comparacao relatorio-bloco">
+                    <h2>Comparação — Total de Receitas x Total de Despesas</h2>
+                    <div class="comparacao-grid">
+                        <div class="comparacao-card receita"><span>Total de Receitas</span><strong>${document.getElementById('pgReceitas').innerText}</strong></div>
+                        <div class="comparacao-card despesa"><span>Total de Despesas</span><strong>${document.getElementById('pgDespesas').innerText}</strong></div>
+                    </div>
+                </div>
+                <h2 class="relatorio-bloco">Previsão — 30 dias</h2>
+                ${previsaoHtml}
+                <br><button class="no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+            </body></html>`);
+            w.document.close();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Alterações feitas pelo usuário ativam o modo dinâmico do Painel.
+            ['filtroTipo', 'filtroRubrica', 'filtroSubItem', 'filtroBuscaRubrica', 'filtroBuscaSubItem', 'filtroDescricao', 'filtroDataInicio', 'filtroDataFim']
+                .forEach(id => {
+                    const campo = document.getElementById(id);
+                    if (!campo) return;
+                    const evento = campo.tagName === 'INPUT' && campo.type === 'text' ? 'input' : 'change';
+                    campo.addEventListener(evento, function() {
+                        filtrosPainelAtivadosPeloUsuario = true;
+                        renderTable();
+                    });
+                });
+
+            document.getElementById('filtroDataInicio').addEventListener('change', function() {
+                const val = this.value;
+                if (val) {
+                    const partes = val.split('-');
+                    atualizarCabecalhoMesAno(partes[0], parseInt(partes[1]));
+                }
+            });
+            popularSelectsDinamicos();
+        });
+
+        function formatarDataAlerta(dataIso) {
+            if (!dataIso) return '';
+            const partes = dataIso.split('-');
+            return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : dataIso;
+        }
+
+        function montarLinhasAlerta(lista, classeTexto) {
+            return lista.map(t => {
+                const dataExibicao = t.vencimento ? formatarDataAlerta(t.vencimento) : 'EM BRANCO';
+                return `
+                    <tr class="border-b border-${classeTexto}-100 last:border-0">
+                        <td class="py-1.5 pr-4">${t.descricao || 'Sem descrição'}</td>
+                        <td class="py-1.5 pr-4 font-semibold">${dataExibicao}</td>
+                        <td class="py-1.5 pr-4 text-right font-semibold">${formatarMoeda(t.valor)}</td>
+                        <td class="py-1.5 font-semibold">${t.dataPg && String(t.dataPg).trim() !== '' ? 'Pago' : 'Em aberto'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function verificarContasVencendoHoje() {
+            // Para o alerta, a referência é sempre a data real em que o projeto foi aberto.
+            // Regra: DT VCTO igual a hoje OU DT VCTO em branco/nulo.
+            // Exceções: Investimento(s) e Aplicação Financeira não participam dos alertas.
+            const dataBase = obterDataLocalISO();
+            const hojeFormatado = formatarDataAlerta(dataBase);
+
+            const naoParticipaDoAlerta = (t) => {
+                if (!t) return true;
+                const tipo = String(t.tipo || '').trim().toLowerCase();
+                const categoria = String(t.categoria || '').trim().toLowerCase();
+                const subItem = String(t.subItem || '').trim().toLowerCase();
+                const descricao = String(t.descricao || '').trim().toLowerCase();
+                const campos = [tipo, categoria, subItem, descricao];
+
+                return campos.some(v =>
+                    v === 'investimento' ||
+                    v === 'investimentos' ||
+                    v === 'aplicação financeira' ||
+                    v === 'aplicacao financeira'
+                );
+            };
+
+            const vencendoHoje = transacoes.filter(t =>
+                t &&
+                !naoParticipaDoAlerta(t) &&
+                (t.vencimento === dataBase || !t.vencimento || String(t.vencimento).trim() === '')
+            );
+
+            const vencidos = transacoes.filter(t =>
+                t &&
+                !naoParticipaDoAlerta(t) &&
+                t.vencimento &&
+                t.vencimento < dataBase &&
+                (!t.dataPg || t.dataPg.trim() === '')
+            );
+
+            const alertaHoje = document.getElementById('alertaVencimentoHoje');
+            const alertaVencido = document.getElementById('alertaVencido');
+
+            if (document.getElementById('spanDataHoje')) {
+                document.getElementById('spanDataHoje').innerText = hojeFormatado;
+            }
+
+            if (vencendoHoje.length > 0) {
+                const quantidadeHoje = vencendoHoje.filter(t => t.vencimento === dataBase).length;
+                document.getElementById('textoAlertaVencimento').innerHTML = quantidadeHoje
+                    ? `${quantidadeHoje} documento(s) com vencimento em ${hojeFormatado}.`
+                    : '';
+                document.getElementById('listaVencimentoHoje').innerHTML =
+                    montarLinhasAlerta(vencendoHoje, 'amber');
+                alertaHoje.classList.remove('hidden');
+            } else {
+                document.getElementById('listaVencimentoHoje').innerHTML = '';
+                alertaHoje.classList.add('hidden');
+            }
+
+            if (vencidos.length > 0) {
+                document.getElementById('textoAlertaVencido').innerHTML =
+                    `${vencidos.length} documento(s) com vencimento anterior a ${hojeFormatado}.`;
+                document.getElementById('listaVencidos').innerHTML =
+                    montarLinhasAlerta(vencidos, 'rose');
+                alertaVencido.classList.remove('hidden');
+            } else {
+                document.getElementById('listaVencidos').innerHTML = '';
+                alertaVencido.classList.add('hidden');
+            }
+        }
+
+        function fecharAlerta(tipo) {
+            if (tipo === 'hoje') {
+                document.getElementById('alertaVencimentoHoje').classList.add('hidden');
+            } else if (tipo === 'vencido') {
+                document.getElementById('alertaVencido').classList.add('hidden');
+            }
+        }
+
+        function limparFiltros() {
+            // "Limpar" retorna ao comportamento padrão do Painel: mês vigente, sem filtros adicionais.
+            filtrosPainelAtivadosPeloUsuario = false;
+            document.getElementById('filtroTipo').value = 'Todos';
+            document.getElementById('filtroRubrica').value = 'Todas';
+            document.getElementById('filtroSubItem').value = 'Todos';
+            const buscaRubrica = document.getElementById('filtroBuscaRubrica');
+            const buscaSubItem = document.getElementById('filtroBuscaSubItem');
+            if (buscaRubrica) buscaRubrica.value = '';
+            if (buscaSubItem) buscaSubItem.value = '';
+            document.getElementById('filtroDescricao').value = '';
+            definirMesCorrentePadrao();
+            renderTable();
+        }
+
+        function verificarFiltrosAtivosPainel() {
+            const tipo = document.getElementById('filtroTipo')?.value || 'Todos';
+            const rubrica = document.getElementById('filtroRubrica')?.value || 'Todas';
+            const subItem = document.getElementById('filtroSubItem')?.value || 'Todos';
+            const descricao = (document.getElementById('filtroDescricao')?.value || '').trim();
+            const buscaRubrica = (document.getElementById('filtroBuscaRubrica')?.value || '').trim();
+            const buscaSubItem = (document.getElementById('filtroBuscaSubItem')?.value || '').trim();
+            const dataInicio = document.getElementById('filtroDataInicio')?.value || '';
+            const dataFim = document.getElementById('filtroDataFim')?.value || '';
+            return tipo !== 'Todos' || rubrica !== 'Todas' || subItem !== 'Todos' || descricao !== '' || buscaRubrica !== '' || buscaSubItem !== '' || dataInicio !== '' || dataFim !== '';
+        }
+
+        function getFilteredTransactions() {
+            const filtroTipo = document.getElementById('filtroTipo').value;
+            const filtroRubrica = document.getElementById('filtroRubrica').value;
+            const filtroSubItem = document.getElementById('filtroSubItem').value;
+            const buscaRubrica = (document.getElementById('filtroBuscaRubrica')?.value || '').trim().toLowerCase();
+            const buscaSubItem = (document.getElementById('filtroBuscaSubItem')?.value || '').trim().toLowerCase();
+            const filtroDescricao = document.getElementById('filtroDescricao').value.toLowerCase();
+            const dataInicio = document.getElementById('filtroDataInicio').value;
+            const dataFim = document.getElementById('filtroDataFim').value;
+            if (dataInicio && dataFim && dataInicio > dataFim) return [];
+
+            return transacoes.filter(t => {
+                const matchTipo = (filtroTipo === 'Todos' || t.tipo === filtroTipo);
+                const matchRubrica = (filtroRubrica === 'Todas' || t.categoria === filtroRubrica);
+                const matchSubItem = (filtroSubItem === 'Todos' || t.subItem === filtroSubItem);
+                const matchBuscaRubrica = (!buscaRubrica || String(t.categoria || '').toLowerCase().includes(buscaRubrica));
+                const matchBuscaSubItem = (!buscaSubItem || String(t.subItem || '').toLowerCase().includes(buscaSubItem));
+                const matchDescricao = t.descricao.toLowerCase().includes(filtroDescricao);
+                let matchData = true;
+                if ((dataInicio || dataFim) && !t.vencimento) matchData = false;
+                if (dataInicio && t.vencimento && t.vencimento < dataInicio) matchData = false;
+                if (dataFim && t.vencimento && t.vencimento > dataFim) matchData = false;
+                return matchTipo && matchRubrica && matchSubItem && matchBuscaRubrica && matchBuscaSubItem && matchDescricao && matchData;
+            });
+        }
+
+        function atualizarCampoInline(id, campo, novoValor) {
+            const item = transacoes.find(t => t.id === id);
+            if (item) {
+                if (campo === 'valor') {
+                    item[campo] = parseFloat(novoValor) || 0;
+                } else if (campo === 'dataPg') {
+                    item[campo] = novoValor;
+                    if (novoValor && novoValor.trim() !== "") {
+                        item.status = (item.tipo === 'Receita') ? 'Recebido' : 'Pago';
+                    } else {
+                        item.status = (item.tipo === 'Receita') ? 'Não Recebido' : 'Pendente';
+                    }
+                } else {
+                    item[campo] = novoValor;
+                }
+
+                if (campo === 'tipo') item.idTipo = gerarIdTexto('TIP', item.tipo);
+                if (campo === 'categoria') item.idRubrica = gerarIdTexto('RUB', item.categoria);
+                if (campo === 'subItem') item.idSubItem = gerarIdTexto('SUB', item.subItem);
+                if (campo === 'descricao') item.idDescricao = gerarIdTexto('DSC', item.descricao);
+                if (campo === 'status') item.idStatus = gerarIdTexto('STA', item.status);
+
+                // Se a despesa voltou a ficar Pendente, recalcula conforme a DT VCTO.
+                atualizarStatusDespesasAutomaticamente([item]);
+                salvarLocalStorage();
+                popularSelectsDinamicos();
+                renderTable();
+                verificarContasVencendoHoje();
+            }
+        }
+
+        function renderTable() {
+            verificarContasVencendoHoje();
+            const tbody = document.getElementById('tabelaCorpo');
+            tbody.innerHTML = '';
+
+            let prevReceita = 0;
+            let recRecebidas = 0;
+            let totalDesp = 0;
+            let totalPendente = 0;
+            let totalInvestimento = 0;
+
+            const dataInicioFiltro = document.getElementById('filtroDataInicio').value;
+            const dataFimFiltro = document.getElementById('filtroDataFim').value;
+
+            const filtroAtivoParaImpressao = filtrosPainelAtivadosPeloUsuario && verificarFiltrosAtivosPainel();
+            let periodoTexto = obterPeriodoFiltroPainel();
+            document.getElementById('printPeriodoInfo').innerText = periodoTexto;
+
+            transacoes.forEach(t => {
+                if (t.tipo === 'Receita') {
+                    prevReceita += (t.valor || 0);
+                    if (t.status !== 'Não Recebido') recRecebidas += (t.valor || 0);
+                }
+                if (t.tipo === 'Despesa') totalDesp += (t.valor || 0);
+                if (t.status === 'A Vencer' || t.status === 'Vencido') totalPendente += (Number(t.valor) || 0);
+
+                const ehInvestimento = (t.tipo === 'Investimentos' || t.categoria === 'INVESTIMENTOS' || t.descricao.toLowerCase().includes('investimento'));
+                if (ehInvestimento) {
+                    let dentroDoMes = true;
+                    if (dataInicioFiltro && t.vencimento && t.vencimento < dataInicioFiltro) dentroDoMes = false;
+                    if (dataFimFiltro && t.vencimento && t.vencimento > dataFimFiltro) dentroDoMes = false;
+                    if (dentroDoMes) totalInvestimento += (t.valor || 0);
+                }
+            });
+
+            document.getElementById('cardPrevReceita').innerText = formatarMoeda(prevReceita);
+            document.getElementById('cardRecRecebidas').innerText = formatarMoeda(recRecebidas);
+            document.getElementById('cardDespesas').innerText = formatarMoeda(totalDesp);
+            document.getElementById('cardPendente').innerText = formatarMoeda(totalPendente);
+            document.getElementById('cardInvestimento').innerText = formatarMoeda(totalInvestimento);
+            
+            const saldoLiquido = prevReceita - totalDesp - totalInvestimento;
+            const cardSaldoEl = document.getElementById('cardSaldo');
+            cardSaldoEl.innerText = formatarMoeda(saldoLiquido);
+            cardSaldoEl.className = saldoLiquido < 0 ? "text-base font-bold text-rose-600 mt-1" : "text-base font-bold text-blue-600 mt-1";
+
+            const filtradas = getFilteredTransactions();
+            if (filtradas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center py-6 text-gray-400">Nenhum lançamento encontrado.</td></tr>`;
+                // Mesmo sem resultados, o Painel Gerencial precisa refletir imediatamente o filtro ativo.
+                atualizarPainelGerencial();
+                return;
+            }
+
+            filtradas.forEach(t => {
+                const ehInvestimento = (t.tipo === 'Investimentos' || t.categoria === 'INVESTIMENTOS' || t.descricao.toLowerCase().includes('investimento'));
+                
+                const badgeTipo = t.tipo === 'Receita' 
+                    ? '<span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-medium">Receita</span>'
+                    : ehInvestimento
+                    ? '<span class="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full font-medium">Investimentos</span>'
+                    : '<span class="bg-rose-100 text-rose-800 text-xs px-2 py-0.5 rounded-full font-medium">Despesa</span>';
+
+                let statusExibicao = t.status;
+                if (ehInvestimento) {
+                    if (t.status === 'Pago') statusExibicao = 'feito';
+                    if (t.status === 'Pendente') statusExibicao = 'a fazer';
+                }
+
+                const badgeStatus = (statusExibicao === 'Pago' || statusExibicao === 'Recebido' || statusExibicao === 'feito')
+                    ? `<span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded border border-blue-200">${statusExibicao}</span>`
+                    : statusExibicao === 'Não Recebido'
+                    ? `<span class="bg-orange-50 text-orange-700 text-xs px-2 py-0.5 rounded border border-orange-200">${statusExibicao}</span>`
+                    : `<span class="bg-amber-50 text-amber-700 text-xs px-2 py-0.5 rounded border border-amber-200">${statusExibicao}</span>`;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b border-gray-100">
+                        <td class="p-2.5"><input type="date" value="${t.vencimento || ''}" oninput="atualizarCampoInline(${t.id}, 'vencimento', this.value)" class="border border-gray-300 rounded px-1.5 py-1 text-xs bg-white"></td>
+                        <td class="p-2.5"><input type="date" value="${t.dataPg || ''}" oninput="atualizarCampoInline(${t.id}, 'dataPg', this.value)" class="border border-gray-300 rounded px-1.5 py-1 text-xs bg-white"></td>
+                        <td class="p-2.5">${badgeTipo}</td>
+                        <td class="p-2.5"><input type="text" value="${t.categoria || ''}" oninput="atualizarCampoInline(${t.id}, 'categoria', this.value)" class="w-24 border border-gray-300 rounded px-1.5 py-1 text-xs font-medium bg-white"></td>
+                        <td class="p-2.5"><input type="text" value="${t.subItem || ''}" oninput="atualizarCampoInline(${t.id}, 'subItem', this.value)" class="w-24 border border-gray-300 rounded px-1.5 py-1 text-xs bg-white"></td>
+                        <td class="p-2.5 text-gray-600">${t.descricao}</td>
+                        <td class="p-2.5 text-right font-semibold ${t.tipo === 'Receita' ? 'text-emerald-600' : 'text-slate-800'}">${formatarMoeda(t.valor)}</td>
+                        <td class="p-2.5 text-center">${badgeStatus}</td>
+                        <td class="p-2.5"><input type="text" value="${t.observacao || ''}" oninput="atualizarCampoInline(${t.id}, 'observacao', this.value)" placeholder="Obs..." class="w-full border border-gray-300 rounded px-1.5 py-1 text-xs"></td>
+                        <td class="p-2.5 text-center flex justify-center gap-1.5 no-print">
+                            <button onclick="editarLancamento(${t.id})" class="bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded text-xs"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="excluirLancamento(${t.id})" class="bg-rose-500 hover:bg-rose-600 text-white px-2 py-1 rounded text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Mantém o Painel Gerencial sincronizado automaticamente com a tabela.
+            // Assim, qualquer inclusão, alteração, exclusão ou atualização inline
+            // que redesenhe a tabela também atualiza o painel, sem clicar em Atualizar.
+            atualizarPainelGerencial();
+        }
+
+        function verificarStatusAutomaticoModal(dataPgVal) {
+            const tipoVal = document.getElementById('tipo').value;
+            const vencimentoVal = document.getElementById('vencimento').value;
+            const statusSelect = document.getElementById('status');
+            const dataPagamento = dataPgVal !== undefined ? dataPgVal : document.getElementById('dataPg').value;
+
+            if (dataPagamento && dataPagamento.trim() !== '') {
+                statusSelect.value = tipoVal === 'Receita' ? 'Recebido' : 'Pago';
+                return;
+            }
+
+            if (tipoVal === 'Despesa') {
+                if (vencimentoVal && vencimentoVal < DATA_ABERTURA_PROJETO) {
+                    statusSelect.value = 'Vencido';
+                } else if (vencimentoVal && vencimentoVal > DATA_ABERTURA_PROJETO) {
+                    statusSelect.value = 'A Vencer';
+                } else {
+                    statusSelect.value = 'Pendente';
+                }
+            } else if (tipoVal === 'Receita') {
+                statusSelect.value = 'Não Recebido';
+            } else {
+                statusSelect.value = 'Pendente';
+            }
+        }
+
+        function atualizarStatusTipoModal() {
+            verificarStatusAutomaticoModal(document.getElementById('dataPg').value);
+        }
+
+        function openModal() {
+            popularSelectsDinamicos();
+            document.getElementById('editId').value = '';
+            document.getElementById('modalTitle').innerText = 'Novo Lançamento';
+            document.getElementById('formLancamento').reset();
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('vencimento').value = hoje;
+            document.getElementById('dataPg').value = hoje;
+            document.getElementById('status').value = 'Pago';
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function editarLancamento(id) {
+            popularSelectsDinamicos();
+            const item = transacoes.find(t => t.id === id);
+            if (!item) return;
+            document.getElementById('editId').value = id;
+            document.getElementById('modalTitle').innerText = 'Editar Lançamento';
+            document.getElementById('vencimento').value = item.vencimento || '';
+            document.getElementById('dataPg').value = item.dataPg || '';
+            document.getElementById('tipo').value = item.tipo;
+            document.getElementById('categoria').value = item.categoria;
+            document.getElementById('subItem').value = item.subItem || '';
+            document.getElementById('descricao').value = item.descricao;
+            document.getElementById('valor').value = item.valor || '';
+            document.getElementById('status').value = item.status;
+            document.getElementById('observacao').value = item.observacao || '';
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        function salvarLancamento(event) {
+            event.preventDefault();
+            const editId = document.getElementById('editId').value;
+            const vencimentoNovo = document.getElementById('vencimento').value;
+            const dataPgNovo = document.getElementById('dataPg').value;
+            const tipoNovo = document.getElementById('tipo').value;
+            let statusNovo = document.getElementById('status').value;
+
+            if (tipoNovo === 'Despesa' && !dataPgNovo && statusNovo === 'Pendente' && vencimentoNovo) {
+                if (vencimentoNovo < DATA_ABERTURA_PROJETO) statusNovo = 'Vencido';
+                else if (vencimentoNovo > DATA_ABERTURA_PROJETO) statusNovo = 'A Vencer';
+            }
+
+            const novo = {
+                id: editId ? parseInt(editId) : (transacoes.length > 0 ? Math.max(...transacoes.map(t => t.id)) + 1 : 1),
+                vencimento: vencimentoNovo,
+                dataPg: dataPgNovo,
+                tipo: tipoNovo,
+                categoria: document.getElementById('categoria').value,
+                subItem: document.getElementById('subItem').value,
+                descricao: document.getElementById('descricao').value,
+                valor: parseFloat(document.getElementById('valor').value) || 0,
+                status: statusNovo,
+                observacao: document.getElementById('observacao').value
+            };
+
+            if (editId) {
+                const index = transacoes.findIndex(t => t.id == editId);
+                if (index !== -1) {
+                    novo.id = parseInt(editId);
+                    transacoes[index] = novo;
+                }
+            } else {
+                transacoes.push(novo);
+            }
+
+            salvarLocalStorage();
+            registrarHistorico(editId ? 'ALTERAÇÃO' : 'INCLUSÃO', novo.id, `${editId ? 'Lançamento alterado' : 'Novo lançamento'}: ${novo.descricao || ''} | ${formatarMoeda(Number(novo.valor)||0)}`);
+            popularSelectsDinamicos();
+            renderTable();
+            atualizarPainelGerencial();
+            atualizarInfoBanco();
+            closeModal();
+        }
+
+        function excluirLancamento(id) {
+            const item = transacoes.find(t => t.id === id);
+            if (!item) return;
+            if (confirm(`Excluir o lançamento ID ${id} — ${item.descricao || ''}?\n\nO registro será enviado para a Lixeira e poderá ser recuperado.`)) {
+                enviarParaLixeira(item);
+                transacoes = transacoes.filter(t => t.id !== id);
+                salvarLocalStorage();
+                registrarHistorico('EXCLUSÃO', id, `Enviado para a lixeira: ${item.descricao || ''} | ${formatarMoeda(Number(item.valor)||0)}`);
+                popularSelectsDinamicos();
+                renderTable();
+                atualizarInfoBanco();
+            }
+        }
+
+        function exportToPDF() {
+            // Garante que o PDF reproduza exatamente o estado atual do Painel Gerencial,
+            // inclusive o período informado pelo filtro.
+            atualizarPainelGerencial();
+            const filtroAtivo = filtrosPainelAtivadosPeloUsuario && verificarFiltrosAtivosPainel();
+            atualizarTituloRubricaPDF();
+            const printPeriodo = document.getElementById('printPeriodoInfo');
+            if (printPeriodo) {
+                printPeriodo.innerText = filtroAtivo
+                    ? obterPeriodoFiltroPainel()
+                    : 'Visão consolidada do banco e projeção dos próximos 30 dias.';
+            }
+            window.print();
+        }
+
+        function exportToCSV() {
+            const filtradas = getFilteredTransactions();
+            const csvEsc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+            const linhas = [
+                ['ID_Item','DT VCTO','Dt Pg','ID_Tipo','Tipo','ID_Rubrica','Rubrica','ID_SubItem','Sub-Item','ID_Descricao','Descricao','Valor','ID_Status','Status','Observacao']
+            ];
+            filtradas.forEach(t => {
+                linhas.push([t.id, t.vencimento || '', t.dataPg || '', gerarIdTexto('TIP', t.tipo), t.tipo, gerarIdTexto('RUB', t.categoria), t.categoria, gerarIdTexto('SUB', t.subItem), t.subItem || '', gerarIdTexto('DSC', t.descricao), t.descricao, t.valor, gerarIdTexto('STA', t.status), t.status, t.observacao || '']);
+            });
+            const csv = '\uFEFF' + linhas.map(l => l.map(csvEsc).join(',')).join('\r\n');
+            const link = document.createElement("a");
+            link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
+            link.download = "planejamento_financeiro.csv";
+            link.click();
+        }
+
+        // Gráficos e Abas Individuais
+        let abaAtivaGrafico = 'prevReceita';
+
+        function mudarAbaGrafico(aba) {
+            comparativoReceitasDespesasAtivo = false;
+            abaAtivaGrafico = aba;
+            ['prevReceita', 'recRecebidas', 'totalDespesas', 'comparativo'].forEach(m => {
+                const btn = document.getElementById(`tabBtn${m.charAt(0).toUpperCase() + m.slice(1)}`);
+                if (btn) {
+                    btn.className = m === aba ? "px-4 py-2 rounded-lg text-xs font-bold bg-purple-600 text-white transition shadow" : "px-4 py-2 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition";
+                }
+            });
+            atualizarGraficos();
+        }
+
+        let chartEvolucaoInstance = null;
+        let chartRubricasInstance = null;
+        let comparativoReceitasDespesasAtivo = false;
+
+        function popularFiltrosGraficos() {
+            const rubricaSelect = document.getElementById('graficoRubrica');
+            const subItemSelect = document.getElementById('graficoSubItem');
+            
+            const rubricas = getRubricasCadastradas();
+            rubricaSelect.innerHTML = '<option value="Todas">Todas as Rubricas</option>';
+            rubricas.forEach(r => rubricaSelect.innerHTML += `<option value="${escaparHtml(r)}">${escaparHtml(r)}</option>`);
+
+            const subItens = getSubItensCadastrados();
+            subItemSelect.innerHTML = '<option value="Todos">Todos os Sub-Itens</option>';
+            subItens.forEach(s => subItemSelect.innerHTML += `<option value="${escaparHtml(s)}">${escaparHtml(s)}</option>`);
+
+            document.getElementById('graficoDataInicio').value = document.getElementById('filtroDataInicio').value;
+            document.getElementById('graficoDataFim').value = document.getElementById('filtroDataFim').value;
+        }
+
+        function openGraficosModal() {
+            popularFiltrosGraficos();
+            document.getElementById('modalGraficos').classList.remove('hidden');
+            mudarAbaGrafico('prevReceita');
+        }
+
+        // Gera o comparativo específico Prev de Receita x Total de Despesas, respeitando os filtros atuais.
+        // Os dois gráficos são atualizados para este mesmo critério.
+        function gerarComparativoReceitasDespesas() {
+            comparativoReceitasDespesasAtivo = true;
+            abaAtivaGrafico = 'comparativo';
+            ['prevReceita', 'recRecebidas', 'totalDespesas', 'comparativo'].forEach(m => {
+                const btn = document.getElementById(`tabBtn${m.charAt(0).toUpperCase() + m.slice(1)}`);
+                if (btn) {
+                    btn.className = m === 'comparativo'
+                        ? "px-4 py-2 rounded-lg text-xs font-bold bg-purple-600 text-white transition shadow flex items-center gap-1.5"
+                        : "px-4 py-2 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition flex items-center gap-1.5";
+                }
+            });
+            atualizarGraficos();
+        }
+
+        function closeGraficosModal() { document.getElementById('modalGraficos').classList.add('hidden'); }
+
+        function atualizarCabecalhoPDFGraficos() {
+            const inicio = document.getElementById('graficoDataInicio')?.value || '';
+            const fim = document.getElementById('graficoDataFim')?.value || '';
+            const formatar = (data) => data ? data.split('-').reverse().join('/') : '';
+            let periodo = 'Período: todos os lançamentos';
+            if (inicio && fim) periodo = `Período: ${formatar(inicio)} a ${formatar(fim)}`;
+            else if (inicio) periodo = `Período: a partir de ${formatar(inicio)}`;
+            else if (fim) periodo = `Período: até ${formatar(fim)}`;
+            const el = document.getElementById('printGraficosPeriodo');
+            if (el) el.innerText = periodo;
+        }
+
+        // Imprime somente a página de Gráficos Evolutivos.
+        // Na opção "Salvar em PDF", o navegador abrirá a janela de impressão; selecione "Salvar como PDF".
+        function prepararImpressaoGraficos() {
+            const modal = document.getElementById('modalGraficos');
+            modal.classList.remove('hidden');
+            document.body.classList.add('imprimir-graficos');
+            // Garante cabeçalho e gráficos atualizados antes da captura para impressão/PDF.
+            atualizarCabecalhoPDFGraficos();
+            atualizarGraficos();
+        }
+
+        function finalizarImpressaoGraficos() {
+            document.body.classList.remove('imprimir-graficos');
+        }
+
+        function salvarGraficosPDF() {
+            prepararImpressaoGraficos();
+            setTimeout(() => window.print(), 150);
+        }
+
+        function imprimirGraficos() {
+            prepararImpressaoGraficos();
+            setTimeout(() => window.print(), 150);
+        }
+
+        window.addEventListener('afterprint', finalizarImpressaoGraficos);
+
+        function atualizarGraficos() {
+            const dataInicio = document.getElementById('graficoDataInicio').value;
+            const dataFim = document.getElementById('graficoDataFim').value;
+            const rubricaFiltro = document.getElementById('graficoRubrica').value;
+            const subItemFiltro = document.getElementById('graficoSubItem').value;
+            const descFiltro = document.getElementById('graficoDescricao').value.toLowerCase();
+            const filtradas = transacoes.filter(t => {
+                const matchRubrica = (rubricaFiltro === 'Todas' || t.categoria === rubricaFiltro);
+                const matchSubItem = (subItemFiltro === 'Todos' || t.subItem === subItemFiltro);
+                const matchDesc = t.descricao.toLowerCase().includes(descFiltro);
+                let matchData = !(dataInicio && dataFim && dataInicio > dataFim);
+                if (dataInicio && t.vencimento && t.vencimento < dataInicio) matchData = false;
+                if (dataFim && t.vencimento && t.vencimento > dataFim) matchData = false;
+                return matchRubrica && matchSubItem && matchDesc && matchData;
+            });
+
+            const datasMap = {};
+            const rubricasMap = {};
+            const rubricasReceitasMap = {};
+            const rubricasDespesasMap = {};
+
+            filtradas.forEach(t => {
+                const dt = t.vencimento || 'Sem Data';
+                if (!datasMap[dt]) datasMap[dt] = { prevReceita: 0, recRecebidas: 0, totalDespesas: 0 };
+
+                if (t.tipo === 'Receita') {
+                    datasMap[dt].prevReceita += (t.valor || 0);
+                    if (t.status !== 'Não Recebido') datasMap[dt].recRecebidas += (t.valor || 0);
+                } else if (t.tipo === 'Despesa') {
+                    datasMap[dt].totalDespesas += (t.valor || 0);
+                }
+
+                let incluirRubrica = true;
+                if (abaAtivaGrafico === 'prevReceita' && t.tipo !== 'Receita') incluirRubrica = false;
+                if (abaAtivaGrafico === 'recRecebidas' && (t.tipo !== 'Receita' || t.status === 'Não Recebido')) incluirRubrica = false;
+                if (abaAtivaGrafico === 'totalDespesas' && t.tipo !== 'Despesa') incluirRubrica = false;
+
+                if (incluirRubrica) {
+                    const rub = t.categoria || 'Outros';
+                    rubricasMap[rub] = (rubricasMap[rub] || 0) + (t.valor || 0);
+                    if (t.tipo === 'Receita') rubricasReceitasMap[rub] = (rubricasReceitasMap[rub] || 0) + (t.valor || 0);
+                    if (t.tipo === 'Despesa') rubricasDespesasMap[rub] = (rubricasDespesasMap[rub] || 0) + (t.valor || 0);
+                }
+            });
+
+            const totalReceitasComparacao = filtradas.reduce((total, t) => total + (t.tipo === 'Receita' ? (Number(t.valor) || 0) : 0), 0);
+            const totalDespesasComparacao = filtradas.reduce((total, t) => total + (t.tipo === 'Despesa' ? (Number(t.valor) || 0) : 0), 0);
+            const elTotalReceitas = document.getElementById('graficoTotalReceitas');
+            const elTotalDespesas = document.getElementById('graficoTotalDespesas');
+            if (elTotalReceitas) elTotalReceitas.innerText = formatarMoeda(totalReceitasComparacao);
+            if (elTotalDespesas) elTotalDespesas.innerText = formatarMoeda(totalDespesasComparacao);
+
+            const sortedDates = Object.keys(datasMap).sort();
+            const formattedDates = sortedDates.map(d => d.split('-').reverse().join('/'));
+
+            const prevReceitaData = sortedDates.map(d => datasMap[d].prevReceita);
+            const recRecebidasData = sortedDates.map(d => datasMap[d].recRecebidas);
+            const totalDespesasData = sortedDates.map(d => datasMap[d].totalDespesas);
+
+            let datasetsEvolucao = [];
+            let tituloEvolucao = "";
+            let tituloRubricas = "";
+
+            if (abaAtivaGrafico === 'prevReceita') {
+                tituloEvolucao = "Evolução: Prev de Receita";
+                tituloRubricas = "Distribuição por Rubrica (Prev de Receita)";
+                datasetsEvolucao.push({ label: 'Prev de Receita (R$)', data: prevReceitaData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 });
+            } else if (abaAtivaGrafico === 'recRecebidas') {
+                tituloEvolucao = "Evolução: Rec Recebidas";
+                tituloRubricas = "Distribuição por Rubrica (Rec Recebidas)";
+                datasetsEvolucao.push({ label: 'Rec Recebidas (R$)', data: recRecebidasData, borderColor: '#047857', backgroundColor: 'rgba(4, 120, 87, 0.1)', fill: true, tension: 0.3 });
+            } else if (abaAtivaGrafico === 'totalDespesas') {
+                tituloEvolucao = "Evolução: Total de Despesas";
+                tituloRubricas = "Distribuição por Rubrica (Total de Despesas)";
+                datasetsEvolucao.push({ label: 'Total de Despesas (R$)', data: totalDespesasData, borderColor: '#f43f5e', backgroundColor: 'rgba(244, 63, 94, 0.1)', fill: true, tension: 0.3 });
+            } else if (abaAtivaGrafico === 'comparativo') {
+                if (comparativoReceitasDespesasAtivo) {
+                    tituloEvolucao = "Evolução Diária: Prev. de Receita vs Despesas";
+                    tituloRubricas = "Resumo Consolidado: Prev. de Receita vs Despesas";
+                    datasetsEvolucao.push(
+                        { label: 'Prev de Receita', data: prevReceitaData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.3 },
+                        { label: 'Total de Despesas', data: totalDespesasData, borderColor: '#f43f5e', backgroundColor: 'rgba(244, 63, 94, 0.1)', tension: 0.3 }
+                    );
+                } else {
+                    tituloEvolucao = "Comparativo Geral";
+                    tituloRubricas = "Distribuição Geral por Rubricas";
+                    datasetsEvolucao.push(
+                        { label: 'Prev de Receita', data: prevReceitaData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.3 },
+                        { label: 'Rec Recebidas', data: recRecebidasData, borderColor: '#047857', backgroundColor: 'rgba(4, 120, 87, 0.1)', tension: 0.3 },
+                        { label: 'Total de Despesas', data: totalDespesasData, borderColor: '#f43f5e', backgroundColor: 'rgba(244, 63, 94, 0.1)', tension: 0.3 }
+                    );
+                }
+            }
+
+            document.getElementById('tituloGraficoEvolucao').innerText = tituloEvolucao;
+            document.getElementById('tituloGraficoRubricas').innerText = tituloRubricas;
+
+            const ctxEvolucao = document.getElementById('chartEvolucao').getContext('2d');
+            if (chartEvolucaoInstance) chartEvolucaoInstance.destroy();
+            if (comparativoReceitasDespesasAtivo) {
+                // Primeiro gráfico: duas linhas independentes, uma para Prev de Receita e outra para Total de Despesas.
+                // Os valores continuam sendo agregados por data, sem qualquer detalhamento por rubrica.
+                chartEvolucaoInstance = new Chart(ctxEvolucao, {
+                    type: 'line',
+                    data: {
+                        labels: formattedDates.length > 0 ? formattedDates : ['Sem Dados'],
+                        datasets: [
+                            {
+                                label: 'Prev de Receita (R$)',
+                                data: prevReceitaData.length > 0 ? prevReceitaData : [0],
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                fill: false,
+                                tension: 0.3,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            },
+                            {
+                                label: 'Total de Despesas (R$)',
+                                data: totalDespesasData.length > 0 ? totalDespesasData : [0],
+                                borderColor: '#f43f5e',
+                                backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                                fill: false,
+                                tension: 0.3,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } },
+                        scales: { x: { ticks: { maxRotation: 45, minRotation: 45, autoSkip: false } }, y: { beginAtZero: true } }
+                    }
+                });
+            } else {
+                chartEvolucaoInstance = new Chart(ctxEvolucao, {
+                    type: 'line',
+                    data: { labels: formattedDates.length > 0 ? formattedDates : ['Sem Dados'], datasets: datasetsEvolucao },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 12 } } }, scales: { y: { beginAtZero: true } } }
+                });
+            }
+
+            const ctxRubricas = document.getElementById('chartRubricas').getContext('2d');
+            if (chartRubricasInstance) chartRubricasInstance.destroy();
+            if (comparativoReceitasDespesasAtivo) {
+                // No comparativo específico, o segundo gráfico também trabalha somente
+                // com os totais gerais, sem qualquer detalhamento por rubrica.
+                chartRubricasInstance = new Chart(ctxRubricas, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Prev de Receita', 'Total de Despesas'],
+                        datasets: [{
+                            label: 'Total (R$)',
+                            data: [totalReceitasComparacao, totalDespesasComparacao],
+                            backgroundColor: ['#10b981', '#f43f5e']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { ticks: { maxRotation: 0, minRotation: 0, autoSkip: false } }, y: { beginAtZero: true } }
+                    }
+                });
+            } else {
+                const rubricasComparativas = Object.keys(rubricasMap);
+                chartRubricasInstance = new Chart(ctxRubricas, {
+                    type: 'bar',
+                    data: {
+                        labels: rubricasComparativas.length > 0 ? rubricasComparativas : ['Sem Dados'],
+                        datasets: [{ label: 'Valor (R$)', data: Object.values(rubricasMap).length > 0 ? Object.values(rubricasMap) : [0], backgroundColor: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1', '#14b8a6', '#f43f5e'] }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { maxRotation: 45, minRotation: 45, autoSkip: false } }, y: { beginAtZero: true } } }
+                });
+            }
+        }
+
+        let aplicacaoInicializada = false;
+        async function iniciarAplicacao(){
+            if(aplicacaoInicializada || !protecaoAutenticada) return;
+            aplicacaoInicializada = true;
+            // Estado inicial obrigatório: Painel Gerencial no layout padrão, com seus dados.
+            filtrosPainelAtivadosPeloUsuario = false;
+            definirMesCorrentePadrao();
+            // Primeiro carrega o banco compartilhado, quando houver sessão Supabase.
+            // Se não houver internet, o banco local continua funcionando normalmente.
+            await sincronizarNuvemAoAbrir();
+            verificarContasVencendoHoje();
+            transacoes.forEach((t, idx) => { if(!t.id) t.id = idx + 1; });
+            popularSelectsDinamicos();
+            renderTable();
+            // Garante que o Painel Gerencial seja preenchido imediatamente
+            // ao abrir o projeto, sem depender do botão Atualizar.
+            atualizarPainelGerencial();
+            atualizarInfoBanco();
+        }
+
+        // Atualização automática periódica: útil quando o PC e o celular ficam abertos ao mesmo tempo.
+        setInterval(async () => {
+            try {
+                const session = await obterSessaoNuvem();
+                if (!session || document.body.classList.contains('auth-pendente')) return;
+                const remoto = await carregarPacoteNuvem();
+                if (!remoto?.payload) return;
+                const ultimaSincronizacao = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
+                if (remoto.updated_at && remoto.updated_at > ultimaSincronizacao) {
+                    const ultimaAlteracaoLocal = localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
+                    if (!ultimaAlteracaoLocal || ultimaAlteracaoLocal <= ultimaSincronizacao) {
+                        aplicarPacoteNuvem(remoto.payload);
+                        localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, remoto.updated_at);
+                        popularSelectsDinamicos(); renderTable(); atualizarPainelGerencial(); atualizarInfoBanco();
+                        atualizarStatusNuvem('Banco atualizado automaticamente pela nuvem.', true);
+                    }
+                }
+            } catch(e) { console.warn('Sincronização automática:', e); }
+        }, 15000);
+
+        window.onload = function() {
+            inicializarProtecaoAcesso();
+            // A aplicação somente é inicializada depois da configuração inicial
+            // ou após a autenticação por senha em uma abertura posterior.
+            if(protecaoAutenticada) iniciarAplicacao();
+        };
+    </script>
+</body>
+</html>
