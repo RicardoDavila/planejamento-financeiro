@@ -829,6 +829,20 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
 }
 </style>
 
+
+<style id="botao-sair-v471">
+@media (max-width: 640px), (pointer: coarse) {
+  header h1 {
+    flex-wrap: wrap;
+  }
+  header h1 button[aria-label="Sair do aplicativo"] {
+    min-height: 42px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+</style>
+
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
     <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
@@ -992,6 +1006,10 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
             <div>
                 <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-wallet text-blue-600"></i> Planejamento Financeiro
+                    <button type="button" onclick="sairAplicativo()" title="Sair e bloquear o aplicativo" aria-label="Sair do aplicativo"
+                        class="ml-2 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm align-middle">
+                        <i class="fa-solid fa-right-from-bracket"></i><span>Sair</span>
+                    </button>
                 </h1>
                 <p id="subtituloMesAno" class="text-sm font-semibold text-blue-600 mt-1 uppercase tracking-wide"></p>
             </div>
@@ -1798,6 +1816,29 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
             mensagemAuth('configMsg','Proteção ativada com sucesso. A partir da próxima abertura, a senha será solicitada.','ok');
             iniciarAplicacao();
         }
+        function sairAplicativo(){
+            const confirmar = confirm('Deseja sair e bloquear o Planejamento Financeiro?\n\nOs dados permanecem neste dispositivo e a conta da nuvem não será desconectada.');
+            if(!confirmar) return;
+
+            protecaoAutenticada = false;
+            document.body.classList.add('auth-pendente');
+
+            const tela = document.getElementById('telaProtecaoAcesso');
+            if(tela) tela.classList.remove('hidden');
+
+            const authSenha = document.getElementById('authSenha');
+            if(authSenha) authSenha.value = '';
+
+            mostrarLoginAcesso();
+            const erro = document.getElementById('authErro');
+            if(erro){
+                erro.classList.add('hidden');
+                erro.textContent = '';
+            }
+
+            window.scrollTo(0, 0);
+        }
+
         async function autenticarAcesso(){
             const cfg=obterConfigProtecao(), senha=document.getElementById('authSenha').value;
             if(!cfg?.ativo){ abrirConfiguracaoSeguranca(true); return; }
