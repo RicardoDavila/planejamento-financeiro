@@ -11,7 +11,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V3.4</title>
+    <title>Planejamento Financeiro - V3.5 Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -194,6 +194,163 @@
     }
 }
 </style>
+
+<style id="mobile-layout-v35">
+/* =========================================================
+   V3.5 — Layout Mobile
+   Somente apresentação/navegação. Não altera dados ou Supabase.
+   ========================================================= */
+@media (max-width: 640px) {
+    :root { --mobile-gap: 10px; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { padding-bottom: 76px !important; background: #f1f5f9; }
+    #appConteudo > .max-w-7xl { padding-left: 8px !important; padding-right: 8px !important; }
+
+    /* Cabeçalho mais compacto */
+    header.no-print {
+        margin-bottom: 10px !important;
+        padding: 8px 4px 10px !important;
+        gap: 8px !important;
+        position: relative;
+    }
+    header.no-print h1 {
+        font-size: 1.18rem !important;
+        line-height: 1.25 !important;
+    }
+    header.no-print p { font-size: .68rem !important; margin-top: 2px !important; }
+
+    /* Barra rápida fixa */
+    #barraRapidaMobile {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 95;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 4px;
+        padding: 7px 6px calc(7px + env(safe-area-inset-bottom));
+        background: rgba(255,255,255,.97);
+        border-top: 1px solid #cbd5e1;
+        box-shadow: 0 -6px 18px rgba(15,23,42,.10);
+        backdrop-filter: blur(8px);
+    }
+    #barraRapidaMobile button {
+        min-width: 0;
+        min-height: 52px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        font-size: .62rem;
+        line-height: 1.05;
+        font-weight: 700;
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        -webkit-tap-highlight-color: transparent;
+    }
+    #barraRapidaMobile button i { font-size: 1rem; }
+    #barraRapidaMobile button:active { transform: scale(.97); }
+    #barraRapidaMobile .acao-primaria { background: #2563eb; color: #fff; border-color: #2563eb; }
+    #barraRapidaMobile .acao-nuvem { background: #059669; color: #fff; border-color: #059669; }
+    #barraRapidaMobile .acao-sync { background: #d97706; color: #fff; border-color: #d97706; }
+    #barraRapidaMobile .acao-grafico { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+
+    /* Ações secundárias: ficam disponíveis pelo botão Mais */
+    .acoes-profissionais { display: none !important; }
+    body.mobile-acoes-abertas .acoes-profissionais {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+        gap: 7px !important;
+        width: 100% !important;
+        max-width: none !important;
+        padding: 8px !important;
+        margin-top: 4px !important;
+        max-height: 48vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    body.mobile-acoes-abertas .botao-acao {
+        min-height: 42px !important;
+        padding: .5rem .4rem !important;
+        font-size: .67rem !important;
+    }
+
+    /* Cartões principais */
+    #painelGerencial {
+        padding: 10px !important;
+        border-radius: 14px !important;
+        margin-bottom: 10px !important;
+    }
+    #painelGerencial h2 { font-size: 1rem !important; }
+    #painelResumoGerencial {
+        grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+        gap: 7px !important;
+        margin-bottom: 10px !important;
+    }
+    #painelResumoGerencial > div {
+        min-height: 66px !important;
+        padding: 9px !important;
+    }
+    #painelResumoGerencial p { line-height: 1.15 !important; }
+    #painelResumoGerencial p.text-sm { font-size: .78rem !important; }
+
+    /* Ações do painel gerencial */
+    #painelGerencial > div:first-child .no-print { width: 100%; }
+    #painelGerencial > div:first-child .no-print button {
+        flex: 1;
+        min-height: 40px;
+        font-size: .72rem !important;
+    }
+
+    /* Filtros mais confortáveis para toque */
+    .bg-white.rounded-xl.shadow-sm.border.border-gray-100.p-4.sm\:p-6 { border-radius: 14px !important; }
+    input, select, textarea { font-size: 16px !important; min-height: 42px; }
+    label { font-size: .72rem !important; }
+    #filtroDescricao { min-height: 42px; }
+
+    /* Tabela continua horizontal, mas fica mais fácil de navegar */
+    #tabelaLancamentosWrapper, .overflow-x-auto {
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    #tabelaLancamentosWrapper table { min-width: 900px !important; }
+    #tabelaLancamentosWrapper th, #tabelaLancamentosWrapper td { padding: 8px 7px !important; }
+
+    /* Tabelas do painel */
+    #painelDetalhesGerencial .overflow-auto { max-height: 220px !important; }
+    #painelDetalhesGerencial table { min-width: 560px; }
+
+    /* Alertas ocupam menos espaço */
+    #alertaHoje, #alertaVencido { padding: 10px !important; margin-bottom: 10px !important; }
+    #alertaHoje h3, #alertaVencido h3 { font-size: .82rem !important; }
+
+    /* Modais no celular: aproveitamento máximo da tela */
+    #modal > div, #modalGraficos > div, #modalRelatorioGerencial > div,
+    #modalConfiguracaoNuvem > div, #modalConfiguracaoSeguranca > div,
+    #modalRecuperacaoSupabase > div {
+        width: 100% !important;
+        max-width: none !important;
+        max-height: calc(100dvh - 12px) !important;
+        border-radius: 14px !important;
+    }
+    #modalGraficos > div { padding: 12px !important; }
+    #modalGraficos .relative.h-72 { height: 230px !important; }
+    #modalGraficos .graficos-controles { padding: 10px !important; }
+    #modalGraficos .graficos-controles button { min-height: 42px; }
+
+    /* Toast/status sem ocupar a tela */
+    .status-nuvem { font-size: 10px; }
+}
+
+@media (min-width: 641px) {
+    #barraRapidaMobile { display: none !important; }
+}
+</style>
+
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
     <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
@@ -410,6 +567,25 @@
                 </button>
             </div>
         </header>
+
+        <!-- Barra rápida exclusiva para celular -->
+        <nav id="barraRapidaMobile" aria-label="Ações rápidas">
+            <button type="button" class="acao-primaria" onclick="openModal()" title="Novo lançamento">
+                <i class="fa-solid fa-plus"></i><span>Novo</span>
+            </button>
+            <button type="button" class="acao-nuvem" onclick="abrirConfiguracaoNuvem()" title="Nuvem">
+                <i class="fa-solid fa-cloud"></i><span>Nuvem</span>
+            </button>
+            <button type="button" class="acao-sync" onclick="sincronizarAgoraNuvem()" title="Sincronizar agora">
+                <i class="fa-solid fa-arrows-rotate"></i><span>Sincronizar</span>
+            </button>
+            <button type="button" class="acao-grafico" onclick="openGraficosModal()" title="Gráficos">
+                <i class="fa-solid fa-chart-line"></i><span>Gráficos</span>
+            </button>
+            <button type="button" onclick="toggleAcoesMobile()" title="Mais opções" aria-expanded="false" id="btnMaisMobile">
+                <i class="fa-solid fa-ellipsis"></i><span>Mais</span>
+            </button>
+        </nav>
 
         <div id="infoBancoSeguranca" class="text-[11px] text-slate-500 mb-4 px-1"></div>
         <div id="infoNuvem" class="text-[11px] text-slate-500 mb-3 px-1 hidden"></div>
@@ -1649,7 +1825,7 @@
         const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_n_k8Yggb0xq8ESLo0rYVsw_SZ5LTSpJ';
         const CHAVE_ULTIMA_ALTERACAO_LOCAL = 'planejamento_financeiro_ultima_alteracao_local';
         const CHAVE_ULTIMA_SINCRONIZACAO = 'planejamento_financeiro_ultima_sincronizacao_nuvem';
-        // V3.4 — sessão robusta: o banco usa diretamente o JWT da sessão autenticada,
+        // V3.5 Mobile — sessão robusta: o banco usa diretamente o JWT da sessão autenticada,
         // mesmo quando o armazenamento interno do Supabase não persiste no navegador.
         // Mantemos uma cópia local apenas como contingência para restaurar a sessão.
         // V3.3 — correção de sessão: armazenamento de contingência da sessão.
@@ -2483,7 +2659,33 @@
                 <h2 class="relatorio-bloco">Previsão — 30 dias</h2>
                 ${previsaoHtml}
                 <br><button class="no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
-            </body></html>`);
+            
+<script>
+function toggleAcoesMobile(){
+    document.body.classList.toggle('mobile-acoes-abertas');
+    const b=document.getElementById('btnMaisMobile');
+    if(b){
+        const aberto=document.body.classList.contains('mobile-acoes-abertas');
+        b.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+        const s=b.querySelector('span'); if(s) s.textContent=aberto ? 'Fechar' : 'Mais';
+        const i=b.querySelector('i'); if(i) i.className=aberto ? 'fa-solid fa-xmark' : 'fa-solid fa-ellipsis';
+    }
+}
+function fecharAcoesMobile(){
+    if(window.innerWidth <= 640 && document.body.classList.contains('mobile-acoes-abertas')){
+        document.body.classList.remove('mobile-acoes-abertas');
+        const b=document.getElementById('btnMaisMobile');
+        if(b){
+            b.setAttribute('aria-expanded','false');
+            const s=b.querySelector('span'); if(s) s.textContent='Mais';
+            const i=b.querySelector('i'); if(i) i.className='fa-solid fa-ellipsis';
+        }
+    }
+}
+window.addEventListener('resize', function(){ if(window.innerWidth > 640) fecharAcoesMobile(); });
+</script>
+
+</body></html>`);
             w.document.close();
         }
 
