@@ -1649,7 +1649,7 @@
         const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_n_k8Yggb0xq8ESLo0rYVsw_SZ5LTSpJ';
         const CHAVE_ULTIMA_ALTERACAO_LOCAL = 'planejamento_financeiro_ultima_alteracao_local';
         const CHAVE_ULTIMA_SINCRONIZACAO = 'planejamento_financeiro_ultima_sincronizacao_nuvem';
-        // V3.3: armazenamento de contingência da sessão.
+        // V3.3 — correção de sessão: armazenamento de contingência da sessão.
         // Se o storage interno do Supabase não persistir no navegador,
         // guardamos os tokens da sessão no localStorage do próprio site e
         // restauramos a sessão na próxima abertura.
@@ -1666,7 +1666,7 @@
                     return false;
                 }
                 if (supabaseCliente) return true;
-                // V3.3: força o armazenamento da sessão no localStorage do próprio domínio.
+                // V3.3 — correção de sessão: força o armazenamento da sessão no localStorage do próprio domínio.
                 // Isso evita que a sessão do PC seja perdida ao recarregar o GitHub Pages.
                 const storage = window.localStorage;
                 supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
@@ -1678,7 +1678,7 @@
                         storage,
                         flowType: 'pkce'
                     },
-                    global: { headers: { 'x-client-info': 'planejamento-financeiro-v3.3' } }
+                    global: { headers: { 'x-client-info': 'planejamento-financeiro-v3.3-session-fix' } }
                 });
                 return true;
             } catch (e) {
@@ -1712,21 +1712,45 @@
 
         function salvarSessaoNuvemManual(sessao) {
             try {
-                if (!sessao?.access_token || !sessao?.refresh_token) return false;
+                // O retorno de signInWithPassword é a fonte da verdade.
+                // Não rejeitamos a sessão apenas porque algum campo opcional
+                // (como refresh_token) não veio no formato esperado.
+                if (!sessao || !sessao.access_token) {
+                    console.error('Sessão Supabase sem access_token:', sessao);
+                    return false;
+                }
+
                 const registro = {
-                    access_token: sessao.access_token,
-                    refresh_token: sessao.refresh_token,
-                    expires_at: sessao.expires_at || null,
-                    expires_in: sessao.expires_in || null,
+                    access_token: String(sessao.access_token),
+                    refresh_token: sessao.refresh_token ? String(sessao.refresh_token) : null,
+                    expires_at: sessao.expires_at ?? null,
+                    expires_in: sessao.expires_in ?? null,
                     token_type: sessao.token_type || 'bearer',
                     user: sessao.user || null,
                     gravada_em: new Date().toISOString()
                 };
-                localStorage.setItem(CHAVE_SESSAO_NUVEM_MANUAL, JSON.stringify(registro));
+
+                const texto = JSON.stringify(registro);
+                localStorage.setItem(CHAVE_SESSAO_NUVEM_MANUAL, texto);
+
+                // Confirma imediatamente a gravação. Se falhar aqui,
+                // então temos de fato um problema de armazenamento do navegador.
+                const confirmacao = localStorage.getItem(CHAVE_SESSAO_NUVEM_MANUAL);
+                if (!confirmacao) {
+                    console.error('localStorage não devolveu a sessão recém-gravada.');
+                    return false;
+                }
+
+                const conferido = JSON.parse(confirmacao);
+                if (!conferido?.access_token) {
+                    console.error('Sessão gravada, mas sem access_token.');
+                    return false;
+                }
+
                 sessaoNuvemManual = registro;
                 return true;
             } catch (e) {
-                console.error('Falha ao gravar sessão manual:', e);
+                console.error('Falha real ao gravar sessão manual:', e);
                 return false;
             }
         }
@@ -2055,23 +2079,36 @@
                 if (error) throw error;
                 if (!data?.session?.access_token) throw new Error('O Supabase aceitou o login, mas não devolveu uma sessão. Verifique se a conta está confirmada.');
 
-                // V3.3: não dependemos exclusivamente do storage interno do Supabase.
+                // V3.3 — correção de sessão: não dependemos exclusivamente do storage interno do Supabase.
                 // O próprio retorno do login já contém uma sessão válida; gravamos essa
                 // sessão no localStorage do site e a restauramos nas próximas aberturas.
                 const sessaoLogin = data.session;
+
+                // Primeiro confirmamos a sessão recebida e a gravação local.
                 if (!salvarSessaoNuvemManual(sessaoLogin)) {
-                    throw new Error('O login foi aceito, mas o navegador não permitiu gravar a sessão local.');
+                    throw new Error('O Supabase aceitou o login, mas a sessão não pôde ser confirmada no armazenamento local deste site.');
                 }
-                try {
-                    const { error: setError } = await supabaseCliente.auth.setSession({
-                        access_token: sessaoLogin.access_token,
-                        refresh_token: sessaoLogin.refresh_token
-                    });
-                    if (setError) console.warn('Supabase setSession:', setError);
-                } catch (setError) {
-                    console.warn('Supabase setSession exception:', setError);
+
+                // O Supabase também pode manter sua própria sessão. Se houver
+                // refresh_token, tentamos registrá-la normalmente; a cópia manual
+                // acima continua sendo a contingência do aplicativo.
+                let sessionConfirmada = sessaoLogin;
+                if (sessaoLogin.refresh_token) {
+                    try {
+                        const { data: setData, error: setError } = await supabaseCliente.auth.setSession({
+                            access_token: sessaoLogin.access_token,
+                            refresh_token: sessaoLogin.refresh_token
+                        });
+                        if (!setError && setData?.session) {
+                            sessionConfirmada = setData.session;
+                            salvarSessaoNuvemManual(sessionConfirmada);
+                        } else if (setError) {
+                            console.warn('Supabase setSession:', setError);
+                        }
+                    } catch (setError) {
+                        console.warn('Supabase setSession exception:', setError);
+                    }
                 }
-                const sessionConfirmada = sessaoLogin;
                 sessaoNuvemManual = sessaoLogin;
 
                 document.getElementById('statusNuvemBadge').textContent = 'Online';
