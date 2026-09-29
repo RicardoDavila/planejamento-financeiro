@@ -1374,7 +1374,7 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <h3 id="modalTitle" class="text-lg font-bold text-slate-800">Novo Lançamento</h3>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <button type="button" id="btnLancarRapidoNoModal" onclick="closeModal(); abrirLancamentoRapido();" class="w-full mb-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-3 shadow flex items-center justify-center gap-2 font-bold text-sm">
+            <button type="button" id="btnLancarRapidoNoModal" onclick="if (closeModal()) abrirLancamentoRapido();" class="w-full mb-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-3 shadow flex items-center justify-center gap-2 font-bold text-sm">
                 <i class="fa-solid fa-bolt"></i> Lançamento Rápido
             </button>
             <form id="formLancamento" onsubmit="salvarLancamento(event)" class="space-y-4">
@@ -4179,12 +4179,18 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
         function closeModal() {
             if (formularioV48TemAlteracoes()) {
                 const confirmar = confirm('Há alterações não salvas neste lançamento.\n\nDeseja sair sem salvar?');
-                if (!confirmar) return;
+                if (!confirmar) {
+                    // Cancelar = permanecer no formulário e preservar exatamente o que foi digitado.
+                    const modal = document.getElementById('modal');
+                    if (modal) modal.classList.remove('hidden');
+                    return false;
+                }
             }
             atualizarBotaoLancamentoRapidoModal(false);
             document.getElementById('modal').classList.add('hidden');
             estadoFormularioV48 = null;
             formularioV48Sujo = false;
+            return true;
         }
 
         function salvarLancamento(event) {
