@@ -11,7 +11,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.0 Mobile</title>
+    <title>Planejamento Financeiro - V4.1 Gráficos Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -3105,7 +3105,84 @@ html.pf-mobile-device .lancamento-card-mobile .badge-mobile {
                 .relatorio-bloco{break-inside:avoid;page-break-inside:avoid}
                 @page{size:landscape;margin:10mm}
                 @media print{.no-print{display:none!important}button{display:none!important}.relatorio-bloco{break-inside:avoid!important;page-break-inside:avoid!important}}
-            </style></head><body>
+            </style>
+<style id="mobile-graficos-v41">
+/* V4.1 - Gráficos mais confortáveis no celular */
+html.pf-mobile-device #modalGraficos > div {
+  width: calc(100vw - 10px) !important;
+  max-width: none !important;
+  max-height: calc(100dvh - 10px) !important;
+  padding: 10px !important;
+  border-radius: 16px !important;
+  overflow-y: auto !important;
+}
+html.pf-mobile-device #modalGraficos .graficos-acoes {
+  gap: 5px !important;
+}
+html.pf-mobile-device #modalGraficos .graficos-acoes button:not(:last-child) {
+  padding: 8px 9px !important;
+  font-size: 0 !important;
+}
+html.pf-mobile-device #modalGraficos .graficos-acoes button:not(:last-child) i {
+  font-size: 15px !important;
+}
+html.pf-mobile-device #modalGraficos .graficos-controles {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+html.pf-mobile-device #modalGraficos .graficos-controles:first-of-type {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+  padding-bottom: 8px !important;
+}
+html.pf-mobile-device #modalGraficos .graficos-controles:first-of-type button {
+  flex: 0 0 auto !important;
+  min-height: 42px !important;
+  white-space: nowrap !important;
+  padding: 9px 11px !important;
+}
+html.pf-mobile-device #modalGraficos .grid.grid-cols-1.lg\:grid-cols-2 {
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 10px !important;
+}
+html.pf-mobile-device #modalGraficos .grafico-print-bloco {
+  padding: 9px !important;
+}
+html.pf-mobile-device #modalGraficos .relative.h-72 {
+  height: 235px !important;
+}
+html.pf-mobile-device #modalGraficos canvas {
+  max-width: 100% !important;
+}
+html.pf-mobile-device #modalGraficos .graficos-controles label {
+  font-size: 11px !important;
+}
+html.pf-mobile-device #modalGraficos .graficos-controles input,
+html.pf-mobile-device #modalGraficos .graficos-controles select,
+html.pf-mobile-device #modalGraficos .graficos-controles button {
+  min-height: 42px !important;
+  font-size: 13px !important;
+}
+html.pf-mobile-device #modalGraficos .graficos-controles .grid.grid-cols-1.sm\:grid-cols-2 {
+  grid-template-columns: minmax(0,1fr) !important;
+}
+html.pf-mobile-device #modalGraficos #comparacaoTotaisGraficos {
+  margin-top: 10px !important;
+  padding: 10px !important;
+}
+html.pf-mobile-device #modalGraficos #comparacaoTotaisGraficos > div {
+  gap: 6px !important;
+}
+html.pf-mobile-device #modalGraficos #comparacaoTotaisGraficos .grid {
+  grid-template-columns: minmax(0,1fr) !important;
+}
+html.pf-mobile-device #modalGraficos .fechamento-graficos button {
+  width: 100% !important;
+  min-height: 44px !important;
+}
+</style>
+</head><body>
                 <h1>RELATÓRIO GERENCIAL — PLANEJAMENTO FINANCEIRO</h1>
                 ${tituloRubricaHtml}
                 <p>Gerado em ${data}</p>
