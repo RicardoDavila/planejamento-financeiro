@@ -760,6 +760,12 @@ html:not(.pf-mobile-device) #atalhoLancamentoRapidoMobile { display:none !import
 #modalLancamentoRapidoV43 input, #modalLancamentoRapidoV43 select { min-height:46px; font-size:16px; }
 </style>
 
+
+<style id="v43-quick-entry-modal-fix">
+#btnLancarRapidoNoModal { display:none; }
+html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
+</style>
+
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
     <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
@@ -1274,6 +1280,9 @@ html:not(.pf-mobile-device) #atalhoLancamentoRapidoMobile { display:none !import
                 <h3 id="modalTitle" class="text-lg font-bold text-slate-800">Novo Lançamento</h3>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
+            <button type="button" id="btnLancarRapidoNoModal" onclick="closeModal(); abrirLancamentoRapido();" class="w-full mb-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-3 shadow flex items-center justify-center gap-2 font-bold text-sm">
+                <i class="fa-solid fa-bolt"></i> Lançamento Rápido
+            </button>
             <form id="formLancamento" onsubmit="salvarLancamento(event)" class="space-y-4">
                 <input type="hidden" id="editId">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -3784,7 +3793,14 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             verificarStatusAutomaticoModal(document.getElementById('dataPg').value);
         }
 
+        
+        function atualizarBotaoLancamentoRapidoModal(mostrar) {
+            const b = document.getElementById('btnLancarRapidoNoModal');
+            if (b) b.style.display = (mostrar && document.documentElement.classList.contains('pf-mobile-device')) ? 'flex' : 'none';
+        }
+
         function openModal() {
+            atualizarBotaoLancamentoRapidoModal(true);
             popularSelectsDinamicos();
             document.getElementById('editId').value = '';
             document.getElementById('modalTitle').innerText = 'Novo Lançamento';
@@ -3797,6 +3813,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
         }
 
         function editarLancamento(id) {
+            atualizarBotaoLancamentoRapidoModal(false);
             popularSelectsDinamicos();
             const item = transacoes.find(t => t.id === id);
             if (!item) return;
@@ -3815,6 +3832,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
         }
 
         function closeModal() {
+            atualizarBotaoLancamentoRapidoModal(false);
             document.getElementById('modal').classList.add('hidden');
         }
 
