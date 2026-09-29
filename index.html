@@ -2660,30 +2660,6 @@
                 ${previsaoHtml}
                 <br><button class="no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
             
-<script>
-function toggleAcoesMobile(){
-    document.body.classList.toggle('mobile-acoes-abertas');
-    const b=document.getElementById('btnMaisMobile');
-    if(b){
-        const aberto=document.body.classList.contains('mobile-acoes-abertas');
-        b.setAttribute('aria-expanded', aberto ? 'true' : 'false');
-        const s=b.querySelector('span'); if(s) s.textContent=aberto ? 'Fechar' : 'Mais';
-        const i=b.querySelector('i'); if(i) i.className=aberto ? 'fa-solid fa-xmark' : 'fa-solid fa-ellipsis';
-    }
-}
-function fecharAcoesMobile(){
-    if(window.innerWidth <= 640 && document.body.classList.contains('mobile-acoes-abertas')){
-        document.body.classList.remove('mobile-acoes-abertas');
-        const b=document.getElementById('btnMaisMobile');
-        if(b){
-            b.setAttribute('aria-expanded','false');
-            const s=b.querySelector('span'); if(s) s.textContent='Mais';
-            const i=b.querySelector('i'); if(i) i.className='fa-solid fa-ellipsis';
-        }
-    }
-}
-window.addEventListener('resize', function(){ if(window.innerWidth > 640) fecharAcoesMobile(); });
-</script>
 
 </body></html>`);
             w.document.close();
@@ -3423,6 +3399,29 @@ window.addEventListener('resize', function(){ if(window.innerWidth > 640) fechar
                 });
             }
         }
+
+        function toggleAcoesMobile(){
+            document.body.classList.toggle('mobile-acoes-abertas');
+            const b=document.getElementById('btnMaisMobile');
+            if(b){
+                const aberto=document.body.classList.contains('mobile-acoes-abertas');
+                b.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+                const span=b.querySelector('span'); if(span) span.textContent=aberto ? 'Fechar' : 'Mais';
+                const icon=b.querySelector('i'); if(icon) icon.className=aberto ? 'fa-solid fa-xmark' : 'fa-solid fa-ellipsis';
+            }
+        }
+        function fecharAcoesMobile(){
+            if(window.innerWidth <= 640 && document.body.classList.contains('mobile-acoes-abertas')){
+                document.body.classList.remove('mobile-acoes-abertas');
+                const b=document.getElementById('btnMaisMobile');
+                if(b){
+                    b.setAttribute('aria-expanded','false');
+                    const span=b.querySelector('span'); if(span) span.textContent='Mais';
+                    const icon=b.querySelector('i'); if(icon) icon.className='fa-solid fa-ellipsis';
+                }
+            }
+        }
+        window.addEventListener('resize', function(){ if(window.innerWidth > 640) fecharAcoesMobile(); });
 
         let aplicacaoInicializada = false;
         async function iniciarAplicacao(){
