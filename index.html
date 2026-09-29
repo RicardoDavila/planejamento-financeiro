@@ -11,7 +11,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.2 Filtros Rápidos Mobile</title>
+    <title>Planejamento Financeiro - V4.3 Lançamento Rápido Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -749,6 +749,17 @@ html.pf-mobile-device .filtros-rapidos-botoes button {
   html:not(.pf-mobile-device) #filtrosRapidosMobile { display: none !important; }
 }
 </style>
+
+<style id="v43-lancamento-rapido">
+#atalhoLancamentoRapidoMobile { margin: 0 0 12px; }
+html.pf-mobile-device #atalhoLancamentoRapidoMobile { display:block !important; }
+html:not(.pf-mobile-device) #atalhoLancamentoRapidoMobile { display:none !important; }
+#modalLancamentoRapidoV43 { display:none; position:fixed; inset:0; z-index:220; background:rgba(15,23,42,.55); padding:16px; align-items:center; justify-content:center; }
+#modalLancamentoRapidoV43.aberto { display:flex; }
+#modalLancamentoRapidoV43 .v43-card { width:100%; max-width:460px; background:#fff; border-radius:18px; box-shadow:0 20px 50px rgba(15,23,42,.25); overflow:hidden; }
+#modalLancamentoRapidoV43 input, #modalLancamentoRapidoV43 select { min-height:46px; font-size:16px; }
+</style>
+
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
     <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
@@ -985,6 +996,12 @@ html.pf-mobile-device .filtros-rapidos-botoes button {
             </button>
         </nav>
         <div id="mobileAcoesBackdrop" aria-hidden="true" onclick="fecharAcoesMobile()"></div>
+
+        <div id="atalhoLancamentoRapidoMobile" class="hidden no-print">
+            <button type="button" onclick="abrirLancamentoRapido()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-3 shadow flex items-center justify-center gap-2 font-bold text-sm">
+                <i class="fa-solid fa-bolt"></i> Lançamento rápido
+            </button>
+        </div>
 
         <div id="infoBancoSeguranca" class="text-[11px] text-slate-500 mb-4 px-1"></div>
         <div id="infoNuvem" class="text-[11px] text-slate-500 mb-3 px-1 hidden"></div>
@@ -1465,6 +1482,29 @@ html.pf-mobile-device .filtros-rapidos-botoes button {
                     <button type="button" onclick="continuarRestauracao()" class="px-5 py-2.5 rounded-lg bg-cyan-600 text-white font-semibold text-sm hover:bg-cyan-700 transition">Continuar com a Restauração</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="modalLancamentoRapidoV43" class="no-print" aria-hidden="true">
+        <div class="v43-card">
+            <div class="px-5 py-4 border-b flex items-center justify-between bg-emerald-50">
+                <div><h3 class="text-lg font-bold text-slate-800">Lançamento rápido</h3><p class="text-xs text-slate-600 mt-0.5">Preencha os dados essenciais e salve.</p></div>
+                <button type="button" onclick="fecharLancamentoRapido()" class="text-slate-500 text-xl px-2">&times;</button>
+            </div>
+            <form id="formLancamentoRapidoV43" class="p-5 space-y-3" onsubmit="salvarLancamentoRapido(event)">
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="block text-xs font-semibold text-slate-600 mb-1">Data</label><input id="v43Data" type="date" required class="w-full border border-slate-300 rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tipo</label><select id="v43Tipo" class="w-full border border-slate-300 rounded-lg px-3 py-2"><option value="Despesa">Despesa</option><option value="Receita">Receita</option><option value="Investimentos">Investimentos</option></select></div>
+                </div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Rubrica</label><select id="v43Categoria" required class="w-full border border-slate-300 rounded-lg px-3 py-2"></select></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Sub-Item</label><select id="v43SubItem" required class="w-full border border-slate-300 rounded-lg px-3 py-2"></select></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Descrição</label><input id="v43Descricao" type="text" required placeholder="Ex.: Conta de luz" class="w-full border border-slate-300 rounded-lg px-3 py-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Valor (R$)</label><input id="v43Valor" type="number" step="0.01" min="0" required placeholder="0,00" class="w-full border border-slate-300 rounded-lg px-3 py-2"></div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="fecharLancamentoRapido()" class="flex-1 rounded-lg border border-slate-300 px-4 py-3 font-semibold text-slate-700">Cancelar</button>
+                    <button type="submit" class="flex-1 rounded-lg bg-emerald-600 text-white px-4 py-3 font-bold">Salvar</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -4143,6 +4183,43 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { maxRotation: 45, minRotation: 45, autoSkip: false } }, y: { beginAtZero: true } } }
                 });
             }
+        }
+
+        function abrirLancamentoRapido(){
+            popularSelectsDinamicos();
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('v43Data').value = hoje;
+            document.getElementById('v43Tipo').value = 'Despesa';
+            const cat = document.getElementById('v43Categoria');
+            const sub = document.getElementById('v43SubItem');
+            cat.innerHTML = document.getElementById('categoria').innerHTML;
+            sub.innerHTML = document.getElementById('subItem').innerHTML;
+            cat.value = document.getElementById('categoria').value || cat.options[0]?.value || '';
+            sub.value = document.getElementById('subItem').value || sub.options[0]?.value || '';
+            document.getElementById('v43Descricao').value = '';
+            document.getElementById('v43Valor').value = '';
+            document.getElementById('modalLancamentoRapidoV43').classList.add('aberto');
+            document.getElementById('modalLancamentoRapidoV43').setAttribute('aria-hidden','false');
+        }
+        function fecharLancamentoRapido(){
+            const m=document.getElementById('modalLancamentoRapidoV43');
+            if(m){m.classList.remove('aberto');m.setAttribute('aria-hidden','true');}
+        }
+        function salvarLancamentoRapido(event){
+            event.preventDefault();
+            // Reaproveita a rotina oficial de salvamento, sem duplicar regras de negócio.
+            document.getElementById('editId').value='';
+            document.getElementById('vencimento').value=document.getElementById('v43Data').value;
+            document.getElementById('dataPg').value='';
+            document.getElementById('tipo').value=document.getElementById('v43Tipo').value;
+            document.getElementById('categoria').value=document.getElementById('v43Categoria').value;
+            document.getElementById('subItem').value=document.getElementById('v43SubItem').value;
+            document.getElementById('descricao').value=document.getElementById('v43Descricao').value;
+            document.getElementById('valor').value=document.getElementById('v43Valor').value;
+            document.getElementById('status').value=(document.getElementById('v43Tipo').value==='Receita'?'Não Recebido':'Pendente');
+            document.getElementById('observacao').value='';
+            salvarLancamento({preventDefault:function(){}});
+            fecharLancamentoRapido();
         }
 
         function toggleAcoesMobile(){
