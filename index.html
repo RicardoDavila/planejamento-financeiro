@@ -879,12 +879,6 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                         </div>
                     </div>
                 </div>
-                
-<div id="navegacaoPeriodoRelatorioMobile" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0;padding:8px;border-radius:12px;background:rgba(0,0,0,.04);">
-  <button type="button" id="relatorioPeriodoAnteriorMobile" style="min-width:44px;padding:10px;border:0;border-radius:10px;">‹</button>
-  <strong id="relatorioPeriodoAtualMobile" style="flex:1;text-align:center;">Mês atual</strong>
-  <button type="button" id="relatorioPeriodoProximoMobile" style="min-width:44px;padding:10px;border:0;border-radius:10px;">›</button>
-</div>
 <button onclick="fecharAlerta('hoje')" class="shrink-0 text-amber-500 hover:text-amber-700 font-bold text-sm px-3 py-1 rounded" title="Fechar aviso">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -1534,6 +1528,11 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
             <p id="rel46Periodo" class="text-xs text-slate-500 mt-0.5">Período atual</p>
           </div>
           <button type="button" onclick="fecharRelatorioMensalMobile()" class="text-slate-500 text-xl px-2">&times;</button>
+        </div>
+        <div id="navegacaoPeriodoRelatorioMobile" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 16px 0;padding:8px;border-radius:12px;background:rgba(0,0,0,.04);">
+          <button type="button" id="relatorioPeriodoAnteriorMobile" style="min-width:44px;min-height:42px;padding:8px;border:0;border-radius:10px;background:white;">‹</button>
+          <strong id="relatorioPeriodoAtualMobile" style="flex:1;text-align:center;text-transform:capitalize;">Mês atual</strong>
+          <button type="button" id="relatorioPeriodoProximoMobile" style="min-width:44px;min-height:42px;padding:8px;border:0;border-radius:10px;background:white;">›</button>
         </div>
         <div class="p-4">
           <div class="grid grid-cols-2 gap-3">
@@ -3423,42 +3422,39 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
                 <h2 class="relatorio-bloco">Previsão — 30 dias</h2>
                 ${previsaoHtml}
                 <br><button class="no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
-            
-
-
 <script id="relatorio-periodo-v47">
 (function(){
-  const state = { offset: 0 };
-
-  function monthDate(){
-    const d = new Date();
-    return new Date(d.getFullYear(), d.getMonth() + state.offset, 1);
+  let periodoRelatorioMobile = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  const fmt = v => (typeof formatarMoeda === 'function' ? formatarMoeda(Number(v)||0) : ('R$ '+(Number(v)||0).toFixed(2).replace('.',',')));
+  function labelPeriodo(d){ return d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); }
+  function isoMes(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+  function atualizarRelatorioPeriodo(){
+    const label=document.getElementById('relatorioPeriodoAtualMobile');
+    const periodo=document.getElementById('rel46Periodo');
+    if(label) label.textContent=labelPeriodo(periodoRelatorioMobile);
+    if(periodo) periodo.textContent='Período: '+labelPeriodo(periodoRelatorioMobile);
+    const lista=Array.isArray(window.transacoes)?window.transacoes:(typeof transacoes!=='undefined'?transacoes:[]);
+    const mes=isoMes(periodoRelatorioMobile);
+    const itens=lista.filter(t=>String(t.vencimento||'').slice(0,7)===mes);
+    let receitas=0,despesas=0,recebido=0,vencer=0,vencido=0;
+    itens.forEach(t=>{const v=Number(t.valor)||0;if(t.tipo==='Receita'){receitas+=v;if(t.status!=='Não Recebido')recebido+=v;}if(t.tipo==='Despesa')despesas+=v;if(t.status==='A Vencer')vencer+=v;if(t.status==='Vencido')vencido+=v;});
+    const saldo=receitas-despesas;
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=fmt(v);};
+    set('rel46Receitas',receitas);set('rel46Despesas',despesas);set('rel46Saldo',saldo);set('rel46Recebido',recebido);set('rel46Vencer',vencer);set('rel46Vencido',vencido);
+    const msg=document.getElementById('rel46Mensagem');if(msg)msg.textContent=saldo<0?'Atenção: o saldo previsto do período está negativo.':(itens.length?`Resumo de ${labelPeriodo(periodoRelatorioMobile)} atualizado com ${itens.length} lançamento(s).`:'Nenhum lançamento encontrado neste mês.');
   }
-  function label(d){
-    return d.toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
-  }
-  function refresh(){
-    const el = document.getElementById('relatorioPeriodoAtualMobile');
-    if(el) el.textContent = label(monthDate()).replace(/^./, c => c.toUpperCase());
-    // Reuse existing report renderer when available.
-    if(typeof window.renderRelatorioMensalMobile === 'function'){
-      try { window.renderRelatorioMensalMobile(monthDate()); } catch(e) {}
-    } else if(typeof window.abrirRelatorioMensalMobile === 'function'){
-      try { window.abrirRelatorioMensalMobile(monthDate()); } catch(e) {}
-    }
-  }
-  document.addEventListener('click', function(e){
-    if(e.target && e.target.id === 'relatorioPeriodoAnteriorMobile'){
-      state.offset--; refresh();
-    }
-    if(e.target && e.target.id === 'relatorioPeriodoProximoMobile'){
-      state.offset++; refresh();
-    }
+  document.addEventListener('click',function(e){
+    if(e.target.closest && e.target.closest('#relatorioPeriodoAnteriorMobile')){periodoRelatorioMobile=new Date(periodoRelatorioMobile.getFullYear(),periodoRelatorioMobile.getMonth()-1,1);atualizarRelatorioPeriodo();}
+    if(e.target.closest && e.target.closest('#relatorioPeriodoProximoMobile')){periodoRelatorioMobile=new Date(periodoRelatorioMobile.getFullYear(),periodoRelatorioMobile.getMonth()+1,1);atualizarRelatorioPeriodo();}
   });
-  document.addEventListener('DOMContentLoaded', refresh);
+  const oldOpen=window.abrirRelatorioMensalMobile;
+  window.abrirRelatorioMensalMobile=function(){
+    periodoRelatorioMobile=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+    if(typeof oldOpen==='function') oldOpen();
+    setTimeout(atualizarRelatorioPeriodo,0);
+  };
 })();
 </script>
-
 </body></html>`);
             w.document.close();
         }
@@ -4562,39 +4558,5 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             if(protecaoAutenticada) iniciarAplicacao();
         };
     </script>
-
-<script id="relatorio-periodo-v47">
-(function(){
-  const state = { offset: 0 };
-
-  function monthDate(){
-    const d = new Date();
-    return new Date(d.getFullYear(), d.getMonth() + state.offset, 1);
-  }
-  function label(d){
-    return d.toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
-  }
-  function refresh(){
-    const el = document.getElementById('relatorioPeriodoAtualMobile');
-    if(el) el.textContent = label(monthDate()).replace(/^./, c => c.toUpperCase());
-    // Reuse existing report renderer when available.
-    if(typeof window.renderRelatorioMensalMobile === 'function'){
-      try { window.renderRelatorioMensalMobile(monthDate()); } catch(e) {}
-    } else if(typeof window.abrirRelatorioMensalMobile === 'function'){
-      try { window.abrirRelatorioMensalMobile(monthDate()); } catch(e) {}
-    }
-  }
-  document.addEventListener('click', function(e){
-    if(e.target && e.target.id === 'relatorioPeriodoAnteriorMobile'){
-      state.offset--; refresh();
-    }
-    if(e.target && e.target.id === 'relatorioPeriodoProximoMobile'){
-      state.offset++; refresh();
-    }
-  });
-  document.addEventListener('DOMContentLoaded', refresh);
-})();
-</script>
-
 </body>
 </html>
