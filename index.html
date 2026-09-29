@@ -384,8 +384,8 @@
                     <i class="fa-solid fa-cloud-arrow-up"></i> Restaurar
                 </button>
                 <input type="file" id="inputRestaurar" accept=".json" class="hidden" onchange="restaurarBackup(event)">
-                <button onclick="sincronizarRecarregarDados()" class="botao-acao bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Sincronizar e recarregar dados do banco mestre sem apagar lançamentos">
-                    <i class="fa-solid fa-database"></i> Sincronizar/Recarregar Dados
+                <button onclick="sincronizarAgoraNuvem()" class="botao-acao bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Sincronizar os dados deste dispositivo com a nuvem">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar com a Nuvem
                 </button>
                 <button onclick="exportToPDF()" class="botao-acao bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-file-pdf"></i> Exportar PDF
@@ -1680,6 +1680,23 @@
         // da biblioteca com erro da conta/tabela do banco.
         inicializarSupabaseCliente();
 
+        // Mantém o indicador da interface sincronizado com a sessão Supabase.
+        function configurarEventosAuthNuvem() {
+            if (!supabaseCliente) return;
+            supabaseCliente.auth.onAuthStateChange((evento, sessao) => {
+                if (sessao?.user) {
+                    const badge = document.getElementById('statusNuvemBadge');
+                    if (badge) badge.textContent = 'Online';
+                    const emailEl = document.getElementById('nuvemEmail');
+                    if (emailEl && !emailEl.value) emailEl.value = sessao.user.email || '';
+                } else {
+                    const badge = document.getElementById('statusNuvemBadge');
+                    if (badge) badge.textContent = 'Local';
+                }
+            });
+        }
+        configurarEventosAuthNuvem();
+
         function mostrarRecuperacaoSupabase(msg='') {
             const modal = document.getElementById('modalRecuperacaoSupabase');
             if (!modal) return;
@@ -1796,6 +1813,9 @@
         }
 
         async function carregarPacoteNuvem() {
+            if (!supabaseCliente && !inicializarSupabaseCliente()) {
+                throw new Error('Biblioteca Supabase não foi carregada. Recarregue a página e tente novamente.');
+            }
             const session = await obterSessaoNuvem();
             if (!session) return null;
             const { data, error } = await supabaseCliente
@@ -1807,16 +1827,23 @@
             return data || null;
         }
 
-        async function salvarPacoteNuvem(forcar=false) {
+        async function salvarPacoteNuvem() {
+            if (!supabaseCliente && !inicializarSupabaseCliente()) {
+                throw new Error('Biblioteca Supabase não foi carregada.');
+            }
             const session = await obterSessaoNuvem();
-            if (!session) return false;
+            if (!session) throw new Error('Este dispositivo ainda não está conectado à conta de nuvem.');
             const pacote = coletarPacoteNuvem();
+            const agora = new Date().toISOString();
             const { error } = await supabaseCliente
                 .from('planejamento_financeiro_sync')
-                .upsert({ user_id: session.user.id, payload: pacote, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+                .upsert(
+                    { user_id: session.user.id, payload: pacote, updated_at: agora },
+                    { onConflict: 'user_id' }
+                );
             if (error) throw error;
-            localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, new Date().toISOString());
-            atualizarStatusNuvem('Dados sincronizados com a nuvem.', true);
+            localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, agora);
+            atualizarStatusNuvem('Dados enviados para a nuvem com sucesso.', true);
             return true;
         }
 
@@ -1828,7 +1855,7 @@
                     if (session) await salvarPacoteNuvem();
                 } catch (e) {
                     console.error('Erro ao salvar na nuvem:', e);
-                    atualizarStatusNuvem('Alteração salva no dispositivo; sincronização pendente.');
+                    atualizarStatusNuvem('Alteração salva neste dispositivo; sincronização pendente.');
                 }
             }, 700);
         }
@@ -1843,64 +1870,112 @@
             try {
                 if (!supabaseCliente && !inicializarSupabaseCliente()) {
                     atualizarStatusNuvem('Biblioteca da nuvem não carregada; os dados locais estão sendo usados.');
-                    return;
+                    return false;
                 }
                 const session = await obterSessaoNuvem();
                 if (!session) {
-                    atualizarStatusNuvem('Local — configure a conta da nuvem no botão Nuvem.');
-                    return;
+                    atualizarStatusNuvem('Local — conecte a conta da nuvem neste dispositivo.');
+                    return false;
                 }
+
+                atualizarStatusNuvem('Conectado. Verificando a versão mais recente da nuvem...');
                 const remoto = await carregarPacoteNuvem();
                 const ultimaAlteracaoLocal = localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
                 const atualizadoRemoto = remoto?.updated_at || '';
 
-                // Proteção contra sobrescrever uma versão remota mais recente.
-                // A decisão é feita comparando a última alteração local diretamente
-                // com a data da versão armazenada na nuvem, e não apenas com a
-                // última sincronização deste dispositivo.
                 if (remoto?.payload) {
                     if (ultimaAlteracaoLocal && atualizadoRemoto && ultimaAlteracaoLocal > atualizadoRemoto) {
                         await salvarPacoteNuvem();
-                        atualizarStatusNuvem('Alterações locais mais recentes foram enviadas para a nuvem.', true);
+                        atualizarStatusNuvem('Dados locais mais recentes foram enviados para a nuvem.', true);
                     } else {
                         aplicarPacoteNuvem(remoto.payload);
                         localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, atualizadoRemoto || new Date().toISOString());
-                        atualizarStatusNuvem('Banco carregado da nuvem e atualizado neste dispositivo.', true);
+                        atualizarStatusNuvem('Banco da nuvem carregado neste dispositivo.', true);
                     }
                 } else {
-                    // Primeira sincronização desta conta: mantém os dados locais
-                    // existentes e cria o pacote na nuvem somente se ainda não houver um.
-                    await salvarPacoteNuvem(true);
+                    await salvarPacoteNuvem();
+                    atualizarStatusNuvem('Primeiro banco criado na nuvem com os dados deste dispositivo.', true);
                 }
+                return true;
             } catch (e) {
-                console.error('Falha na sincronização inicial:', e);
-                atualizarStatusNuvem('Nuvem indisponível: ' + resumirErroSupabase(e) + ' — usando os dados locais.');
+                console.error('Falha na sincronização:', e);
+                atualizarStatusNuvem('Erro na nuvem: ' + resumirErroSupabase(e));
+                return false;
             }
         }
 
         async function sincronizarAgoraNuvem() {
             try {
+                if (!supabaseCliente && !inicializarSupabaseCliente()) {
+                    throw new Error('Biblioteca Supabase não foi carregada. Verifique a conexão com a internet.');
+                }
+
                 const session = await obterSessaoNuvem();
-                if (!session) { abrirConfiguracaoNuvem(); return; }
-                await salvarPacoteNuvem(true);
-                popularSelectsDinamicos(); renderTable(); atualizarPainelGerencial(); atualizarInfoBanco();
-                alert('Sincronização concluída. O mesmo banco poderá ser carregado no celular e no computador.');
+                if (!session) {
+                    abrirConfiguracaoNuvem();
+                    atualizarStatusNuvem('Faça login na conta de sincronização para continuar.');
+                    return;
+                }
+
+                atualizarStatusNuvem('Sincronizando com a nuvem...');
+                const remoto = await carregarPacoteNuvem();
+                const ultimaAlteracaoLocal = localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
+                const atualizadoRemoto = remoto?.updated_at || '';
+
+                if (!remoto?.payload) {
+                    await salvarPacoteNuvem();
+                    alert('Sincronização concluída. O banco local foi enviado para a nuvem.');
+                } else if (ultimaAlteracaoLocal && atualizadoRemoto && ultimaAlteracaoLocal > atualizadoRemoto) {
+                    await salvarPacoteNuvem();
+                    alert('Sincronização concluída. As alterações mais recentes deste dispositivo foram enviadas para a nuvem.');
+                } else {
+                    aplicarPacoteNuvem(remoto.payload);
+                    localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, atualizadoRemoto);
+                    atualizarStatusNuvem('Banco da nuvem carregado neste dispositivo.', true);
+                    popularSelectsDinamicos();
+                    renderTable();
+                    atualizarPainelGerencial();
+                    atualizarInfoBanco();
+                    alert('Sincronização concluída. Os dados mais recentes da nuvem foram carregados neste dispositivo.');
+                }
             } catch (e) {
-                console.error(e);
-                alert('Não foi possível sincronizar: ' + (e.message || 'erro de conexão'));
+                console.error('Erro na sincronização manual:', e);
+                const detalhe = resumirErroSupabase(e);
+                atualizarStatusNuvem('Falha na sincronização: ' + detalhe);
+                alert('Não foi possível sincronizar com a nuvem:\n\n' + detalhe);
             }
         }
 
         async function entrarNuvem() {
-            if (!supabaseCliente && !inicializarSupabaseCliente()) return alert('Serviço de nuvem não foi carregado. Verifique a conexão com a internet.');
-            const email = document.getElementById('nuvemEmail').value.trim().toLowerCase();
-            const password = document.getElementById('nuvemSenha').value;
-            if (!email || !password) return alert('Informe o e-mail e a senha da conta de sincronização.');
-            const { error } = await supabaseCliente.auth.signInWithPassword({ email, password });
-            if (error) return alert('Não foi possível entrar na nuvem: ' + error.message);
-            await sincronizarNuvemAoAbrir();
-            popularSelectsDinamicos(); renderTable(); atualizarPainelGerencial(); atualizarInfoBanco();
-            document.getElementById('nuvemSenha').value='';
+            try {
+                if (!supabaseCliente && !inicializarSupabaseCliente()) {
+                    throw new Error('Serviço de nuvem não foi carregado. Verifique a conexão com a internet.');
+                }
+                const email = document.getElementById('nuvemEmail').value.trim().toLowerCase();
+                const password = document.getElementById('nuvemSenha').value;
+                if (!email || !password) throw new Error('Informe o e-mail e a senha da conta de sincronização.');
+
+                atualizarStatusNuvem('Entrando na conta de sincronização...');
+                const { data, error } = await supabaseCliente.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                if (!data?.session) throw new Error('Login concluído sem sessão ativa. Verifique a confirmação da conta Supabase.');
+
+                atualizarStatusNuvem('Conta conectada. Sincronizando...');
+                const ok = await sincronizarNuvemAoAbrir();
+                if (!ok) return;
+
+                popularSelectsDinamicos();
+                renderTable();
+                atualizarPainelGerencial();
+                atualizarInfoBanco();
+                document.getElementById('nuvemSenha').value='';
+                atualizarStatusNuvem('Conta conectada e banco sincronizado.', true);
+            } catch (e) {
+                console.error('Falha no login da nuvem:', e);
+                const detalhe = resumirErroSupabase(e);
+                atualizarStatusNuvem('Falha no login: ' + detalhe);
+                alert('Não foi possível conectar à nuvem:\n\n' + detalhe);
+            }
         }
 
         async function criarContaNuvem() {
