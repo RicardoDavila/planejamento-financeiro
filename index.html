@@ -11,7 +11,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.4 Status da Nuvem Mobile</title>
+    <title>Planejamento Financeiro - V4.5 Calendário Financeiro Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -959,6 +959,9 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <button onclick="sincronizarAgoraNuvem()" class="botao-acao bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Sincronizar os dados deste dispositivo com a nuvem">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar com a Nuvem
                 </button>
+                <button onclick="abrirCalendarioFinanceiro()" class="botao-acao bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Calendário financeiro">
+                    <i class="fa-solid fa-calendar-days"></i> Calendário
+                </button>
                 <button onclick="exportToPDF()" class="botao-acao bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-file-pdf"></i> Exportar PDF
                 </button>
@@ -1494,6 +1497,25 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
         </div>
     </div>
 
+
+    <div id="modalCalendarioFinanceiro" class="no-print" aria-hidden="true">
+      <div class="cal45-card">
+        <div class="cal45-head">
+          <div class="flex items-center justify-between gap-2">
+            <button type="button" onclick="calendarioV45Mes(-1)" class="px-3 py-2 rounded-lg border text-slate-700">‹</button>
+            <div class="text-center"><h3 id="cal45Titulo" class="font-bold text-slate-800">Calendário Financeiro</h3><p class="text-[10px] text-slate-500">Toque em um dia para ver os lançamentos</p></div>
+            <button type="button" onclick="calendarioV45Mes(1)" class="px-3 py-2 rounded-lg border text-slate-700">›</button>
+          </div>
+          <div class="flex justify-end mt-2"><button type="button" onclick="fecharCalendarioFinanceiro()" class="text-xs font-semibold text-slate-600 px-3 py-1.5 rounded-lg border">Fechar</button></div>
+        </div>
+        <div class="grid grid-cols-7 px-2 pt-2">
+          <div class="cal45-week">Dom</div><div class="cal45-week">Seg</div><div class="cal45-week">Ter</div><div class="cal45-week">Qua</div><div class="cal45-week">Qui</div><div class="cal45-week">Sex</div><div class="cal45-week">Sáb</div>
+        </div>
+        <div id="cal45Grid" class="cal45-grid"></div>
+        <div id="cal45Detail" class="cal45-detail"><p class="text-xs text-slate-500">Selecione um dia.</p></div>
+      </div>
+    </div>
+
     <div id="modalLancamentoRapidoV43" class="no-print" aria-hidden="true">
         <div class="v43-card">
             <div class="px-5 py-4 border-b flex items-center justify-between bg-emerald-50">
@@ -1517,7 +1539,33 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
         </div>
     </div>
 
-    <script>
+    
+<style id="mobile-calendario-v45">
+#modalCalendarioFinanceiro{display:none;position:fixed;inset:0;background:rgba(15,23,42,.58);z-index:260;align-items:center;justify-content:center;padding:10px;}
+#modalCalendarioFinanceiro.aberto{display:flex;}
+.cal45-card{width:min(100%,760px);max-height:calc(100dvh - 20px);overflow:auto;background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(15,23,42,.3);}
+.cal45-head{position:sticky;top:0;z-index:2;background:#fff;border-bottom:1px solid #e2e8f0;padding:12px 14px;}
+.cal45-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:10px;}
+.cal45-week{font-size:10px;font-weight:800;color:#64748b;text-align:center;padding:5px 0;text-transform:uppercase;}
+.cal45-day{min-height:62px;border:1px solid #e2e8f0;border-radius:9px;background:#fff;padding:5px;cursor:pointer;text-align:left;position:relative;}
+.cal45-day:hover{background:#f8fafc;}
+.cal45-day.out{opacity:.38;}
+.cal45-day.today{border:2px solid #0891b2;background:#ecfeff;}
+.cal45-num{font-size:12px;font-weight:800;color:#334155;}
+.cal45-dots{display:flex;gap:3px;flex-wrap:wrap;margin-top:6px;}
+.cal45-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.cal45-dot.rec{background:#10b981}.cal45-dot.des{background:#f43f5e}.cal45-dot.inv{background:#8b5cf6}.cal45-dot.atras{background:#f59e0b;}
+.cal45-total{font-size:9px;color:#475569;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cal45-detail{border-top:1px solid #e2e8f0;padding:12px 14px;}
+.cal45-item{border:1px solid #e2e8f0;border-radius:11px;padding:9px;margin-bottom:7px;background:#f8fafc;}
+.cal45-item strong{font-size:12px;color:#0f172a}.cal45-item small{display:block;color:#64748b;font-size:10px;margin-top:2px}.cal45-item .valor{font-weight:800;font-size:13px;margin-top:4px;}
+html.pf-mobile-device #modalCalendarioFinanceiro{align-items:flex-end;padding:0;}
+html.pf-mobile-device .cal45-card{width:100%;max-height:94dvh;border-radius:18px 18px 0 0;}
+html.pf-mobile-device .cal45-day{min-height:55px;}
+@media(max-width:430px){.cal45-grid{gap:3px;padding:7px}.cal45-day{min-height:52px;padding:4px}.cal45-total{font-size:8px}.cal45-dot{width:7px;height:7px}}
+</style>
+
+<script>
         // ==================== PWA V3 ====================
         // Registra o Service Worker e oferece instalação quando o navegador permitir.
         let eventoInstalacaoPWA = null;
@@ -4223,6 +4271,66 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { maxRotation: 45, minRotation: 45, autoSkip: false } }, y: { beginAtZero: true } } }
                 });
             }
+        }
+
+
+        let calendarioV45Data = new Date();
+        function abrirCalendarioFinanceiro(){
+            calendarioV45Data = new Date();
+            renderCalendarioV45();
+            const m=document.getElementById('modalCalendarioFinanceiro');
+            m.classList.add('aberto'); m.setAttribute('aria-hidden','false');
+        }
+        function fecharCalendarioFinanceiro(){
+            const m=document.getElementById('modalCalendarioFinanceiro');
+            if(m){m.classList.remove('aberto');m.setAttribute('aria-hidden','true');}
+        }
+        function calendarioV45Mes(delta){
+            calendarioV45Data.setMonth(calendarioV45Data.getMonth()+delta);
+            renderCalendarioV45();
+        }
+        function cal45Iso(d){
+            const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+            return `${y}-${m}-${day}`;
+        }
+        function renderCalendarioV45(){
+            const y=calendarioV45Data.getFullYear(), m=calendarioV45Data.getMonth();
+            const nomes=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+            const titulo=document.getElementById('cal45Titulo'); if(titulo) titulo.textContent=`${nomes[m]} ${y}`;
+            const grid=document.getElementById('cal45Grid'); if(!grid) return; grid.innerHTML='';
+            const inicio=new Date(y,m,1), primeiro=inicio.getDay();
+            const diasMes=new Date(y,m+1,0).getDate();
+            const diasPrev=new Date(y,m,0).getDate();
+            const hojeIso=cal45Iso(new Date());
+            const mapa={};
+            (Array.isArray(transacoes)?transacoes:[]).forEach(t=>{
+                if(!t.vencimento) return;
+                if(!mapa[t.vencimento]) mapa[t.vencimento]=[];
+                mapa[t.vencimento].push(t);
+            });
+            for(let i=0;i<42;i++){
+                let dia=i-primeiro+1, data, out=false;
+                if(dia<1){dia=diasPrev+dia; data=new Date(y,m-1,dia); out=true;}
+                else if(dia>diasMes){dia=dia-diasMes; data=new Date(y,m+1,dia); out=true;}
+                else data=new Date(y,m,dia);
+                const iso=cal45Iso(data), itens=mapa[iso]||[];
+                const el=document.createElement('button'); el.type='button'; el.className='cal45-day'+(out?' out':'')+(iso===hojeIso?' today':'');
+                const rec=itens.filter(t=>t.tipo==='Receita').length, des=itens.filter(t=>t.tipo==='Despesa').length, inv=itens.filter(t=>t.tipo==='Investimentos'||t.categoria==='INVESTIMENTOS').length;
+                const atras=itens.some(t=>t.status==='Vencido');
+                const total=itens.reduce((s,t)=>s+(Number(t.valor)||0),0);
+                el.innerHTML=`<div class="cal45-num">${dia}</div><div class="cal45-dots">${rec?'<span class="cal45-dot rec"></span>':''}${des?'<span class="cal45-dot des"></span>':''}${inv?'<span class="cal45-dot inv"></span>':''}${atras?'<span class="cal45-dot atras"></span>':''}</div>${itens.length?`<div class="cal45-total">${itens.length} • ${moeda(total)}</div>`:''}`;
+                el.onclick=()=>mostrarDetalhesCalendarioV45(iso,itens); grid.appendChild(el);
+            }
+            mostrarDetalhesCalendarioV45(hojeIso,mapa[hojeIso]||[]);
+        }
+        function mostrarDetalhesCalendarioV45(iso,itens){
+            const box=document.getElementById('cal45Detail'); if(!box) return;
+            const [y,m,d]=iso.split('-');
+            if(!itens.length){box.innerHTML=`<p class="text-xs font-semibold text-slate-700">${d}/${m}/${y}</p><p class="text-xs text-slate-500 mt-1">Nenhum lançamento neste dia.</p>`;return;}
+            box.innerHTML=`<p class="text-xs font-bold text-slate-800 mb-2">${d}/${m}/${y} • ${itens.length} lançamento(s)</p>`+itens.map(t=>{
+                const classe=t.tipo==='Receita'?'text-emerald-700':(t.tipo==='Investimentos'?'text-purple-700':'text-rose-700');
+                return `<div class="cal45-item"><strong>${t.descricao||'Sem descrição'}</strong><small>${t.tipo||''} • ${t.categoria||''}${t.subItem?' • '+t.subItem:''}</small><div class="valor ${classe}">${moeda(Number(t.valor)||0)}${t.status?' • '+t.status:''}</div></div>`;
+            }).join('');
         }
 
         function abrirLancamentoRapido(){
