@@ -11,7 +11,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V3</title>
+    <title>Planejamento Financeiro - V3.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1649,11 +1649,15 @@
         const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_n_k8Yggb0xq8ESLo0rYVsw_SZ5LTSpJ';
         const CHAVE_ULTIMA_ALTERACAO_LOCAL = 'planejamento_financeiro_ultima_alteracao_local';
         const CHAVE_ULTIMA_SINCRONIZACAO = 'planejamento_financeiro_ultima_sincronizacao_nuvem';
+        // V3.4 — sessão robusta: o banco usa diretamente o JWT da sessão autenticada,
+        // mesmo quando o armazenamento interno do Supabase não persiste no navegador.
+        // Mantemos uma cópia local apenas como contingência para restaurar a sessão.
         // V3.3 — correção de sessão: armazenamento de contingência da sessão.
         // Se o storage interno do Supabase não persistir no navegador,
         // guardamos os tokens da sessão no localStorage do próprio site e
         // restauramos a sessão na próxima abertura.
         const CHAVE_SESSAO_NUVEM_MANUAL = 'planejamento-financeiro-supabase-session-v3';
+        const REST_SYNC_URL = SUPABASE_URL + '/rest/v1/planejamento_financeiro_sync';
         let supabaseCliente = null;
         let sessaoNuvemManual = null;
         let sincronizacaoNuvemTimer = null;
@@ -1678,7 +1682,7 @@
                         storage,
                         flowType: 'pkce'
                     },
-                    global: { headers: { 'x-client-info': 'planejamento-financeiro-v3.3-session-fix' } }
+                    global: { headers: { 'x-client-info': 'planejamento-financeiro-v3.4-auth-fix' } }
                 });
                 return true;
             } catch (e) {
@@ -1761,7 +1765,10 @@
                 const salvo = localStorage.getItem(CHAVE_SESSAO_NUVEM_MANUAL);
                 if (!salvo) return null;
                 const registro = JSON.parse(salvo);
-                if (!registro?.access_token || !registro?.refresh_token) return null;
+                // O access_token é suficiente para as chamadas REST autenticadas.
+                // O refresh_token é desejável, mas não pode ser requisito para usar
+                // uma sessão recém-obtida no mesmo navegador.
+                if (!registro?.access_token) return null;
                 sessaoNuvemManual = registro;
                 return registro;
             } catch (e) {
@@ -1771,20 +1778,72 @@
 
         async function restaurarSessaoNuvemManual() {
             const sessao = obterSessaoNuvemManual();
-            if (!sessao || !supabaseCliente) return null;
+            if (!sessao || !supabaseCliente) return sessao || null;
             try {
-                const { data, error } = await supabaseCliente.auth.setSession({
-                    access_token: sessao.access_token,
-                    refresh_token: sessao.refresh_token
-                });
-                if (error) throw error;
-                const ativa = data?.session || sessao;
-                sessaoNuvemManual = ativa;
-                return ativa;
+                if (sessao.refresh_token) {
+                    const { data, error } = await supabaseCliente.auth.setSession({
+                        access_token: sessao.access_token,
+                        refresh_token: sessao.refresh_token
+                    });
+                    if (!error && data?.session) {
+                        sessaoNuvemManual = data.session;
+                        salvarSessaoNuvemManual(data.session);
+                        return data.session;
+                    }
+                    if (error) console.warn('Supabase setSession:', error);
+                }
             } catch (e) {
-                console.warn('Não foi possível restaurar a sessão manual:', e);
-                return null;
+                console.warn('Não foi possível restaurar a sessão no cliente Supabase:', e);
             }
+            // Mesmo sem sessão interna do cliente, devolvemos a sessão manual.
+            // As operações de banco da V3.4 usarão o JWT diretamente no REST.
+            return sessao;
+        }
+
+        async function obterSessaoAutenticadaNuvem() {
+            if (!supabaseCliente && !inicializarSupabaseCliente()) return null;
+            try {
+                const { data, error } = await supabaseCliente.auth.getSession();
+                if (!error && data?.session?.access_token) {
+                    sessaoNuvemManual = data.session;
+                    return data.session;
+                }
+            } catch (e) {
+                console.warn('Supabase getSession exception:', e);
+            }
+
+            const manual = obterSessaoNuvemManual();
+            if (!manual?.access_token) return null;
+
+            // Se houver refresh token, tenta renovar a sessão antes de usar o JWT.
+            if (manual.refresh_token) {
+                try {
+                    const { data, error } = await supabaseCliente.auth.setSession({
+                        access_token: manual.access_token,
+                        refresh_token: manual.refresh_token
+                    });
+                    if (!error && data?.session?.access_token) {
+                        sessaoNuvemManual = data.session;
+                        salvarSessaoNuvemManual(data.session);
+                        return data.session;
+                    }
+                } catch (e) {
+                    console.warn('Renovação da sessão Supabase:', e);
+                }
+            }
+            return manual;
+        }
+
+        async function obterHeadersRestNuvem(session) {
+            if (!session?.access_token || !session?.user?.id) {
+                throw new Error('Sessão da nuvem inválida ou expirada. Entre novamente na conta de sincronização.');
+            }
+            return {
+                'apikey': SUPABASE_PUBLISHABLE_KEY,
+                'Authorization': 'Bearer ' + session.access_token,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
         }
 
         // Tenta restaurar a sessão manual assim que o cliente Supabase estiver pronto.
@@ -1879,20 +1938,7 @@
         }
 
         async function obterSessaoNuvem() {
-            if (!supabaseCliente && !inicializarSupabaseCliente()) return null;
-            try {
-                const { data, error } = await supabaseCliente.auth.getSession();
-                if (error) console.warn('Supabase getSession:', error);
-                if (data?.session) {
-                    sessaoNuvemManual = data.session;
-                    return data.session;
-                }
-                // Fallback para a sessão que gravamos no localStorage do site.
-                return await restaurarSessaoNuvemManual();
-            } catch (e) {
-                console.warn('Supabase getSession exception:', e);
-                return await restaurarSessaoNuvemManual();
-            }
+            return await obterSessaoAutenticadaNuvem();
         }
 
         function coletarPacoteNuvem() {
@@ -1925,35 +1971,35 @@
         }
 
         async function carregarPacoteNuvem() {
-            if (!supabaseCliente && !inicializarSupabaseCliente()) {
-                throw new Error('Biblioteca Supabase não foi carregada. Recarregue a página e tente novamente.');
-            }
             const session = await obterSessaoNuvem();
             if (!session) return null;
-            const { data, error } = await supabaseCliente
-                .from('planejamento_financeiro_sync')
-                .select('payload,updated_at')
-                .eq('user_id', session.user.id)
-                .maybeSingle();
-            if (error) throw error;
-            return data || null;
+            const headers = await obterHeadersRestNuvem(session);
+            const url = REST_SYNC_URL + '?select=payload,updated_at&user_id=eq.' + encodeURIComponent(session.user.id) + '&limit=1';
+            const resposta = await fetch(url, { method: 'GET', headers, cache: 'no-store' });
+            if (!resposta.ok) {
+                const texto = await resposta.text();
+                throw new Error('Supabase REST ' + resposta.status + ': ' + (texto || resposta.statusText));
+            }
+            const linhas = await resposta.json();
+            return Array.isArray(linhas) && linhas.length ? linhas[0] : null;
         }
 
         async function salvarPacoteNuvem() {
-            if (!supabaseCliente && !inicializarSupabaseCliente()) {
-                throw new Error('Biblioteca Supabase não foi carregada.');
-            }
             const session = await obterSessaoNuvem();
             if (!session) throw new Error('Este dispositivo ainda não está conectado à conta de nuvem.');
             const pacote = coletarPacoteNuvem();
             const agora = new Date().toISOString();
-            const { error } = await supabaseCliente
-                .from('planejamento_financeiro_sync')
-                .upsert(
-                    { user_id: session.user.id, payload: pacote, updated_at: agora },
-                    { onConflict: 'user_id' }
-                );
-            if (error) throw error;
+            const headers = await obterHeadersRestNuvem(session);
+            headers['Prefer'] = 'resolution=merge-duplicates,return=minimal';
+            const resposta = await fetch(REST_SYNC_URL, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ user_id: session.user.id, payload: pacote, updated_at: agora })
+            });
+            if (!resposta.ok) {
+                const texto = await resposta.text();
+                throw new Error('Supabase REST ' + resposta.status + ': ' + (texto || resposta.statusText));
+            }
             localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, agora);
             atualizarStatusNuvem('Dados enviados para a nuvem com sucesso.', true);
             return true;
@@ -2109,7 +2155,8 @@
                         console.warn('Supabase setSession exception:', setError);
                     }
                 }
-                sessaoNuvemManual = sessaoLogin;
+                sessaoNuvemManual = sessionConfirmada || sessaoLogin;
+                salvarSessaoNuvemManual(sessaoNuvemManual);
 
                 document.getElementById('statusNuvemBadge').textContent = 'Online';
                 atualizarStatusNuvem('Conta conectada neste PC. Testando acesso ao banco... ', true);
