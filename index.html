@@ -407,6 +407,31 @@
         <div id="infoBancoSeguranca" class="text-[11px] text-slate-500 mb-4 px-1"></div>
         <div id="infoNuvem" class="text-[11px] text-slate-500 mb-3 px-1 hidden"></div>
 
+        <!-- Modal redefinição da senha do Supabase Auth -->
+        <div id="modalRecuperacaoSupabase" class="fixed inset-0 bg-black/60 z-[220] hidden items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                <div class="bg-emerald-700 px-5 py-4 text-white">
+                    <h2 class="font-bold text-lg">Redefinir senha da nuvem</h2>
+                    <p class="text-xs text-emerald-100">Conta Supabase Auth</p>
+                </div>
+                <div class="p-5 space-y-4">
+                    <p class="text-sm text-slate-600">O link de recuperação foi validado. Defina agora uma nova senha para a conta usada na sincronização entre computador e celular.</p>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nova senha da sincronização</label>
+                        <input id="supabaseRecoveryPassword" type="password" autocomplete="new-password" class="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Mínimo de 6 caracteres">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Confirmar nova senha</label>
+                        <input id="supabaseRecoveryPasswordConfirm" type="password" autocomplete="new-password" class="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Repita a nova senha" onkeydown="if(event.key==='Enter') atualizarSenhaSupabase()">
+                    </div>
+                    <p id="supabaseRecoveryMsg" class="text-xs"></p>
+                    <button id="btnAtualizarSenhaSupabase" onclick="atualizarSenhaSupabase()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2.5 text-sm font-semibold">
+                        <i class="fa-solid fa-key mr-1"></i> Salvar nova senha
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal Sincronização em Nuvem -->
         <div id="modalConfiguracaoNuvem" class="fixed inset-0 bg-black/50 z-[110] hidden items-center justify-center p-4">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
@@ -1621,6 +1646,75 @@
         // A segunda verificação evita que o sistema confunda erro de carregamento
         // da biblioteca com erro da conta/tabela do banco.
         inicializarSupabaseCliente();
+
+        function mostrarRecuperacaoSupabase(msg='') {
+            const modal = document.getElementById('modalRecuperacaoSupabase');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            const senha = document.getElementById('supabaseRecoveryPassword');
+            const conf = document.getElementById('supabaseRecoveryPasswordConfirm');
+            const texto = document.getElementById('supabaseRecoveryMsg');
+            if (senha) senha.value = '';
+            if (conf) conf.value = '';
+            if (texto) { texto.textContent = msg; texto.className = 'text-xs ' + (msg ? 'text-slate-600' : ''); }
+            setTimeout(() => senha?.focus(), 100);
+        }
+
+        function fecharRecuperacaoSupabase() {
+            const modal = document.getElementById('modalRecuperacaoSupabase');
+            if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        }
+
+        async function atualizarSenhaSupabase() {
+            if (!supabaseCliente) return mensagemSupabaseRecuperacao('Serviço de nuvem não foi carregado. Verifique a conexão com a internet.', false);
+            const senha = document.getElementById('supabaseRecoveryPassword')?.value || '';
+            const conf = document.getElementById('supabaseRecoveryPasswordConfirm')?.value || '';
+            if (senha.length < 6) return mensagemSupabaseRecuperacao('A nova senha deve ter pelo menos 6 caracteres.', false);
+            if (senha !== conf) return mensagemSupabaseRecuperacao('A confirmação da nova senha não confere.', false);
+            const btn = document.getElementById('btnAtualizarSenhaSupabase');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Salvando...'; }
+            try {
+                const { error } = await supabaseCliente.auth.updateUser({ password: senha });
+                if (error) throw error;
+                mensagemSupabaseRecuperacao('Senha da conta Supabase Auth alterada com sucesso. Você já pode usar essa senha em “Nuvem → Entrar / Sincronizar”.', true);
+                if (document.getElementById('supabaseRecoveryPassword')) document.getElementById('supabaseRecoveryPassword').value = '';
+                if (document.getElementById('supabaseRecoveryPasswordConfirm')) document.getElementById('supabaseRecoveryPasswordConfirm').value = '';
+                setTimeout(() => fecharRecuperacaoSupabase(), 2200);
+            } catch (e) {
+                console.error('Supabase - falha ao atualizar senha:', e);
+                mensagemSupabaseRecuperacao('Não foi possível alterar a senha: ' + (e?.message || 'erro desconhecido'), false);
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-key mr-1"></i> Salvar nova senha'; }
+            }
+        }
+
+        function mensagemSupabaseRecuperacao(texto, ok=false) {
+            const el = document.getElementById('supabaseRecoveryMsg');
+            if (!el) return;
+            el.textContent = texto;
+            el.className = 'text-xs ' + (ok ? 'text-emerald-600' : 'text-red-600');
+        }
+
+        function configurarRecuperacaoSupabase() {
+            if (!supabaseCliente?.auth?.onAuthStateChange) return;
+            supabaseCliente.auth.onAuthStateChange((event) => {
+                if (event === 'PASSWORD_RECOVERY') {
+                    setTimeout(() => mostrarRecuperacaoSupabase('O link foi validado. Escolha uma nova senha para a conta de sincronização.'), 0);
+                }
+            });
+        }
+        configurarRecuperacaoSupabase();
+        // Fallback para links de recuperação quando o evento PASSWORD_RECOVERY
+        // já tiver sido processado antes do listener ser registrado.
+        if (/[#&?]type=recovery(?:&|$)/i.test(window.location.hash) || /[?&]type=recovery(?:&|$)/i.test(window.location.search)) {
+            setTimeout(async () => {
+                try {
+                    const { data } = await supabaseCliente.auth.getSession();
+                    if (data?.session) mostrarRecuperacaoSupabase('O link foi validado. Escolha uma nova senha para a conta de sincronização.');
+                } catch(e) { console.warn('Recuperação Supabase:', e); }
+            }, 250);
+        }
 
         function atualizarStatusNuvem(texto, ok=false) {
             const badge = document.getElementById('statusNuvemBadge');
