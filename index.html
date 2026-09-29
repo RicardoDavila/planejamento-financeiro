@@ -11,7 +11,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.3 Lançamento Rápido Mobile</title>
+    <title>Planejamento Financeiro - V4.4 Status da Nuvem Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -385,7 +385,7 @@ html.pf-mobile-device #barraRapidaMobile button small {
     opacity:.92;
     min-height:7px;
 }
-html.pf-mobile-device #statusNuvemMobile { color: rgba(255,255,255,.9); }
+html.pf-mobile-device #statusNuvemMobile { color: rgba(255,255,255,.92); font-size:.58rem !important; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 html.pf-mobile-device #btnNuvemMobile[data-status="local"] { background:#64748b !important; border-color:#64748b !important; }
 html.pf-mobile-device #btnNuvemMobile[data-status="online"] { background:#059669 !important; border-color:#059669 !important; }
 html.pf-mobile-device #btnNuvemMobile[data-status="erro"] { background:#b91c1c !important; border-color:#b91c1c !important; }
@@ -2610,6 +2610,15 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
             }
         }
 
+        function formatarHoraSincronizacao(valor) {
+            if (!valor) return '';
+            try {
+                const d = new Date(valor);
+                if (Number.isNaN(d.getTime())) return '';
+                return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            } catch (_) { return ''; }
+        }
+
         function espelharStatusNuvemMobile() {
             const badge = document.getElementById('statusNuvemBadge');
             const btn = document.getElementById('btnNuvemMobile');
@@ -2618,8 +2627,21 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
             const estado = (badge.textContent || '').trim().toLowerCase();
             const online = estado === 'online' || estado.includes('conect');
             const erro = estado.includes('falha') || estado.includes('erro');
+            const ultima = formatarHoraSincronizacao(localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '');
             btn.dataset.status = online ? 'online' : (erro ? 'erro' : 'local');
-            txt.textContent = online ? 'Online' : (erro ? 'Erro' : 'Local');
+            if (estado.includes('sincronizando')) {
+                txt.textContent = 'Sincronizando...';
+                btn.title = 'Sincronização em andamento';
+            } else if (online) {
+                txt.textContent = ultima ? 'Online • ' + ultima : 'Online';
+                btn.title = ultima ? 'Nuvem online • última sincronização às ' + ultima : 'Nuvem online';
+            } else if (erro) {
+                txt.textContent = 'Erro';
+                btn.title = 'Falha na sincronização';
+            } else {
+                txt.textContent = 'Offline';
+                btn.title = 'Sem conta de nuvem conectada neste dispositivo';
+            }
         }
         (function configurarEspelhoStatusNuvem(){
             const iniciar = () => {
