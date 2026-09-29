@@ -9,7 +9,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="application-name" content="Planejamento Financeiro">
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
-    <!-- V4.8 — Proteção de exclusões, status de sincronização e proteção contra alterações não salvas -->
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
     <title>Planejamento Financeiro - V4.5 Calendário Financeiro Mobile</title>
@@ -747,40 +746,93 @@ html.pf-mobile-device .filtros-rapidos-botoes button {
   flex: 0 0 auto; min-width: 78px; min-height: 44px;
 }
 @media (min-width: 641px) {
-  /* V4.8.5: filtros rápidos sempre visíveis no PC */
-  #filtrosRapidosMobile { display: block !important; visibility: visible !important; }
-  #filtrosRapidosMobile .filtros-rapidos-botoes { display:flex !important; flex-wrap: wrap; overflow: visible; }
-  #filtrosRapidosMobile .filtros-rapidos-botoes button { display:inline-flex !important; flex: 0 0 auto; }
+  html:not(.pf-mobile-device) #filtrosRapidosMobile { display: none !important; }
 }
 </style>
 
-<style id="v484-acoes-rapidas-pc">
-/* V4.8.4 - mesmas ações rápidas do celular também no PC */
-@media (min-width: 641px) {
-  #filtrosRapidosMobile {
-    padding-top: 2px;
-    border-top: 1px solid #e2e8f0;
+<style id="v486-filtros-organizados">
+/* V4.8.6 — organização visual dos filtros no celular e desktop */
+.pf-filtros-cabecalho {
+  display:flex; align-items:center; justify-content:space-between;
+  margin: 2px 0 0;
+}
+.pf-filtros-titulo {
+  display:flex; align-items:center; gap:7px;
+  font-size:13px; font-weight:800; color:#334155;
+}
+.pf-filtros-titulo i { color:#0f766e; }
+.pf-filtros-subtitulo {
+  margin-top:2px; font-size:11px; color:#64748b;
+}
+.pf-filtros-painel {
+  background:linear-gradient(180deg,#f8fafc 0%,#f1f5f9 100%) !important;
+  border-color:#e2e8f0 !important;
+}
+.pf-filtros-painel > div { min-width:0; }
+.filtros-rapidos-mobile {
+  background:#ffffff; border:1px solid #e2e8f0; border-radius:14px;
+  padding:10px 12px; margin-top:2px;
+  box-shadow:0 1px 2px rgba(15,23,42,.04);
+}
+.filtros-rapidos-titulo {
+  display:flex; align-items:center; gap:6px;
+  font-size:11px !important; font-weight:800 !important;
+  color:#334155 !important; margin-bottom:8px !important;
+}
+.filtros-rapidos-titulo::before {
+  content:""; width:4px; height:16px; border-radius:999px; background:#0f766e;
+}
+.filtros-rapidos-botoes button {
+  box-shadow:0 1px 2px rgba(15,23,42,.06);
+  transition:all .15s ease;
+}
+@media (max-width:640px), (pointer:coarse) {
+  .pf-filtros-cabecalho { margin:0 2px 2px; }
+  .pf-filtros-titulo { font-size:14px; }
+  .pf-filtros-subtitulo { font-size:10px; max-width:330px; line-height:1.35; }
+  .pf-filtros-painel {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:10px !important; padding:12px !important;
   }
-  #filtrosRapidosMobile .filtros-rapidos-titulo {
-    font-size: 12px;
-    margin-bottom: 8px;
+  .pf-filtros-painel > div:nth-child(1),
+  .pf-filtros-painel > div:nth-child(4),
+  .pf-filtros-painel > div:nth-child(5),
+  .pf-filtros-painel > div:nth-child(6) { grid-column:span 1; }
+  .pf-filtros-painel > div:nth-child(2),
+  .pf-filtros-painel > div:nth-child(3) { grid-column:span 1; }
+  .pf-filtros-painel > div:nth-child(7) { grid-column:1 / -1; }
+  .pf-filtros-painel #filtrosRapidosMobile { grid-column:1 / -1 !important; }
+  .pf-filtros-painel label { min-height:16px; display:block; }
+  .pf-filtros-painel input,
+  .pf-filtros-painel select { width:100%; box-sizing:border-box; }
+  .pf-filtros-painel #filtroBuscaRubrica,
+  .pf-filtros-painel #filtroBuscaSubItem { margin-top:6px !important; }
+  .pf-filtros-painel #limparFiltros,
+  .pf-filtros-painel button { width:100%; }
+  .filtros-rapidos-mobile { padding:11px !important; }
+  .filtros-rapidos-botoes {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px !important; overflow:visible !important; padding-bottom:0 !important;
   }
-  #filtrosRapidosMobile .filtros-rapidos-botoes button {
-    min-height: 38px;
-    padding: 8px 14px;
-    font-size: 12px;
+  .filtros-rapidos-botoes button {
+    min-width:0 !important; width:100%; min-height:42px !important;
+    padding:8px 5px !important; font-size:11px !important;
+    white-space:nowrap;
   }
+}
+@media (min-width:641px) and (pointer:fine) {
+  .pf-filtros-painel #filtrosRapidosMobile {
+    display:block !important; grid-column:1 / -1 !important;
+  }
+  .filtros-rapidos-botoes { justify-content:flex-start; }
 }
 </style>
 
 <style id="v43-lancamento-rapido">
 #atalhoLancamentoRapidoMobile { margin: 0 0 12px; }
 html.pf-mobile-device #atalhoLancamentoRapidoMobile { display:block !important; }
-html:not(.pf-mobile-device) #atalhoLancamentoRapidoMobile { display:block !important; }
-/* V4.8.5: ações rápidas também ficam disponíveis no PC. */
-@media (min-width: 641px) {
-  #atalhoLancamentoRapidoMobile { display:block !important; max-width:420px; }
-}
+html:not(.pf-mobile-device) #atalhoLancamentoRapidoMobile { display:none !important; }
 #modalLancamentoRapidoV43 { display:none; position:fixed; inset:0; z-index:220; background:rgba(15,23,42,.55); padding:16px; align-items:center; justify-content:center; }
 #modalLancamentoRapidoV43.aberto { display:flex; }
 #modalLancamentoRapidoV43 .v43-card { width:100%; max-width:460px; background:#fff; border-radius:18px; box-shadow:0 20px 50px rgba(15,23,42,.25); overflow:hidden; }
@@ -867,6 +919,20 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
     padding-left: 10px;
     padding-right: 10px;
   }
+}
+</style>
+
+<style id="v486-botao-rapido-titulo">
+.pf-btn-rapido-titulo {
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  min-height:38px; padding:8px 12px; border:0; border-radius:10px;
+  background:#059669; color:#fff; font-size:12px; font-weight:800;
+  box-shadow:0 2px 5px rgba(5,150,105,.18);
+}
+.pf-btn-rapido-titulo:hover { background:#047857; }
+@media (max-width:640px), (pointer:coarse) {
+  .pf-btn-rapido-titulo { min-height:40px; padding:8px 10px; font-size:11px; }
+  .pf-btn-rapido-titulo span { display:none; }
 }
 </style>
 
@@ -1025,11 +1091,6 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
 .botao-acao { min-height:42px; border:1px solid rgba(148,163,184,.22); border-radius:.7rem; padding:.65rem .8rem; box-shadow:0 2px 5px rgba(15,23,42,.08); font-size:.72rem; font-weight:600; letter-spacing:.01em; transition:transform .15s ease,box-shadow .15s ease,filter .15s ease; }
 .botao-acao:hover { transform:translateY(-1px); box-shadow:0 5px 12px rgba(15,23,42,.12); filter:brightness(1.03); }
 .botao-acao:active { transform:translateY(0); }
-.v48-sync-status { display:inline-flex; align-items:center; gap:.35rem; margin-top:.35rem; font-size:.7rem; font-weight:700; color:#64748b; }
-.v48-sync-status.ok { color:#047857; }
-.v48-sync-status.pendente { color:#b45309; }
-.v48-sync-status.erro { color:#b91c1c; }
-@media (max-width:639px){ .v48-sync-status { font-size:.65rem; line-height:1.2; } }
 @media (min-width:640px){ .acoes-profissionais{grid-template-columns:repeat(3,minmax(0,1fr));} }
 @media (min-width:1024px){ .acoes-profissionais{grid-template-columns:repeat(4,minmax(0,1fr)); max-width:760px;} }
 @media (max-width:639px){ .botao-acao{font-size:.68rem; padding:.55rem .5rem;} }
@@ -1044,7 +1105,6 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                     </button>
                 </h1>
                 <p id="subtituloMesAno" class="text-sm font-semibold text-blue-600 mt-1 uppercase tracking-wide"></p>
-                <div id="statusSincronizacaoV48" class="v48-sync-status" aria-live="polite"><i class="fa-solid fa-cloud"></i> Verificando sincronização...</div>
             </div>
             <div class="acoes-profissionais">
                 <button onclick="openModal()" class="botao-acao bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
@@ -1072,9 +1132,6 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <input type="file" id="inputRestaurar" accept=".json" class="hidden" onchange="restaurarBackup(event)">
                 <button onclick="sincronizarAgoraNuvem()" class="botao-acao bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Sincronizar os dados deste dispositivo com a nuvem">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar com a Nuvem
-                </button>
-                <button onclick="abrirLancamentoRapido()" class="botao-acao bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Lançamento rápido">
-                    <i class="fa-solid fa-bolt"></i> Lançamento rápido
                 </button>
                 <button onclick="abrirCalendarioFinanceiro()" class="botao-acao bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Calendário financeiro">
                     <i class="fa-solid fa-calendar-days"></i> Calendário
@@ -1313,9 +1370,20 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 overflow-hidden">
             <div class="flex flex-col gap-4 mb-6 no-print">
                 <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
-                    <h2 class="text-lg font-bold text-slate-800">Lançamentos, Rúbricas e Sub-Itens</h2>
+                    <div class="flex items-center justify-between gap-3 w-full">
+                        <h2 class="text-lg font-bold text-slate-800">Lançamentos, Rúbricas e Sub-Itens</h2>
+                        <button type="button" onclick="abrirLancamentoRapido()" class="pf-btn-rapido-titulo no-print">
+                            <i class="fa-solid fa-bolt"></i><span>Lançamento Rápido</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 bg-slate-50 p-4 rounded-xl border border-gray-200 items-end">
+                <div class="pf-filtros-cabecalho">
+                    <div>
+                        <div class="pf-filtros-titulo"><i class="fa-solid fa-sliders"></i> Filtros de lançamentos</div>
+                        <div class="pf-filtros-subtitulo">Refine os lançamentos por tipo, rubrica, sub-item, descrição ou período.</div>
+                    </div>
+                </div>
+                <div class="pf-filtros-painel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 bg-slate-50 p-4 rounded-xl border border-gray-200 items-end">
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Filtrar por Tipo</label>
                         <select id="filtroTipo" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -1403,7 +1471,7 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <h3 id="modalTitle" class="text-lg font-bold text-slate-800">Novo Lançamento</h3>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <button type="button" id="btnLancarRapidoNoModal" onclick="if (closeModal()) abrirLancamentoRapido();" class="w-full mb-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-3 shadow flex items-center justify-center gap-2 font-bold text-sm">
+            <button type="button" id="btnLancarRapidoNoModal" onclick="closeModal(); abrirLancamentoRapido();" class="w-full mb-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-3 shadow flex items-center justify-center gap-2 font-bold text-sm">
                 <i class="fa-solid fa-bolt"></i> Lançamento Rápido
             </button>
             <form id="formLancamento" onsubmit="salvarLancamento(event)" class="space-y-4">
@@ -2575,10 +2643,6 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
         let sessaoNuvemManual = null;
         let sincronizacaoNuvemTimer = null;
         let sincronizacaoNuvemEmAndamento = false;
-        let estadoFormularioV48 = null;
-        let estadoLancamentoRapidoV48 = null;
-        let formularioV48Sujo = false;
-        let lancamentoRapidoV48Sujo = false;
 
         function inicializarSupabaseCliente() {
             try {
@@ -2852,7 +2916,6 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
                 msg.textContent = texto;
                 msg.className = 'text-xs rounded-lg border p-3 ' + (ok ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-600');
             }
-            atualizarIndicadorSincronizacaoV48();
         }
 
         function formatarHoraSincronizacao(valor) {
@@ -2862,38 +2925,6 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
                 if (Number.isNaN(d.getTime())) return '';
                 return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
             } catch (_) { return ''; }
-        }
-
-        function formatarDataHoraSincronizacao(valor) {
-            if (!valor) return '';
-            try {
-                const d = new Date(valor);
-                if (Number.isNaN(d.getTime())) return '';
-                return d.toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-            } catch (_) { return ''; }
-        }
-
-        function atualizarIndicadorSincronizacaoV48() {
-            const el = document.getElementById('statusSincronizacaoV48');
-            if (!el) return;
-            const alteracao = localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
-            const sincronizacao = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
-            const estadoNuvem = (document.getElementById('statusNuvemBadge')?.textContent || '').trim().toLowerCase();
-            el.className = 'v48-sync-status';
-            if (alteracao && (!sincronizacao || alteracao > sincronizacao)) {
-                el.classList.add('pendente');
-                el.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Alterações locais aguardando sincronização';
-                el.title = 'Há alterações salvas neste dispositivo que ainda não foram confirmadas na nuvem.';
-            } else if (sincronizacao) {
-                el.classList.add('ok');
-                el.innerHTML = '<i class="fa-solid fa-circle-check"></i> Última sincronização: ' + formatarDataHoraSincronizacao(sincronizacao);
-                el.title = 'Última sincronização confirmada com a nuvem.';
-            } else if (estadoNuvem.includes('erro') || estadoNuvem.includes('falha')) {
-                el.classList.add('erro');
-                el.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Sincronização com problema';
-            } else {
-                el.innerHTML = '<i class="fa-solid fa-cloud"></i> Ainda não há sincronização confirmada';
-            }
         }
 
         function espelharStatusNuvemMobile() {
@@ -2998,7 +3029,6 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
                 throw new Error('Supabase REST ' + resposta.status + ': ' + (texto || resposta.statusText));
             }
             localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, agora);
-            atualizarIndicadorSincronizacaoV48();
             atualizarStatusNuvem('Dados enviados para a nuvem com sucesso.', true);
             return true;
         }
@@ -3260,7 +3290,6 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
             // Mantém também uma cópia mensal por compatibilidade com versões anteriores.
             localStorage.setItem(getChaveStorageAtual(), JSON.stringify(dados));
             localStorage.setItem(CHAVE_ULTIMA_ALTERACAO_LOCAL, new Date().toISOString());
-            atualizarIndicadorSincronizacaoV48();
             agendarSincronizacaoNuvem();
         }
 
@@ -3623,55 +3652,6 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
                 }
             });
             popularSelectsDinamicos();
-
-            // V4.8.1 — marca explicitamente alterações feitas pelo usuário nos formulários.
-            // Isso evita depender apenas da comparação de valores, inclusive no celular.
-            const formLancamentoV48 = document.getElementById('formLancamento');
-            if (formLancamentoV48) {
-                const marcarSujo = () => {
-                    if (!document.getElementById('modal')?.classList.contains('hidden')) {
-                        formularioV48Sujo = true;
-                    }
-                };
-                formLancamentoV48.addEventListener('input', marcarSujo);
-                formLancamentoV48.addEventListener('change', marcarSujo);
-            }
-
-            const formRapidoV48 = document.getElementById('formLancamentoRapidoV43');
-            if (formRapidoV48) {
-                const marcarRapidoSujo = () => {
-                    const modalRapido = document.getElementById('modalLancamentoRapidoV43');
-                    if (modalRapido?.classList.contains('aberto')) {
-                        lancamentoRapidoV48Sujo = true;
-                    }
-                };
-                formRapidoV48.addEventListener('input', marcarRapidoSujo);
-                formRapidoV48.addEventListener('change', marcarRapidoSujo);
-            }
-        });
-
-        // V4.8.2 — reforço da proteção de alterações não salvas no PC e no celular.
-        // Este bloco é independente de outros handlers para continuar funcionando mesmo
-        // que algum recurso secundário da página apresente erro durante a inicialização.
-        window.addEventListener('load', function(){
-            const formPrincipal = document.getElementById('formLancamento');
-            if (formPrincipal) {
-                const marcarAlteracaoPrincipal = function(){
-                    const modal = document.getElementById('modal');
-                    if (modal && !modal.classList.contains('hidden')) formularioV48Sujo = true;
-                };
-                formPrincipal.addEventListener('input', marcarAlteracaoPrincipal, true);
-                formPrincipal.addEventListener('change', marcarAlteracaoPrincipal, true);
-            }
-            const formRapido = document.getElementById('formLancamentoRapidoV43');
-            if (formRapido) {
-                const marcarAlteracaoRapida = function(){
-                    const modal = document.getElementById('modalLancamentoRapidoV43');
-                    if (modal && modal.classList.contains('aberto')) lancamentoRapidoV48Sujo = true;
-                };
-                formRapido.addEventListener('input', marcarAlteracaoRapida, true);
-                formRapido.addEventListener('change', marcarAlteracaoRapida, true);
-            }
         });
 
         function formatarDataAlerta(dataIso) {
@@ -4149,26 +4129,6 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             if (b) b.style.display = (mostrar && document.documentElement.classList.contains('pf-mobile-device')) ? 'flex' : 'none';
         }
 
-        function capturarEstadoFormularioV48() {
-            const ids = ['vencimento','dataPg','tipo','categoria','subItem','descricao','valor','status','observacao'];
-            return ids.reduce((o,id)=>{ const el=document.getElementById(id); o[id]=el?String(el.value??''):''; return o; },{});
-        }
-        function formularioV48TemAlteracoes() {
-            if (formularioV48Sujo) return true;
-            if (!estadoFormularioV48) return false;
-            const atual = capturarEstadoFormularioV48();
-            return JSON.stringify(atual) !== JSON.stringify(estadoFormularioV48);
-        }
-        function capturarEstadoRapidoV48() {
-            const ids = ['v43Data','v43Tipo','v43Categoria','v43SubItem','v43Descricao','v43Valor'];
-            return ids.reduce((o,id)=>{ const el=document.getElementById(id); o[id]=el?String(el.value??''):''; return o; },{});
-        }
-        function formularioRapidoV48TemAlteracoes() {
-            if (lancamentoRapidoV48Sujo) return true;
-            if (!estadoLancamentoRapidoV48) return false;
-            return JSON.stringify(capturarEstadoRapidoV48()) !== JSON.stringify(estadoLancamentoRapidoV48);
-        }
-
         function openModal() {
             atualizarBotaoLancamentoRapidoModal(true);
             popularSelectsDinamicos();
@@ -4180,8 +4140,6 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             document.getElementById('dataPg').value = hoje;
             document.getElementById('status').value = 'Pago';
             document.getElementById('modal').classList.remove('hidden');
-            estadoFormularioV48 = capturarEstadoFormularioV48();
-            formularioV48Sujo = false;
         }
 
         function editarLancamento(id) {
@@ -4201,25 +4159,11 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             document.getElementById('status').value = item.status;
             document.getElementById('observacao').value = item.observacao || '';
             document.getElementById('modal').classList.remove('hidden');
-            estadoFormularioV48 = capturarEstadoFormularioV48();
-            formularioV48Sujo = false;
         }
 
         function closeModal() {
-            if (formularioV48TemAlteracoes()) {
-                const confirmar = confirm('Há alterações não salvas neste lançamento.\n\nDeseja sair sem salvar?');
-                if (!confirmar) {
-                    // Cancelar = permanecer no formulário e preservar exatamente o que foi digitado.
-                    const modal = document.getElementById('modal');
-                    if (modal) modal.classList.remove('hidden');
-                    return false;
-                }
-            }
             atualizarBotaoLancamentoRapidoModal(false);
             document.getElementById('modal').classList.add('hidden');
-            estadoFormularioV48 = null;
-            formularioV48Sujo = false;
-            return true;
         }
 
         function salvarLancamento(event) {
@@ -4259,9 +4203,6 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             }
 
             salvarLocalStorage();
-            // O salvamento concluiu as alterações; não deve disparar o aviso ao fechar o modal.
-            estadoFormularioV48 = null;
-            formularioV48Sujo = false;
             registrarHistorico(editId ? 'ALTERAÇÃO' : 'INCLUSÃO', novo.id, `${editId ? 'Lançamento alterado' : 'Novo lançamento'}: ${novo.descricao || ''} | ${formatarMoeda(Number(novo.valor)||0)}`);
             popularSelectsDinamicos();
             renderTable();
@@ -4667,18 +4608,10 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             document.getElementById('v43Valor').value = '';
             document.getElementById('modalLancamentoRapidoV43').classList.add('aberto');
             document.getElementById('modalLancamentoRapidoV43').setAttribute('aria-hidden','false');
-            estadoLancamentoRapidoV48 = capturarEstadoRapidoV48();
-            lancamentoRapidoV48Sujo = false;
         }
         function fecharLancamentoRapido(){
-            if (formularioRapidoV48TemAlteracoes()) {
-                const confirmar = confirm('Há alterações não salvas neste lançamento rápido.\n\nDeseja sair sem salvar?');
-                if (!confirmar) return;
-            }
             const m=document.getElementById('modalLancamentoRapidoV43');
             if(m){m.classList.remove('aberto');m.setAttribute('aria-hidden','true');}
-            estadoLancamentoRapidoV48 = null;
-            lancamentoRapidoV48Sujo = false;
         }
         function salvarLancamentoRapido(event){
             event.preventDefault();
@@ -4694,9 +4627,6 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             document.getElementById('status').value=(document.getElementById('v43Tipo').value==='Receita'?'Não Recebido':'Pendente');
             document.getElementById('observacao').value='';
             salvarLancamento({preventDefault:function(){}});
-            // O lançamento já foi salvo pela rotina oficial; não perguntar novamente ao fechar.
-            estadoLancamentoRapidoV48 = null;
-            lancamentoRapidoV48Sujo = false;
             fecharLancamentoRapido();
         }
 
@@ -4771,7 +4701,6 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             // ao abrir o projeto, sem depender do botão Atualizar.
             atualizarPainelGerencial();
             atualizarInfoBanco();
-            atualizarIndicadorSincronizacaoV48();
         }
 
         // Atualização automática periódica: útil quando o PC e o celular ficam abertos ao mesmo tempo.
@@ -4793,15 +4722,6 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
                 }
             } catch(e) { console.warn('Sincronização automática:', e); }
         }, 15000);
-
-        window.addEventListener('beforeunload', function(event) {
-            const modalAberto = !document.getElementById('modal')?.classList.contains('hidden');
-            const rapidoAberto = document.getElementById('modalLancamentoRapidoV43')?.classList.contains('aberto');
-            if ((modalAberto && formularioV48TemAlteracoes()) || (rapidoAberto && formularioRapidoV48TemAlteracoes())) {
-                event.preventDefault();
-                event.returnValue = '';
-            }
-        });
 
         window.onload = function() {
             inicializarProtecaoAcesso();
