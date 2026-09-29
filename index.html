@@ -747,10 +747,10 @@ html.pf-mobile-device .filtros-rapidos-botoes button {
   flex: 0 0 auto; min-width: 78px; min-height: 44px;
 }
 @media (min-width: 641px) {
-  /* V4.8.4: filtros rápidos também disponíveis no PC */
-  #filtrosRapidosMobile { display: block !important; }
-  #filtrosRapidosMobile .filtros-rapidos-botoes { flex-wrap: wrap; overflow: visible; }
-  #filtrosRapidosMobile .filtros-rapidos-botoes button { flex: 0 0 auto; }
+  /* V4.8.5: filtros rápidos sempre visíveis no PC */
+  #filtrosRapidosMobile { display: block !important; visibility: visible !important; }
+  #filtrosRapidosMobile .filtros-rapidos-botoes { display:flex !important; flex-wrap: wrap; overflow: visible; }
+  #filtrosRapidosMobile .filtros-rapidos-botoes button { display:inline-flex !important; flex: 0 0 auto; }
 }
 </style>
 
@@ -776,7 +776,11 @@ html.pf-mobile-device .filtros-rapidos-botoes button {
 <style id="v43-lancamento-rapido">
 #atalhoLancamentoRapidoMobile { margin: 0 0 12px; }
 html.pf-mobile-device #atalhoLancamentoRapidoMobile { display:block !important; }
-html:not(.pf-mobile-device) #atalhoLancamentoRapidoMobile { display:none !important; }
+html:not(.pf-mobile-device) #atalhoLancamentoRapidoMobile { display:block !important; }
+/* V4.8.5: ações rápidas também ficam disponíveis no PC. */
+@media (min-width: 641px) {
+  #atalhoLancamentoRapidoMobile { display:block !important; max-width:420px; }
+}
 #modalLancamentoRapidoV43 { display:none; position:fixed; inset:0; z-index:220; background:rgba(15,23,42,.55); padding:16px; align-items:center; justify-content:center; }
 #modalLancamentoRapidoV43.aberto { display:flex; }
 #modalLancamentoRapidoV43 .v43-card { width:100%; max-width:460px; background:#fff; border-radius:18px; box-shadow:0 20px 50px rgba(15,23,42,.25); overflow:hidden; }
