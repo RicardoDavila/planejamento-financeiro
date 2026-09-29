@@ -11,7 +11,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.1 Gráficos Mobile</title>
+    <title>Planejamento Financeiro - V4.2 Filtros Rápidos Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -720,6 +720,36 @@ html.pf-mobile-device .lancamento-card-mobile .badge-mobile {
 }
 </style>
 
+
+<style id="mobile-filtros-rapidos-v42">
+/* V4.2 - Filtros rápidos para celular */
+.filtros-rapidos-mobile { margin-top: 2px; }
+.filtros-rapidos-titulo { font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px; }
+.filtros-rapidos-botoes { display: flex; gap: 7px; flex-wrap: wrap; }
+.filtros-rapidos-botoes button {
+  border: 1px solid #cbd5e1; background: #ffffff; color: #334155;
+  border-radius: 999px; padding: 9px 12px; font-size: 12px; font-weight: 700;
+  min-height: 40px; cursor: pointer;
+}
+.filtros-rapidos-botoes button.ativo { background: #0f172a; color: #fff; border-color: #0f172a; }
+@media (max-width: 640px) {
+  html.pf-mobile-device #filtrosRapidosMobile {
+    display: block !important;
+    overflow: hidden;
+  }
+  html.pf-mobile-device .filtros-rapidos-botoes {
+    flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  html.pf-mobile-device .filtros-rapidos-botoes::-webkit-scrollbar { display: none; }
+  html.pf-mobile-device .filtros-rapidos-botoes button {
+    flex: 0 0 auto; min-width: 78px; min-height: 44px;
+  }
+}
+@media (min-width: 641px) {
+  #filtrosRapidosMobile { display: none !important; }
+}
+</style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
     <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
@@ -1180,6 +1210,17 @@ html.pf-mobile-device .lancamento-card-mobile .badge-mobile {
                         <button onclick="limparFiltros()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1">
                             <i class="fa-solid fa-rotate-left"></i> Limpar
                         </button>
+                    </div>
+                    <div id="filtrosRapidosMobile" class="filtros-rapidos-mobile lg:col-span-5" aria-label="Filtros rápidos">
+                        <div class="filtros-rapidos-titulo">Período rápido</div>
+                        <div class="filtros-rapidos-botoes">
+                            <button type="button" onclick="aplicarFiltroRapido('hoje')">Hoje</button>
+                            <button type="button" onclick="aplicarFiltroRapido('7dias')">7 dias</button>
+                            <button type="button" onclick="aplicarFiltroRapido('esteMes')">Este mês</button>
+                            <button type="button" onclick="aplicarFiltroRapido('proximoMes')">Próximo mês</button>
+                            <button type="button" onclick="aplicarFiltroRapido('atrasados')">Atrasados</button>
+                            <button type="button" onclick="aplicarFiltroRapido('todos')">Todos</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3357,6 +3398,67 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             const dataInicio = document.getElementById('filtroDataInicio')?.value || '';
             const dataFim = document.getElementById('filtroDataFim')?.value || '';
             return tipo !== 'Todos' || rubrica !== 'Todas' || subItem !== 'Todos' || descricao !== '' || buscaRubrica !== '' || buscaSubItem !== '' || dataInicio !== '' || dataFim !== '';
+        }
+
+
+        function definirDatasFiltroRapido(inicio, fim, chaveAtiva) {
+            const campoInicio = document.getElementById('filtroDataInicio');
+            const campoFim = document.getElementById('filtroDataFim');
+            if (!campoInicio || !campoFim) return;
+            campoInicio.value = inicio || '';
+            campoFim.value = fim || '';
+
+            document.querySelectorAll('#filtrosRapidosMobile button').forEach(btn => btn.classList.remove('ativo'));
+            const botao = document.querySelector(`#filtrosRapidosMobile button[onclick="aplicarFiltroRapido('${chaveAtiva}')"]`);
+            if (botao) botao.classList.add('ativo');
+
+            filtrosPainelAtivadosPeloUsuario = true;
+            if (inicio) {
+                const partes = inicio.split('-');
+                atualizarCabecalhoMesAno(partes[0], parseInt(partes[1]));
+            }
+            renderTable();
+        }
+
+        function aplicarFiltroRapido(opcao) {
+            const hoje = new Date();
+            hoje.setHours(0,0,0,0);
+            const iso = d => {
+                const ano = d.getFullYear();
+                const mes = String(d.getMonth()+1).padStart(2,'0');
+                const dia = String(d.getDate()).padStart(2,'0');
+                return `${ano}-${mes}-${dia}`;
+            };
+            let inicio = '', fim = '';
+
+            if (opcao === 'hoje') {
+                inicio = fim = iso(hoje);
+            } else if (opcao === '7dias') {
+                const fimData = new Date(hoje);
+                fimData.setDate(fimData.getDate() + 6);
+                inicio = iso(hoje);
+                fim = iso(fimData);
+            } else if (opcao === 'esteMes') {
+                const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                const fimMes = new Date(hoje.getFullYear(), hoje.getMonth()+1, 0);
+                inicio = iso(inicioMes);
+                fim = iso(fimMes);
+            } else if (opcao === 'proximoMes') {
+                const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth()+1, 1);
+                const fimMes = new Date(hoje.getFullYear(), hoje.getMonth()+2, 0);
+                inicio = iso(inicioMes);
+                fim = iso(fimMes);
+            } else if (opcao === 'atrasados') {
+                const ontem = new Date(hoje);
+                ontem.setDate(ontem.getDate() - 1);
+                inicio = '';
+                fim = iso(ontem);
+            } else if (opcao === 'todos') {
+                inicio = '';
+                fim = '';
+            }
+
+            definirDatasFiltroRapido(inicio, fim, opcao);
         }
 
         function getFilteredTransactions() {
