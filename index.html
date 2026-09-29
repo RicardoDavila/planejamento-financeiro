@@ -1649,7 +1649,13 @@
         const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_n_k8Yggb0xq8ESLo0rYVsw_SZ5LTSpJ';
         const CHAVE_ULTIMA_ALTERACAO_LOCAL = 'planejamento_financeiro_ultima_alteracao_local';
         const CHAVE_ULTIMA_SINCRONIZACAO = 'planejamento_financeiro_ultima_sincronizacao_nuvem';
+        // V3.3: armazenamento de contingência da sessão.
+        // Se o storage interno do Supabase não persistir no navegador,
+        // guardamos os tokens da sessão no localStorage do próprio site e
+        // restauramos a sessão na próxima abertura.
+        const CHAVE_SESSAO_NUVEM_MANUAL = 'planejamento-financeiro-supabase-session-v3';
         let supabaseCliente = null;
+        let sessaoNuvemManual = null;
         let sincronizacaoNuvemTimer = null;
         let sincronizacaoNuvemEmAndamento = false;
 
@@ -1660,7 +1666,7 @@
                     return false;
                 }
                 if (supabaseCliente) return true;
-                // V3.2: força o armazenamento da sessão no localStorage do próprio domínio.
+                // V3.3: força o armazenamento da sessão no localStorage do próprio domínio.
                 // Isso evita que a sessão do PC seja perdida ao recarregar o GitHub Pages.
                 const storage = window.localStorage;
                 supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
@@ -1672,7 +1678,7 @@
                         storage,
                         flowType: 'pkce'
                     },
-                    global: { headers: { 'x-client-info': 'planejamento-financeiro-v3.2' } }
+                    global: { headers: { 'x-client-info': 'planejamento-financeiro-v3.3' } }
                 });
                 return true;
             } catch (e) {
@@ -1703,6 +1709,71 @@
             });
         }
         configurarEventosAuthNuvem();
+
+        function salvarSessaoNuvemManual(sessao) {
+            try {
+                if (!sessao?.access_token || !sessao?.refresh_token) return false;
+                const registro = {
+                    access_token: sessao.access_token,
+                    refresh_token: sessao.refresh_token,
+                    expires_at: sessao.expires_at || null,
+                    expires_in: sessao.expires_in || null,
+                    token_type: sessao.token_type || 'bearer',
+                    user: sessao.user || null,
+                    gravada_em: new Date().toISOString()
+                };
+                localStorage.setItem(CHAVE_SESSAO_NUVEM_MANUAL, JSON.stringify(registro));
+                sessaoNuvemManual = registro;
+                return true;
+            } catch (e) {
+                console.error('Falha ao gravar sessão manual:', e);
+                return false;
+            }
+        }
+
+        function obterSessaoNuvemManual() {
+            try {
+                if (sessaoNuvemManual?.access_token) return sessaoNuvemManual;
+                const salvo = localStorage.getItem(CHAVE_SESSAO_NUVEM_MANUAL);
+                if (!salvo) return null;
+                const registro = JSON.parse(salvo);
+                if (!registro?.access_token || !registro?.refresh_token) return null;
+                sessaoNuvemManual = registro;
+                return registro;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function restaurarSessaoNuvemManual() {
+            const sessao = obterSessaoNuvemManual();
+            if (!sessao || !supabaseCliente) return null;
+            try {
+                const { data, error } = await supabaseCliente.auth.setSession({
+                    access_token: sessao.access_token,
+                    refresh_token: sessao.refresh_token
+                });
+                if (error) throw error;
+                const ativa = data?.session || sessao;
+                sessaoNuvemManual = ativa;
+                return ativa;
+            } catch (e) {
+                console.warn('Não foi possível restaurar a sessão manual:', e);
+                return null;
+            }
+        }
+
+        // Tenta restaurar a sessão manual assim que o cliente Supabase estiver pronto.
+        setTimeout(() => {
+            restaurarSessaoNuvemManual().then(sessao => {
+                if (sessao?.user) {
+                    const badge = document.getElementById('statusNuvemBadge');
+                    if (badge) badge.textContent = 'Online';
+                    const emailEl = document.getElementById('nuvemEmail');
+                    if (emailEl && !emailEl.value) emailEl.value = sessao.user.email || '';
+                }
+            });
+        }, 150);
 
         function mostrarRecuperacaoSupabase(msg='') {
             const modal = document.getElementById('modalRecuperacaoSupabase');
@@ -1787,11 +1858,16 @@
             if (!supabaseCliente && !inicializarSupabaseCliente()) return null;
             try {
                 const { data, error } = await supabaseCliente.auth.getSession();
-                if (error) { console.error('Supabase getSession:', error); return null; }
-                return data?.session || null;
+                if (error) console.warn('Supabase getSession:', error);
+                if (data?.session) {
+                    sessaoNuvemManual = data.session;
+                    return data.session;
+                }
+                // Fallback para a sessão que gravamos no localStorage do site.
+                return await restaurarSessaoNuvemManual();
             } catch (e) {
-                console.error('Supabase getSession exception:', e);
-                return null;
+                console.warn('Supabase getSession exception:', e);
+                return await restaurarSessaoNuvemManual();
             }
         }
 
@@ -1979,16 +2055,24 @@
                 if (error) throw error;
                 if (!data?.session?.access_token) throw new Error('O Supabase aceitou o login, mas não devolveu uma sessão. Verifique se a conta está confirmada.');
 
-                // Confirma explicitamente a sessão no armazenamento local do PC.
-                const { error: setError } = await supabaseCliente.auth.setSession({
-                    access_token: data.session.access_token,
-                    refresh_token: data.session.refresh_token
-                });
-                if (setError) throw setError;
-                const sessionConfirmada = await obterSessaoNuvem();
-                if (!sessionConfirmada?.user?.id) {
-                    throw new Error('Login realizado, mas a sessão não pôde ser gravada neste navegador. Verifique se o armazenamento do site está permitido no Chrome.');
+                // V3.3: não dependemos exclusivamente do storage interno do Supabase.
+                // O próprio retorno do login já contém uma sessão válida; gravamos essa
+                // sessão no localStorage do site e a restauramos nas próximas aberturas.
+                const sessaoLogin = data.session;
+                if (!salvarSessaoNuvemManual(sessaoLogin)) {
+                    throw new Error('O login foi aceito, mas o navegador não permitiu gravar a sessão local.');
                 }
+                try {
+                    const { error: setError } = await supabaseCliente.auth.setSession({
+                        access_token: sessaoLogin.access_token,
+                        refresh_token: sessaoLogin.refresh_token
+                    });
+                    if (setError) console.warn('Supabase setSession:', setError);
+                } catch (setError) {
+                    console.warn('Supabase setSession exception:', setError);
+                }
+                const sessionConfirmada = sessaoLogin;
+                sessaoNuvemManual = sessaoLogin;
 
                 document.getElementById('statusNuvemBadge').textContent = 'Online';
                 atualizarStatusNuvem('Conta conectada neste PC. Testando acesso ao banco... ', true);
