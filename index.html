@@ -532,112 +532,148 @@ html.pf-mobile-device #tabelaLancamentosWrapper tbody td:last-child button {
 
 
 <style id="mobile-layout-v39-cards">
-/* V3.9 — Lançamentos em cartões no celular. Desktop permanece com tabela. */
+/* V3.9.1 — Lançamentos em cartões no celular.
+   Usa a classe pf-mobile-device em vez de depender do viewport CSS.
+   Assim funciona também no PWA Android quando o viewport reportar largura > 640px. */
 #cartoesLancamentosMobile { display:none; }
-@media (max-width: 640px) {
-  html.pf-mobile-device #tabelaLancamentosWrapper { display:none !important; }
-  html.pf-mobile-device #cartoesLancamentosMobile {
-    display:flex !important;
-    flex-direction:column;
-    gap:10px;
-    margin-top:4px;
-  }
-  html.pf-mobile-device .lancamento-card-mobile {
-    background:#fff;
-    border:1px solid #e2e8f0;
-    border-radius:14px;
-    padding:12px;
-    box-shadow:0 2px 8px rgba(15,23,42,.06);
-  }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-topo {
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:8px;
-    padding-bottom:9px;
-    margin-bottom:9px;
-    border-bottom:1px solid #e5e7eb;
-  }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-data {
-    font-size:15px;
-    font-weight:800;
-    color:#0f172a;
-  }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-subdata {
-    margin-top:2px;
-    font-size:11px;
-    color:#64748b;
-  }
+
+html.pf-mobile-device #tabelaLancamentosWrapper {
+  display:none !important;
+}
+
+html.pf-mobile-device #cartoesLancamentosMobile {
+  display:flex !important;
+  flex-direction:column;
+  gap:10px;
+  margin-top:4px;
+}
+
+html.pf-mobile-device .lancamento-card-mobile {
+  display:block;
+  width:100%;
+  box-sizing:border-box;
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:12px;
+  box-shadow:0 2px 8px rgba(15,23,42,.06);
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-topo {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:8px;
+  padding-bottom:9px;
+  margin-bottom:9px;
+  border-bottom:1px solid #e5e7eb;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-data {
+  font-size:15px;
+  font-weight:800;
+  color:#0f172a;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-subdata {
+  margin-top:2px;
+  font-size:11px;
+  color:#64748b;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px 12px;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-item {
+  min-width:0;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-item.full {
+  grid-column:1 / -1;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-label {
+  display:block;
+  margin-bottom:2px;
+  font-size:10px;
+  line-height:1.1;
+  font-weight:800;
+  color:#64748b;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-value {
+  font-size:13px;
+  line-height:1.3;
+  color:#1e293b;
+  overflow-wrap:anywhere;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-valor {
+  font-size:16px;
+  font-weight:800;
+  color:#0f172a;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-acoes {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:11px;
+  padding-top:10px;
+  border-top:1px solid #e5e7eb;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-acoes button {
+  min-height:44px !important;
+  border-radius:9px;
+  color:#fff;
+  font-size:13px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-editar {
+  background:#f59e0b;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-excluir {
+  background:#f43f5e;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .lcm-vazio {
+  padding:18px 12px;
+  text-align:center;
+  color:#64748b;
+  background:#f8fafc;
+  border:1px dashed #cbd5e1;
+  border-radius:12px;
+}
+
+html.pf-mobile-device .lancamento-card-mobile .badge-mobile {
+  display:inline-flex;
+  align-items:center;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:10px;
+  line-height:1;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+@media (max-width:380px) {
   html.pf-mobile-device .lancamento-card-mobile .lcm-grid {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:9px 12px;
-  }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-item {
-    min-width:0;
+    grid-template-columns:1fr;
   }
   html.pf-mobile-device .lancamento-card-mobile .lcm-item.full {
-    grid-column:1 / -1;
-  }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-label {
-    display:block;
-    margin-bottom:2px;
-    font-size:10px;
-    line-height:1.1;
-    font-weight:800;
-    color:#64748b;
-    text-transform:uppercase;
-    letter-spacing:.03em;
-  }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-value {
-    font-size:13px;
-    line-height:1.3;
-    color:#1e293b;
-    overflow-wrap:anywhere;
-  }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-valor {
-    font-size:16px;
-    font-weight:800;
-    color:#0f172a;
-  }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-acoes {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-top:11px;
-    padding-top:10px;
-    border-top:1px solid #e5e7eb;
-  }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-acoes button {
-    min-height:44px !important;
-    border-radius:9px;
-    color:#fff;
-    font-size:13px;
-    font-weight:700;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:7px;
-  }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-editar { background:#f59e0b; }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-excluir { background:#f43f5e; }
-  html.pf-mobile-device .lancamento-card-mobile .lcm-vazio {
-    padding:18px 12px;
-    text-align:center;
-    color:#64748b;
-    background:#f8fafc;
-    border:1px dashed #cbd5e1;
-    border-radius:12px;
-  }
-  html.pf-mobile-device .lancamento-card-mobile .badge-mobile {
-    display:inline-flex;
-    align-items:center;
-    padding:4px 8px;
-    border-radius:999px;
-    font-size:10px;
-    line-height:1;
-    font-weight:800;
-    white-space:nowrap;
+    grid-column:auto;
   }
 }
 </style>
