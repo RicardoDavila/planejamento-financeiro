@@ -11,7 +11,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V3.5 Mobile</title>
+    <title>Planejamento Financeiro - V3.6 Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -351,6 +351,23 @@
 }
 </style>
 
+
+<style id="mobile-layout-v36-device">
+/* V3.6: layout mobile robusto para Android/iOS, sem alterar dados ou Supabase. */
+html.pf-mobile-device body { font-size:14px; overflow-x:hidden; padding-bottom:76px !important; background:#f1f5f9; }
+html.pf-mobile-device #barraRapidaMobile { position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; z-index:95 !important; display:grid !important; grid-template-columns:repeat(5,minmax(0,1fr)) !important; gap:4px !important; padding:7px 6px calc(7px + env(safe-area-inset-bottom)) !important; background:rgba(255,255,255,.97) !important; border-top:1px solid #cbd5e1 !important; box-shadow:0 -6px 18px rgba(15,23,42,.10) !important; backdrop-filter:blur(8px); }
+html.pf-mobile-device #barraRapidaMobile button { min-width:0 !important; min-height:52px !important; border-radius:10px !important; display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:3px !important; font-size:.62rem !important; line-height:1.05 !important; font-weight:700 !important; -webkit-tap-highlight-color:transparent; }
+html.pf-mobile-device #barraRapidaMobile button i { font-size:1rem !important; }
+html.pf-mobile-device #appConteudo > .max-w-7xl { padding-left:8px !important; padding-right:8px !important; }
+html.pf-mobile-device #painelResumoGerencial { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:7px !important; }
+html.pf-mobile-device #painelResumoGerencial > div { min-height:66px !important; padding:9px !important; }
+html.pf-mobile-device input, html.pf-mobile-device select, html.pf-mobile-device textarea { font-size:16px !important; min-height:42px; }
+html.pf-mobile-device #tabelaLancamentosWrapper, html.pf-mobile-device .overflow-x-auto { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+html.pf-mobile-device #tabelaLancamentosWrapper table { min-width:900px !important; }
+html.pf-mobile-device #modal > div, html.pf-mobile-device #modalGraficos > div, html.pf-mobile-device #modalRelatorioGerencial > div, html.pf-mobile-device #modalConfiguracaoNuvem > div, html.pf-mobile-device #modalConfiguracaoSeguranca > div, html.pf-mobile-device #modalRecuperacaoSupabase > div { width:100% !important; max-width:none !important; max-height:calc(100dvh - 12px) !important; border-radius:14px !important; }
+html.pf-mobile-device .acoes-profissionais { display:none !important; }
+html.pf-mobile-device body.mobile-acoes-abertas .acoes-profissionais { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:7px !important; width:100% !important; max-width:none !important; padding:8px !important; margin-top:4px !important; max-height:48vh; overflow-y:auto; }
+</style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
     <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
@@ -1054,6 +1071,16 @@
                 btn.style.display = 'none';
             });
         }
+        // V3.6: detectar aparelho móvel para aplicar o layout mesmo com viewport CSS >640px.
+        (function(){
+            try {
+                const ua = navigator.userAgent || '';
+                const ehMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) ||
+                    (window.matchMedia && window.matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) <= 1100);
+                if (ehMobile) document.documentElement.classList.add('pf-mobile-device');
+            } catch(e) {}
+        })();
+
         if (location.protocol === 'https:' || location.hostname === 'localhost') {
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
