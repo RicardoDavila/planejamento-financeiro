@@ -829,6 +829,49 @@ html.pf-mobile-device .filtros-rapidos-botoes button {
 }
 </style>
 
+
+<style id="v487-filtros-layout">
+/* V4.8.7 — layout mais organizado dos filtros, especialmente no celular */
+.pf-filtros-layout .pf-filtro-item { min-width:0; }
+@media (min-width:641px) and (pointer:fine) {
+  .pf-filtros-layout { grid-template-columns:repeat(5,minmax(0,1fr)) !important; }
+  .pf-filtro-tipo { grid-column:1; grid-row:1; }
+  .pf-filtro-rubrica-select { grid-column:2; grid-row:1; }
+  .pf-filtro-subitem-select { grid-column:3; grid-row:1; }
+  .pf-filtro-descricao { grid-column:4; grid-row:1; }
+  .pf-filtro-limpar { grid-column:5; grid-row:1; }
+  .pf-filtro-busca-rubrica { grid-column:2; grid-row:2; }
+  .pf-filtro-busca-subitem { grid-column:3; grid-row:2; }
+  .pf-filtro-data-inicio { grid-column:1; grid-row:2; }
+  .pf-filtro-data-fim { grid-column:4; grid-row:2; }
+  .pf-filtro-rapidos { grid-column:1 / -1 !important; grid-row:3; }
+}
+@media (max-width:640px), (pointer:coarse) {
+  .pf-filtros-layout {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:10px !important;
+    padding:12px !important;
+  }
+  .pf-filtro-tipo { grid-column:1; grid-row:1; }
+  .pf-filtro-rubrica-select { grid-column:2; grid-row:1; }
+  .pf-filtro-busca-rubrica { grid-column:1; grid-row:2; }
+  .pf-filtro-busca-subitem { grid-column:2; grid-row:2; }
+  .pf-filtro-subitem-select { grid-column:1; grid-row:3; }
+  .pf-filtro-descricao { grid-column:2; grid-row:3; }
+  .pf-filtro-data-inicio { grid-column:1; grid-row:4; }
+  .pf-filtro-data-fim { grid-column:2; grid-row:4; }
+  .pf-filtro-limpar { grid-column:1 / -1; grid-row:5; }
+  .pf-filtro-rapidos { grid-column:1 / -1 !important; grid-row:6; }
+  .pf-filtros-layout label { min-height:16px; display:block; }
+  .pf-filtros-layout input, .pf-filtros-layout select { width:100%; box-sizing:border-box; min-width:0; }
+  .pf-filtros-layout .pf-filtro-item input,
+  .pf-filtros-layout .pf-filtro-item select { min-height:42px; }
+  .pf-filtro-busca-rubrica input,
+  .pf-filtro-busca-subitem input { font-size:11px !important; }
+  .pf-filtro-limpar button { min-height:42px; }
+  .pf-filtro-rapidos { margin-top:0; }
+}
+</style>
 <style id="v43-lancamento-rapido">
 #atalhoLancamentoRapidoMobile { margin: 0 0 12px; }
 html.pf-mobile-device #atalhoLancamentoRapidoMobile { display:block !important; }
@@ -1383,8 +1426,8 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                         <div class="pf-filtros-subtitulo">Refine os lançamentos por tipo, rubrica, sub-item, descrição ou período.</div>
                     </div>
                 </div>
-                <div class="pf-filtros-painel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 bg-slate-50 p-4 rounded-xl border border-gray-200 items-end">
-                    <div>
+                <div class="pf-filtros-painel pf-filtros-layout grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 bg-slate-50 p-4 rounded-xl border border-gray-200 items-end">
+                    <div class="pf-filtro-item pf-filtro-tipo">
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Filtrar por Tipo</label>
                         <select id="filtroTipo" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="Todos">Todos os Tipos</option>
@@ -1393,38 +1436,44 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                             <option value="Investimentos">Investimentos</option>
                         </select>
                     </div>
-                    <div>
+                    <div class="pf-filtro-item pf-filtro-rubrica-select">
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Rubrica</label>
                         <select id="filtroRubrica" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="Todas">Todas as Rubricas</option>
                         </select>
-                        <input type="search" id="filtroBuscaRubrica" oninput="renderTable()" autocomplete="off" placeholder="Pesquisar rubrica..." class="w-full mt-1.5 border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <div>
+                    <div class="pf-filtro-item pf-filtro-busca-rubrica">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Pesquisar Rubrica</label>
+                        <input type="search" id="filtroBuscaRubrica" oninput="renderTable()" autocomplete="off" placeholder="Pesquisar rubrica..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="pf-filtro-item pf-filtro-subitem-select">
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Sub-Item</label>
                         <select id="filtroSubItem" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="Todos">Todos os Sub-Itens</option>
                         </select>
-                        <input type="search" id="filtroBuscaSubItem" oninput="renderTable()" autocomplete="off" placeholder="Pesquisar sub-item..." class="w-full mt-1.5 border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <div>
+                    <div class="pf-filtro-item pf-filtro-busca-subitem">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Pesquisar Sub-Item</label>
+                        <input type="search" id="filtroBuscaSubItem" oninput="renderTable()" autocomplete="off" placeholder="Pesquisar sub-item..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="pf-filtro-item pf-filtro-descricao">
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Filtrar Descrição</label>
                         <input type="text" id="filtroDescricao" oninput="renderTable()" placeholder="Ex: Aluguel, Luz..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <div class="lg:col-start-1">
+                    <div class="pf-filtro-item pf-filtro-data-inicio">
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Vencimento Início</label>
                         <input type="date" id="filtroDataInicio" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <div>
+                    <div class="pf-filtro-item pf-filtro-data-fim">
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Vencimento Fim</label>
                         <input type="date" id="filtroDataFim" onchange="renderTable()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <div class="lg:col-start-5 lg:row-start-1">
-                        <button onclick="limparFiltros()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1">
+                    <div class="pf-filtro-item pf-filtro-limpar">
+                        <button id="limparFiltros" onclick="limparFiltros()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1">
                             <i class="fa-solid fa-rotate-left"></i> Limpar
                         </button>
                     </div>
-                    <div id="filtrosRapidosMobile" class="filtros-rapidos-mobile lg:col-span-5" aria-label="Filtros rápidos">
+                    <div id="filtrosRapidosMobile" class="filtros-rapidos-mobile pf-filtro-rapidos lg:col-span-5" aria-label="Filtros rápidos">
                         <div class="filtros-rapidos-titulo">Período rápido</div>
                         <div class="filtros-rapidos-botoes">
                             <button type="button" onclick="aplicarFiltroRapido('hoje')">Hoje</button>
