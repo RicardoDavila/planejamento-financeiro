@@ -11,7 +11,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V3.7 Mobile</title>
+    <title>Planejamento Financeiro - V3.8 Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -432,6 +432,102 @@ html.pf-mobile-device #modalConfiguracaoSeguranca button { min-height:44px; }
 
 /* Evita zoom acidental em controles de data/pesquisa no Android. */
 html.pf-mobile-device input, html.pf-mobile-device select, html.pf-mobile-device textarea { font-size:16px !important; }
+
+
+<style id="mobile-layout-v38-lancamentos">
+/* V3.8 — Lançamentos mobile: navegação da tabela mais clara, sem alterar dados/Supabase. */
+html.pf-mobile-device #tabelaLancamentosWrapper {
+    position:relative;
+    max-height:62dvh;
+    overflow:auto !important;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    background:#fff;
+    box-shadow:0 2px 8px rgba(15,23,42,.05);
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+}
+html.pf-mobile-device #tabelaLancamentosWrapper .mobile-tabela-hint {
+    position:sticky;
+    top:0;
+    z-index:20;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    min-height:30px;
+    padding:6px 8px;
+    background:#eff6ff;
+    color:#1d4ed8;
+    border-bottom:1px solid #dbeafe;
+    font-size:11px;
+    font-weight:600;
+}
+html.pf-mobile-device #tabelaLancamentosWrapper table {
+    min-width:980px !important;
+}
+html.pf-mobile-device #tabelaLancamentosWrapper thead th {
+    position:sticky;
+    top:30px;
+    z-index:10;
+    background:#f1f5f9;
+}
+html.pf-mobile-device #tabelaLancamentosWrapper thead th:first-child { z-index:15; }
+html.pf-mobile-device #tabelaLancamentosWrapper thead th:last-child { z-index:15; }
+html.pf-mobile-device #tabelaLancamentosWrapper tbody td {
+    background:#fff;
+    vertical-align:middle;
+}
+html.pf-mobile-device #tabelaLancamentosWrapper tbody tr:active td {
+    background:#f8fafc;
+}
+html.pf-mobile-device #tabelaLancamentosWrapper table th:first-child,
+html.pf-mobile-device #tabelaLancamentosWrapper table td:first-child {
+    position:sticky;
+    left:0;
+    z-index:8;
+    background:#fff;
+    box-shadow:2px 0 6px rgba(15,23,42,.08);
+}
+html.pf-mobile-device #tabelaLancamentosWrapper table thead th:first-child {
+    background:#f1f5f9;
+}
+html.pf-mobile-device #tabelaLancamentosWrapper table th:last-child,
+html.pf-mobile-device #tabelaLancamentosWrapper table td:last-child {
+    position:sticky;
+    right:0;
+    z-index:8;
+    background:#fff;
+    box-shadow:-2px 0 6px rgba(15,23,42,.08);
+}
+html.pf-mobile-device #tabelaLancamentosWrapper table thead th:last-child {
+    background:#f1f5f9;
+}
+html.pf-mobile-device #tabelaLancamentosWrapper tbody input {
+    min-height:42px !important;
+    padding:7px 8px !important;
+}
+html.pf-mobile-device #tabelaLancamentosWrapper tbody td:nth-child(1) input,
+html.pf-mobile-device #tabelaLancamentosWrapper tbody td:nth-child(2) input { min-width:125px; }
+html.pf-mobile-device #tabelaLancamentosWrapper tbody td:nth-child(4) input,
+html.pf-mobile-device #tabelaLancamentosWrapper tbody td:nth-child(5) input { min-width:120px; }
+html.pf-mobile-device #tabelaLancamentosWrapper tbody td:nth-child(9) input { min-width:180px; }
+html.pf-mobile-device #tabelaLancamentosWrapper tbody td:last-child {
+    min-width:96px;
+}
+html.pf-mobile-device #tabelaLancamentosWrapper tbody td:last-child button {
+    width:40px !important;
+    height:40px !important;
+    min-height:40px !important;
+    padding:0 !important;
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+}
+@media (max-width:380px) {
+    html.pf-mobile-device #tabelaLancamentosWrapper { max-height:58dvh; }
+    html.pf-mobile-device #tabelaLancamentosWrapper .mobile-tabela-hint { font-size:10px; }
+}
 </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
@@ -871,7 +967,8 @@ html.pf-mobile-device input, html.pf-mobile-device select, html.pf-mobile-device
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <div id="tabelaLancamentosWrapper" class="overflow-x-auto">
+                <div class="mobile-tabela-hint" aria-hidden="true"><i class="fa-solid fa-arrows-left-right"></i> Deslize a tabela para ver todas as colunas</div>
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-100 text-slate-700 text-xs uppercase tracking-wider">
