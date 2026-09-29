@@ -461,6 +461,7 @@
                         <button onclick="criarContaNuvem()" class="bg-slate-700 hover:bg-slate-800 text-white rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-user-plus mr-1"></i> Criar conta</button>
                     </div>
                     <button onclick="sincronizarAgoraNuvem()" class="w-full border border-emerald-600 text-emerald-700 hover:bg-emerald-50 rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-arrows-rotate mr-1"></i> Sincronizar agora</button>
+                    <button onclick="testarConexaoNuvem()" class="w-full border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg py-2 text-xs font-semibold"><i class="fa-solid fa-stethoscope mr-1"></i> Testar conexão da nuvem</button>
                     <button onclick="sairNuvem()" class="w-full text-xs text-red-600 hover:text-red-800 font-semibold">Desconectar este dispositivo da nuvem</button>
                     <p class="text-[11px] text-slate-500 leading-relaxed">A senha de acesso do aplicativo continua independente. A conta acima é usada somente para identificar seu banco na nuvem e permitir que computador e celular compartilhem os mesmos dados.</p>
                 </div>
@@ -1658,14 +1659,20 @@
                     console.error('Biblioteca Supabase JS não foi carregada.');
                     return false;
                 }
+                if (supabaseCliente) return true;
+                // V3.2: força o armazenamento da sessão no localStorage do próprio domínio.
+                // Isso evita que a sessão do PC seja perdida ao recarregar o GitHub Pages.
+                const storage = window.localStorage;
                 supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
                     auth: {
                         persistSession: true,
                         autoRefreshToken: true,
                         detectSessionInUrl: true,
-                        storageKey: 'planejamento-financeiro-supabase-auth'
+                        storageKey: 'planejamento-financeiro-supabase-auth-v3',
+                        storage,
+                        flowType: 'pkce'
                     },
-                    global: { headers: { 'x-client-info': 'planejamento-financeiro' } }
+                    global: { headers: { 'x-client-info': 'planejamento-financeiro-v3.2' } }
                 });
                 return true;
             } catch (e) {
@@ -1777,10 +1784,15 @@
         }
 
         async function obterSessaoNuvem() {
-            if (!supabaseCliente) return null;
-            const { data, error } = await supabaseCliente.auth.getSession();
-            if (error) { console.error(error); return null; }
-            return data?.session || null;
+            if (!supabaseCliente && !inicializarSupabaseCliente()) return null;
+            try {
+                const { data, error } = await supabaseCliente.auth.getSession();
+                if (error) { console.error('Supabase getSession:', error); return null; }
+                return data?.session || null;
+            } catch (e) {
+                console.error('Supabase getSession exception:', e);
+                return null;
+            }
         }
 
         function coletarPacoteNuvem() {
@@ -1947,34 +1959,70 @@
         }
 
         async function entrarNuvem() {
+            const btn = document.querySelector('#modalConfiguracaoNuvem button[onclick="entrarNuvem()"]');
             try {
                 if (!supabaseCliente && !inicializarSupabaseCliente()) {
-                    throw new Error('Serviço de nuvem não foi carregado. Verifique a conexão com a internet.');
+                    throw new Error('Biblioteca Supabase não foi carregada. Atualize a página e tente novamente.');
                 }
-                const email = document.getElementById('nuvemEmail').value.trim().toLowerCase();
-                const password = document.getElementById('nuvemSenha').value;
+                const emailEl = document.getElementById('nuvemEmail');
+                const senhaEl = document.getElementById('nuvemSenha');
+                const email = (emailEl?.value || '').trim().toLowerCase();
+                const password = senhaEl?.value || '';
                 if (!email || !password) throw new Error('Informe o e-mail e a senha da conta de sincronização.');
 
-                atualizarStatusNuvem('Entrando na conta de sincronização...');
+                if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Conectando...'; }
+                atualizarStatusNuvem('Conectando ao Supabase...');
+
+                // Limpa uma sessão antiga somente deste dispositivo antes de autenticar.
+                try { await supabaseCliente.auth.signOut({ scope: 'local' }); } catch (_) {}
                 const { data, error } = await supabaseCliente.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-                if (!data?.session) throw new Error('Login concluído sem sessão ativa. Verifique a confirmação da conta Supabase.');
+                if (!data?.session?.access_token) throw new Error('O Supabase aceitou o login, mas não devolveu uma sessão. Verifique se a conta está confirmada.');
 
-                atualizarStatusNuvem('Conta conectada. Sincronizando...');
-                const ok = await sincronizarNuvemAoAbrir();
-                if (!ok) return;
+                // Confirma explicitamente a sessão no armazenamento local do PC.
+                const { error: setError } = await supabaseCliente.auth.setSession({
+                    access_token: data.session.access_token,
+                    refresh_token: data.session.refresh_token
+                });
+                if (setError) throw setError;
+                const sessionConfirmada = await obterSessaoNuvem();
+                if (!sessionConfirmada?.user?.id) {
+                    throw new Error('Login realizado, mas a sessão não pôde ser gravada neste navegador. Verifique se o armazenamento do site está permitido no Chrome.');
+                }
+
+                document.getElementById('statusNuvemBadge').textContent = 'Online';
+                atualizarStatusNuvem('Conta conectada neste PC. Testando acesso ao banco... ', true);
+                if (emailEl) emailEl.value = sessionConfirmada.user.email || email;
+
+                try {
+                    const ok = await sincronizarNuvemAoAbrir();
+                    if (!ok) {
+                        // Autenticação está correta mesmo que a tabela/RLS esteja com problema.
+                        document.getElementById('statusNuvemBadge').textContent = 'Online';
+                        atualizarStatusNuvem('Conta conectada. O acesso ao banco precisa ser verificado.', false);
+                    } else {
+                        atualizarStatusNuvem('Conta conectada e banco sincronizado.', true);
+                    }
+                } catch (syncError) {
+                    document.getElementById('statusNuvemBadge').textContent = 'Online';
+                    const detalhe = resumirErroSupabase(syncError);
+                    atualizarStatusNuvem('Conta conectada, mas houve erro no banco: ' + detalhe, false);
+                    alert('A conta foi conectada com sucesso neste PC, mas a sincronização encontrou um erro:\n\n' + detalhe);
+                }
 
                 popularSelectsDinamicos();
                 renderTable();
                 atualizarPainelGerencial();
                 atualizarInfoBanco();
-                document.getElementById('nuvemSenha').value='';
-                atualizarStatusNuvem('Conta conectada e banco sincronizado.', true);
+                if (senhaEl) senhaEl.value = '';
             } catch (e) {
                 console.error('Falha no login da nuvem:', e);
+                document.getElementById('statusNuvemBadge').textContent = 'Local';
                 const detalhe = resumirErroSupabase(e);
-                atualizarStatusNuvem('Falha no login: ' + detalhe);
-                alert('Não foi possível conectar à nuvem:\n\n' + detalhe);
+                atualizarStatusNuvem('Falha no login: ' + detalhe, false);
+                alert('Não foi possível conectar à nuvem neste PC:\n\n' + detalhe);
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-1"></i> Entrar / Sincronizar'; }
             }
         }
 
@@ -2013,6 +2061,24 @@
                 } else atualizarStatusNuvem('Nenhuma conta de nuvem conectada neste dispositivo.');
             });
         }
+        async function testarConexaoNuvem() {
+            try {
+                if (!supabaseCliente && !inicializarSupabaseCliente()) throw new Error('Biblioteca Supabase não carregada.');
+                const session = await obterSessaoNuvem();
+                const armazenamento = (() => { try { return !!window.localStorage; } catch(e) { return false; } })();
+                if (!session) {
+                    atualizarStatusNuvem('Diagnóstico: este PC ainda não possui uma sessão Supabase gravada. Armazenamento: ' + (armazenamento ? 'OK' : 'bloqueado') + '.');
+                    return;
+                }
+                const remoto = await carregarPacoteNuvem();
+                atualizarStatusNuvem(remoto?.payload ? 'Diagnóstico OK: conta, sessão e tabela acessíveis neste PC.' : 'Diagnóstico OK: conta e sessão acessíveis; ainda não há banco salvo para este usuário.', true);
+            } catch (e) {
+                const detalhe = resumirErroSupabase(e);
+                atualizarStatusNuvem('Diagnóstico: ' + detalhe, false);
+                alert('Diagnóstico da nuvem:\n\n' + detalhe);
+            }
+        }
+
         function fecharConfiguracaoNuvem() {
             const modal = document.getElementById('modalConfiguracaoNuvem');
             if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
