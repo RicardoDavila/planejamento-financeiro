@@ -1,5 +1,5 @@
-/* Planejamento Financeiro - PWA V3.6 Mobile */
-const CACHE_NAME = 'planejamento-financeiro-v3-6-mobile';
+/* Planejamento Financeiro - PWA V3.7 Mobile */
+const CACHE_NAME = 'planejamento-financeiro-v3-7-mobile';
 const APP_SHELL = [
   './',
   './index.html',

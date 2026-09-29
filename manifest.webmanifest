@@ -1,5 +1,5 @@
 {
-  "name": "Planejamento Financeiro V3.6",
+  "name": "Planejamento Financeiro V3.7",
   "short_name": "Finanças",
   "description": "Planejamento Financeiro com proteção de acesso e sincronização em nuvem.",
   "lang": "pt-BR",
@@ -8,7 +8,10 @@
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "any",
   "background_color": "#f8fafc",
   "theme_color": "#0f172a",
@@ -26,5 +29,8 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["finance", "productivity"]
+  "categories": [
+    "finance",
+    "productivity"
+  ]
 }
