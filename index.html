@@ -7,8 +7,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="manifest.json">
-    <title>Planejamento Financeiro - Banco de Dados com IDs - v2.1</title>
+    <meta name="application-name" content="Planejamento Financeiro">
+    <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <title>Planejamento Financeiro - V3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -27,6 +30,7 @@
             .max-w-7xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
         }
         .print-only { display: none; }
+        #btnInstalarPWA { display:none; }
 
         /* Sincronização em nuvem / uso em celular */
         .status-nuvem { font-size: 11px; }
@@ -192,6 +196,9 @@
 </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
+    <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
+        <i class="fa-solid fa-download"></i> Instalar aplicativo
+    </button>
 
     <!-- Tela de bloqueio/autenticação -->
     <div id="telaProtecaoAcesso" class="fixed inset-0 bg-slate-950/95 flex items-center justify-center p-4">
@@ -847,12 +854,38 @@
     </div>
 
     <script>
-        // PWA: registra o Service Worker quando o projeto estiver hospedado em HTTPS.
+        // ==================== PWA V3 ====================
+        // Registra o Service Worker e oferece instalação quando o navegador permitir.
+        let eventoInstalacaoPWA = null;
+        function configurarInstalacaoPWA() {
+            const btn = document.getElementById('btnInstalarPWA');
+            if (!btn) return;
+            window.addEventListener('beforeinstallprompt', (event) => {
+                event.preventDefault();
+                eventoInstalacaoPWA = event;
+                btn.style.display = 'inline-flex';
+            });
+            btn.addEventListener('click', async () => {
+                if (!eventoInstalacaoPWA) return;
+                eventoInstalacaoPWA.prompt();
+                try { await eventoInstalacaoPWA.userChoice; } catch(e) {}
+                eventoInstalacaoPWA = null;
+                btn.style.display = 'none';
+            });
+            window.addEventListener('appinstalled', () => {
+                eventoInstalacaoPWA = null;
+                btn.style.display = 'none';
+            });
+        }
         if (location.protocol === 'https:' || location.hostname === 'localhost') {
             if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+                        .catch((erro) => console.warn('PWA: Service Worker não registrado:', erro));
+                });
             }
         }
+        window.addEventListener('DOMContentLoaded', configurarInstalacaoPWA);
     </script>
     <script>
         /* ==================== PROTEÇÃO DE ACESSO ==================== */
@@ -1819,16 +1852,24 @@
                 }
                 const remoto = await carregarPacoteNuvem();
                 const ultimaAlteracaoLocal = localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
-                const ultimaSincronizacao = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
-                if (ultimaAlteracaoLocal && (!ultimaSincronizacao || ultimaAlteracaoLocal > ultimaSincronizacao)) {
-                    await salvarPacoteNuvem();
-                    return;
-                }
+                const atualizadoRemoto = remoto?.updated_at || '';
+
+                // Proteção contra sobrescrever uma versão remota mais recente.
+                // A decisão é feita comparando a última alteração local diretamente
+                // com a data da versão armazenada na nuvem, e não apenas com a
+                // última sincronização deste dispositivo.
                 if (remoto?.payload) {
-                    aplicarPacoteNuvem(remoto.payload);
-                    localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, remoto.updated_at || new Date().toISOString());
-                    atualizarStatusNuvem('Banco carregado da nuvem e atualizado neste dispositivo.', true);
+                    if (ultimaAlteracaoLocal && atualizadoRemoto && ultimaAlteracaoLocal > atualizadoRemoto) {
+                        await salvarPacoteNuvem();
+                        atualizarStatusNuvem('Alterações locais mais recentes foram enviadas para a nuvem.', true);
+                    } else {
+                        aplicarPacoteNuvem(remoto.payload);
+                        localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, atualizadoRemoto || new Date().toISOString());
+                        atualizarStatusNuvem('Banco carregado da nuvem e atualizado neste dispositivo.', true);
+                    }
                 } else {
+                    // Primeira sincronização desta conta: mantém os dados locais
+                    // existentes e cria o pacote na nuvem somente se ainda não houver um.
                     await salvarPacoteNuvem(true);
                 }
             } catch (e) {
