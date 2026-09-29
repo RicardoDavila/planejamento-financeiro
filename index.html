@@ -11,7 +11,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V3.8 Mobile</title>
+    <title>Planejamento Financeiro - V3.9 Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -529,6 +529,119 @@ html.pf-mobile-device #tabelaLancamentosWrapper tbody td:last-child button {
     html.pf-mobile-device #tabelaLancamentosWrapper .mobile-tabela-hint { font-size:10px; }
 }
 </style>
+
+
+<style id="mobile-layout-v39-cards">
+/* V3.9 — Lançamentos em cartões no celular. Desktop permanece com tabela. */
+#cartoesLancamentosMobile { display:none; }
+@media (max-width: 640px) {
+  html.pf-mobile-device #tabelaLancamentosWrapper { display:none !important; }
+  html.pf-mobile-device #cartoesLancamentosMobile {
+    display:flex !important;
+    flex-direction:column;
+    gap:10px;
+    margin-top:4px;
+  }
+  html.pf-mobile-device .lancamento-card-mobile {
+    background:#fff;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    padding:12px;
+    box-shadow:0 2px 8px rgba(15,23,42,.06);
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-topo {
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:8px;
+    padding-bottom:9px;
+    margin-bottom:9px;
+    border-bottom:1px solid #e5e7eb;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-data {
+    font-size:15px;
+    font-weight:800;
+    color:#0f172a;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-subdata {
+    margin-top:2px;
+    font-size:11px;
+    color:#64748b;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px 12px;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-item {
+    min-width:0;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-item.full {
+    grid-column:1 / -1;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-label {
+    display:block;
+    margin-bottom:2px;
+    font-size:10px;
+    line-height:1.1;
+    font-weight:800;
+    color:#64748b;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-value {
+    font-size:13px;
+    line-height:1.3;
+    color:#1e293b;
+    overflow-wrap:anywhere;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-valor {
+    font-size:16px;
+    font-weight:800;
+    color:#0f172a;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-acoes {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:11px;
+    padding-top:10px;
+    border-top:1px solid #e5e7eb;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-acoes button {
+    min-height:44px !important;
+    border-radius:9px;
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-editar { background:#f59e0b; }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-excluir { background:#f43f5e; }
+  html.pf-mobile-device .lancamento-card-mobile .lcm-vazio {
+    padding:18px 12px;
+    text-align:center;
+    color:#64748b;
+    background:#f8fafc;
+    border:1px dashed #cbd5e1;
+    border-radius:12px;
+  }
+  html.pf-mobile-device .lancamento-card-mobile .badge-mobile {
+    display:inline-flex;
+    align-items:center;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:10px;
+    line-height:1;
+    font-weight:800;
+    white-space:nowrap;
+  }
+}
+</style>
+
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
     <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
@@ -987,6 +1100,7 @@ html.pf-mobile-device #tabelaLancamentosWrapper tbody td:last-child button {
                     <tbody id="tabelaCorpo" class="divide-y divide-gray-200 text-xs"></tbody>
                 </table>
             </div>
+            <div id="cartoesLancamentosMobile" aria-label="Lançamentos em cartões no celular"></div>
         </div>
     </div>
 
@@ -3084,6 +3198,100 @@ html.pf-mobile-device #tabelaLancamentosWrapper tbody td:last-child button {
             }
         }
 
+        function escaparHtmlMobile(valor) {
+            return String(valor ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function formatarDataMobile(valor) {
+            if (!valor) return '—';
+            const partes = String(valor).split('-');
+            if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+            return escaparHtmlMobile(valor);
+        }
+
+        function renderCartoesLancamentosMobile(filtradas) {
+            const container = document.getElementById('cartoesLancamentosMobile');
+            if (!container) return;
+            if (!filtradas.length) {
+                container.innerHTML = '<div class="lancamento-card-mobile lcm-vazio">Nenhum lançamento encontrado.</div>';
+                return;
+            }
+
+            container.innerHTML = filtradas.map(t => {
+                const ehInvestimento = (t.tipo === 'Investimentos' || t.categoria === 'INVESTIMENTOS' || String(t.descricao || '').toLowerCase().includes('investimento'));
+                const tipoTexto = ehInvestimento ? 'Investimentos' : (t.tipo || '—');
+                const tipoClasse = tipoTexto === 'Receita'
+                    ? 'background:#d1fae5;color:#065f46'
+                    : ehInvestimento
+                    ? 'background:#ede9fe;color:#6d28d9'
+                    : 'background:#ffe4e6;color:#9f1239';
+
+                let statusExibicao = t.status || '—';
+                if (ehInvestimento) {
+                    if (t.status === 'Pago') statusExibicao = 'feito';
+                    if (t.status === 'Pendente') statusExibicao = 'a fazer';
+                }
+                const statusClasse = (statusExibicao === 'Pago' || statusExibicao === 'Recebido' || statusExibicao === 'feito')
+                    ? 'background:#dbeafe;color:#1d4ed8'
+                    : statusExibicao === 'Não Recebido'
+                    ? 'background:#ffedd5;color:#c2410c'
+                    : 'background:#fef3c7;color:#92400e';
+
+                const valorClasse = t.tipo === 'Receita' ? 'color:#059669' : 'color:#0f172a';
+                const descricao = escaparHtmlMobile(t.descricao || 'Sem descrição');
+                const observacao = escaparHtmlMobile(t.observacao || '—');
+                const categoria = escaparHtmlMobile(t.categoria || '—');
+                const subItem = escaparHtmlMobile(t.subItem || '—');
+                const dataPg = formatarDataMobile(t.dataPg);
+                const valor = escaparHtmlMobile(formatarMoeda(t.valor));
+
+                return `
+                    <article class="lancamento-card-mobile">
+                        <div class="lcm-topo">
+                            <div>
+                                <div class="lcm-data">Vencimento: ${formatarDataMobile(t.vencimento)}</div>
+                                <div class="lcm-subdata">Pg./Receb.: ${dataPg}</div>
+                            </div>
+                            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+                                <span class="badge-mobile" style="${tipoClasse}">${escaparHtmlMobile(tipoTexto)}</span>
+                                <span class="badge-mobile" style="${statusClasse}">${escaparHtmlMobile(statusExibicao)}</span>
+                            </div>
+                        </div>
+                        <div class="lcm-grid">
+                            <div class="lcm-item">
+                                <span class="lcm-label">Rubrica</span>
+                                <div class="lcm-value">${categoria}</div>
+                            </div>
+                            <div class="lcm-item">
+                                <span class="lcm-label">Sub-Item</span>
+                                <div class="lcm-value">${subItem}</div>
+                            </div>
+                            <div class="lcm-item full">
+                                <span class="lcm-label">Descrição</span>
+                                <div class="lcm-value">${descricao}</div>
+                            </div>
+                            <div class="lcm-item">
+                                <span class="lcm-label">Valor</span>
+                                <div class="lcm-valor" style="${valorClasse}">${valor}</div>
+                            </div>
+                            <div class="lcm-item">
+                                <span class="lcm-label">Observação</span>
+                                <div class="lcm-value">${observacao}</div>
+                            </div>
+                        </div>
+                        <div class="lcm-acoes no-print">
+                            <button type="button" class="lcm-editar" onclick="editarLancamento(${t.id})"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                            <button type="button" class="lcm-excluir" onclick="excluirLancamento(${t.id})"><i class="fa-solid fa-trash-can"></i> Excluir</button>
+                        </div>
+                    </article>`;
+            }).join('');
+        }
+
         function renderTable() {
             verificarContasVencendoHoje();
             const tbody = document.getElementById('tabelaCorpo');
@@ -3133,6 +3341,7 @@ html.pf-mobile-device #tabelaLancamentosWrapper tbody td:last-child button {
             const filtradas = getFilteredTransactions();
             if (filtradas.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="10" class="text-center py-6 text-gray-400">Nenhum lançamento encontrado.</td></tr>`;
+                renderCartoesLancamentosMobile([]);
                 // Mesmo sem resultados, o Painel Gerencial precisa refletir imediatamente o filtro ativo.
                 atualizarPainelGerencial();
                 return;
@@ -3177,6 +3386,8 @@ html.pf-mobile-device #tabelaLancamentosWrapper tbody td:last-child button {
                     </tr>
                 `;
             });
+
+            renderCartoesLancamentosMobile(filtradas);
 
             // Mantém o Painel Gerencial sincronizado automaticamente com a tabela.
             // Assim, qualquer inclusão, alteração, exclusão ou atualização inline
