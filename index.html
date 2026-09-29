@@ -4318,7 +4318,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
                 const rec=itens.filter(t=>t.tipo==='Receita').length, des=itens.filter(t=>t.tipo==='Despesa').length, inv=itens.filter(t=>t.tipo==='Investimentos'||t.categoria==='INVESTIMENTOS').length;
                 const atras=itens.some(t=>t.status==='Vencido');
                 const total=itens.reduce((s,t)=>s+(Number(t.valor)||0),0);
-                el.innerHTML=`<div class="cal45-num">${dia}</div><div class="cal45-dots">${rec?'<span class="cal45-dot rec"></span>':''}${des?'<span class="cal45-dot des"></span>':''}${inv?'<span class="cal45-dot inv"></span>':''}${atras?'<span class="cal45-dot atras"></span>':''}</div>${itens.length?`<div class="cal45-total">${itens.length} • ${moeda(total)}</div>`:''}`;
+                el.innerHTML=`<div class="cal45-num">${dia}</div><div class="cal45-dots">${rec?'<span class="cal45-dot rec"></span>':''}${des?'<span class="cal45-dot des"></span>':''}${inv?'<span class="cal45-dot inv"></span>':''}${atras?'<span class="cal45-dot atras"></span>':''}</div>${itens.length?`<div class="cal45-total">${itens.length} • ${formatarMoeda(total)}</div>`:''}`;
                 el.onclick=()=>mostrarDetalhesCalendarioV45(iso,itens); grid.appendChild(el);
             }
             mostrarDetalhesCalendarioV45(hojeIso,mapa[hojeIso]||[]);
@@ -4329,7 +4329,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             if(!itens.length){box.innerHTML=`<p class="text-xs font-semibold text-slate-700">${d}/${m}/${y}</p><p class="text-xs text-slate-500 mt-1">Nenhum lançamento neste dia.</p>`;return;}
             box.innerHTML=`<p class="text-xs font-bold text-slate-800 mb-2">${d}/${m}/${y} • ${itens.length} lançamento(s)</p>`+itens.map(t=>{
                 const classe=t.tipo==='Receita'?'text-emerald-700':(t.tipo==='Investimentos'?'text-purple-700':'text-rose-700');
-                return `<div class="cal45-item"><strong>${t.descricao||'Sem descrição'}</strong><small>${t.tipo||''} • ${t.categoria||''}${t.subItem?' • '+t.subItem:''}</small><div class="valor ${classe}">${moeda(Number(t.valor)||0)}${t.status?' • '+t.status:''}</div></div>`;
+                return `<div class="cal45-item"><strong>${t.descricao||'Sem descrição'}</strong><small>${t.tipo||''} • ${t.categoria||''}${t.subItem?' • '+t.subItem:''}</small><div class="valor ${classe}">${formatarMoeda(Number(t.valor)||0)}${t.status?' • '+t.status:''}</div></div>`;
             }).join('');
         }
 
