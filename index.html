@@ -1017,6 +1017,62 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
   }
 }
 </style>
+
+<style id="v489-fix-desktop-filtros">
+/* V4.8.9 — correção final do layout desktop.
+   Não altera o layout mobile aprovado da V4.8.7. */
+@media (min-width:641px) and (pointer:fine) {
+  html:not(.pf-mobile-device) #filtrosRapidosMobile {
+    display:block !important;
+    grid-column:1 / -1 !important;
+    grid-row:3 !important;
+  }
+  html:not(.pf-mobile-device) #filtrosRapidosMobile .filtros-rapidos-botoes {
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:7px !important;
+    overflow:visible !important;
+  }
+  html:not(.pf-mobile-device) #filtrosRapidosMobile .filtros-rapidos-botoes button {
+    min-width:82px !important;
+  }
+  /* Datas ficam no mesmo bloco, imediatamente lado a lado. */
+  html:not(.pf-mobile-device) .pf-filtro-data-inicio {
+    grid-column:3 !important; grid-row:2 !important;
+  }
+  html:not(.pf-mobile-device) .pf-filtro-data-fim {
+    grid-column:4 !important; grid-row:2 !important;
+  }
+}
+</style>
+<style id="v410-desktop-periodo-final">
+/* V4.8.10 — correção definitiva do período rápido no desktop.
+   Não altera o layout mobile aprovado. */
+@media (min-width:641px) {
+  html:not(.pf-mobile-device) #filtrosRapidosMobile {
+    display:block !important;
+    grid-column:1 / -1 !important;
+    grid-row:3 !important;
+    visibility:visible !important;
+  }
+  html:not(.pf-mobile-device) #filtrosRapidosMobile .filtros-rapidos-botoes {
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:7px !important;
+    overflow:visible !important;
+  }
+  html:not(.pf-mobile-device) #filtrosRapidosMobile .filtros-rapidos-botoes button {
+    display:inline-flex !important;
+    min-width:82px !important;
+  }
+  html:not(.pf-mobile-device) .pf-filtro-data-inicio {
+    grid-column:3 !important; grid-row:2 !important;
+  }
+  html:not(.pf-mobile-device) .pf-filtro-data-fim {
+    grid-column:4 !important; grid-row:2 !important;
+  }
+}
+</style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
     <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
