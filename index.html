@@ -732,22 +732,21 @@ html.pf-mobile-device .lancamento-card-mobile .badge-mobile {
   min-height: 40px; cursor: pointer;
 }
 .filtros-rapidos-botoes button.ativo { background: #0f172a; color: #fff; border-color: #0f172a; }
-@media (max-width: 640px) {
-  html.pf-mobile-device #filtrosRapidosMobile {
-    display: block !important;
-    overflow: hidden;
-  }
-  html.pf-mobile-device .filtros-rapidos-botoes {
-    flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch; scrollbar-width: none;
-  }
-  html.pf-mobile-device .filtros-rapidos-botoes::-webkit-scrollbar { display: none; }
-  html.pf-mobile-device .filtros-rapidos-botoes button {
-    flex: 0 0 auto; min-width: 78px; min-height: 44px;
-  }
+/* Em aparelhos móveis, usar a classe pf-mobile-device, não a largura CSS. */
+html.pf-mobile-device #filtrosRapidosMobile {
+  display: block !important;
+  overflow: hidden;
+}
+html.pf-mobile-device .filtros-rapidos-botoes {
+  flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+html.pf-mobile-device .filtros-rapidos-botoes::-webkit-scrollbar { display: none; }
+html.pf-mobile-device .filtros-rapidos-botoes button {
+  flex: 0 0 auto; min-width: 78px; min-height: 44px;
 }
 @media (min-width: 641px) {
-  #filtrosRapidosMobile { display: none !important; }
+  html:not(.pf-mobile-device) #filtrosRapidosMobile { display: none !important; }
 }
 </style>
 </head>
