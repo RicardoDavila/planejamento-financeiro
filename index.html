@@ -766,6 +766,69 @@ html:not(.pf-mobile-device) #atalhoLancamentoRapidoMobile { display:none !import
 html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
 </style>
 
+
+<style id="mobile-polish-v47">
+@media (max-width: 900px), (pointer: coarse) {
+  :root {
+    --pf-touch-min: 44px;
+    --pf-radius: 14px;
+  }
+
+  button, .btn, input[type="button"], input[type="submit"], select {
+    min-height: var(--pf-touch-min);
+    border-radius: var(--pf-radius);
+  }
+
+  button:active {
+    transform: scale(.98);
+  }
+
+  .card, .dashboard-card, .metric-card, .resumo-card {
+    border-radius: 16px;
+  }
+
+  .valor, .valor-total, .saldo, .metric-value {
+    font-variant-numeric: tabular-nums;
+  }
+
+  #barraRapidaMobile {
+    min-height: 68px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  #barraRapidaMobile button {
+    min-height: 54px;
+  }
+
+  #barraRapidaMobile button[aria-current="page"],
+  #barraRapidaMobile button.active,
+  #barraRapidaMobile button.selecionado {
+    font-weight: 700;
+  }
+
+  .lancamento-card-mobile {
+    border-radius: 16px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .lancamento-card-mobile button {
+    min-height: 46px;
+  }
+
+  input, textarea, select {
+    min-height: 44px;
+  }
+
+  .filtros-rapidos-mobile {
+    scrollbar-width: none;
+  }
+
+  .filtros-rapidos-mobile::-webkit-scrollbar {
+    display: none;
+  }
+}
+</style>
+
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
     <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
