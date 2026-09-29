@@ -2548,6 +2548,8 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
         let sincronizacaoNuvemEmAndamento = false;
         let estadoFormularioV48 = null;
         let estadoLancamentoRapidoV48 = null;
+        let formularioV48Sujo = false;
+        let lancamentoRapidoV48Sujo = false;
 
         function inicializarSupabaseCliente() {
             try {
@@ -3592,6 +3594,55 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
                 }
             });
             popularSelectsDinamicos();
+
+            // V4.8.1 — marca explicitamente alterações feitas pelo usuário nos formulários.
+            // Isso evita depender apenas da comparação de valores, inclusive no celular.
+            const formLancamentoV48 = document.getElementById('formLancamento');
+            if (formLancamentoV48) {
+                const marcarSujo = () => {
+                    if (!document.getElementById('modal')?.classList.contains('hidden')) {
+                        formularioV48Sujo = true;
+                    }
+                };
+                formLancamentoV48.addEventListener('input', marcarSujo);
+                formLancamentoV48.addEventListener('change', marcarSujo);
+            }
+
+            const formRapidoV48 = document.getElementById('formLancamentoRapidoV43');
+            if (formRapidoV48) {
+                const marcarRapidoSujo = () => {
+                    const modalRapido = document.getElementById('modalLancamentoRapidoV43');
+                    if (modalRapido?.classList.contains('aberto')) {
+                        lancamentoRapidoV48Sujo = true;
+                    }
+                };
+                formRapidoV48.addEventListener('input', marcarRapidoSujo);
+                formRapidoV48.addEventListener('change', marcarRapidoSujo);
+            }
+        });
+
+        // V4.8.2 — reforço da proteção de alterações não salvas no PC e no celular.
+        // Este bloco é independente de outros handlers para continuar funcionando mesmo
+        // que algum recurso secundário da página apresente erro durante a inicialização.
+        window.addEventListener('load', function(){
+            const formPrincipal = document.getElementById('formLancamento');
+            if (formPrincipal) {
+                const marcarAlteracaoPrincipal = function(){
+                    const modal = document.getElementById('modal');
+                    if (modal && !modal.classList.contains('hidden')) formularioV48Sujo = true;
+                };
+                formPrincipal.addEventListener('input', marcarAlteracaoPrincipal, true);
+                formPrincipal.addEventListener('change', marcarAlteracaoPrincipal, true);
+            }
+            const formRapido = document.getElementById('formLancamentoRapidoV43');
+            if (formRapido) {
+                const marcarAlteracaoRapida = function(){
+                    const modal = document.getElementById('modalLancamentoRapidoV43');
+                    if (modal && modal.classList.contains('aberto')) lancamentoRapidoV48Sujo = true;
+                };
+                formRapido.addEventListener('input', marcarAlteracaoRapida, true);
+                formRapido.addEventListener('change', marcarAlteracaoRapida, true);
+            }
         });
 
         function formatarDataAlerta(dataIso) {
@@ -4074,6 +4125,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             return ids.reduce((o,id)=>{ const el=document.getElementById(id); o[id]=el?String(el.value??''):''; return o; },{});
         }
         function formularioV48TemAlteracoes() {
+            if (formularioV48Sujo) return true;
             if (!estadoFormularioV48) return false;
             const atual = capturarEstadoFormularioV48();
             return JSON.stringify(atual) !== JSON.stringify(estadoFormularioV48);
@@ -4083,6 +4135,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             return ids.reduce((o,id)=>{ const el=document.getElementById(id); o[id]=el?String(el.value??''):''; return o; },{});
         }
         function formularioRapidoV48TemAlteracoes() {
+            if (lancamentoRapidoV48Sujo) return true;
             if (!estadoLancamentoRapidoV48) return false;
             return JSON.stringify(capturarEstadoRapidoV48()) !== JSON.stringify(estadoLancamentoRapidoV48);
         }
@@ -4099,6 +4152,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             document.getElementById('status').value = 'Pago';
             document.getElementById('modal').classList.remove('hidden');
             estadoFormularioV48 = capturarEstadoFormularioV48();
+            formularioV48Sujo = false;
         }
 
         function editarLancamento(id) {
@@ -4119,6 +4173,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             document.getElementById('observacao').value = item.observacao || '';
             document.getElementById('modal').classList.remove('hidden');
             estadoFormularioV48 = capturarEstadoFormularioV48();
+            formularioV48Sujo = false;
         }
 
         function closeModal() {
@@ -4129,6 +4184,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             atualizarBotaoLancamentoRapidoModal(false);
             document.getElementById('modal').classList.add('hidden');
             estadoFormularioV48 = null;
+            formularioV48Sujo = false;
         }
 
         function salvarLancamento(event) {
@@ -4168,6 +4224,9 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             }
 
             salvarLocalStorage();
+            // O salvamento concluiu as alterações; não deve disparar o aviso ao fechar o modal.
+            estadoFormularioV48 = null;
+            formularioV48Sujo = false;
             registrarHistorico(editId ? 'ALTERAÇÃO' : 'INCLUSÃO', novo.id, `${editId ? 'Lançamento alterado' : 'Novo lançamento'}: ${novo.descricao || ''} | ${formatarMoeda(Number(novo.valor)||0)}`);
             popularSelectsDinamicos();
             renderTable();
@@ -4574,6 +4633,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             document.getElementById('modalLancamentoRapidoV43').classList.add('aberto');
             document.getElementById('modalLancamentoRapidoV43').setAttribute('aria-hidden','false');
             estadoLancamentoRapidoV48 = capturarEstadoRapidoV48();
+            lancamentoRapidoV48Sujo = false;
         }
         function fecharLancamentoRapido(){
             if (formularioRapidoV48TemAlteracoes()) {
@@ -4583,6 +4643,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             const m=document.getElementById('modalLancamentoRapidoV43');
             if(m){m.classList.remove('aberto');m.setAttribute('aria-hidden','true');}
             estadoLancamentoRapidoV48 = null;
+            lancamentoRapidoV48Sujo = false;
         }
         function salvarLancamentoRapido(event){
             event.preventDefault();
@@ -4600,6 +4661,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             salvarLancamento({preventDefault:function(){}});
             // O lançamento já foi salvo pela rotina oficial; não perguntar novamente ao fechar.
             estadoLancamentoRapidoV48 = null;
+            lancamentoRapidoV48Sujo = false;
             fecharLancamentoRapido();
         }
 
