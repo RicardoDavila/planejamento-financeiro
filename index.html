@@ -3870,179 +3870,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
 
 
 
-<script id="v411-calculadora-js">
-(function() {
-    const state = {
-        display: '0',
-        first: null,
-        operator: null,
-        waiting: false,
-        justPercent: false
-    };
 
-    function displayEl() { return document.getElementById('calcDisplay'); }
-    function updateDisplay() {
-        const el = displayEl();
-        if (el) el.value = state.display;
-    }
-    function toNumber(v) {
-        const n = Number(String(v).replace(',', '.'));
-        return Number.isFinite(n) ? n : 0;
-    }
-    function formatNumber(n) {
-        if (!Number.isFinite(n)) return 'Erro';
-        const rounded = Math.abs(n) < 1e-12 ? 0 : Number(n.toFixed(12));
-        return String(rounded).replace('.', ',');
-    }
-    function calculate(a,b,op) {
-        switch(op) {
-            case '+': return a + b;
-            case '-': return a - b;
-            case '*': return a * b;
-            case '/': return b === 0 ? NaN : a / b;
-            default: return b;
-        }
-    }
-
-    window.abrirCalculadora = function() {
-        const modal = document.getElementById('modalCalculadora');
-        if (!modal) return;
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        state.display = '0';
-        state.first = null;
-        state.operator = null;
-        state.waiting = false;
-        state.justPercent = false;
-        updateDisplay();
-        setTimeout(() => document.getElementById('calcDisplay')?.focus(), 50);
-    };
-
-    window.fecharCalculadora = function() {
-        const modal = document.getElementById('modalCalculadora');
-        if (!modal) return;
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    };
-
-    function digit(v) {
-        if (state.display === 'Erro' || state.waiting) {
-            state.display = v;
-            state.waiting = false;
-        } else if (state.display === '0') {
-            state.display = v;
-        } else if (state.display.length < 16) {
-            state.display += v;
-        }
-        state.justPercent = false;
-        updateDisplay();
-    }
-
-    function decimal() {
-        if (state.display === 'Erro' || state.waiting) {
-            state.display = '0,';
-            state.waiting = false;
-        } else if (!state.display.includes(',')) {
-            state.display += ',';
-        }
-        updateDisplay();
-    }
-
-    function clearCalc() {
-        state.display = '0';
-        state.first = null;
-        state.operator = null;
-        state.waiting = false;
-        state.justPercent = false;
-        updateDisplay();
-    }
-
-    function backspace() {
-        if (state.waiting || state.display === 'Erro') return;
-        state.display = state.display.length > 1 ? state.display.slice(0,-1) : '0';
-        if (state.display === '-' || state.display === '') state.display = '0';
-        updateDisplay();
-    }
-
-    function toggleSign() {
-        if (state.display === '0' || state.display === 'Erro') return;
-        state.display = state.display.startsWith('-') ? state.display.slice(1) : '-' + state.display;
-        updateDisplay();
-    }
-
-    function chooseOperator(op) {
-        const current = toNumber(state.display);
-        if (state.first === null) {
-            state.first = current;
-        } else if (state.operator && !state.waiting) {
-            const result = calculate(state.first, current, state.operator);
-            state.first = result;
-            state.display = formatNumber(result);
-        }
-        state.operator = op;
-        state.waiting = true;
-        state.justPercent = false;
-        updateDisplay();
-    }
-
-    function percent() {
-        const current = toNumber(state.display);
-        if (state.first !== null && state.operator && !state.waiting) {
-            // Percentual aplicado ao primeiro valor: 200 + 10% => 220;
-            // 200 * 10% => 20.
-            const pct = state.first * current / 100;
-            state.display = formatNumber(pct);
-        } else {
-            state.display = formatNumber(current / 100);
-        }
-        state.waiting = false;
-        state.justPercent = true;
-        updateDisplay();
-    }
-
-    function equals() {
-        if (state.operator === null || state.first === null) return;
-        let second = toNumber(state.display);
-        const result = calculate(state.first, second, state.operator);
-        state.display = formatNumber(result);
-        state.first = null;
-        state.operator = null;
-        state.waiting = true;
-        state.justPercent = false;
-        updateDisplay();
-    }
-
-    function handle(action, value) {
-        if (action === 'digit') digit(value);
-        else if (action === 'decimal') decimal();
-        else if (action === 'clear') clearCalc();
-        else if (action === 'back') backspace();
-        else if (action === 'sign') toggleSign();
-        else if (action === 'op') chooseOperator(value);
-        else if (action === 'percent') percent();
-        else if (action === 'equals') equals();
-    }
-
-    document.addEventListener('click', function(e) {
-        const btn = e.target.closest('[data-calc]');
-        if (btn) handle(btn.dataset.calc, btn.dataset.value || '');
-        if (e.target === document.getElementById('modalCalculadora')) fecharCalculadora();
-    });
-
-    document.addEventListener('keydown', function(e) {
-        const modal = document.getElementById('modalCalculadora');
-        if (!modal || modal.classList.contains('hidden')) return;
-        if (/^[0-9]$/.test(e.key)) { digit(e.key); e.preventDefault(); }
-        else if (e.key === ',' || e.key === '.') { decimal(); e.preventDefault(); }
-        else if (['+','-','*','/'].includes(e.key)) { chooseOperator(e.key); e.preventDefault(); }
-        else if (e.key === '%') { percent(); e.preventDefault(); }
-        else if (e.key === 'Enter' || e.key === '=') { equals(); e.preventDefault(); }
-        else if (e.key === 'Escape') { fecharCalculadora(); e.preventDefault(); }
-        else if (e.key === 'Backspace') { backspace(); e.preventDefault(); }
-        else if (e.key.toLowerCase() === 'c') { clearCalc(); e.preventDefault(); }
-    });
-})();
-</script>
 
 </body></html>`);
             w.document.close();
@@ -5147,5 +4975,179 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             if(protecaoAutenticada) iniciarAplicacao();
         };
     </script>
+    <script id="v411-calculadora-js">
+(function() {
+    const state = {
+        display: '0',
+        first: null,
+        operator: null,
+        waiting: false,
+        justPercent: false
+    };
+
+    function displayEl() { return document.getElementById('calcDisplay'); }
+    function updateDisplay() {
+        const el = displayEl();
+        if (el) el.value = state.display;
+    }
+    function toNumber(v) {
+        const n = Number(String(v).replace(',', '.'));
+        return Number.isFinite(n) ? n : 0;
+    }
+    function formatNumber(n) {
+        if (!Number.isFinite(n)) return 'Erro';
+        const rounded = Math.abs(n) < 1e-12 ? 0 : Number(n.toFixed(12));
+        return String(rounded).replace('.', ',');
+    }
+    function calculate(a,b,op) {
+        switch(op) {
+            case '+': return a + b;
+            case '-': return a - b;
+            case '*': return a * b;
+            case '/': return b === 0 ? NaN : a / b;
+            default: return b;
+        }
+    }
+
+    window.abrirCalculadora = function() {
+        const modal = document.getElementById('modalCalculadora');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        state.display = '0';
+        state.first = null;
+        state.operator = null;
+        state.waiting = false;
+        state.justPercent = false;
+        updateDisplay();
+        setTimeout(() => document.getElementById('calcDisplay')?.focus(), 50);
+    };
+
+    window.fecharCalculadora = function() {
+        const modal = document.getElementById('modalCalculadora');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    };
+
+    function digit(v) {
+        if (state.display === 'Erro' || state.waiting) {
+            state.display = v;
+            state.waiting = false;
+        } else if (state.display === '0') {
+            state.display = v;
+        } else if (state.display.length < 16) {
+            state.display += v;
+        }
+        state.justPercent = false;
+        updateDisplay();
+    }
+
+    function decimal() {
+        if (state.display === 'Erro' || state.waiting) {
+            state.display = '0,';
+            state.waiting = false;
+        } else if (!state.display.includes(',')) {
+            state.display += ',';
+        }
+        updateDisplay();
+    }
+
+    function clearCalc() {
+        state.display = '0';
+        state.first = null;
+        state.operator = null;
+        state.waiting = false;
+        state.justPercent = false;
+        updateDisplay();
+    }
+
+    function backspace() {
+        if (state.waiting || state.display === 'Erro') return;
+        state.display = state.display.length > 1 ? state.display.slice(0,-1) : '0';
+        if (state.display === '-' || state.display === '') state.display = '0';
+        updateDisplay();
+    }
+
+    function toggleSign() {
+        if (state.display === '0' || state.display === 'Erro') return;
+        state.display = state.display.startsWith('-') ? state.display.slice(1) : '-' + state.display;
+        updateDisplay();
+    }
+
+    function chooseOperator(op) {
+        const current = toNumber(state.display);
+        if (state.first === null) {
+            state.first = current;
+        } else if (state.operator && !state.waiting) {
+            const result = calculate(state.first, current, state.operator);
+            state.first = result;
+            state.display = formatNumber(result);
+        }
+        state.operator = op;
+        state.waiting = true;
+        state.justPercent = false;
+        updateDisplay();
+    }
+
+    function percent() {
+        const current = toNumber(state.display);
+        if (state.first !== null && state.operator && !state.waiting) {
+            // Percentual aplicado ao primeiro valor: 200 + 10% => 220;
+            // 200 * 10% => 20.
+            const pct = state.first * current / 100;
+            state.display = formatNumber(pct);
+        } else {
+            state.display = formatNumber(current / 100);
+        }
+        state.waiting = false;
+        state.justPercent = true;
+        updateDisplay();
+    }
+
+    function equals() {
+        if (state.operator === null || state.first === null) return;
+        let second = toNumber(state.display);
+        const result = calculate(state.first, second, state.operator);
+        state.display = formatNumber(result);
+        state.first = null;
+        state.operator = null;
+        state.waiting = true;
+        state.justPercent = false;
+        updateDisplay();
+    }
+
+    function handle(action, value) {
+        if (action === 'digit') digit(value);
+        else if (action === 'decimal') decimal();
+        else if (action === 'clear') clearCalc();
+        else if (action === 'back') backspace();
+        else if (action === 'sign') toggleSign();
+        else if (action === 'op') chooseOperator(value);
+        else if (action === 'percent') percent();
+        else if (action === 'equals') equals();
+    }
+
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('[data-calc]');
+        if (btn) handle(btn.dataset.calc, btn.dataset.value || '');
+        if (e.target === document.getElementById('modalCalculadora')) fecharCalculadora();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('modalCalculadora');
+        if (!modal || modal.classList.contains('hidden')) return;
+        if (/^[0-9]$/.test(e.key)) { digit(e.key); e.preventDefault(); }
+        else if (e.key === ',' || e.key === '.') { decimal(); e.preventDefault(); }
+        else if (['+','-','*','/'].includes(e.key)) { chooseOperator(e.key); e.preventDefault(); }
+        else if (e.key === '%') { percent(); e.preventDefault(); }
+        else if (e.key === 'Enter' || e.key === '=') { equals(); e.preventDefault(); }
+        else if (e.key === 'Escape') { fecharCalculadora(); e.preventDefault(); }
+        else if (e.key === 'Backspace') { backspace(); e.preventDefault(); }
+        else if (e.key.toLowerCase() === 'c') { clearCalc(); e.preventDefault(); }
+    });
+})();
+</script>
+
 </body>
 </html>
