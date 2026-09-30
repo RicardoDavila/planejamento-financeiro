@@ -12,7 +12,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.8.13</title>
+    <title>Planejamento Financeiro - V4.8.14</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -261,6 +261,7 @@
     #barraRapidaMobile .acao-nuvem { background: #059669; color: #fff; border-color: #059669; }
     #barraRapidaMobile .acao-sync { background: #d97706; color: #fff; border-color: #d97706; }
     #barraRapidaMobile .acao-grafico { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+    /* V4.8.14 — barra inferior sem calculadora; calculadora permanece no Resumo Financeiro */
 
     /* Ações secundárias: ficam disponíveis pelo botão Mais */
     .acoes-profissionais { display: none !important; }
@@ -1097,7 +1098,7 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
 
 
 <style id="v411-calculadora">
-/* V4.8.11 — calculadora */
+/* V4.8.14 — calculadora */
 .calc-btn {
     min-height:54px;
     border:1px solid #e2e8f0;
@@ -1386,9 +1387,6 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
             <button type="button" class="acao-grafico" onclick="openGraficosModal()" title="Gráficos">
                 <i class="fa-solid fa-chart-line"></i><span>Gráficos</span>
             </button>
-            <button type="button" class="acao-calculadora" onclick="abrirCalculadora()" title="Calculadora">
-                <i class="fa-solid fa-calculator"></i><span>Calculadora</span>
-            </button>
             <button type="button" onclick="toggleAcoesMobile()" title="Mais opções" aria-expanded="false" id="btnMaisMobile">
                 <i class="fa-solid fa-ellipsis"></i><span>Mais</span>
             </button>
@@ -1404,7 +1402,7 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
         <div id="infoBancoSeguranca" class="text-[11px] text-slate-500 mb-4 px-1"></div>
         <div id="infoNuvem" class="text-[11px] text-slate-500 mb-3 px-1 hidden"></div>
 
-        <!-- V4.8.11 — Calculadora financeira com porcentagem -->
+        <!-- V4.8.14 — Calculadora financeira com porcentagem -->
         <div id="modalCalculadora" class="fixed inset-0 bg-slate-950/60 z-[230] hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="tituloCalculadora">
             <div class="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
                 <div class="bg-slate-900 px-5 py-4 text-white flex items-center justify-between">
@@ -5026,7 +5024,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             if(protecaoAutenticada) iniciarAplicacao();
         };
     </script>
-    <script id="v411-calculadora-js">
+    <script id="v414-calculadora-js">
 (function() {
     const state = {
         display: '0',
