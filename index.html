@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- V4.8.11 -->
+    <!-- V4.8.13 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f172a">
@@ -12,7 +12,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.8.12</title>
+    <title>Planejamento Financeiro - V4.8.13</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1198,6 +1198,23 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
         </div>
     </div>
 
+    <!-- Tela neutra após Sair. Se o navegador bloquear window.close(), não deixa a aplicação em branco. -->
+    <div id="telaEncerramentoAcesso" class="hidden fixed inset-0 z-[1200] bg-slate-950 flex items-center justify-center p-4">
+        <div class="w-full max-w-md rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-2xl">
+            <div class="bg-slate-900 px-6 py-6 text-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center"><i class="fa-solid fa-lock text-xl"></i></div>
+                    <div><h2 class="text-xl font-bold">Aplicação encerrada</h2><p class="text-xs text-slate-300">Planejamento Financeiro</p></div>
+                </div>
+            </div>
+            <div class="p-6 text-center">
+                <p class="text-sm text-slate-600">O acesso foi encerrado e o sistema está bloqueado.</p>
+                <p class="text-xs text-slate-500 mt-2">Se o navegador não puder fechar esta janela automaticamente, você pode fechá-la normalmente.</p>
+                <button type="button" onclick="abrirNovamenteAcesso()" class="w-full mt-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-lock-open mr-1"></i> Abrir novamente</button>
+            </div>
+        </div>
+    </div>
+
     <div id="appConteudo" class="max-w-7xl mx-auto px-4 py-6">
         <!-- Cabeçalho específico para Impressão / PDF -->
         <div class="print-only mb-4 text-center border-b pb-3">
@@ -2181,20 +2198,40 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
             document.body.classList.add('auth-pendente');
             document.body.classList.add('auth-saiu');
 
-            const tela = document.getElementById('telaProtecaoAcesso');
-            if(tela) tela.classList.add('hidden');
+            const telaLogin = document.getElementById('telaProtecaoAcesso');
+            if(telaLogin) telaLogin.classList.add('hidden');
 
             const authSenha = document.getElementById('authSenha');
             if(authSenha) authSenha.value = '';
 
-            mostrarLoginAcesso();
             const erro = document.getElementById('authErro');
             if(erro){
                 erro.classList.add('hidden');
                 erro.textContent = '';
             }
 
+            const telaEncerramento = document.getElementById('telaEncerramentoAcesso');
+            if(telaEncerramento) telaEncerramento.classList.remove('hidden');
+
             window.scrollTo(0, 0);
+
+            // Tenta fechar uma janela/PWA quando o navegador permitir.
+            // Em abas normais o navegador pode bloquear window.close(); nesse caso,
+            // a tela de encerramento permanece visível em vez de deixar uma tela branca.
+            setTimeout(() => {
+                try { window.close(); } catch(e) {}
+            }, 120);
+        }
+
+        function abrirNovamenteAcesso(){
+            const telaEncerramento = document.getElementById('telaEncerramentoAcesso');
+            if(telaEncerramento) telaEncerramento.classList.add('hidden');
+            document.body.classList.remove('auth-saiu');
+            const telaLogin = document.getElementById('telaProtecaoAcesso');
+            if(telaLogin) telaLogin.classList.remove('hidden');
+            mostrarLoginAcesso();
+            const senha = document.getElementById('authSenha');
+            if(senha){ senha.value=''; setTimeout(() => senha.focus(), 50); }
         }
 
         async function autenticarAcesso(){
