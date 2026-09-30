@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <!-- V4.8.11 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f172a">
@@ -11,7 +12,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.5 Calendário Financeiro Mobile</title>
+    <title>Planejamento Financeiro - V4.8.11</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1073,6 +1074,49 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
   }
 }
 </style>
+
+
+<style id="v411-filtros-rubrica-tipo">
+/* V4.8.11 — inversão visual: Rubrica antes de Filtrar por Tipo.
+   Somente posição dos controles; IDs, filtros e dados permanecem inalterados. */
+@media (min-width:641px) and (pointer:fine) {
+  .pf-filtro-rubrica-select { grid-column:1 !important; grid-row:1 !important; }
+  .pf-filtro-tipo { grid-column:2 !important; grid-row:1 !important; }
+  .pf-filtro-busca-rubrica { grid-column:1 !important; grid-row:2 !important; }
+  .pf-filtro-busca-subitem { grid-column:2 !important; grid-row:2 !important; }
+}
+@media (max-width:640px), (pointer:coarse) {
+  .pf-filtro-rubrica-select { grid-column:1 !important; grid-row:1 !important; }
+  .pf-filtro-tipo { grid-column:2 !important; grid-row:1 !important; }
+  .pf-filtro-busca-rubrica { grid-column:1 !important; grid-row:2 !important; }
+  .pf-filtro-busca-subitem { grid-column:2 !important; grid-row:2 !important; }
+}
+</style>
+
+
+<style id="v411-calculadora">
+/* V4.8.11 — calculadora */
+.calc-btn {
+    min-height:54px;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    background:#f8fafc;
+    color:#0f172a;
+    font-size:18px;
+    font-weight:800;
+    transition:transform .08s ease, background .12s ease;
+}
+.calc-btn:hover { background:#f1f5f9; }
+.calc-btn:active { transform:scale(.97); }
+.calc-func { background:#e2e8f0; color:#334155; }
+.calc-percent { background:#fef3c7; border-color:#fde68a; color:#92400e; }
+.calc-op { background:#dbeafe; border-color:#bfdbfe; color:#1d4ed8; }
+.calc-equals { background:#0f172a; border-color:#0f172a; color:#fff; }
+@media (max-width:640px), (pointer:coarse) {
+    #modalCalculadora > div { max-width:390px; }
+    .calc-btn { min-height:58px; }
+}
+</style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
     <button id="btnInstalarPWA" type="button" class="fixed bottom-4 right-4 z-[300] items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl hover:bg-slate-800" aria-label="Instalar Planejamento Financeiro">
@@ -1285,6 +1329,9 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <button onclick="openGraficosModal()" class="botao-acao bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-chart-line"></i> Gráficos Evolutivos
                 </button>
+                <button onclick="abrirCalculadora()" class="botao-acao bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Calculadora financeira">
+                    <i class="fa-solid fa-calculator"></i> Calculadora
+                </button>
                 <button onclick="abrirConfiguracaoSeguranca(false)" class="botao-acao bg-blue-700 hover:bg-blue-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Configurar proteção por senha e recuperação">
                     <i class="fa-solid fa-shield-halved"></i> Segurança e Acesso
                 </button>
@@ -1328,6 +1375,57 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
 
         <div id="infoBancoSeguranca" class="text-[11px] text-slate-500 mb-4 px-1"></div>
         <div id="infoNuvem" class="text-[11px] text-slate-500 mb-3 px-1 hidden"></div>
+
+        <!-- V4.8.11 — Calculadora financeira com porcentagem -->
+        <div id="modalCalculadora" class="fixed inset-0 bg-slate-950/60 z-[230] hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="tituloCalculadora">
+            <div class="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+                <div class="bg-slate-900 px-5 py-4 text-white flex items-center justify-between">
+                    <div>
+                        <h2 id="tituloCalculadora" class="font-bold text-lg"><i class="fa-solid fa-calculator mr-2"></i>Calculadora</h2>
+                        <p class="text-xs text-slate-300">Operações financeiras e porcentagem</p>
+                    </div>
+                    <button type="button" onclick="fecharCalculadora()" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20" aria-label="Fechar calculadora">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="mb-3">
+                        <input id="calcDisplay" type="text" value="0" readonly
+                            class="w-full h-16 rounded-xl border border-slate-300 bg-slate-50 px-4 text-right text-2xl font-bold text-slate-800 outline-none"
+                            aria-label="Visor da calculadora">
+                    </div>
+                    <div id="calculadoraTeclado" class="grid grid-cols-4 gap-2">
+                        <button type="button" data-calc="clear" class="calc-btn calc-func">C</button>
+                        <button type="button" data-calc="back" class="calc-btn calc-func"><i class="fa-solid fa-delete-left"></i></button>
+                        <button type="button" data-calc="percent" class="calc-btn calc-percent">%</button>
+                        <button type="button" data-calc="op" data-value="/" class="calc-btn calc-op">÷</button>
+
+                        <button type="button" data-calc="digit" data-value="7" class="calc-btn">7</button>
+                        <button type="button" data-calc="digit" data-value="8" class="calc-btn">8</button>
+                        <button type="button" data-calc="digit" data-value="9" class="calc-btn">9</button>
+                        <button type="button" data-calc="op" data-value="*" class="calc-btn calc-op">×</button>
+
+                        <button type="button" data-calc="digit" data-value="4" class="calc-btn">4</button>
+                        <button type="button" data-calc="digit" data-value="5" class="calc-btn">5</button>
+                        <button type="button" data-calc="digit" data-value="6" class="calc-btn">6</button>
+                        <button type="button" data-calc="op" data-value="-" class="calc-btn calc-op">−</button>
+
+                        <button type="button" data-calc="digit" data-value="1" class="calc-btn">1</button>
+                        <button type="button" data-calc="digit" data-value="2" class="calc-btn">2</button>
+                        <button type="button" data-calc="digit" data-value="3" class="calc-btn">3</button>
+                        <button type="button" data-calc="op" data-value="+" class="calc-btn calc-op">+</button>
+
+                        <button type="button" data-calc="sign" class="calc-btn calc-func">±</button>
+                        <button type="button" data-calc="digit" data-value="0" class="calc-btn">0</button>
+                        <button type="button" data-calc="decimal" class="calc-btn">,</button>
+                        <button type="button" data-calc="equals" class="calc-btn calc-equals">=</button>
+                    </div>
+                    <div class="mt-3 text-[11px] text-slate-500 text-center">
+                        A tecla <strong>%</strong> calcula a porcentagem do valor em operação.
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Modal redefinição da senha do Supabase Auth -->
         <div id="modalRecuperacaoSupabase" class="fixed inset-0 bg-black/60 z-[220] hidden items-center justify-center p-4">
@@ -1465,12 +1563,12 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <span id="dashboardV40Nuvem" class="dashboard-v40-sync">Nuvem Online</span>
             </div>
             <div class="dashboard-v40-grid">
-                <div class="dashboard-v40-card receita"><div class="lbl">Receitas</div><div id="d40Receitas" class="val">R$ 0,00</div></div>
-                <div class="dashboard-v40-card despesa"><div class="lbl">Despesas</div><div id="d40Despesas" class="val">R$ 0,00</div></div>
-                <div class="dashboard-v40-card saldo"><div class="lbl">Saldo Previsto</div><div id="d40Saldo" class="val">R$ 0,00</div></div>
-                <div class="dashboard-v40-card vencer"><div class="lbl">A Vencer</div><div id="d40Vencer" class="val">R$ 0,00</div></div>
-                <div class="dashboard-v40-card vencido"><div class="lbl">Vencido</div><div id="d40Vencido" class="val">R$ 0,00</div></div>
-                <div class="dashboard-v40-card recebido"><div class="lbl">Recebido</div><div id="d40Recebido" class="val">R$ 0,00</div></div>
+                <div class="dashboard-v40-card receita"><div class="lbl">RECEITAS</div><div id="d40Receitas" class="val">R$ 0,00</div></div>
+                <div class="dashboard-v40-card recebido"><div class="lbl">RECEBIDO</div><div id="d40Recebido" class="val">R$ 0,00</div></div>
+                <div class="dashboard-v40-card despesa"><div class="lbl">DESPESAS</div><div id="d40Despesas" class="val">R$ 0,00</div></div>
+                <div class="dashboard-v40-card vencer"><div class="lbl">A VENCER</div><div id="d40Vencer" class="val">R$ 0,00</div></div>
+                <div class="dashboard-v40-card vencido"><div class="lbl">VENCIDO</div><div id="d40Vencido" class="val">R$ 0,00</div></div>
+                <div class="dashboard-v40-card saldo"><div class="lbl">SALDO PREVISTO</div><div id="d40Saldo" class="val">R$ 0,00</div></div>
             </div>
             <div id="dashboardV40Alerta" class="dashboard-v40-alert ok">Situação financeira controlada.</div>
             <div class="dashboard-v40-actions">
@@ -1486,14 +1584,14 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <div><h2 class="text-lg font-bold text-slate-800">Painel Gerencial</h2><p id="periodoPainelGerencial" class="text-xs text-slate-500">Visão consolidada do banco e projeção dos próximos 30 dias.</p></div>
                 <div class="flex gap-2 no-print"><button onclick="atualizarPainelGerencial()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-arrows-rotate"></i> Atualizar</button><button onclick="abrirRelatorioGerencial()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-file-pdf"></i> Relatório</button></div>
             </div>
-            <div id="painelResumoGerencial" class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 mb-5">
-                <div class="bg-emerald-50 rounded-lg p-3"><p class="text-[10px] font-bold text-emerald-700 uppercase">PREV RECEITAS</p><p id="pgReceitas" class="text-sm font-bold text-emerald-800 mt-1">R$ 0,00</p></div>
-                <div class="bg-blue-50 rounded-lg p-3"><p class="text-[10px] font-bold text-blue-700 uppercase">REC RECEBIDAS</p><p id="pgRecebido" class="text-sm font-bold text-blue-800 mt-1">R$ 0,00</p></div>
-                <div class="bg-rose-50 rounded-lg p-3"><p class="text-[10px] font-bold text-rose-700 uppercase">Despesas</p><p id="pgDespesas" class="text-sm font-bold text-rose-800 mt-1">R$ 0,00</p></div>
-                <div class="bg-amber-50 rounded-lg p-3"><p class="text-[10px] font-bold text-amber-700 uppercase">A Vencer</p><p id="pgAVencer" class="text-sm font-bold text-amber-800 mt-1">R$ 0,00</p></div>
-                <div class="bg-red-50 rounded-lg p-3"><p class="text-[10px] font-bold text-red-700 uppercase">Vencido</p><p id="pgVencido" class="text-sm font-bold text-red-800 mt-1">R$ 0,00</p></div>
+            <div id="painelResumoGerencial" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-5">
+                <div class="bg-emerald-50 rounded-lg p-3"><p class="text-[10px] font-bold text-emerald-700 uppercase">RECEITAS</p><p id="pgReceitas" class="text-sm font-bold text-emerald-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-blue-50 rounded-lg p-3"><p class="text-[10px] font-bold text-blue-700 uppercase">RECEBIDO</p><p id="pgRecebido" class="text-sm font-bold text-blue-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-rose-50 rounded-lg p-3"><p class="text-[10px] font-bold text-rose-700 uppercase">DESPESAS</p><p id="pgDespesas" class="text-sm font-bold text-rose-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-amber-50 rounded-lg p-3"><p class="text-[10px] font-bold text-amber-700 uppercase">A VENCER</p><p id="pgAVencer" class="text-sm font-bold text-amber-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-red-50 rounded-lg p-3"><p class="text-[10px] font-bold text-red-700 uppercase">VENCIDO</p><p id="pgVencido" class="text-sm font-bold text-red-800 mt-1">R$ 0,00</p></div>
+                <div class="bg-slate-50 rounded-lg p-3"><p class="text-[10px] font-bold text-slate-700 uppercase">SALDO PREVISTO</p><p id="pgSaldo" class="text-sm font-bold text-slate-800 mt-1">R$ 0,00</p></div>
                 <div class="bg-purple-50 rounded-lg p-3"><p class="text-[10px] font-bold text-purple-700 uppercase">Investimentos</p><p id="pgInvestimentos" class="text-sm font-bold text-purple-800 mt-1">R$ 0,00</p></div>
-                <div class="bg-slate-50 rounded-lg p-3"><p class="text-[10px] font-bold text-slate-700 uppercase">Saldo Previsto</p><p id="pgSaldo" class="text-sm font-bold text-slate-800 mt-1">R$ 0,00</p></div>
                 <div id="pgSemaforo" class="rounded-lg p-3 bg-emerald-50"><p class="text-[10px] font-bold uppercase">Situação</p><p id="pgSituacao" class="text-sm font-bold mt-1">Controlada</p></div>
             </div>
             <div id="painelDetalhesGerencial" class="grid grid-cols-1 xl:grid-cols-2 gap-5">
@@ -3769,6 +3867,182 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
                 ${previsaoHtml}
                 <br><button class="no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
             
+
+
+
+<script id="v411-calculadora-js">
+(function() {
+    const state = {
+        display: '0',
+        first: null,
+        operator: null,
+        waiting: false,
+        justPercent: false
+    };
+
+    function displayEl() { return document.getElementById('calcDisplay'); }
+    function updateDisplay() {
+        const el = displayEl();
+        if (el) el.value = state.display;
+    }
+    function toNumber(v) {
+        const n = Number(String(v).replace(',', '.'));
+        return Number.isFinite(n) ? n : 0;
+    }
+    function formatNumber(n) {
+        if (!Number.isFinite(n)) return 'Erro';
+        const rounded = Math.abs(n) < 1e-12 ? 0 : Number(n.toFixed(12));
+        return String(rounded).replace('.', ',');
+    }
+    function calculate(a,b,op) {
+        switch(op) {
+            case '+': return a + b;
+            case '-': return a - b;
+            case '*': return a * b;
+            case '/': return b === 0 ? NaN : a / b;
+            default: return b;
+        }
+    }
+
+    window.abrirCalculadora = function() {
+        const modal = document.getElementById('modalCalculadora');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        state.display = '0';
+        state.first = null;
+        state.operator = null;
+        state.waiting = false;
+        state.justPercent = false;
+        updateDisplay();
+        setTimeout(() => document.getElementById('calcDisplay')?.focus(), 50);
+    };
+
+    window.fecharCalculadora = function() {
+        const modal = document.getElementById('modalCalculadora');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    };
+
+    function digit(v) {
+        if (state.display === 'Erro' || state.waiting) {
+            state.display = v;
+            state.waiting = false;
+        } else if (state.display === '0') {
+            state.display = v;
+        } else if (state.display.length < 16) {
+            state.display += v;
+        }
+        state.justPercent = false;
+        updateDisplay();
+    }
+
+    function decimal() {
+        if (state.display === 'Erro' || state.waiting) {
+            state.display = '0,';
+            state.waiting = false;
+        } else if (!state.display.includes(',')) {
+            state.display += ',';
+        }
+        updateDisplay();
+    }
+
+    function clearCalc() {
+        state.display = '0';
+        state.first = null;
+        state.operator = null;
+        state.waiting = false;
+        state.justPercent = false;
+        updateDisplay();
+    }
+
+    function backspace() {
+        if (state.waiting || state.display === 'Erro') return;
+        state.display = state.display.length > 1 ? state.display.slice(0,-1) : '0';
+        if (state.display === '-' || state.display === '') state.display = '0';
+        updateDisplay();
+    }
+
+    function toggleSign() {
+        if (state.display === '0' || state.display === 'Erro') return;
+        state.display = state.display.startsWith('-') ? state.display.slice(1) : '-' + state.display;
+        updateDisplay();
+    }
+
+    function chooseOperator(op) {
+        const current = toNumber(state.display);
+        if (state.first === null) {
+            state.first = current;
+        } else if (state.operator && !state.waiting) {
+            const result = calculate(state.first, current, state.operator);
+            state.first = result;
+            state.display = formatNumber(result);
+        }
+        state.operator = op;
+        state.waiting = true;
+        state.justPercent = false;
+        updateDisplay();
+    }
+
+    function percent() {
+        const current = toNumber(state.display);
+        if (state.first !== null && state.operator && !state.waiting) {
+            // Percentual aplicado ao primeiro valor: 200 + 10% => 220;
+            // 200 * 10% => 20.
+            const pct = state.first * current / 100;
+            state.display = formatNumber(pct);
+        } else {
+            state.display = formatNumber(current / 100);
+        }
+        state.waiting = false;
+        state.justPercent = true;
+        updateDisplay();
+    }
+
+    function equals() {
+        if (state.operator === null || state.first === null) return;
+        let second = toNumber(state.display);
+        const result = calculate(state.first, second, state.operator);
+        state.display = formatNumber(result);
+        state.first = null;
+        state.operator = null;
+        state.waiting = true;
+        state.justPercent = false;
+        updateDisplay();
+    }
+
+    function handle(action, value) {
+        if (action === 'digit') digit(value);
+        else if (action === 'decimal') decimal();
+        else if (action === 'clear') clearCalc();
+        else if (action === 'back') backspace();
+        else if (action === 'sign') toggleSign();
+        else if (action === 'op') chooseOperator(value);
+        else if (action === 'percent') percent();
+        else if (action === 'equals') equals();
+    }
+
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('[data-calc]');
+        if (btn) handle(btn.dataset.calc, btn.dataset.value || '');
+        if (e.target === document.getElementById('modalCalculadora')) fecharCalculadora();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('modalCalculadora');
+        if (!modal || modal.classList.contains('hidden')) return;
+        if (/^[0-9]$/.test(e.key)) { digit(e.key); e.preventDefault(); }
+        else if (e.key === ',' || e.key === '.') { decimal(); e.preventDefault(); }
+        else if (['+','-','*','/'].includes(e.key)) { chooseOperator(e.key); e.preventDefault(); }
+        else if (e.key === '%') { percent(); e.preventDefault(); }
+        else if (e.key === 'Enter' || e.key === '=') { equals(); e.preventDefault(); }
+        else if (e.key === 'Escape') { fecharCalculadora(); e.preventDefault(); }
+        else if (e.key === 'Backspace') { backspace(); e.preventDefault(); }
+        else if (e.key.toLowerCase() === 'c') { clearCalc(); e.preventDefault(); }
+    });
+})();
+</script>
 
 </body></html>`);
             w.document.close();
