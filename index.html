@@ -12,7 +12,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.8.11</title>
+    <title>Planejamento Financeiro - V4.8.12</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -56,6 +56,8 @@
 
         /* Proteção de acesso por senha */
         body.auth-pendente #appConteudo { visibility: hidden !important; pointer-events: none !important; }
+        /* Após clicar em Sair, mantém a aplicação bloqueada sem deixar a tela de login aberta. Ao recarregar o site, o login volta a aparecer normalmente. */
+        body.auth-saiu #telaProtecaoAcesso { display: none !important; }
         #telaProtecaoAcesso { z-index: 1000; }
         .auth-card { box-shadow: 0 25px 70px rgba(15,23,42,.22); }
         @media print { #telaProtecaoAcesso, #modalConfiguracaoSeguranca { display:none !important; } }
@@ -1347,6 +1349,12 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
             </div>
         </header>
 
+        <style>
+          .dashboard-calc-btn { background:#0f172a !important; color:#fff !important; border-color:#0f172a !important; }
+          .dashboard-calc-btn:hover { filter:brightness(1.08); }
+          .acao-calculadora { background:#0f172a !important; color:#fff !important; }
+        </style>
+
         <!-- Barra rápida exclusiva para celular -->
         <nav id="barraRapidaMobile" aria-label="Ações rápidas">
             <button type="button" class="acao-primaria" onclick="openModal()" title="Novo lançamento">
@@ -1360,6 +1368,9 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
             </button>
             <button type="button" class="acao-grafico" onclick="openGraficosModal()" title="Gráficos">
                 <i class="fa-solid fa-chart-line"></i><span>Gráficos</span>
+            </button>
+            <button type="button" class="acao-calculadora" onclick="abrirCalculadora()" title="Calculadora">
+                <i class="fa-solid fa-calculator"></i><span>Calculadora</span>
             </button>
             <button type="button" onclick="toggleAcoesMobile()" title="Mais opções" aria-expanded="false" id="btnMaisMobile">
                 <i class="fa-solid fa-ellipsis"></i><span>Mais</span>
@@ -1575,6 +1586,7 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <button type="button" onclick="abrirConfiguracaoNuvem()"><i class="fa-solid fa-cloud"></i> Nuvem</button>
                 <button type="button" onclick="sincronizarAgoraNuvem()"><i class="fa-solid fa-arrows-rotate"></i> Sincronizar</button>
                 <button type="button" onclick="openModal()"><i class="fa-solid fa-plus"></i> Novo</button>
+                <button type="button" onclick="abrirCalculadora()" class="dashboard-calc-btn"><i class="fa-solid fa-calculator"></i> Calculadora</button>
             </div>
         </section>
 
@@ -2167,9 +2179,10 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
 
             protecaoAutenticada = false;
             document.body.classList.add('auth-pendente');
+            document.body.classList.add('auth-saiu');
 
             const tela = document.getElementById('telaProtecaoAcesso');
-            if(tela) tela.classList.remove('hidden');
+            if(tela) tela.classList.add('hidden');
 
             const authSenha = document.getElementById('authSenha');
             if(authSenha) authSenha.value = '';
@@ -2192,6 +2205,7 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
             if(!ok) return mensagemAuth('authErro','Senha incorreta.');
             protecaoAutenticada=true;
             document.body.classList.remove('auth-pendente');
+            document.body.classList.remove('auth-saiu');
             document.getElementById('telaProtecaoAcesso').classList.add('hidden');
             document.getElementById('authSenha').value='';
             iniciarAplicacao();
