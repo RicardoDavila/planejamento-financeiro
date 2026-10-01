@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- V4.8.13 -->
+    <!-- V4.8.16 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f172a">
@@ -12,7 +12,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.8.14</title>
+    <title>Planejamento Financeiro - V4.8.16</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -261,6 +261,18 @@
     #barraRapidaMobile .acao-nuvem { background: #059669; color: #fff; border-color: #059669; }
     #barraRapidaMobile .acao-sync { background: #d97706; color: #fff; border-color: #d97706; }
     #barraRapidaMobile .acao-grafico { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+    /* V4.8.16 — no Resumo Financeiro mobile, manter somente a Calculadora.
+       Nuvem, Sincronizar, Novo e Mais ficam exclusivamente na barra inferior. */
+    @media (max-width: 640px), (pointer: coarse) {
+        #dashboardMobileV40 .dashboard-v40-actions > button:not(.dashboard-calc-btn) {
+            display: none !important;
+        }
+        #dashboardMobileV40 .dashboard-v40-actions {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+    }
+
     /* V4.8.14 — barra inferior sem calculadora; calculadora permanece no Resumo Financeiro */
 
     /* Ações secundárias: ficam disponíveis pelo botão Mais */
@@ -1597,10 +1609,8 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <div class="dashboard-v40-card saldo"><div class="lbl">SALDO PREVISTO</div><div id="d40Saldo" class="val">R$ 0,00</div></div>
             </div>
             <div id="dashboardV40Alerta" class="dashboard-v40-alert ok">Situação financeira controlada.</div>
+            <!-- V4.8.16: somente a Calculadora aparece no Resumo Financeiro mobile; demais ações ficam no rodapé. -->
             <div class="dashboard-v40-actions">
-                <button type="button" onclick="abrirConfiguracaoNuvem()"><i class="fa-solid fa-cloud"></i> Nuvem</button>
-                <button type="button" onclick="sincronizarAgoraNuvem()"><i class="fa-solid fa-arrows-rotate"></i> Sincronizar</button>
-                <button type="button" onclick="openModal()"><i class="fa-solid fa-plus"></i> Novo</button>
                 <button type="button" onclick="abrirCalculadora()" class="dashboard-calc-btn"><i class="fa-solid fa-calculator"></i> Calculadora</button>
             </div>
         </section>
