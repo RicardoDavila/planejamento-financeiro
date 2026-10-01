@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- V4.8.19 — remove atalho duplicado e distribui as duas ações por toda a largura no celular -->
+    <!-- V4.8.20 — correção final de prioridade CSS para os atalhos mobile -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f172a">
@@ -12,7 +12,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.8.19</title>
+    <title>Planejamento Financeiro - V4.8.20</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1177,6 +1177,43 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
 @media (max-width:640px), (pointer:coarse) {
     #modalCalculadora > div { max-width:390px; }
     .calc-btn { min-height:58px; }
+}
+</style>
+<!-- V4.8.20 — correção definitiva dos atalhos no celular; esta regra fica após estilos antigos conflitantes. -->
+<style id="v4820-mobile-quick-actions-final">
+@media (max-width: 640px), (pointer: coarse) {
+  html.pf-mobile-device #atalhoLancamentoRapidoMobile,
+  #atalhoLancamentoRapidoMobile {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  #dashboardMobileV40 .dashboard-v40-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+  #dashboardMobileV40 .dashboard-v40-actions > button {
+    display: flex !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+  }
 }
 </style>
 </head>
