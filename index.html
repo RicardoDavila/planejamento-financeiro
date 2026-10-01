@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- V4.8.18 — ações Calculadora e Lançamento Rápido lado a lado no celular -->
+    <!-- V4.8.19 — remove atalho duplicado e distribui as duas ações por toda a largura no celular -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f172a">
@@ -12,7 +12,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.8.18</title>
+    <title>Planejamento Financeiro - V4.8.19</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -294,21 +294,28 @@
     /* V4.8.16 — no Resumo Financeiro mobile, manter somente a Calculadora.
        Nuvem, Sincronizar, Novo e Mais ficam exclusivamente na barra inferior. */
     @media (max-width: 640px), (pointer: coarse) {
-        #dashboardMobileV40 .dashboard-v40-actions > button:not(.dashboard-calc-btn) {
-            display: none !important;
-        }
+        /* V4.8.19: esconder o atalho duplicado abaixo do título e usar toda a largura
+           para os dois botões do Resumo Financeiro. */
+        html.pf-mobile-device #atalhoLancamentoRapidoMobile,
+        #atalhoLancamentoRapidoMobile { display: none !important; }
         #dashboardMobileV40 .dashboard-v40-actions {
             display: grid !important;
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+            width: 100% !important;
             gap: 8px !important;
+            box-sizing: border-box !important;
         }
-        #dashboardMobileV40 .dashboard-v40-actions button {
+        #dashboardMobileV40 .dashboard-v40-actions > button {
+            display: flex !important;
+            width: 100% !important;
             min-width: 0 !important;
-            min-height: 46px !important;
-            height: 46px !important;
+            min-height: 48px !important;
+            height: 48px !important;
+            margin: 0 !important;
             padding: 6px 4px !important;
             font-size: 11px !important;
             white-space: nowrap;
+            box-sizing: border-box !important;
         }
         #dashboardMobileV40 .dashboard-v40-actions button i { flex-shrink: 0; }
     }
@@ -1652,7 +1659,7 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <div class="dashboard-v40-card saldo"><div class="lbl">SALDO PREVISTO</div><div id="d40Saldo" class="val">R$ 0,00</div></div>
             </div>
             <div id="dashboardV40Alerta" class="dashboard-v40-alert ok">Situação financeira controlada.</div>
-            <!-- V4.8.16: somente a Calculadora aparece no Resumo Financeiro mobile; demais ações ficam no rodapé. -->
+            <!-- V4.8.19: Calculadora e Lançamento Rápido dividem toda a largura no Resumo Financeiro mobile. -->
             <div class="dashboard-v40-actions">
                 <button type="button" onclick="abrirCalculadora()" class="dashboard-calc-btn"><i class="fa-solid fa-calculator"></i> Calculadora</button>
                 <button type="button" onclick="abrirLancamentoRapido()" class="dashboard-rapido-btn"><i class="fa-solid fa-bolt"></i> Lançamento Rápido</button>
