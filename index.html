@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- V4.8.17 — correção PDF em dispositivos móveis -->
+    <!-- V4.8.18 — ações Calculadora e Lançamento Rápido lado a lado no celular -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f172a">
@@ -12,7 +12,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - V4.8.17</title>
+    <title>Planejamento Financeiro - V4.8.18</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -299,8 +299,18 @@
         }
         #dashboardMobileV40 .dashboard-v40-actions {
             display: grid !important;
-            grid-template-columns: minmax(0, 1fr) !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 8px !important;
         }
+        #dashboardMobileV40 .dashboard-v40-actions button {
+            min-width: 0 !important;
+            min-height: 46px !important;
+            height: 46px !important;
+            padding: 6px 4px !important;
+            font-size: 11px !important;
+            white-space: nowrap;
+        }
+        #dashboardMobileV40 .dashboard-v40-actions button i { flex-shrink: 0; }
     }
 
     /* V4.8.14 — barra inferior sem calculadora; calculadora permanece no Resumo Financeiro */
@@ -1412,6 +1422,9 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
         <style>
           .dashboard-calc-btn { background:#0f172a !important; color:#fff !important; border-color:#0f172a !important; }
           .dashboard-calc-btn:hover { filter:brightness(1.08); }
+          .dashboard-rapido-btn { background:#059669 !important; color:#fff !important; border-color:#059669 !important; }
+          .dashboard-rapido-btn:hover { filter:brightness(1.08); }
+          .dashboard-v40-actions button { min-height:44px; width:100%; padding:8px 6px; }
           .acao-calculadora { background:#0f172a !important; color:#fff !important; }
         </style>
 
@@ -1642,6 +1655,7 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
             <!-- V4.8.16: somente a Calculadora aparece no Resumo Financeiro mobile; demais ações ficam no rodapé. -->
             <div class="dashboard-v40-actions">
                 <button type="button" onclick="abrirCalculadora()" class="dashboard-calc-btn"><i class="fa-solid fa-calculator"></i> Calculadora</button>
+                <button type="button" onclick="abrirLancamentoRapido()" class="dashboard-rapido-btn"><i class="fa-solid fa-bolt"></i> Lançamento Rápido</button>
             </div>
         </section>
 
@@ -1674,9 +1688,6 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
                     <div class="flex items-center justify-between gap-3 w-full">
                         <h2 class="text-lg font-bold text-slate-800">Lançamentos, Rúbricas e Sub-Itens</h2>
-                        <button type="button" onclick="abrirLancamentoRapido()" class="pf-btn-rapido-titulo no-print">
-                            <i class="fa-solid fa-bolt"></i><span>Lançamento Rápido</span>
-                        </button>
                     </div>
                 </div>
                 <div class="pf-filtros-cabecalho">
