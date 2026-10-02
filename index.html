@@ -4439,7 +4439,15 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             cardSaldoEl.innerText = formatarMoeda(saldoLiquido);
             cardSaldoEl.className = saldoLiquido < 0 ? "text-base font-bold text-rose-600 mt-1" : "text-base font-bold text-blue-600 mt-1";
 
-            const filtradas = getFilteredTransactions();
+            // Ordenação somente visual por DT VCTO crescente; não altera transacoes nem dados salvos.
+            const filtradas = getFilteredTransactions().slice().sort((a, b) => {
+                const dataA = (a.vencimento || '').trim();
+                const dataB = (b.vencimento || '').trim();
+                if (!dataA && !dataB) return 0;
+                if (!dataA) return 1;
+                if (!dataB) return -1;
+                return dataA.localeCompare(dataB);
+            });
             if (filtradas.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="10" class="text-center py-6 text-gray-400">Nenhum lançamento encontrado.</td></tr>`;
                 renderCartoesLancamentosMobile([]);
