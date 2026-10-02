@@ -1935,45 +1935,23 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
             </div>
 
             <!-- Painel de Filtros Individuais para a Aba Ativa -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-gray-200 mb-6 items-end graficos-controles no-print">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Período Início</label>
-                    <input type="date" id="graficoDataInicio" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Período Fim</label>
-                    <input type="date" id="graficoDataFim" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div class="lg:col-start-1">
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Rubrica</label>
-                    <select id="graficoRubrica" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                        <option value="Todas">Todas as Rubricas</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Sub-Item</label>
-                    <select id="graficoSubItem" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                        <option value="Todos">Todos os Sub-Itens</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Descrição</label>
-                    <input type="text" id="graficoDescricao" placeholder="Filtrar descrição..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div class="lg:col-span-2 space-y-2">
-                    <button onclick="atualizarGraficos()" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow">
-                        <i class="fa-solid fa-chart-line"></i> Gerar Gráfico
-                    </button>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <button onclick="gerarComparativoReceitasDespesas()" class="w-full min-h-[42px] bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 text-center shadow">
-                            <i class="fa-solid fa-chart-column"></i> Gerar Gráfico Comparativo Receitas x Despesas
-                        </button>
-                        <button onclick="compararRubricaMesAnteriorAtual()" class="w-full min-h-[42px] bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 text-center shadow">
-                            <i class="fa-solid fa-chart-line"></i> Comparar Rubrica: mês anterior x atual
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <section class="graficos-controles no-print mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" aria-label="Filtros dos gráficos">
+  <div class="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3"><i class="fa-solid fa-sliders text-indigo-600"></i><h4 class="text-sm font-bold text-slate-800">Filtros da análise</h4><span class="ml-auto text-xs text-slate-500">Defina o período e os critérios</span></div>
+  <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Período início</label><input type="date" id="graficoDataInicio" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"></div>
+    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Período fim</label><input type="date" id="graficoDataFim" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"></div>
+  </div>
+  <div class="mb-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Rubrica</label><select id="graficoRubrica" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"><option value="Todas">Todas as Rubricas</option></select></div>
+    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Sub-Item</label><select id="graficoSubItem" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"><option value="Todos">Todos os Sub-Itens</option></select></div>
+    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Descrição</label><input type="text" id="graficoDescricao" placeholder="Filtrar descrição..." class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"></div>
+  </div>
+  <div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
+    <button onclick="atualizarGraficos()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700"><i class="fa-solid fa-chart-line"></i>Gerar gráfico</button>
+    <button onclick="gerarComparativoReceitasDespesas()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"><i class="fa-solid fa-chart-column"></i>Comparar receitas x despesas</button>
+    <button onclick="compararRubricaMesAnteriorAtual()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"><i class="fa-solid fa-chart-line"></i>Comparativo Mês Anterior X Mês Atual</button>
+  </div>
+</section>
 
             <!-- Indicador de variação percentual da rubrica selecionada -->
             <div id="variacaoPercentualRubrica" class="hidden mb-5 rounded-xl border border-slate-200 bg-white p-4 shadow-sm" aria-live="polite">
@@ -4776,15 +4754,25 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             const rubricaFiltro = document.getElementById('graficoRubrica').value;
             const subItemFiltro = document.getElementById('graficoSubItem').value;
             const descFiltro = (document.getElementById('graficoDescricao').value || '').toLowerCase();
-            if (!rubricaFiltro || rubricaFiltro === 'Todas') {
-                alert('Selecione uma Rubrica específica para comparar os meses.');
-                return;
-            }
 
-            // Atualiza os gráficos normalmente primeiro; assim o segundo gráfico não é alterado
-            // por esta comparação especial.
+            // O comparativo mensal é contextual:
+            // 1) Se houver Rubrica/Sub-Item/Descrição filtrados, mantém o comportamento
+            //    legado, comparando exatamente esse recorte.
+            // 2) Sem esses filtros, usa a aba/visão ativa:
+            //    Prev Receita, Rec Recebidas, Total de Despesas ou Despesas x Receitas.
+            const temFiltroIndividual =
+                (rubricaFiltro && rubricaFiltro !== 'Todas') ||
+                (subItemFiltro && subItemFiltro !== 'Todos') ||
+                !!descFiltro;
+
+            const contexto = temFiltroIndividual
+                ? 'filtro'
+                : (['prevReceita', 'recRecebidas', 'totalDespesas', 'comparativo'].includes(abaAtivaGrafico)
+                    ? abaAtivaGrafico
+                    : 'prevReceita');
+
+            // Ao entrar nesta comparação, não manter o comparativo geral anterior.
             comparativoReceitasDespesasAtivo = false;
-            atualizarGraficos();
 
             const hoje = new Date();
             const inicioMesAtual = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
@@ -4792,58 +4780,294 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
             const diasMesAtual = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
             const diasMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth(), 0).getDate();
             const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-            const valoresAtual = Array(31).fill(0);
+
+            const nomeMesAnterior = nomesMeses[inicioMesAnterior.getMonth()];
+            const nomeMesAtual = nomesMeses[inicioMesAtual.getMonth()];
+
             const valoresAnterior = Array(31).fill(0);
+            const valoresAtual = Array(31).fill(0);
+            const receitasAnterior = Array(31).fill(0);
+            const receitasAtual = Array(31).fill(0);
+            const despesasAnterior = Array(31).fill(0);
+            const despesasAtual = Array(31).fill(0);
+
+            // Aplica os mesmos filtros individuais usados pelos gráficos.
+            const passaFiltrosIndividuais = (t) => {
+                if (rubricaFiltro && rubricaFiltro !== 'Todas' && (t.categoria || 'Outros') !== rubricaFiltro) return false;
+                if (subItemFiltro && subItemFiltro !== 'Todos' && (t.subItem || '') !== subItemFiltro) return false;
+                if (descFiltro && !(t.descricao || '').toLowerCase().includes(descFiltro)) return false;
+                return true;
+            };
 
             (Array.isArray(transacoes) ? transacoes : []).forEach(t => {
-                if ((t.categoria || 'Outros') !== rubricaFiltro) return;
-                if (subItemFiltro !== 'Todos' && (t.subItem || '') !== subItemFiltro) return;
-                if (!(t.descricao || '').toLowerCase().includes(descFiltro)) return;
+                if (!passaFiltrosIndividuais(t)) return;
                 if (!t.vencimento || !/^\d{4}-\d{2}-\d{2}$/.test(t.vencimento)) return;
+
                 const partes = t.vencimento.split('-').map(Number);
                 const ano = partes[0], mes = partes[1] - 1, dia = partes[2];
+                if (dia < 1 || dia > 31) return;
+
                 const valor = Number(t.valor) || 0;
-                if (ano === inicioMesAtual.getFullYear() && mes === inicioMesAtual.getMonth()) valoresAtual[dia - 1] += valor;
-                if (ano === inicioMesAnterior.getFullYear() && mes === inicioMesAnterior.getMonth()) valoresAnterior[dia - 1] += valor;
+                const ehMesAnterior = ano === inicioMesAnterior.getFullYear() && mes === inicioMesAnterior.getMonth();
+                const ehMesAtual = ano === inicioMesAtual.getFullYear() && mes === inicioMesAtual.getMonth();
+                if (!ehMesAnterior && !ehMesAtual) return;
+
+                const ehReceita = t.tipo === 'Receita';
+                const ehRecebida = ehReceita && t.status !== 'Não Recebido';
+                const ehDespesa = t.tipo === 'Despesa';
+
+                // Valores do contexto selecionado.
+                if (contexto === 'filtro') {
+                    // Legado: Rubrica/Sub-Item/Descrição, independentemente da aba.
+                    if (ehMesAnterior) valoresAnterior[dia - 1] += valor;
+                    if (ehMesAtual) valoresAtual[dia - 1] += valor;
+                } else if (contexto === 'prevReceita') {
+                    if (ehReceita) {
+                        if (ehMesAnterior) valoresAnterior[dia - 1] += valor;
+                        if (ehMesAtual) valoresAtual[dia - 1] += valor;
+                    }
+                } else if (contexto === 'recRecebidas') {
+                    if (ehRecebida) {
+                        if (ehMesAnterior) valoresAnterior[dia - 1] += valor;
+                        if (ehMesAtual) valoresAtual[dia - 1] += valor;
+                    }
+                } else if (contexto === 'totalDespesas') {
+                    if (ehDespesa) {
+                        if (ehMesAnterior) valoresAnterior[dia - 1] += valor;
+                        if (ehMesAtual) valoresAtual[dia - 1] += valor;
+                    }
+                } else if (contexto === 'comparativo') {
+                    // Para o balanço, mantemos receitas e despesas separadas para
+                    // permitir visualizar tanto os montantes quanto o saldo mensal.
+                    if (ehReceita) {
+                        if (ehMesAnterior) receitasAnterior[dia - 1] += valor;
+                        if (ehMesAtual) receitasAtual[dia - 1] += valor;
+                    } else if (ehDespesa) {
+                        if (ehMesAnterior) despesasAnterior[dia - 1] += valor;
+                        if (ehMesAtual) despesasAtual[dia - 1] += valor;
+                    }
+                }
             });
 
+            const totalAnterior = valoresAnterior.reduce((s, v) => s + v, 0);
+            const totalAtual = valoresAtual.reduce((s, v) => s + v, 0);
+
+            const totalReceitasAnterior = receitasAnterior.reduce((s, v) => s + v, 0);
+            const totalReceitasAtual = receitasAtual.reduce((s, v) => s + v, 0);
+            const totalDespesasAnterior = despesasAnterior.reduce((s, v) => s + v, 0);
+            const totalDespesasAtual = despesasAtual.reduce((s, v) => s + v, 0);
+            const saldoAnterior = totalReceitasAnterior - totalDespesasAnterior;
+            const saldoAtual = totalReceitasAtual - totalDespesasAtual;
+
+            const formatarPercentual = (atual, anterior) => {
+                if (anterior === 0 && atual === 0) return '0,00%';
+                if (anterior === 0) return 'Novo valor';
+                const percentual = ((atual - anterior) / Math.abs(anterior)) * 100;
+                const sinal = percentual > 0 ? '+' : '';
+                return `${sinal}${percentual.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}%`;
+            };
+
+            // Gráfico 1
             const diasExibidos = Math.max(diasMesAtual, diasMesAnterior);
             const labels = Array.from({length: diasExibidos}, (_, i) => String(i + 1));
             const ctx = document.getElementById('chartEvolucao').getContext('2d');
             if (chartEvolucaoInstance) chartEvolucaoInstance.destroy();
+
+            let datasetsEvolucao;
+            let tituloEvolucao;
+
+            if (contexto === 'comparativo') {
+                datasetsEvolucao = [
+                    {
+                        label: `${nomeMesAnterior} — Receitas`,
+                        data: receitasAnterior.slice(0, diasExibidos),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16,185,129,0.08)',
+                        fill: false, tension: 0.25, pointRadius: 3
+                    },
+                    {
+                        label: `${nomeMesAtual} — Receitas`,
+                        data: receitasAtual.slice(0, diasExibidos),
+                        borderColor: '#047857',
+                        backgroundColor: 'rgba(4,120,87,0.08)',
+                        fill: false, tension: 0.25, pointRadius: 3
+                    },
+                    {
+                        label: `${nomeMesAnterior} — Despesas`,
+                        data: despesasAnterior.slice(0, diasExibidos),
+                        borderColor: '#f43f5e',
+                        backgroundColor: 'rgba(244,63,94,0.08)',
+                        fill: false, tension: 0.25, pointRadius: 3
+                    },
+                    {
+                        label: `${nomeMesAtual} — Despesas`,
+                        data: despesasAtual.slice(0, diasExibidos),
+                        borderColor: '#be123c',
+                        backgroundColor: 'rgba(190,18,60,0.08)',
+                        fill: false, tension: 0.25, pointRadius: 3
+                    }
+                ];
+                tituloEvolucao = 'Comparativo Mês Anterior X Mês Atual — Receitas e Despesas';
+            } else {
+                let nomeContexto = 'Rubrica / Sub-Item';
+                if (contexto === 'prevReceita') nomeContexto = 'Prev Receita';
+                if (contexto === 'recRecebidas') nomeContexto = 'Receita Recebida';
+                if (contexto === 'totalDespesas') nomeContexto = 'Total de Despesas';
+                if (contexto === 'filtro') nomeContexto = rubricaFiltro !== 'Todas' ? rubricaFiltro : (subItemFiltro !== 'Todos' ? subItemFiltro : 'Filtros selecionados');
+
+                datasetsEvolucao = [
+                    {
+                        label: `${nomeMesAnterior}`,
+                        data: valoresAnterior.slice(0, diasExibidos),
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99,102,241,0.08)',
+                        fill: false, tension: 0.25, pointRadius: 3
+                    },
+                    {
+                        label: `${nomeMesAtual}`,
+                        data: valoresAtual.slice(0, diasExibidos),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16,185,129,0.08)',
+                        fill: false, tension: 0.25, pointRadius: 3
+                    }
+                ];
+                tituloEvolucao = `Comparativo Mês Anterior X Mês Atual — ${nomeContexto}`;
+            }
+
             chartEvolucaoInstance = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels,
-                    datasets: [
-                        { label: `${nomesMeses[inicioMesAnterior.getMonth()]} (mês anterior)`, data: valoresAnterior.slice(0, diasExibidos), borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.08)', fill: false, tension: 0.25, pointRadius: 3 },
-                        { label: `${nomesMeses[inicioMesAtual.getMonth()]} (mês atual)`, data: valoresAtual.slice(0, diasExibidos), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.08)', fill: false, tension: 0.25, pointRadius: 3 }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatarMoeda(context.parsed.y || 0)}` } } }, scales: { x: { title: { display: true, text: 'Dia do mês' }, ticks: { autoSkip: false, maxRotation: 0 } }, y: { beginAtZero: true, ticks: { callback: value => formatarMoeda(value) } } } }
+                data: { labels, datasets: datasetsEvolucao },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.dataset.label}: ${formatarMoeda(context.parsed.y || 0)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Dia do mês' }, ticks: { autoSkip: false, maxRotation: 0 } },
+                        y: { beginAtZero: true, ticks: { callback: value => formatarMoeda(value) } }
+                    }
+                }
             });
+
             const titulo = document.getElementById('tituloGraficoEvolucao');
-            if (titulo) titulo.innerText = `Comparativo mensal — ${rubricaFiltro}`;
+            if (titulo) titulo.innerText = tituloEvolucao;
 
-            // Segundo gráfico: barras agrupadas lado a lado com os totais de cada mês.
-            const totalAnterior = valoresAnterior.reduce((s, v) => s + v, 0);
-            const totalAtual = valoresAtual.reduce((s, v) => s + v, 0);
+            // Gráfico 2: para o balanço, mostra os saldos dos dois meses;
+            // nos demais contextos, mantém a comparação dos totais.
+            const ctxBarras = document.getElementById('chartRubricas').getContext('2d');
+            if (chartRubricasInstance) chartRubricasInstance.destroy();
 
-            // Exibe a variação percentual fora dos gráficos.
+            let labelsBarras;
+            let datasetsBarras;
+            let tituloBarras;
+
+            if (contexto === 'comparativo') {
+                labelsBarras = [nomeMesAnterior, nomeMesAtual];
+                datasetsBarras = [
+                    {
+                        label: 'Receitas',
+                        data: [totalReceitasAnterior, totalReceitasAtual],
+                        backgroundColor: '#10b981',
+                        borderColor: '#059669',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Despesas',
+                        data: [totalDespesasAnterior, totalDespesasAtual],
+                        backgroundColor: '#f43f5e',
+                        borderColor: '#e11d48',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Saldo',
+                        data: [saldoAnterior, saldoAtual],
+                        backgroundColor: '#6366f1',
+                        borderColor: '#4f46e5',
+                        borderWidth: 1
+                    }
+                ];
+                tituloBarras = 'Despesas X Receitas — Balanço Mensal';
+            } else {
+                const nomeContexto =
+                    contexto === 'prevReceita' ? 'Prev Receita' :
+                    contexto === 'recRecebidas' ? 'Receita Recebida' :
+                    contexto === 'totalDespesas' ? 'Total de Despesas' :
+                    'Filtros selecionados';
+
+                labelsBarras = [nomeContexto];
+                datasetsBarras = [
+                    { label: `${nomeMesAnterior} (mês anterior)`, data: [totalAnterior], backgroundColor: '#6366f1', borderColor: '#4f46e5', borderWidth: 1 },
+                    { label: `${nomeMesAtual} (mês atual)`, data: [totalAtual], backgroundColor: '#10b981', borderColor: '#059669', borderWidth: 1 }
+                ];
+                tituloBarras = `Totais — ${nomeContexto}`;
+            }
+
+            chartRubricasInstance = new Chart(ctxBarras, {
+                type: 'bar',
+                data: { labels: labelsBarras, datasets: datasetsBarras },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.dataset.label}: ${formatarMoeda(context.parsed.y || 0)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { stacked: false, ticks: { maxRotation: 0, minRotation: 0 } },
+                        y: { beginAtZero: false, ticks: { callback: value => formatarMoeda(value) } }
+                    }
+                }
+            });
+
+            const tituloBarrasEl = document.getElementById('tituloGraficoRubricas');
+            if (tituloBarrasEl) tituloBarrasEl.innerText = tituloBarras;
+
+            // Indicador de variação: no balanço, usa o saldo; nos demais, usa o
+            // total do contexto selecionado.
             const painelVariacao = document.getElementById('variacaoPercentualRubrica');
             const valorVariacao = document.getElementById('variacaoPercentualValor');
             const descricaoVariacao = document.getElementById('variacaoPercentualDescricao');
+
             if (painelVariacao && valorVariacao && descricaoVariacao) {
                 painelVariacao.classList.remove('hidden');
-                const nomeMesAnterior = nomesMeses[inicioMesAnterior.getMonth()];
-                const nomeMesAtual = nomesMeses[inicioMesAtual.getMonth()];
-                descricaoVariacao.textContent = `${rubricaFiltro} — ${nomeMesAnterior} para ${nomeMesAtual}`;
-                if (totalAnterior !== 0) {
-                    const percentual = ((totalAtual - totalAnterior) / Math.abs(totalAnterior)) * 100;
+
+                let anteriorIndicador = totalAnterior;
+                let atualIndicador = totalAtual;
+                let descricao = `${nomeMesAnterior} para ${nomeMesAtual}`;
+
+                if (contexto === 'comparativo') {
+                    anteriorIndicador = saldoAnterior;
+                    atualIndicador = saldoAtual;
+                    descricao = `Saldo — ${nomeMesAnterior} para ${nomeMesAtual}`;
+                } else if (contexto === 'prevReceita') {
+                    descricao = `Prev Receita — ${nomeMesAnterior} para ${nomeMesAtual}`;
+                } else if (contexto === 'recRecebidas') {
+                    descricao = `Receita Recebida — ${nomeMesAnterior} para ${nomeMesAtual}`;
+                } else if (contexto === 'totalDespesas') {
+                    descricao = `Total de Despesas — ${nomeMesAnterior} para ${nomeMesAtual}`;
+                } else {
+                    descricao = `Filtros selecionados — ${nomeMesAnterior} para ${nomeMesAtual}`;
+                }
+
+                descricaoVariacao.textContent = descricao;
+
+                if (anteriorIndicador !== 0) {
+                    const percentual = ((atualIndicador - anteriorIndicador) / Math.abs(anteriorIndicador)) * 100;
                     const sinal = percentual > 0 ? '+' : '';
                     valorVariacao.textContent = `${sinal}${percentual.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}%`;
-                    valorVariacao.className = `text-2xl font-bold ${percentual > 0 ? 'text-rose-600' : percentual < 0 ? 'text-emerald-600' : 'text-slate-700'}`;
-                } else if (totalAtual === 0) {
+                    valorVariacao.className =
+                        `text-2xl font-bold ${percentual > 0 ? 'text-rose-600' : percentual < 0 ? 'text-emerald-600' : 'text-slate-700'}`;
+                } else if (atualIndicador === 0) {
                     valorVariacao.textContent = '0,00%';
                     valorVariacao.className = 'text-2xl font-bold text-slate-700';
                 } else {
@@ -4853,32 +5077,6 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
                 }
             }
 
-            const ctxBarras = document.getElementById('chartRubricas').getContext('2d');
-            if (chartRubricasInstance) chartRubricasInstance.destroy();
-            chartRubricasInstance = new Chart(ctxBarras, {
-                type: 'bar',
-                data: {
-                    labels: [rubricaFiltro],
-                    datasets: [
-                        { label: `${nomesMeses[inicioMesAnterior.getMonth()]} (mês anterior)`, data: [totalAnterior], backgroundColor: '#6366f1', borderColor: '#4f46e5', borderWidth: 1 },
-                        { label: `${nomesMeses[inicioMesAtual.getMonth()]} (mês atual)`, data: [totalAtual], backgroundColor: '#10b981', borderColor: '#059669', borderWidth: 1 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: true, position: 'bottom' },
-                        tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatarMoeda(context.parsed.y || 0)}` } }
-                    },
-                    scales: {
-                        x: { stacked: false, ticks: { maxRotation: 0, minRotation: 0 } },
-                        y: { beginAtZero: true, ticks: { callback: value => formatarMoeda(value) } }
-                    }
-                }
-            });
-            const tituloBarras = document.getElementById('tituloGraficoRubricas');
-            if (tituloBarras) tituloBarras.innerText = `Totais por mês — ${rubricaFiltro}`;
             comparacaoRubricaMesAtiva = true;
         }
 
