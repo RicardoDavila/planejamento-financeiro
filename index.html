@@ -1960,16 +1960,18 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Descrição</label>
                     <input type="text" id="graficoDescricao" placeholder="Filtrar descrição..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 lg:col-span-2">
+                <div class="lg:col-span-2 space-y-2">
                     <button onclick="atualizarGraficos()" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow">
                         <i class="fa-solid fa-chart-line"></i> Gerar Gráfico
                     </button>
-                    <button onclick="compararRubricaMesAnteriorAtual()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow">
-                        <i class="fa-solid fa-chart-line"></i> Comparar Rubrica: mês anterior x atual
-                    </button>
-                    <button onclick="gerarComparativoReceitasDespesas()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow">
-                        <i class="fa-solid fa-chart-column"></i> Comparativa Receitas X Despesas
-                    </button>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="gerarComparativoReceitasDespesas()" class="w-full min-h-[42px] bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 text-center shadow">
+                            <i class="fa-solid fa-chart-column"></i> Gerar Gráfico Comparativo Receitas x Despesas
+                        </button>
+                        <button onclick="compararRubricaMesAnteriorAtual()" class="w-full min-h-[42px] bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 text-center shadow">
+                            <i class="fa-solid fa-chart-line"></i> Comparar Rubrica: mês anterior x atual
+                        </button>
+                    </div>
                 </div>
             </div>
 
