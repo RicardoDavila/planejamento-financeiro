@@ -1932,6 +1932,7 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
                 <button onclick="mudarAbaGrafico('recRecebidas')" id="tabBtnRecRecebidas" class="px-4 py-2 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Rec Recebidas</button>
                 <button onclick="mudarAbaGrafico('totalDespesas')" id="tabBtnTotalDespesas" class="px-4 py-2 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-trend-down"></i> Total de Despesas</button>
                 <button onclick="mudarAbaGrafico('comparativo')" id="tabBtnComparativo" class="px-4 py-2 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition flex items-center gap-1.5"><i class="fa-solid fa-chart-column"></i> Comparativo Geral</button>
+                <button onclick="mudarAbaGrafico('totalReceitasDespesas')" id="tabBtnTotalReceitasDespesas" class="px-4 py-2 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition flex items-center gap-1.5"><i class="fa-solid fa-scale-balanced"></i> Total de Receitas X Total de Despesas</button>
             </div>
 
             <!-- Painel de Filtros Individuais para a Aba Ativa -->
@@ -1946,10 +1947,11 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
     <div><label class="mb-1 block text-xs font-semibold text-slate-600">Sub-Item</label><select id="graficoSubItem" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"><option value="Todos">Todos os Sub-Itens</option></select></div>
     <div><label class="mb-1 block text-xs font-semibold text-slate-600">Descrição</label><input type="text" id="graficoDescricao" placeholder="Filtrar descrição..." class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"></div>
   </div>
-  <div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
+  <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-4">
     <button onclick="atualizarGraficos()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700"><i class="fa-solid fa-chart-line"></i>Gerar gráfico</button>
     <button onclick="gerarComparativoReceitasDespesas()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"><i class="fa-solid fa-chart-column"></i>Comparar receitas x despesas</button>
     <button onclick="compararRubricaMesAnteriorAtual()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"><i class="fa-solid fa-chart-line"></i>Comparativo Mês Anterior X Mês Atual</button>
+    <button onclick="limparFiltrosGraficos()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-slate-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-700"><i class="fa-solid fa-filter-circle-xmark"></i>Limpar filtros</button>
   </div>
 </section>
 
@@ -4653,13 +4655,33 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
         function mudarAbaGrafico(aba) {
             comparativoReceitasDespesasAtivo = false;
             abaAtivaGrafico = aba;
-            ['prevReceita', 'recRecebidas', 'totalDespesas', 'comparativo'].forEach(m => {
+            ['prevReceita', 'recRecebidas', 'totalDespesas', 'comparativo', 'totalReceitasDespesas'].forEach(m => {
                 const btn = document.getElementById(`tabBtn${m.charAt(0).toUpperCase() + m.slice(1)}`);
                 if (btn) {
                     btn.className = m === aba ? "px-4 py-2 rounded-lg text-xs font-bold bg-purple-600 text-white transition shadow" : "px-4 py-2 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition";
                 }
             });
+            if (aba === 'totalReceitasDespesas') {
+                compararTotalReceitasDespesas();
+                return;
+            }
             atualizarGraficos();
+        }
+
+        function limparFiltrosGraficos() {
+            const inicio = document.getElementById('graficoDataInicio');
+            const fim = document.getElementById('graficoDataFim');
+            const rubrica = document.getElementById('graficoRubrica');
+            const subItem = document.getElementById('graficoSubItem');
+            const descricao = document.getElementById('graficoDescricao');
+            if (inicio) inicio.value = '';
+            if (fim) fim.value = '';
+            if (rubrica) rubrica.value = 'Todas';
+            if (subItem) subItem.value = 'Todos';
+            if (descricao) descricao.value = '';
+            comparativoReceitasDespesasAtivo = false;
+            comparacaoRubricaMesAtiva = false;
+            mudarAbaGrafico('prevReceita');
         }
 
         let chartEvolucaoInstance = null;
@@ -4694,7 +4716,7 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
         function gerarComparativoReceitasDespesas() {
             comparativoReceitasDespesasAtivo = true;
             abaAtivaGrafico = 'comparativo';
-            ['prevReceita', 'recRecebidas', 'totalDespesas', 'comparativo'].forEach(m => {
+            ['prevReceita', 'recRecebidas', 'totalDespesas', 'comparativo', 'totalReceitasDespesas'].forEach(m => {
                 const btn = document.getElementById(`tabBtn${m.charAt(0).toUpperCase() + m.slice(1)}`);
                 if (btn) {
                     btn.className = m === 'comparativo'
@@ -4748,6 +4770,62 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
 
         window.addEventListener('afterprint', finalizarImpressaoGraficos);
 
+        // Compara os valores totais de Receitas e Despesas no período e filtros selecionados.
+        function compararTotalReceitasDespesas() {
+            comparacaoRubricaMesAtiva = false;
+            comparativoReceitasDespesasAtivo = false;
+            const inicio = document.getElementById('graficoDataInicio')?.value || '';
+            const fim = document.getElementById('graficoDataFim')?.value || '';
+            const rubrica = document.getElementById('graficoRubrica')?.value || 'Todas';
+            const subItem = document.getElementById('graficoSubItem')?.value || 'Todos';
+            const descricao = (document.getElementById('graficoDescricao')?.value || '').trim().toLowerCase();
+            if (inicio && fim && inicio > fim) {
+                alert('A data inicial não pode ser posterior à data final.');
+                return;
+            }
+            const filtradas = (Array.isArray(transacoes) ? transacoes : []).filter(t => {
+                if (rubrica !== 'Todas' && (t.categoria || 'Outros') !== rubrica) return false;
+                if (subItem !== 'Todos' && (t.subItem || '') !== subItem) return false;
+                if (descricao && !(t.descricao || '').toLowerCase().includes(descricao)) return false;
+                if (inicio && (!t.vencimento || t.vencimento < inicio)) return false;
+                if (fim && (!t.vencimento || t.vencimento > fim)) return false;
+                return true;
+            });
+            const totalReceitas = filtradas.reduce((s,t) => s + (t.tipo === 'Receita' ? (Number(t.valor) || 0) : 0), 0);
+            const totalDespesas = filtradas.reduce((s,t) => s + (t.tipo === 'Despesa' ? (Number(t.valor) || 0) : 0), 0);
+            const saldo = totalReceitas - totalDespesas;
+            const moeda = v => typeof formatarMoeda === 'function' ? formatarMoeda(v) : v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+            const c1 = document.getElementById('chartEvolucao');
+            const c2 = document.getElementById('chartRubricas');
+            if (!c1 || !c2 || typeof Chart === 'undefined') { alert('Não foi possível carregar os gráficos.'); return; }
+            if (chartEvolucaoInstance) chartEvolucaoInstance.destroy();
+            if (chartRubricasInstance) chartRubricasInstance.destroy();
+            chartEvolucaoInstance = new Chart(c1.getContext('2d'), {
+                type: 'bar',
+                data: { labels: ['Total de Receitas', 'Total de Despesas'], datasets: [{ label: 'Valor total no período', data: [totalReceitas,totalDespesas], backgroundColor: ['#10b981','#f43f5e'], borderColor: ['#059669','#e11d48'], borderWidth: 1 }] },
+                options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx => `${ctx.label}: ${moeda(ctx.parsed.y || 0)}`}}}, scales:{ y:{beginAtZero:true,ticks:{callback:v=>moeda(v)}}} }
+            });
+            chartRubricasInstance = new Chart(c2.getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: ['Total de Receitas', 'Total de Despesas'], datasets: [{ data: [totalReceitas,totalDespesas], backgroundColor: ['#10b981','#f43f5e'], borderColor: ['#059669','#e11d48'], borderWidth:1 }] },
+                options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'bottom'}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${moeda(ctx.parsed || 0)}`}}} }
+            });
+            const periodo = inicio || fim ? ` (${inicio ? inicio.split('-').reverse().join('/') : 'início aberto'} a ${fim ? fim.split('-').reverse().join('/') : 'fim aberto'})` : ' (todo o período)';
+            const t1 = document.getElementById('tituloGraficoEvolucao'); if (t1) t1.innerText = 'Total de Receitas X Total de Despesas' + periodo;
+            const t2 = document.getElementById('tituloGraficoRubricas'); if (t2) t2.innerText = 'Participação dos totais — Receitas e Despesas';
+            const painel = document.getElementById('variacaoPercentualRubrica');
+            const valor = document.getElementById('variacaoPercentualValor');
+            const desc = document.getElementById('variacaoPercentualDescricao');
+            if (painel && valor && desc) {
+                painel.classList.remove('hidden');
+                valor.innerText = moeda(saldo);
+                valor.className = `text-2xl font-bold ${saldo >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
+                desc.innerText = `Saldo total (Receitas − Despesas): ${moeda(saldo)}${periodo}`;
+            }
+            const tituloPDF = document.getElementById('printGraficosTitulo');
+            if (tituloPDF) tituloPDF.innerText = 'Total de Receitas X Total de Despesas';
+        }
+
         // Compara, no primeiro gráfico, os valores diários da rubrica selecionada
         // no mês anterior e no mês atual. O segundo gráfico permanece como gerado pelos filtros.
         function compararRubricaMesAnteriorAtual() {
@@ -4767,8 +4845,8 @@ html.pf-mobile-device #modalGraficos .fechamento-graficos button {
 
             const contexto = temFiltroIndividual
                 ? 'filtro'
-                : (['prevReceita', 'recRecebidas', 'totalDespesas', 'comparativo'].includes(abaAtivaGrafico)
-                    ? abaAtivaGrafico
+                : (['prevReceita', 'recRecebidas', 'totalDespesas', 'comparativo', 'totalReceitasDespesas'].includes(abaAtivaGrafico)
+                    ? (abaAtivaGrafico === 'totalReceitasDespesas' ? 'comparativo' : abaAtivaGrafico)
                     : 'prevReceita');
 
             // Ao entrar nesta comparação, não manter o comparativo geral anterior.
