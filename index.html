@@ -1267,6 +1267,33 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
 }
 </style>
 
+<style id="pf-mobile-mais-panel-v4">
+#pfMobileMaisPanel { display:none; }
+@media (max-width: 800px), (pointer: coarse) {
+  #mobileAcoesBackdrop { display:none; position:fixed !important; inset:0 !important; z-index:10000 !important; background:rgba(15,23,42,.34) !important; }
+  #pfMobileMaisPanel { display:none; position:fixed !important; left:10px !important; right:10px !important;
+    bottom:calc(78px + env(safe-area-inset-bottom)) !important; max-height:65dvh !important; overflow-y:auto !important;
+    z-index:10001 !important; background:#fff !important; color:#0f172a !important; border:1px solid #cbd5e1 !important;
+    border-radius:18px !important; box-shadow:0 18px 42px rgba(15,23,42,.3) !important; padding:12px !important; }
+  #pfMobileMaisPanel .pf-mobile-mais-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:4px 4px 12px; }
+  #pfMobileMaisPanel .pf-mobile-mais-header button { width:36px; height:36px; border-radius:9px; background:#e2e8f0; color:#0f172a; font-size:18px; }
+  #pfMobileMaisPanel .pf-mobile-mais-grid { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; }
+  #pfMobileMaisPanel .botao-acao { display:flex !important; visibility:visible !important; width:100% !important; min-height:46px !important;
+    align-items:center !important; justify-content:center !important; white-space:normal !important; text-align:center !important; }
+  body.mobile-acoes-abertas #pfMobileMaisPanel { display:block !important; }
+}
+</style>
+<style id="pf-mobile-bottom-bar-visibility-v5">
+@media (max-width: 800px), (pointer: coarse) {
+  html.pf-mobile-device #barraRapidaMobile,
+  #barraRapidaMobile {
+    position: fixed !important;
+    z-index: 10002 !important;
+  }
+  #mobileAcoesBackdrop { z-index: 10000 !important; }
+  #pfMobileMaisPanel { z-index: 10001 !important; }
+}
+</style>
 </head>
 <aside id="pfSaasSidebar" aria-label="Navegação principal"><div class="pf-brand"><div class="pf-brand-icon"><i class="fa-solid fa-chart-pie"></i></div><div><strong>Planejamento<br>Financeiro</strong><small>GESTÃO FINANCEIRA</small></div></div><div class="pf-nav-label">Menu principal</div><nav class="pf-nav"><a class="active" href="#painelGerencial"><i class="fa-solid fa-house"></i>Dashboard</a><a href="#tabelaLancamentosWrapper"><i class="fa-solid fa-arrow-right-arrow-left"></i>Lançamentos</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroTipo')?.focus(),80)"><i class="fa-solid fa-circle-arrow-up"></i>Receitas e despesas</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroRubrica')?.focus(),80)"><i class="fa-solid fa-layer-group"></i>Cadastros e rubricas</a><a href="#painelGerencial"><i class="fa-solid fa-chart-column"></i>Relatórios</a></nav><div id="pf493Actions"><div class="pf493-actions-title">Ações e ferramentas</div><button type="button" class="botao-acao" onclick="abrirConfiguracaoNomeUsuario()" title="Personalizar a saudação do dashboard"><i class="fa-solid fa-user-pen"></i>Nome do usuário</button></div><div class="pf-sidebar-foot"><strong>Planejamento Financeiro</strong>Disciplina financeira hoje,<br>mais oportunidades amanhã.</div></aside>
 <body class="bg-gray-50 font-sans text-gray-800 auth-pendente">
@@ -1562,6 +1589,69 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
             </button>
         </nav>
         <div id="mobileAcoesBackdrop" aria-hidden="true" onclick="fecharAcoesMobile()"></div>
+<div id="pfMobileMaisPanel" aria-label="Todas as ações" role="dialog" aria-modal="true">
+  <div class="pf-mobile-mais-header">
+    <strong>Mais ações</strong>
+    <button type="button" onclick="fecharAcoesMobile()" aria-label="Fechar menu">✕</button>
+  </div>
+  <div class="pf-mobile-mais-grid">
+    <button type="button" class="botao-acao" onclick="abrirConfiguracaoNomeUsuario()" title="Personalizar a saudação do dashboard"><i class="fa-solid fa-user-pen"></i> Nome do usuário — Cadastrar nome</button>
+<button onclick="openModal()" class="botao-acao bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Novo Lançamento
+                </button>
+<button onclick="adicionarNovaRubricaPrompt()" class="botao-acao bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-folder-plus"></i> NOVA RUBRICA
+                </button>
+<button onclick="adicionarNovoSubItemPrompt()" class="botao-acao bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-circle-plus"></i> NOVO SUB-ITEM
+                </button>
+<button onclick="exportToExcel()" class="botao-acao bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Exportar Banco de Dados Excel com IDs Relacionais">
+                    <i class="fa-solid fa-file-excel"></i> Exportar Excel (DB)
+                </button>
+<button onclick="document.getElementById('inputImportExcel').click()" class="botao-acao bg-lime-700 hover:bg-lime-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Importar e Atualizar dados via Excel">
+                    <i class="fa-solid fa-file-arrow-up"></i> Importar Excel
+                </button>
+<button onclick="fazerBackup()" class="botao-acao bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Fazer Backup dos Dados">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Backup
+                </button>
+<button onclick="abrirAlertaPreRestauracao()" class="botao-acao bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Restaurar Backup">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Restaurar
+                </button>
+<button onclick="sincronizarAgoraNuvem()" class="botao-acao bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Sincronizar os dados deste dispositivo com a nuvem">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar com a Nuvem
+                </button>
+<button onclick="abrirCalendarioFinanceiro()" class="botao-acao bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Calendário financeiro">
+                    <i class="fa-solid fa-calendar-days"></i> Calendário
+                </button>
+<button onclick="abrirRelatorioMensalMobile()" class="botao-acao bg-violet-600 hover:bg-violet-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Resumo financeiro do mês">
+                    <i class="fa-solid fa-file-lines"></i> Relatório mensal
+                </button>
+<button onclick="exportToPDF()" class="botao-acao bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i> Exportar PDF
+                </button>
+<button onclick="exportToCSV()" class="botao-acao bg-slate-700 hover:bg-slate-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Exportar CSV
+                </button>
+<button onclick="openGraficosModal()" class="botao-acao bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i> Gráficos Evolutivos
+                </button>
+<button onclick="abrirCalculadora()" class="botao-acao bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Calculadora financeira">
+                    <i class="fa-solid fa-calculator"></i> Calculadora
+                </button>
+<button onclick="abrirConfiguracaoSeguranca(false)" class="botao-acao bg-blue-700 hover:bg-blue-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Configurar proteção por senha e recuperação">
+                    <i class="fa-solid fa-shield-halved"></i> Segurança e Acesso
+                </button>
+<button onclick="abrirConfiguracaoNuvem()" class="botao-acao bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Sincronizar dados entre computador e celular">
+                    <i class="fa-solid fa-cloud"></i> Nuvem <span class="opacity-90">Local</span>
+                </button>
+<button onclick="abrirSegurancaBanco('historico')" class="botao-acao bg-slate-600 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Histórico de alterações">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Histórico
+                </button>
+<button onclick="abrirSegurancaBanco('lixeira')" class="botao-acao bg-orange-600 hover:bg-orange-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Lixeira e recuperação">
+                    <i class="fa-solid fa-trash-can"></i> Lixeira
+                </button>
+  </div>
+</div>
 
         <div id="atalhoLancamentoRapidoMobile" class="no-print">
             <button type="button" onclick="abrirLancamentoRapido()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-3 shadow flex items-center justify-center gap-2 font-bold text-sm">
@@ -5552,30 +5642,42 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
         }
 
         function toggleAcoesMobile(){
-            document.body.classList.toggle('mobile-acoes-abertas');
-            const b=document.getElementById('btnMaisMobile');
-            if(b){
-                const aberto=document.body.classList.contains('mobile-acoes-abertas');
-                b.setAttribute('aria-expanded', aberto ? 'true' : 'false');
-                const span=b.querySelector('span'); if(span) span.textContent=aberto ? 'Fechar' : 'Mais';
-                const icon=b.querySelector('i'); if(icon) icon.className=aberto ? 'fa-solid fa-xmark' : 'fa-solid fa-ellipsis';
-            }
-            const backdrop=document.getElementById('mobileAcoesBackdrop');
-            if(backdrop) backdrop.setAttribute('aria-hidden', aberto ? 'false' : 'true');
-        }
-        function fecharAcoesMobile(){
-            if(document.body.classList.contains('mobile-acoes-abertas')){
-                document.body.classList.remove('mobile-acoes-abertas');
-                const b=document.getElementById('btnMaisMobile');
-                if(b){
-                    b.setAttribute('aria-expanded','false');
-                    const span=b.querySelector('span'); if(span) span.textContent='Mais';
-                    const icon=b.querySelector('i'); if(icon) icon.className='fa-solid fa-ellipsis';
-                }
-                const backdrop=document.getElementById('mobileAcoesBackdrop');
-                if(backdrop) backdrop.setAttribute('aria-hidden','true');
-            }
-        }
+    const aberto = !document.body.classList.contains('mobile-acoes-abertas');
+    document.body.classList.toggle('mobile-acoes-abertas', aberto);
+    const painel = document.getElementById('pfMobileMaisPanel');
+    const backdrop = document.getElementById('mobileAcoesBackdrop');
+    const b = document.getElementById('btnMaisMobile');
+    if (painel) painel.style.display = aberto ? 'block' : 'none';
+    if (backdrop) {
+        backdrop.style.display = aberto ? 'block' : 'none';
+        backdrop.setAttribute('aria-hidden', aberto ? 'false' : 'true');
+    }
+    if (b) {
+        b.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+        const span = b.querySelector('span');
+        if (span) span.textContent = aberto ? 'Fechar' : 'Mais';
+        const icon = b.querySelector('i');
+        if (icon) icon.className = aberto ? 'fa-solid fa-xmark' : 'fa-solid fa-ellipsis';
+    }
+}
+function fecharAcoesMobile(){
+    document.body.classList.remove('mobile-acoes-abertas');
+    const painel = document.getElementById('pfMobileMaisPanel');
+    const backdrop = document.getElementById('mobileAcoesBackdrop');
+    const b = document.getElementById('btnMaisMobile');
+    if (painel) painel.style.display = 'none';
+    if (backdrop) {
+        backdrop.style.display = 'none';
+        backdrop.setAttribute('aria-hidden', 'true');
+    }
+    if (b) {
+        b.setAttribute('aria-expanded', 'false');
+        const span = b.querySelector('span');
+        if (span) span.textContent = 'Mais';
+        const icon = b.querySelector('i');
+        if (icon) icon.className = 'fa-solid fa-ellipsis';
+    }
+}
         window.addEventListener('resize', function(){
             const ehMobile = document.documentElement.classList.contains('pf-mobile-device');
             if(!ehMobile) fecharAcoesMobile();
