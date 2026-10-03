@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- V4.9.10 — teste mobile corrigido baseado na V4.9.8; arquivo independente -->
+    <!-- V4.9.11 — correção final de layout mobile baseada no teste V4.9.10; arquivo independente -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f172a">
@@ -12,7 +12,7 @@
     <meta name="description" content="Planejamento Financeiro com proteção de acesso e sincronização em nuvem.">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <title>Planejamento Financeiro - Teste Mobile V4.9.10</title>
+    <title>Planejamento Financeiro - Teste Mobile V4.9.11</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1294,6 +1294,33 @@ html.pf-mobile-device #btnLancarRapidoNoModal { display:flex; }
   input, select, textarea { font-size:16px !important; max-width:100%; }
   button { min-height:40px; }
   .overflow-x-auto { max-width:100%; }
+}
+</style>
+
+
+<style id="mobile-correction-v4911">
+/* V4.9.11 — overrides finais para telas estreitas; mantém a lógica de dados existente. */
+@media screen and (max-width: 700px) {
+  html, body { width:100% !important; max-width:100% !important; overflow-x:hidden !important; }
+  body { padding-bottom:88px !important; }
+  #pfSaasSidebar { display:none !important; }
+  #appConteudo { width:100% !important; margin:0 !important; padding:0 8px 18px !important; }
+  #appConteudo > .max-w-7xl { width:100% !important; max-width:100% !important; margin:0 auto !important; padding-left:0 !important; padding-right:0 !important; }
+  #painelGerencial { width:100% !important; max-width:100% !important; padding:12px !important; box-sizing:border-box !important; }
+  #painelResumoGerencial { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; }
+  #painelResumoGerencial > * { min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; }
+  #tabelaLancamentosWrapper { display:none !important; }
+  #cartoesLancamentosMobile { display:flex !important; flex-direction:column !important; width:100% !important; gap:10px !important; }
+  #cartoesLancamentosMobile:empty { display:none !important; }
+  #cartoesLancamentosMobile .lancamento-card-mobile { width:100% !important; max-width:100% !important; box-sizing:border-box !important; overflow-wrap:anywhere !important; }
+  #barraRapidaMobile { display:grid !important; position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; z-index:999 !important; grid-template-columns:repeat(5,minmax(0,1fr)) !important; padding:6px 5px calc(6px + env(safe-area-inset-bottom)) !important; background:#fff !important; border-top:1px solid #cbd5e1 !important; }
+  #barraRapidaMobile button { min-width:0 !important; min-height:48px !important; padding:4px 2px !important; font-size:10px !important; }
+  input, select, textarea { max-width:100% !important; box-sizing:border-box !important; font-size:16px !important; }
+  .overflow-x-auto { max-width:100% !important; }
+  #modal > div, #modalGraficos > div, #modalRelatorioGerencial > div, #modalConfiguracaoNuvem > div, #modalConfiguracaoSeguranca > div, #modalRecuperacaoSupabase > div { width:calc(100vw - 16px) !important; max-width:calc(100vw - 16px) !important; max-height:calc(100dvh - 16px) !important; overflow-y:auto !important; box-sizing:border-box !important; }
+}
+@media screen and (min-width: 701px) {
+  #cartoesLancamentosMobile { display:none !important; }
 }
 </style>
 
