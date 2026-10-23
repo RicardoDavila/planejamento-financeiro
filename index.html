@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src https: data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://oflbclvieeknffjtndxo.supabase.co https://ricardodavila.github.io https://api.bcb.gov.br https://api.emailjs.com; img-src 'self' file: https: data: blob:; manifest-src 'self' file:; worker-src 'self'; form-action 'none'; frame-src https://oflbclvieeknffjtndxo.supabase.co blob:;">
+    <!-- Distribuição V4.11.0: dados locais e sincronização financeira habilitados. -->
     <!-- V4.10.10 — versão publicada com menu Ajuda e verificação de novas versões -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1511,13 +1513,13 @@ html.pf-mobile-device .rel46-card{width:100%;max-height:92dvh;border-radius:18px
             .situacao td{font-size:11px;padding:9px}.linha-saldo td{font-weight:800;background:#e5f0fc;color:#173b62}
             .observacoes{font-size:11px;line-height:1.6;margin:0;padding-left:18px}.observacoes li{margin:4px 0}.frase{margin-top:12px;background:#e6f3e9;color:#315b45;padding:13px;border-radius:8px;font-style:italic;font-size:13px;text-align:center}
             .rodape{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #aab8c8;padding-top:10px;margin-top:22px;font-size:9px;color:#5b6e83}
-            .graficos{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:13px;margin:0 0 15px}
+            .graficos{display:grid;grid-template-columns:minmax(0,1fr);gap:13px;margin:0 0 15px}
             .grafico{border:1px solid var(--linha);border-radius:9px;background:#fff;padding:13px;min-width:0;break-inside:avoid}
             .grafico-titulo{font-size:12px;font-weight:800;color:#173b62}
             .grafico-sub{font-size:10px;color:var(--muted);margin-top:4px;margin-bottom:9px}
-            .grafico-area{height:235px;position:relative}
+            .grafico-area{height:auto;position:relative}
             @media(max-width:750px){.pagina{margin:0;padding:12px;border-radius:0}.cabecalho{grid-template-columns:1fr}.meta{text-align:left;max-width:none}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.kpi{padding:10px}.kpi .valor{font-size:17px}.grid{grid-template-columns:1fr}.marca h1{font-size:21px}.tabela th,.tabela td{font-size:10px;padding:6px 5px}.rodape{flex-direction:column}}
-            @media print{body{background:#fff}.pagina{max-width:none;margin:0;padding:0;box-shadow:none;border-radius:0}.acoes{display:none}.cabecalho,.kpi,.bloco,.resumo{break-inside:avoid}.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tabela th{-webkit-print-color-adjust:exact;print-color-adjust:exact}.kpi,.resumo,.bloco-titulo,.total,.frase{-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4 portrait;margin:9mm}}
+            @media print{body{background:#fff}.pagina{max-width:none;margin:0;padding:0;box-shadow:none;border-radius:0}.acoes{display:none}.cabecalho,.kpi,.bloco,.resumo{break-inside:avoid}.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tabela th{-webkit-print-color-adjust:exact;print-color-adjust:exact}.kpi,.resumo,.bloco-titulo,.total,.frase{-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4 portrait;margin:0}.pagina{padding:9mm!important}}
             
 
 /* ===== CSS original consolidado ===== */
@@ -1839,12 +1841,55 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
 @media (max-width:640px) { #pf-theme-toggle { left:10px; bottom:10px; width:42px; height:42px; } }
 
 </style>
-</head>
+<script>
+// A abertura começa na saudação; navegações pelo menu continuam disponíveis após carregar.
+try {
+ history.scrollRestoration = 'manual';
+ if (['#painelGerencial','#tabelaLancamentosWrapper'].includes(location.hash)) {
+  history.replaceState(history.state, '', location.pathname + location.search);
+ }
+} catch(e) {}
+function pfMostrarInicioPagina(){
+ window.scrollTo({top:0,left:0,behavior:'instant'});
+ const app=document.getElementById('appConteudo');if(app)app.scrollTop=0;
+}
+window.addEventListener('load',()=>requestAnimationFrame(()=>requestAnimationFrame(pfMostrarInicioPagina)),{once:true});
+</script>
+
+<style id="pfHelpViewportFix">
+#pfHelpModal{z-index:10100;padding:16px;box-sizing:border-box}
+#pfHelpModal .pf-help-modal-card{box-sizing:border-box;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);display:flex;flex-direction:column;overflow:hidden}
+#pfHelpModalBody{min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+#pfHelpModal .pf-help-modal-icon,#pfHelpModalTitle,#pfHelpModal .pf-help-primary{flex-shrink:0}
+#pfHelpModal .pf-help-close{z-index:2;width:36px;height:36px;display:grid;place-items:center;right:8px;top:8px;background:#f1f5f9;color:#334155;border-radius:8px;line-height:1}
+#pfHelpModal .pf-help-search-view{width:min(100%,780px);text-align:left;padding:24px}
+#pfHelpModal .pf-help-search-view .pf-help-modal-icon{display:none}
+#pfHelpModal .pf-help-search-view h2{padding-right:36px}
+#pfHelpModal .pf-help-search-view .pf-help-primary{align-self:flex-end}
+#pfPesquisaForm button,#pfPesquisaResultados button{background:#1d4ed8;color:white;padding:10px 16px;border:0;border-radius:8px;cursor:pointer}
+#pfPesquisaForm button:disabled{opacity:.65;cursor:wait}
+#pfPesquisaResultados article{text-align:left;overflow-wrap:anywhere}
+body.dark-mode #pfHelpModal .pf-help-close{background:#334155;color:#f8fafc}
+@media(max-width:640px){#pfHelpModal{padding:10px}#pfHelpModal .pf-help-modal-card{max-height:calc(100dvh - 20px)}#pfHelpModal .pf-help-search-view{padding:20px 14px}#pfHelpModal .pf-help-search-view h2{font-size:18px}}
+</style>
+<style>
+#pfAvisosDia{border:1px solid #cbd5e1;border-radius:14px;padding:16px;margin:0 0 20px;background:#fff;color:#1e293b}
+.pf-avisos-cabecalho{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#pfAvisosTitulo{font-size:15px;font-weight:800;margin:0}
+#pfAlternarAvisos{padding:8px 12px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:8px;font-weight:600;cursor:pointer}
+#pfAvisosResumo{font-size:13px;color:#475569;margin:10px 0 0}#pfAvisosResumo:empty{display:none}
+#pfAvisosConteudo:not([hidden]){margin-top:14px}#pfAvisosConteudo[hidden]{display:none!important}
+#pfAvisosConteudo>div:last-child{margin-bottom:0}
+#pfAvisosConteudo button[onclick^="fecharAlerta"]{display:none}
+body.dark-mode #pfAvisosDia{background:#172033;color:#f1f5f9;border-color:#475569}
+body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{background:#26364d;color:#dbeafe;border-color:#64748b}
+</style></head>
 <aside id="pfSaasSidebar" aria-label="Navegação principal"><div class="pf-brand"><div class="pf-brand-icon"><i class="fa-solid fa-chart-pie"></i></div><div><strong>Planejamento<br>Financeiro</strong><small>GESTÃO FINANCEIRA</small></div></div><div class="pf-nav-label">Menu principal</div><nav class="pf-nav"><a class="active" href="#painelGerencial"><i class="fa-solid fa-house"></i>Dashboard</a><a href="#tabelaLancamentosWrapper"><i class="fa-solid fa-arrow-right-arrow-left"></i>Lançamentos</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroTipo')?.focus(),80)"><i class="fa-solid fa-circle-arrow-up"></i>Receitas e despesas</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroRubrica')?.focus(),80)"><i class="fa-solid fa-layer-group"></i>Cadastros e rubricas</a><a href="#painelGerencial"><i class="fa-solid fa-chart-column"></i>Relatórios</a></nav>
 <div class="pf-nav-label pf-help-section-label">Ajuda e informações</div>
 <details id="pfHelpMenu" class="pf-help-menu pf-help-sidebar">
   <summary class="botao-acao" title="Ajuda e informações do aplicativo"><i class="fa-solid fa-circle-question"></i><span>Ajuda / Help</span><i class="fa-solid fa-chevron-down pf-help-chevron"></i></summary>
   <div class="pf-help-dropdown" role="menu" aria-label="Ajuda">
+    <button type="button" onclick="pfPesquisarManuais()"><i class="fa-solid fa-magnifying-glass"></i> Pesquisar dúvidas nos manuais</button>
     <button type="button" onclick="pfOpenManuals()"><i class="fa-solid fa-book-open"></i> Manual de Operação</button>
     <button type="button" onclick="pfShowCurrentVersion()"><i class="fa-solid fa-code-branch"></i> Versão atual do projeto</button>
     <button type="button" onclick="pfCheckUpdates()"><i class="fa-solid fa-arrows-rotate"></i> Verificar novas versões</button>
@@ -1855,7 +1900,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
 <div id="pf493Actions">
 <div class="pf493-actions-title">Ações e ferramentas</div>
 <button type="button" class="botao-acao" onclick="abrirConfiguracaoNomeUsuario()" title="Personalizar a saudação do dashboard"><i class="fa-solid fa-user-pen"></i>Nome do usuário</button>
-<button type="button" id="btnInstalarDesktop" class="botao-acao" title="Instalar o Planejamento Financeiro como aplicativo no Desktop"><i class="fa-solid fa-desktop"></i>Instalar no Desktop</button>
+<button type="button" id="btnInstalarDesktop" class="botao-acao" title="Escolher onde instalar o Planejamento Financeiro"><i class="fa-solid fa-download"></i>Instalar aplicativo</button>
 <details class="pf-seguranca-menu" title="Abrir os recursos de segurança, backup, importação, exportação e sincronização.">
 <summary class="botao-acao" onclick="verificarAcessoSeguranca(event)"><i class="fa-solid fa-shield-halved"></i>SEGURANÇA <span aria-hidden="true">▾</span></summary>
 <div class="pf-seguranca-dropdown">
@@ -1867,7 +1912,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
 <button type="button" class="botao-acao" onclick="sincronizarAgoraNuvem()" title="Sincronizar os dados deste dispositivo com o banco de dados na nuvem."><i class="fa-solid fa-cloud-arrow-up"></i>Sincronização com a Nuvem</button>
 <button type="button" class="botao-acao" onclick="verificarEabrirSegurancaAcesso(event)" title="Configurar a proteção por senha, autenticação e recuperação de acesso."><i class="fa-solid fa-shield-halved"></i>Segurança e Acesso</button>
 </div></details></div><div class="pf-sidebar-foot"><strong>Planejamento Financeiro</strong>Disciplina financeira hoje,<br>mais oportunidades amanhã.</div></aside>
-<!-- TESTE ISOLADO V4.10.2: não substitui o index.html de produção -->
+<!-- Configuração de acesso -->
 <style id="pf-help-menu-styles">
 .pf-help-menu{position:relative;z-index:120;margin:0 0 6px}.pf-help-menu>summary{list-style:none;cursor:pointer}.pf-help-menu>summary::-webkit-details-marker{display:none}
 #pfSaasSidebar .pf-help-sidebar>summary{display:flex;align-items:center;gap:11px;width:100%;padding:10px;border:1px solid transparent;border-radius:8px;background:transparent;color:#c8d6e7;font-size:11px;font-weight:600;text-align:left;cursor:pointer}
@@ -1954,7 +1999,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
     <div id="modalConfiguracaoSeguranca" class="fixed inset-0 bg-black/60 z-[950] hidden items-center justify-center p-4 no-print">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
             <div class="px-6 py-4 border-b flex items-center justify-between"><div><h3 class="text-lg font-bold text-slate-800">Segurança e acesso</h3><p class="text-xs text-slate-500">Atualize senha, e-mail e recuperação.</p></div><button onclick="fecharConfiguracaoSeguranca()" class="text-slate-400 hover:text-slate-700 text-xl">&times;</button></div>
-            <div class="p-6"><div id="configInternaMsg" class="text-xs mb-3"></div><div class="grid md:grid-cols-2 gap-3"><div><label class="block text-xs font-semibold text-slate-600 mb-1">E-mail de recuperação</label><input id="configInternaEmail" type="email" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Senha atual</label><input id="configInternaAtual" type="password" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Nova senha</label><input id="configInternaNova" type="password" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Confirmar nova senha</label><input id="configInternaConfirmar" type="password" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">EmailJS Public Key</label><input id="configInternaPublicKey" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Service ID</label><input id="configInternaServiceId" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div class="md:col-span-2"><label class="block text-xs font-semibold text-slate-600 mb-1">Template ID</label><input id="configInternaTemplateId" class="w-full border rounded-lg px-3 py-2 text-sm"></div></div><div class="flex justify-end gap-2 mt-5"><button onclick="fecharConfiguracaoSeguranca()" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700">Cancelar</button><button onclick="salvarConfiguracaoInterna()" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold">Salvar alterações</button></div></div>
+            <div class="p-6"><div id="configInternaMsg" class="text-xs mb-3"></div><div class="grid md:grid-cols-2 gap-3"><div><label class="block text-xs font-semibold text-slate-600 mb-1">E-mail de recuperação</label><input id="configInternaEmail" type="email" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Senha atual</label><input id="configInternaAtual" type="password" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Nova senha</label><input id="configInternaNova" type="password" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Confirmar nova senha</label><input id="configInternaConfirmar" type="password" class="w-full border rounded-lg px-3 py-2 text-sm"></div><details id="pfRecuperacaoAvancada" class="md:col-span-2" hidden><summary style="cursor:pointer;font-weight:600;padding:12px 0">Configurações avançadas de recuperação</summary><p style="font-size:12px;margin-bottom:12px">Configuração do serviço de envio de códigos de recuperação por e-mail.</p><div class="grid md:grid-cols-2 gap-3"><div><label class="block text-xs font-semibold text-slate-600 mb-1">EmailJS Public Key</label><input id="configInternaPublicKey" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1">Service ID</label><input id="configInternaServiceId" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div class="md:col-span-2"><label class="block text-xs font-semibold text-slate-600 mb-1">Template ID</label><input id="configInternaTemplateId" class="w-full border rounded-lg px-3 py-2 text-sm"></div></div></details></div><div class="flex justify-end gap-2 mt-5"><button onclick="fecharConfiguracaoSeguranca()" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700">Cancelar</button><button onclick="salvarConfiguracaoInterna()" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold">Salvar alterações</button></div></div>
         </div>
     </div>
 
@@ -2019,7 +2064,9 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
         <section id="pf495Greeting" class="mb-5 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
             <div class="flex flex-wrap items-center gap-2">
                 <h1 id="pf495GreetingTitle" class="text-xl font-bold text-slate-800">Olá, Usuário!</h1>
-                <span id="pf495PerfilBadge" class="pf-perfil-badge pf-perfil-usuario" aria-label="Perfil atual">Usuário</span>
+                <span id="pf495PerfilBadge" class="pf-perfil-badge pf-perfil-usuario" aria-label="Perfil atual">Usuário</span><div id="pfGreetingControls" class="no-print"><button onclick="abrirConfiguracaoNuvem()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Sincronizar dados entre computador e celular">
+                    <i class="fa-solid fa-cloud"></i> Nuvem <span id="statusNuvemBadge" class="opacity-90">Local</span>
+                </button><span id="pfGreetingTheme"></span></div>
             </div>
             <p class="mt-1 text-sm text-slate-500">Aqui está o resumo das suas finanças.</p>
         </section>
@@ -2032,6 +2079,9 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
         </div>
 
         <!-- Alertas de Vencimento -->
+<section id="pfAvisosDia" class="no-print" aria-labelledby="pfAvisosTitulo">
+ <div class="pf-avisos-cabecalho"><h2 id="pfAvisosTitulo"><i class="fa-solid fa-bell" aria-hidden="true"></i> AVISOS DO DIA</h2><button id="pfAlternarAvisos" type="button" onclick="pfAlternarAvisosDia()" aria-controls="pfAvisosConteudo" aria-expanded="true">Ocultar avisos</button></div>
+ <p id="pfAvisosResumo" role="status"></p><div id="pfAvisosConteudo"><div id="pfAvisoBackup" hidden style="padding:14px;border:1px solid #d97706;border-left:4px solid #d97706;border-radius:10px;margin-bottom:14px"><h3 style="font-weight:700">Importante: faça um backup</h3><p id="pfAvisoBackupTexto" style="font-size:13px;margin:6px 0 10px"></p><button type="button" onclick="fazerBackup()" style="background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:8px 12px">Fazer backup agora</button></div>
         <div id="alertaVencimentoHoje" class="hidden no-print mb-4 bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl shadow-sm">
             <div class="flex items-start justify-between gap-4">
                 <div class="flex items-start gap-3 min-w-0">
@@ -2091,22 +2141,21 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
             </div>
         </div>
 
+        </div></section>
         <!-- Header -->
         
 <header class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between border-b pb-4 no-print gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-wallet text-blue-600"></i> Planejamento Financeiro
-                    <button type="button" onclick="sairAplicativo()" title="Sair e bloquear o aplicativo" aria-label="Sair do aplicativo"
-                        class="ml-2 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm align-middle">
-                        <i class="fa-solid fa-right-from-bracket"></i><span>Sair</span>
-                    </button>
+                    
                 </h1>
-                <p id="subtituloMesAno" class="text-sm font-semibold text-blue-600 mt-1 uppercase tracking-wide"></p>
+                <div class="pf-mobile-theme-row"><p id="subtituloMesAno" class="text-sm font-semibold text-blue-600 mt-1 uppercase tracking-wide"></p><span id="pfMobileTemaPrincipal"></span></div>
             </div>
             <div class="acoes-profissionais">
-                <button onclick="openModal()" class="botao-acao bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Cadastrar uma nova receita, despesa ou investimento."><i class="fa-solid fa-plus"></i> Novo Lançamento</button>
-                <button onclick="adicionarNovaRubricaPrompt()" class="botao-acao bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Criar uma nova Rubrica para organizar os lançamentos."><i class="fa-solid fa-folder-plus"></i> NOVA RUBRICA</button>
+                
+                
+<button onclick="adicionarNovaRubricaPrompt()" class="botao-acao bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Criar uma nova Rubrica para organizar os lançamentos."><i class="fa-solid fa-folder-plus"></i> NOVA RUBRICA</button>
                 <button onclick="adicionarNovoSubItemPrompt()" class="botao-acao bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Criar um novo Sub-Item para detalhar os lançamentos."><i class="fa-solid fa-file-circle-plus"></i> NOVO SUB-ITEM</button>
                 <button onclick="abrirCalendarioFinanceiro()" class="botao-acao bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Visualizar os lançamentos financeiros organizados por data."><i class="fa-solid fa-calendar-days"></i> Calendário</button>
                 <button onclick="abrirRelatorioMensalMobile()" class="botao-acao bg-violet-600 hover:bg-violet-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Visualizar o resumo financeiro do mês."><i class="fa-solid fa-file-lines"></i> Relatório mensal</button>
@@ -2115,9 +2164,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 <button onclick="abrirCalculadora()" class="botao-acao bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Abrir a calculadora financeira, incluindo operações com percentual."><i class="fa-solid fa-calculator"></i> Calculadora</button>
                 <button onclick="abrirSegurancaBanco('historico')" class="botao-acao bg-slate-600 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Consultar o histórico de alterações realizadas no banco de dados."><i class="fa-solid fa-clock-rotate-left"></i> Histórico</button>
                 <button onclick="abrirSegurancaBanco('lixeira')" class="botao-acao bg-orange-600 hover:bg-orange-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Abrir a Lixeira para consultar e recuperar lançamentos excluídos."><i class="fa-solid fa-trash-can"></i> Lixeira</button>
-                                <button onclick="abrirConfiguracaoNuvem()" class="botao-acao bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Sincronizar dados entre computador e celular">
-                    <i class="fa-solid fa-cloud"></i> Nuvem <span id="statusNuvemBadge" class="opacity-90">Local</span>
-                </button>
+                                
 
 </div>
         </header>
@@ -2163,6 +2210,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
 <button onclick="openModal()" class="botao-acao bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-plus"></i> Novo Lançamento
                 </button>
+<button type="button" onclick="abrirGerenciarCadastros()" class="botao-acao bg-indigo-600 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium"><i class="fa-solid fa-list-check"></i> Gerenciar cadastros</button>
 <button onclick="adicionarNovaRubricaPrompt()" class="botao-acao bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-folder-plus"></i> NOVA RUBRICA
                 </button>
@@ -2432,7 +2480,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
         <section id="painelGerencial" class="mb-6 bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
                 <div><h2 class="text-lg font-bold text-slate-800">Painel Gerencial</h2><p id="periodoPainelGerencial" class="text-xs text-slate-500">Visão consolidada do banco e projeção dos próximos 30 dias.</p></div>
-                <div class="flex gap-2 no-print"><button onclick="atualizarPainelGerencial()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-arrows-rotate"></i> Atualizar</button><button onclick="abrirRelatorioGerencial()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-file-pdf"></i> Relatório</button></div>
+                <div id="pfPainelAcoes" class="flex gap-2 no-print"><button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Cadastrar uma nova receita, despesa ou investimento."><i class="fa-solid fa-plus"></i> Novo Lançamento</button><button onclick="atualizarPainelGerencial()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-arrows-rotate"></i> Atualizar</button><button onclick="abrirRelatorioGerencial()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-file-pdf"></i> Relatório</button></div>
             </div>
             <div id="painelResumoGerencial" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-5">
                 <div class="bg-emerald-50 rounded-lg p-3"><p class="text-[10px] font-bold text-emerald-700 uppercase">RECEITAS</p><p id="pgReceitas" class="text-sm font-bold text-emerald-800 mt-1">R$ 0,00</p></div>
@@ -2599,7 +2647,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Descrição</label>
-                    <input type="text" id="descricao" required placeholder="Ex: Aluguel..." class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="descricao" placeholder="Opcional — Sem descrição" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -2665,18 +2713,19 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
             <section class="graficos-controles no-print mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" aria-label="Filtros dos gráficos">
   <div class="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3"><i class="fa-solid fa-sliders text-indigo-600"></i><h4 class="text-sm font-bold text-slate-800">Filtros da análise</h4><span class="ml-auto text-xs text-slate-500">Defina o período e os critérios</span></div>
   <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Período início</label><input type="date" id="graficoDataInicio" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"></div>
-    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Período fim</label><input type="date" id="graficoDataFim" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"></div>
+    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Período início</label><input type="date" id="graficoDataInicio" onchange="atualizarGraficos()" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"></div>
+    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Período fim</label><input type="date" id="graficoDataFim" onchange="atualizarGraficos()" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"></div>
   </div>
+  <p id="graficoAvisoPeriodo" role="alert" style="display:none;background:#fff3cd;color:#664d03;border:1px solid #d6a800;border-radius:8px;padding:12px;margin:0 0 16px;font-weight:600">A data inicial deve ser anterior ou igual à data final. Corrija o período para consultar os gráficos.</p>
   <div class="mb-5 grid grid-cols-1 gap-4 md:grid-cols-4">
     <div><label class="mb-1 block text-xs font-semibold text-slate-600">Filtrar por tipo</label><select id="graficoTipo" onchange="atualizarVisibilidadeTipoGrafico(); atualizarGraficos();" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"><option value="Todos">Todos os tipos</option><option value="Receita">Somente receitas</option><option value="Despesa">Somente despesas</option></select></div>
-    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Rubrica</label><select id="graficoRubrica" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"><option value="Todas">Todas as Rubricas</option></select></div>
-    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Sub-Item</label><select id="graficoSubItem" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"><option value="Todos">Todos os Sub-Itens</option></select></div>
-    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Descrição</label><input type="text" id="graficoDescricao" placeholder="Filtrar descrição..." class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"></div>
+    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Rubrica</label><select id="graficoRubrica" onchange="atualizarGraficos()" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"><option value="Todas">Todas as Rubricas</option></select></div>
+    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Sub-Item</label><select id="graficoSubItem" onchange="atualizarGraficos()" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"><option value="Todos">Todos os Sub-Itens</option></select></div>
+    <div><label class="mb-1 block text-xs font-semibold text-slate-600">Descrição</label><input type="text" id="graficoDescricao" oninput="atualizarGraficos()" placeholder="Filtrar descrição..." class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"></div>
   </div>
   <div class="mb-4 rounded-xl bg-slate-50 border border-slate-200 p-3">
     <div class="flex flex-wrap gap-2 mb-3">
-      <button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('hoje')">Hoje</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('7dias')">7 dias</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('mes')">Este mês</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('anterior')">Mês anterior</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('trimestre')">Trimestre</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('ano')">Ano</button>
+      <button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('hoje')">Hoje</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('7dias')">7 dias</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('anterior')">Mês anterior</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('mes')">Este mês</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('posterior')">Mês posterior</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('trimestre')">Trimestre</button><button type="button" class="pf-chip" onclick="atalhoPeriodoGraficos('ano')">Ano</button>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
       <div><label class="block text-xs font-semibold text-slate-600 mb-1">Status</label><select id="graficoStatusAvancado" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" onchange="atualizarGraficos()"><option value="Todos">Todos os status</option><option>Pago</option><option>Recebido</option><option>A Vencer</option><option>Vencido</option><option>Não Recebido</option></select></div>
@@ -2684,7 +2733,8 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
       <div><label class="block text-xs font-semibold text-slate-600 mb-1">Valor máximo (R$)</label><input id="graficoValorMax" type="number" min="0" step="0.01" placeholder="Sem máximo" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" oninput="atualizarGraficos()"></div>
       <div><label class="block text-xs font-semibold text-slate-600 mb-1">Comparação</label><select id="graficoModoComparacao" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" onchange="atualizarGraficos()"><option value="anterior">Período anterior</option><option value="ano">Mesmo período do ano passado</option><option value="nenhuma">Sem comparação</option></select></div>
     </div>
-    <div class="flex flex-wrap items-center gap-2 mt-3"><button type="button" class="pf-chip" onclick="salvarVisaoGrafico()">Salvar visão</button><select id="graficoVisoesSalvas" class="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs" onchange="carregarVisaoGrafico()"><option value="">Visões salvas…</option></select><button type="button" class="pf-chip" onclick="exportarDadosGraficosCSV()">Exportar CSV</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('despesas')">Maiores despesas</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('vencidas')">Atrasados</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('naorecebidas')">Receitas não recebidas</button></div>
+    <p id="graficoAvisoValores" role="alert" style="display:none;background:#fff3cd;color:#664d03;border:1px solid #d6a800;border-radius:8px;padding:12px;margin:0 0 16px;font-weight:600">O valor mínimo deve ser menor ou igual ao valor máximo. Corrija os valores para consultar os gráficos.</p>
+    <div class="flex flex-wrap items-center gap-2 mt-3"><button type="button" class="pf-chip" onclick="salvarVisaoGrafico()">Salvar visão</button><select id="graficoVisoesSalvas" class="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs" onchange="carregarVisaoGrafico()"><option value="">Visões salvas…</option></select><button type="button" class="pf-chip" onclick="excluirVisaoGrafico()" title="Excluir a visão selecionada">Excluir visão</button><button type="button" class="pf-chip" onclick="exportarDadosGraficosCSV()">Exportar CSV</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('despesas')">Maiores despesas</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('menoresDespesas')">Menores despesas</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('vencidas')">Atrasados</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('naorecebidas')">Receitas não recebidas</button></div>
   </div>
   <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-4">
     <button onclick="atualizarGraficos()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700"><i class="fa-solid fa-chart-line"></i>Gerar gráfico</button>
@@ -2716,7 +2766,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 <div class="pf-chart-card"><h4 class="font-bold text-sm text-slate-800 mb-2">Vencidos por faixa de atraso</h4><div id="pfAtrasos"></div></div>
                 <div class="pf-chart-card"><h4 class="font-bold text-sm text-slate-800 mb-2">Mapa de calor — despesas por dia do mês</h4><div id="pfHeatmap"></div><p class="text-xs text-slate-500 mt-2">Intensidade maior indica maior total de despesas naquele dia.</p></div>
               </div>
-              <div class="pf-chart-card"><h4 class="font-bold text-sm text-slate-800 mb-2">Últimos 12 meses — receitas, despesas e saldo</h4><div id="pfDozeMeses"></div></div>
+              <div class="pf-chart-card"><h4 id="pfTituloDozeMeses" class="font-bold text-sm text-slate-800 mb-2">Últimos 12 meses — receitas, despesas e saldo</h4><div id="pfDozeMeses"></div></div>
               <div class="pf-chart-card"><h4 class="font-bold text-sm text-slate-800 mb-2">Lançamentos do recorte (detalhamento)</h4><div id="pfDrilldown" class="overflow-x-auto"></div></div>
             </section>
 
@@ -2768,6 +2818,8 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
     </div>
 
 
+    <input type="file" id="inputImportExcel" accept=".xlsx,.xls" onchange="importFromExcel(event)" hidden>
+    <input type="file" id="inputRestaurar" accept=".json,application/json" onchange="restaurarBackup(event)" hidden>
     <!-- Modal de segurança para restauração -->
     <div id="modalPreRestauracao" class="fixed inset-0 bg-black/50 z-[200] items-center justify-center p-4 no-print" style="display:none;">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200">
@@ -2848,7 +2900,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
             <div class="rel46-metrica vencido"><span>Vencido</span><strong id="rel46Vencido">R$ 0,00</strong></div>
           </div>
           <div id="rel46Mensagem" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">Resumo do período.</div>
-          <div class="mt-4 flex gap-2">
+          <div class="rel46-actions mt-4 flex gap-2">
             <button type="button" onclick="abrirRelatorioGerencial(); fecharRelatorioMensalMobile();" class="flex-1 rounded-lg bg-rose-600 text-white px-3 py-3 text-xs font-bold">
               <i class="fa-solid fa-file-pdf mr-1"></i> Relatório completo
             </button>
@@ -2871,7 +2923,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 </div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Rubrica</label><select id="v43Categoria" required class="w-full border border-slate-300 rounded-lg px-3 py-2"></select></div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Sub-Item</label><select id="v43SubItem" required class="w-full border border-slate-300 rounded-lg px-3 py-2"></select></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Descrição</label><input id="v43Descricao" type="text" required placeholder="Ex.: Conta de luz" class="w-full border border-slate-300 rounded-lg px-3 py-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Descrição</label><input id="v43Descricao" type="text" placeholder="Opcional — Sem descrição" class="w-full border border-slate-300 rounded-lg px-3 py-2"></div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Valor (R$)</label><input id="v43Valor" type="number" step="0.01" min="0" required placeholder="0,00" class="w-full border border-slate-300 rounded-lg px-3 py-2"></div>
                 <div class="flex gap-3 pt-2">
                     <button type="button" onclick="fecharLancamentoRapido()" class="flex-1 rounded-lg border border-slate-300 px-4 py-3 font-semibold text-slate-700">Cancelar</button>
@@ -2977,7 +3029,11 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 }
             };
 
-            botoes.forEach((btn) => btn.addEventListener('click', instalar));
+            window.pfSolicitarInstalacaoPWA = instalar;
+            botoes.forEach((btn) => btn.addEventListener('click', () => {
+                if (btn.id === 'btnInstalarDesktop') pfAbrirInstalarAplicativo();
+                else instalar();
+            }));
 
             window.addEventListener('appinstalled', () => {
                 eventoInstalacaoPWA = null;
@@ -3010,6 +3066,11 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
 /* ===== Script original consolidado: bloco %d ===== */
 
         /* ==================== PROTEÇÃO DE ACESSO ==================== */
+        // Chave disponível antes de qualquer inicialização de dados.
+        const CHAVE_ULTIMA_ALTERACAO_LOCAL = 'planejamento_financeiro_ultima_alteracao_local';
+        // Variaveis usadas durante a configuracao inicial devem existir antes dos callbacks.
+        let sincronizacaoNuvemTimer = null;
+        let aplicacaoInicializada = false;
         const CHAVE_PROTECAO_ACESSO = (location.protocol === 'file:') ? 'pf_protecao_acesso_teste_local_v1' : 'pf_protecao_acesso_v1';
         let protecaoAutenticada = false;
         let modoConfigInicial = false;
@@ -3048,7 +3109,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
             document.getElementById('recoveryEmail').value=obterConfigProtecao()?.email||'';
             document.getElementById('recoveryEmail').focus();
         }
-        function abrirConfiguracaoSeguranca(inicial=false){
+        async function abrirConfiguracaoSeguranca(inicial=false){
             const cfg=obterConfigProtecao();
             if(inicial){
                 modoConfigInicial=true;
@@ -3061,6 +3122,8 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
             }
             else {
                 if(!protecaoAutenticada){ mostrarLoginAcesso(); return; }
+                const avancada=document.getElementById('pfRecuperacaoAvancada');avancada.open=false;avancada.hidden=true;
+                const admin=typeof window.ehAdministrador==='function'&&await window.ehAdministrador();avancada.hidden=!admin;avancada.querySelectorAll('input').forEach(input=>input.disabled=!admin);
                 document.getElementById('modalConfiguracaoSeguranca').classList.remove('hidden'); document.getElementById('modalConfiguracaoSeguranca').classList.add('flex');
                 document.getElementById('configInternaEmail').value=cfg?.email||''; document.getElementById('configInternaPublicKey').value=cfg?.emailjsPublicKey||''; document.getElementById('configInternaServiceId').value=cfg?.emailjsServiceId||''; document.getElementById('configInternaTemplateId').value=cfg?.emailjsTemplateId||'';
             }
@@ -3188,7 +3251,8 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
             if(!/^\S+@\S+\.\S+$/.test(email)) return mensagemAuth('configInternaMsg','Informe um e-mail válido.');
             if(nova && nova.length<6) return mensagemAuth('configInternaMsg','A nova senha deve ter pelo menos 6 caracteres.');
             if(nova!==conf) return mensagemAuth('configInternaMsg','A confirmação da nova senha não confere.');
-            cfg.email=email; cfg.emailjsPublicKey=document.getElementById('configInternaPublicKey').value.trim(); cfg.emailjsServiceId=document.getElementById('configInternaServiceId').value.trim(); cfg.emailjsTemplateId=document.getElementById('configInternaTemplateId').value.trim();
+            cfg.email=email;
+            if(typeof window.ehAdministrador==='function'&&await window.ehAdministrador()){cfg.emailjsPublicKey=document.getElementById('configInternaPublicKey').value.trim(); cfg.emailjsServiceId=document.getElementById('configInternaServiceId').value.trim(); cfg.emailjsTemplateId=document.getElementById('configInternaTemplateId').value.trim();}
             if(nova){ const cred=await criarCredencial(nova); cfg.salt=cred.salt; cfg.hash=cred.hash; }
             cfg.alteradoEm=new Date().toISOString(); salvarConfigProtecao(cfg); mensagemAuth('configInternaMsg','Configurações de segurança salvas.','ok'); document.getElementById('configInternaAtual').value=''; document.getElementById('configInternaNova').value=''; document.getElementById('configInternaConfirmar').value='';
         }
@@ -3203,45 +3267,8 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
             }
         }
 
-        const dadosPadraoCompletos = [
-            {id: 101, vencimento: "2026-09-01", dataPg: "2026-09-01", tipo: "Receita", categoria: "RECEITA", subItem: "Receita", descricao: "Japeri", valor: 7900.00, status: "Recebido", observacao: ""},
-            {id: 102, vencimento: "2026-09-01", dataPg: "2026-09-01", tipo: "Receita", categoria: "RECEITA", subItem: "Receita", descricao: "Queimados", valor: 3900.00, status: "Recebido", observacao: ""},
-            {id: 103, vencimento: "2026-09-17", dataPg: "2026-09-17", tipo: "Receita", categoria: "RECEITA", subItem: "Receita", descricao: "Guapimirim", valor: 17363.74, status: "Recebido", observacao: ""},
-
-            {id: 1, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "DESPESAS PAI", subItem: "Condomínio", descricao: "cond Escrit Pai", valor: 506.20, status: "Pago", observacao: ""},
-            {id: 2, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "DESPESAS PAI", subItem: "IPTU", descricao: "Parc Iptu Pai", valor: 330.82, status: "Pago", observacao: ""},
-            {id: 3, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "DESPESAS PAI", subItem: "IPTU", descricao: "Parc Iptu Pai 2", valor: 90.00, status: "Pago", observacao: ""},
-            {id: 4, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "DESPESAS PAI", subItem: "IPTU", descricao: "Iptu Escrit Pai", valor: 396.58, status: "Pago", observacao: ""},
-            {id: 5, vencimento: "2026-09-15", dataPg: "2026-09-15", tipo: "Despesa", categoria: "DESPESAS PAI", subItem: "Luz", descricao: "Luz Escrit Pai", valor: 145.25, status: "Pago", observacao: ""},
-            {id: 6, vencimento: "2026-09-07", dataPg: "2026-09-07", tipo: "Despesa", categoria: "CELULAR", subItem: "Celular", descricao: "Cel Valentina", valor: 75.00, status: "Pago", observacao: ""},
-            {id: 7, vencimento: "2026-09-07", dataPg: "2026-09-07", tipo: "Despesa", categoria: "CELULAR", subItem: "Celular", descricao: "Cel Antonia", valor: 65.00, status: "Pago", observacao: ""},
-            {id: 8, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "CELULAR", subItem: "Celular", descricao: "Cel Ric/Lú", valor: 143.98, status: "Pago", observacao: ""},
-
-            {id: 20, vencimento: "2026-09-07", dataPg: "2026-09-07", tipo: "Despesa", categoria: "ICARAÍ", subItem: "Condomínio", descricao: "Cond Escritório", valor: 780.51, status: "Pago", observacao: ""},
-            {id: 21, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "WM", subItem: "Honorários", descricao: "Hon contador WM", valor: 1190.00, status: "Pago", observacao: ""},
-            {id: 22, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "WM", subItem: "IPTU", descricao: "Iptu Escrit", valor: 77.54, status: "Pago", observacao: ""},
-            {id: 23, vencimento: "2026-09-15", dataPg: "2026-09-15", tipo: "Despesa", categoria: "WM", subItem: "Luz", descricao: "Luz Escrit", valor: 46.71, status: "Pago", observacao: ""},
-            {id: 24, vencimento: "2026-09-18", dataPg: "2026-09-18", tipo: "Despesa", categoria: "WM", subItem: "WM", descricao: "INSS", valor: 360.00, status: "Pago", observacao: ""},
-            {id: 25, vencimento: "2026-09-01", dataPg: "", tipo: "Despesa", categoria: "WM", subItem: "WM", descricao: "Parc simples 1", valor: 140.00, status: "Pendente", observacao: ""},
-            {id: 26, vencimento: "2026-09-01", dataPg: "", tipo: "Despesa", categoria: "WM", subItem: "WM", descricao: "Parc simples 2", valor: 1400.00, status: "Pendente", observacao: ""},
-            {id: 27, vencimento: "2026-09-05", dataPg: "2026-09-05", tipo: "Despesa", categoria: "PLANO SAÚDE", subItem: "P Saúde", descricao: "Plano Saude Lu", valor: 1074.00, status: "Pago", observacao: ""},
-            {id: 28, vencimento: "2026-09-05", dataPg: "2026-09-05", tipo: "Despesa", categoria: "PLANO SAÚDE", subItem: "P Saúde", descricao: "Plano Saude Ric", valor: 1402.00, status: "Pago", observacao: ""},
-
-            {id: 40, vencimento: "2026-09-01", dataPg: "2026-09-01", tipo: "Despesa", categoria: "CARTÃO", subItem: "CartãoPF", descricao: "cartão pessoa física", valor: 1016.61, status: "Pago", observacao: ""},
-            {id: 41, vencimento: "2026-09-21", dataPg: "2026-09-21", tipo: "Despesa", categoria: "CARTÃO", subItem: "CartãoPF", descricao: "Cartão Porto", valor: 1712.79, status: "Pago", observacao: ""},
-            {id: 42, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "IPTU", subItem: "IPTU", descricao: "Iptu SG", valor: 65.76, status: "Pago", observacao: ""},
-
-            {id: 60, vencimento: "2026-09-08", dataPg: "2026-09-08", tipo: "Despesa", categoria: "ARARUAMA", subItem: "Agua", descricao: "Água Araruama", valor: 138.18, status: "Pago", observacao: ""},
-            {id: 61, vencimento: "2026-09-15", dataPg: "", tipo: "Despesa", categoria: "ICARAÍ", subItem: "Gás", descricao: "gas icarai", valor: 80.86, status: "Pendente", observacao: ""},
-            {id: 62, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "ARARUAMA", subItem: "Internet", descricao: "Internet Araruama", valor: 120.84, status: "Pago", observacao: ""},
-            {id: 63, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "ARARUAMA", subItem: "Luz", descricao: "Luz Araruama", valor: 67.98, status: "Pago", observacao: ""},
-            {id: 64, vencimento: "2026-09-10", dataPg: "2026-09-10", tipo: "Despesa", categoria: "ICARAÍ", subItem: "Luz", descricao: "Luz Icarai", valor: 358.47, status: "Pago", observacao: ""},
-            {id: 65, vencimento: "2026-09-15", dataPg: "2026-09-15", tipo: "Despesa", categoria: "ICARAÍ", subItem: "Internet", descricao: "Internete Icarai", valor: 137.90, status: "Pago", observacao: ""},
-            {id: 66, vencimento: "2026-09-07", dataPg: "2026-09-07", tipo: "Despesa", categoria: "ICARAÍ", subItem: "Aluguel", descricao: "Aluguel", valor: 2652.83, status: "Pago", observacao: ""},
-            {id: 67, vencimento: "2026-09-22", dataPg: "", tipo: "Despesa", categoria: "LUZ", subItem: "Luz", descricao: "Luz Prin Isabel", valor: 228.78, status: "Pendente", observacao: ""},
-
-            {id: 200, vencimento: "2026-09-25", dataPg: "", tipo: "Investimentos", categoria: "INVESTIMENTOS", subItem: "Investimentos", descricao: "Aporte Tesouro Direto", valor: 1500.00, status: "Pendente", observacao: ""}
-        ];
+        // Distribuição sem lançamentos pessoais embutidos: usa dados locais ou da conta autenticada.
+        const dadosPadraoCompletos = [];
 
         // Gerador interno de ID estruturado para exportação e banco de dados
         function gerarIdTexto(prefixo, texto) {
@@ -3431,7 +3458,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 item.tipo = item.tipo ? String(item.tipo) : 'Despesa';
                 item.categoria = item.categoria ? String(item.categoria) : 'GERAL';
                 item.subItem = item.subItem ? String(item.subItem) : 'Geral';
-                item.descricao = item.descricao ? String(item.descricao) : '';
+                item.descricao = String(item.descricao ?? '').trim() || 'Sem descrição';
                 item.valor = Number(item.valor) || 0;
                 item.status = item.status ? String(item.status) : (item.tipo === 'Receita' ? 'Não Recebido' : 'Pendente');
                 item.observacao = item.observacao ? String(item.observacao) : '';
@@ -3447,7 +3474,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 item.idRubrica = item.idRubrica || gerarIdTexto('RUB', item.categoria);
                 item.idSubItem = item.idSubItem || gerarIdTexto('SUB', item.subItem);
                 item.idDescricao = item.idDescricao || gerarIdTexto('DSC', item.descricao);
-                item.idStatus = item.idStatus || gerarIdTexto('STA', item.status);
+                item.idStatus = gerarIdTexto('STA', item.status);
                 return item;
             });
         }
@@ -3559,7 +3586,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
             const transRubricas = [...new Set(transacoes.map(t => corrigirRubricaLancamento(t.categoria)))].filter(Boolean);
             const extrasBrutos = JSON.parse(localStorage.getItem('rubricas_extras') || '[]');
             const extras = extrasBrutos.map(v => corrigirRubricaLancamento(v)).filter(Boolean);
-            return [...new Set([...padrao, ...transRubricas, ...extras])].sort();
+            return [...new Set([...padrao, ...transRubricas, ...extras])].filter(n => !JSON.parse(localStorage.getItem('pf_rubricas_ocultas') || '[]').includes(n)).sort();
         }
 
         function getSubItensCadastrados() {
@@ -3576,7 +3603,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 localStorage.setItem('subitens_extras', JSON.stringify(extrasLimpos));
             } catch (e) {}
 
-            return [...new Set([...padrao, ...transSub, ...extras])].sort((a, b) => String(a).localeCompare(String(b), 'pt-BR', { sensitivity: 'base' }));
+            return [...new Set([...padrao, ...transSub, ...extras])].filter(n => !JSON.parse(localStorage.getItem('pf_subitens_ocultos') || '[]').includes(n)).sort((a, b) => String(a).localeCompare(String(b), 'pt-BR', { sensitivity: 'base' }));
         }
 
         function popularSelectsDinamicos() {
@@ -3624,10 +3651,12 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
 
         function adicionarNovaRubricaPrompt() {
             const nova = prompt("Digite o nome da Nova Rubrica:");
+            if (nova === null) return;
+            if (!nova.trim()) { alert('Preencha o nome da rubrica.'); return; }
             if (nova && nova.trim() !== "") {
                 const nomeFormatado = nova.trim().toUpperCase();
                 let extras = JSON.parse(localStorage.getItem('rubricas_extras') || '[]');
-                if (!extras.includes(nomeFormatado)) {
+                if (!getRubricasCadastradas().some(nome => String(nome).trim().toLocaleUpperCase('pt-BR') === nomeFormatado)) {
                     extras.push(nomeFormatado);
                     localStorage.setItem('rubricas_extras', JSON.stringify(extras));
                     popularSelectsDinamicos();
@@ -3640,10 +3669,12 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
 
         function adicionarNovoSubItemPrompt() {
             const novo = prompt("Digite o nome do Novo Sub-Item:");
+            if (novo === null) return;
+            if (!novo.trim()) { alert('Preencha o nome do subitem.'); return; }
             if (novo && novo.trim() !== "") {
                 const nomeFormatado = corrigirOrtografiaLancamento(novo);
                 let extras = JSON.parse(localStorage.getItem('subitens_extras') || '[]');
-                if (!extras.includes(nomeFormatado)) {
+                if (!getSubItensCadastrados().some(nome => String(nome).trim().toLocaleUpperCase('pt-BR') === nomeFormatado.trim().toLocaleUpperCase('pt-BR'))) {
                     extras.push(nomeFormatado);
                     localStorage.setItem('subitens_extras', JSON.stringify(extras));
                     popularSelectsDinamicos();
@@ -3684,7 +3715,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 ID_Descricao: t.idDescricao || gerarIdTexto('DSC', t.descricao),
                 Descricao: t.descricao || '',
                 Valor: t.valor || 0,
-                ID_Status: t.idStatus || gerarIdTexto('STA', t.status),
+                ID_Status: gerarIdTexto('STA', t.status),
                 Status: t.status || '',
                 Observacao: t.observacao || ''
             }));
@@ -3782,6 +3813,8 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 data_abertura_projeto: DATA_ABERTURA_PROJETO,
                 transacoes: normalizarTransacoes(transacoes),
                 tabelas: refs,
+                rubricas_ocultas: JSON.parse(localStorage.getItem('pf_rubricas_ocultas') || '[]'),
+                subitens_ocultos: JSON.parse(localStorage.getItem('pf_subitens_ocultos') || '[]'),
                 rubricas_extras: JSON.parse(localStorage.getItem('rubricas_extras') || '[]'),
                 subitens_extras: JSON.parse(localStorage.getItem('subitens_extras') || '[]')
             };
@@ -3868,6 +3901,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
             localStorage.setItem(CHAVE_ULTIMO_BACKUP, new Date().toISOString());
             registrarHistorico('BACKUP', '', 'Backup JSON exportado.');
             atualizarInfoBanco();
+            pfAtualizarAvisosDia();
         }
 
         function validarBackup(conteudo) {
@@ -3902,6 +3936,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 localStorage.setItem(CHAVE_ULTIMO_BACKUP, new Date().toISOString());
                 registrarHistorico('BACKUP', '', 'Backup de segurança criado antes da restauração.');
                 atualizarInfoBanco();
+                pfAtualizarAvisosDia();
 
                 document.getElementById('modalPreRestauracao').style.display = 'none';
                 document.getElementById('modalContinuarRestauracao').style.display = 'flex';
@@ -3937,6 +3972,8 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                         localStorage.setItem(CHAVE_DATA_ABERTURA, conteudo.data_abertura_projeto);
                         DATA_ABERTURA_PROJETO = conteudo.data_abertura_projeto;
                     }
+                    localStorage.setItem('pf_rubricas_ocultas', JSON.stringify(Array.isArray(conteudo.rubricas_ocultas) ? conteudo.rubricas_ocultas : []));
+                    localStorage.setItem('pf_subitens_ocultos', JSON.stringify(Array.isArray(conteudo.subitens_ocultos) ? conteudo.subitens_ocultos : []));
                     if (Array.isArray(conteudo.rubricas_extras)) localStorage.setItem('rubricas_extras', JSON.stringify(conteudo.rubricas_extras));
                     if (Array.isArray(conteudo.subitens_extras)) localStorage.setItem('subitens_extras', JSON.stringify(conteudo.subitens_extras));
 
@@ -3973,7 +4010,6 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
         // ==================== SUPABASE / SINCRONIZAÇÃO EM NUVEM ====================
         const SUPABASE_URL = 'https://oflbclvieeknffjtndxo.supabase.co';
         const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_n_k8Yggb0xq8ESLo0rYVsw_SZ5LTSpJ';
-        const CHAVE_ULTIMA_ALTERACAO_LOCAL = 'planejamento_financeiro_ultima_alteracao_local';
         const CHAVE_ULTIMA_SINCRONIZACAO = 'planejamento_financeiro_ultima_sincronizacao_nuvem';
         // V3.7 Mobile — sessão robusta: o banco usa diretamente o JWT da sessão autenticada,
         // mesmo quando o armazenamento interno do Supabase não persiste no navegador.
@@ -3986,7 +4022,6 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
         const REST_SYNC_URL = SUPABASE_URL + '/rest/v1/planejamento_financeiro_sync';
         let supabaseCliente = null;
         let sessaoNuvemManual = null;
-        let sincronizacaoNuvemTimer = null;
         let sincronizacaoNuvemEmAndamento = false;
 
         function inicializarSupabaseCliente() {
@@ -4321,6 +4356,8 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 atualizado_localmente_em: localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || new Date().toISOString(),
                 data_abertura_projeto: DATA_ABERTURA_PROJETO,
                 transacoes: normalizarTransacoes(transacoes),
+                rubricas_ocultas: JSON.parse(localStorage.getItem('pf_rubricas_ocultas') || '[]'),
+                subitens_ocultos: JSON.parse(localStorage.getItem('pf_subitens_ocultos') || '[]'),
                 rubricas_extras: JSON.parse(localStorage.getItem('rubricas_extras') || '[]'),
                 subitens_extras: JSON.parse(localStorage.getItem('subitens_extras') || '[]'),
                 lixeira: obterLixeira(),
@@ -4329,6 +4366,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
         }
 
         function aplicarPacoteNuvem(payload) {
+            // Sincronização habilitada na distribuição.
             if (!payload || !Array.isArray(payload.transacoes)) throw new Error('Banco da nuvem inválido.');
             transacoes = normalizarTransacoes(payload.transacoes);
             localStorage.setItem(CHAVE_BANCO_MESTRE, JSON.stringify(transacoes));
@@ -4337,13 +4375,16 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 DATA_ABERTURA_PROJETO = payload.data_abertura_projeto;
                 localStorage.setItem(CHAVE_DATA_ABERTURA, DATA_ABERTURA_PROJETO);
             }
-            if (Array.isArray(payload.rubricas_extras)) localStorage.setItem('rubricas_extras', JSON.stringify(payload.rubricas_extras));
+            localStorage.setItem('pf_rubricas_ocultas', JSON.stringify(Array.isArray(payload.rubricas_ocultas) ? payload.rubricas_ocultas : []));
+                    localStorage.setItem('pf_subitens_ocultos', JSON.stringify(Array.isArray(payload.subitens_ocultos) ? payload.subitens_ocultos : []));
+                    if (Array.isArray(payload.rubricas_extras)) localStorage.setItem('rubricas_extras', JSON.stringify(payload.rubricas_extras));
             if (Array.isArray(payload.subitens_extras)) localStorage.setItem('subitens_extras', JSON.stringify(payload.subitens_extras));
             if (Array.isArray(payload.lixeira)) localStorage.setItem(CHAVE_LIXEIRA, JSON.stringify(payload.lixeira));
             if (Array.isArray(payload.historico)) localStorage.setItem(CHAVE_HISTORICO, JSON.stringify(payload.historico));
         }
 
         async function carregarPacoteNuvem() {
+            // Leitura autenticada do banco remoto.
             const session = await obterSessaoNuvem();
             if (!session) return null;
             const headers = await obterHeadersRestNuvem(session);
@@ -4358,8 +4399,19 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
         }
 
         async function salvarPacoteNuvem() {
+            // Sincronização habilitada na distribuição.
             const session = await obterSessaoNuvem();
             if (!session) throw new Error('Este dispositivo ainda não está conectado à conta de nuvem.');
+            // Proteção conservadora: não sobrescrever alterações remotas não vistas por este dispositivo.
+            // Esta verificação reduz riscos, mas não substitui uma operação atômica no servidor.
+            const remotoAntesDeSalvar = await carregarPacoteNuvem();
+            const ultimaSyncConhecida = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
+            const versaoRemota = remotoAntesDeSalvar?.updated_at || '';
+            if (remotoAntesDeSalvar?.payload && (!ultimaSyncConhecida || versaoRemota !== ultimaSyncConhecida)) {
+                const aviso = 'Sincronização interrompida para proteger seus dados: a nuvem contém uma versão que este dispositivo ainda não confirmou. Nenhum dado local foi apagado. Faça um backup antes de resolver a divergência.';
+                atualizarStatusNuvem(aviso);
+                throw new Error(aviso);
+            }
             const pacote = coletarPacoteNuvem();
             const agora = new Date().toISOString();
             const headers = await obterHeadersRestNuvem(session);
@@ -4379,6 +4431,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
         }
 
         function agendarSincronizacaoNuvem() {
+            // Agenda o envio das alterações locais.
             clearTimeout(sincronizacaoNuvemTimer);
             sincronizacaoNuvemTimer = setTimeout(async () => {
                 try {
@@ -4398,6 +4451,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
         }
 
         async function sincronizarNuvemAoAbrir() {
+            // Sincroniza com a sessão autenticada deste dispositivo.
             try {
                 if (!supabaseCliente && !inicializarSupabaseCliente()) {
                     atualizarStatusNuvem('Biblioteca da nuvem não carregada; os dados locais estão sendo usados.');
@@ -4416,9 +4470,14 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
 
                 if (remoto?.payload) {
                     if (ultimaAlteracaoLocal && atualizadoRemoto && ultimaAlteracaoLocal > atualizadoRemoto) {
+                        // O salvamento verifica se esta versão remota já foi confirmada neste dispositivo.
                         await salvarPacoteNuvem();
                         atualizarStatusNuvem('Dados locais mais recentes foram enviados para a nuvem.', true);
                     } else {
+                        const base = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
+                        if (base && ultimaAlteracaoLocal > base && atualizadoRemoto !== base) {
+                            throw new Error('Conflito de sincronização: existem alterações locais e remotas. Nenhum dado foi substituído. Faça backup antes de resolver.');
+                        }
                         aplicarPacoteNuvem(remoto.payload);
                         localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, atualizadoRemoto || new Date().toISOString());
                         atualizarStatusNuvem('Banco da nuvem carregado neste dispositivo.', true);
@@ -4436,6 +4495,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
         }
 
         async function sincronizarAgoraNuvem() {
+            // Sincronização habilitada na distribuição.
             try {
                 if (!supabaseCliente && !inicializarSupabaseCliente()) {
                     throw new Error('Biblioteca Supabase não foi carregada. Verifique a conexão com a internet.');
@@ -4460,6 +4520,10 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                     await salvarPacoteNuvem();
                     alert('Sincronização concluída. As alterações mais recentes deste dispositivo foram enviadas para a nuvem.');
                 } else {
+                    const base = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
+                    if (base && ultimaAlteracaoLocal > base && atualizadoRemoto !== base) {
+                        throw new Error('Conflito de sincronização: há alterações locais e remotas. Nenhum dado foi substituído. Faça backup antes de resolver.');
+                    }
                     aplicarPacoteNuvem(remoto.payload);
                     localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, atualizadoRemoto);
                     atualizarStatusNuvem('Banco da nuvem carregado neste dispositivo.', true);
@@ -4532,7 +4596,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 salvarSessaoNuvemManual(sessaoNuvemManual);
 
                 document.getElementById('statusNuvemBadge').textContent = 'Online';
-                atualizarStatusNuvem('Conta conectada neste PC. Testando acesso ao banco... ', true);
+                atualizarStatusNuvem('Conta conectada. Verificando a sincronização financeira.', true);
                 if (emailEl) emailEl.value = sessionConfirmada.user.email || email;
 
                 try {
@@ -4542,7 +4606,7 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                         document.getElementById('statusNuvemBadge').textContent = 'Online';
                         atualizarStatusNuvem('Conta conectada. O acesso ao banco precisa ser verificado.', false);
                     } else {
-                        atualizarStatusNuvem('Conta conectada e banco sincronizado.', true);
+                        atualizarStatusNuvem('Conta conectada e sincronização financeira concluída.', true);
                     }
                 } catch (syncError) {
                     document.getElementById('statusNuvemBadge').textContent = 'Online';
@@ -4900,10 +4964,10 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
 
             const linhasSituacao = totaisSituacao.map(([nome,valor])=>`<tr class="${nome==='Saldo Projetado'?'linha-saldo':''}"><td>${nome}</td><td class="valor">${moedaRel(valor)}</td></tr>`).join('');
             const resumo = somenteDespesas
-                ? `No período de ${esc(periodo)}, as despesas pagas identificadas totalizam ${moedaRel(despesasPagas)}, há ${moedaRel(despesasVencer)} em despesas a vencer e ${moedaRel(vencidas)} em valores vencidos. Os indicadores consideram somente os lançamentos de despesas selecionados.`
+                ? `Considerando ${esc(periodo).replace(/^Período de referência:\s*/i, 'o período de ')}, as despesas pagas identificadas totalizam ${moedaRel(despesasPagas)}, há ${moedaRel(despesasVencer)} em despesas a vencer e ${moedaRel(vencidas)} em valores vencidos. Os indicadores consideram somente os lançamentos de despesas selecionados.`
                 : somenteReceitas
-                    ? `No período de ${esc(periodo)}, as receitas previstas somam ${moedaRel(receitasPrevistas)} e as receitas recebidas totalizam ${moedaRel(receitasRecebidas)}. Os indicadores consideram somente os lançamentos de receitas selecionados.`
-                    : `No período de ${esc(periodo)}, as receitas previstas somam ${moedaRel(receitasPrevistas)}. As despesas pagas identificadas totalizam ${moedaRel(despesasPagas)} e há ${moedaRel(despesasVencer)} em despesas a vencer. Os valores vencidos identificados somam ${moedaRel(vencidas)}. O saldo projetado é de ${moedaRel(saldoProjetado)}; confirme os recebimentos esperados e os compromissos antes de tomar decisões de caixa.`;
+                    ? `Considerando ${esc(periodo).replace(/^Período de referência:\s*/i, 'o período de ')}, as receitas previstas somam ${moedaRel(receitasPrevistas)} e as receitas recebidas totalizam ${moedaRel(receitasRecebidas)}. Os indicadores consideram somente os lançamentos de receitas selecionados.`
+                    : `Considerando ${esc(periodo).replace(/^Período de referência:\s*/i, 'o período de ')}, as receitas previstas somam ${moedaRel(receitasPrevistas)}. As despesas pagas identificadas totalizam ${moedaRel(despesasPagas)} e há ${moedaRel(despesasVencer)} em despesas a vencer. Os valores vencidos identificados somam ${moedaRel(vencidas)}. O saldo projetado é de ${moedaRel(saldoProjetado)}; confirme os recebimentos esperados e os compromissos antes de tomar decisões de caixa.`;
             const observacaoVencidos = vencidas > 0 ? `Existem ${moedaRel(vencidas)} em lançamentos marcados como vencidos; revise as pendências.` : 'Não há lançamentos marcados como vencidos nos dados considerados.';
             const categoriasTop = Object.entries(categorias).sort((a,b)=>b[1]-a[1]).slice(0,6);
             const jsonCategorias = JSON.stringify(categoriasTop);
@@ -4953,20 +5017,20 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                     ? [{key:'receitas',label:'Receitas previstas',color:'#2f8b57'},{key:'recebidas',label:'Receitas recebidas',color:'#244b70'}]
                     : [{key:'receitas',label:'Receitas previstas',color:'#2f8b57'},{key:'pagas',label:'Despesas pagas',color:'#c58a35'},{key:'vencer',label:'Despesas a vencer',color:'#d84b5b'}];
             const maxMensal = Math.max(1, ...mesesDados.flatMap(m=>seriesMensais.map(serie=>m[serie.key]||0)));
-            const alturaLinha = 66;
-            const alturaGrafico = Math.max(230, 42 + mesesDados.length * alturaLinha);
-            const graficoComparativoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 ${alturaGrafico}" role="img" aria-label="Comparativo financeiro mensal com nomes das séries" style="width:100%;height:100%;font-family:Arial,sans-serif">
+            const alturaLinha = 120;
+            const alturaGrafico = Math.max(100, 12 + mesesDados.length * alturaLinha);
+            const graficoComparativoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 ${alturaGrafico}" role="img" aria-label="Comparativo financeiro mensal com nomes das séries" style="width:100%;height:auto;display:block;font-family:Arial,sans-serif">
               <rect width="900" height="${alturaGrafico}" fill="#fff"/>
               ${mesesDados.length ? mesesDados.map((mes,i)=>{
                   const yBase = 12 + i*alturaLinha;
                   const linhas = seriesMensais.map((serie,j)=>{
-                      const y = yBase + 15 + j*15;
+                      const y = yBase + 25 + j*27;
                       const valor = mes[serie.key] || 0;
-                      const largura = Math.max(valor>0?2:0, 315*valor/maxMensal);
-                      const valorX = Math.min(800, 365+largura+5);
-                      return `<text x="105" y="${y+9}" font-size="10" fill="#475569">${svgEsc(serie.label)}</text><rect x="250" y="${y}" width="${largura}" height="10" rx="3" fill="${serie.color}"/><text x="${valorX}" y="${y+9}" font-size="9" font-weight="700" fill="#334155">${svgEsc(moedaRel(valor))}</text>`;
+                      const largura = Math.max(valor>0?2:0, 380*valor/maxMensal);
+                      const valorX = Math.min(770, 370+largura+8);
+                      return `<text x="130" y="${y+13}" font-size="18" fill="#475569">${svgEsc(serie.label)}</text><rect x="370" y="${y}" width="${largura}" height="16" rx="3" fill="${serie.color}"/><text x="${valorX}" y="${y+13}" font-size="18" font-weight="700" fill="#334155">${svgEsc(moedaRel(valor))}</text>`;
                   }).join('');
-                  return `<text x="5" y="${yBase+13}" font-size="12" font-weight="700" fill="#173b62">${svgEsc(mes.label.toUpperCase())}</text><line x1="5" y1="${yBase+alturaLinha-3}" x2="690" y2="${yBase+alturaLinha-3}" stroke="#e8edf3" stroke-width="1"/>${linhas}`;
+                  return `<text x="5" y="${yBase+16}" font-size="18" font-weight="700" fill="#173b62">${svgEsc(mes.label.toUpperCase())}</text><line x1="5" y1="${yBase+alturaLinha-3}" x2="895" y2="${yBase+alturaLinha-3}" stroke="#e8edf3" stroke-width="1"/>${linhas}`;
               }).join('') : '<text x="12" y="35" font-size="12" fill="#64748b">Sem lançamentos no período selecionado</text>'}
             </svg>`;
             // O gráfico 2 apresenta todas as Descrições dos lançamentos de despesa filtrados, sem limitar a quantidade.
@@ -4976,12 +5040,12 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
                 totaisPorDescricao[nome] = (totaisPorDescricao[nome] || 0) + t.valor;
             });
             const descricoesGrafico = Object.entries(totaisPorDescricao).sort((a,b)=>b[1]-a[1]);
-            const alturaDescricao = 34;
-            const alturaGraficoDescricoes = Math.max(230, 20 + descricoesGrafico.length * alturaDescricao);
+            const alturaDescricao = 52;
+            const alturaGraficoDescricoes = Math.max(65, 16 + descricoesGrafico.length * alturaDescricao);
             const maxDescricao = Math.max(1, ...descricoesGrafico.map(x=>x[1]));
-            const graficoCategoriasSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 ${alturaGraficoDescricoes}" role="img" aria-label="Despesas detalhadas por Descrição filtrada" style="width:100%;height:100%;font-family:Arial,sans-serif">
+            const graficoCategoriasSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 ${alturaGraficoDescricoes}" role="img" aria-label="Despesas detalhadas por Descrição filtrada" style="width:100%;height:auto;display:block;font-family:Arial,sans-serif">
               <rect width="560" height="${alturaGraficoDescricoes}" fill="#fff"/>
-              ${descricoesGrafico.length ? descricoesGrafico.map((d,i)=>{const y=8+i*alturaDescricao;const nome=String(d[0]||'Sem descrição');const label=nome.length>42?nome.slice(0,41)+'…':nome;const largura=Math.max(d[1]>0?2:0,300*d[1]/maxDescricao);return `<text x="4" y="${y+11}" font-size="11" font-weight="600" fill="#334155">${svgEsc(label)}</text><rect x="4" y="${y+15}" width="${largura}" height="11" rx="4" fill="${coresGrafico[i%coresGrafico.length]}"/><text x="${Math.min(505,10+largura)}" y="${y+24}" font-size="9" font-weight="700" fill="#334155">${svgEsc(moedaRel(d[1]))}</text>`;}).join('') : '<text x="12" y="35" font-size="12" fill="#64748b">Nenhuma descrição de despesa nos filtros selecionados</text>'}
+              ${descricoesGrafico.length ? descricoesGrafico.map((d,i)=>{const y=8+i*alturaDescricao;const nome=String(d[0]||'Sem descrição');const label=nome.length>42?nome.slice(0,41)+'…':nome;const largura=Math.max(d[1]>0?2:0,300*d[1]/maxDescricao);return `<text x="4" y="${y+15}" font-size="14" font-weight="600" fill="#334155">${svgEsc(label)}</text><rect x="4" y="${y+23}" width="${largura}" height="14" rx="4" fill="${coresGrafico[i%coresGrafico.length]}"/><text x="${Math.min(505,10+largura)}" y="${y+35}" font-size="14" font-weight="700" fill="#334155">${svgEsc(moedaRel(d[1]))}</text>`;}).join('') : '<text x="12" y="35" font-size="12" fill="#64748b">Nenhuma descrição de despesa nos filtros selecionados</text>'}
             </svg>`;
             const filtroInfo = `Rubrica: ${rubrica} • Tipo: ${filtroTipo}`;
 
@@ -5006,13 +5070,13 @@ body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color:#cbd5e1 !im
             .situacao td{font-size:11px;padding:9px}.linha-saldo td{font-weight:800;background:#e5f0fc;color:#173b62}
             .observacoes{font-size:11px;line-height:1.6;margin:0;padding-left:18px}.observacoes li{margin:4px 0}.frase{margin-top:12px;background:#e6f3e9;color:#315b45;padding:13px;border-radius:8px;font-style:italic;font-size:13px;text-align:center}
             .rodape{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #aab8c8;padding-top:10px;margin-top:22px;font-size:9px;color:#5b6e83}
-            .graficos{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:13px;margin:0 0 15px}
+            .graficos{display:grid;grid-template-columns:minmax(0,1fr);gap:13px;margin:0 0 15px}
             .grafico{border:1px solid var(--linha);border-radius:9px;background:#fff;padding:13px;min-width:0;break-inside:avoid}
             .grafico-titulo{font-size:12px;font-weight:800;color:#173b62}
             .grafico-sub{font-size:10px;color:var(--muted);margin-top:4px;margin-bottom:9px}
-            .grafico-area{height:235px;position:relative}
+            .grafico-area{height:auto;position:relative}
             @media(max-width:750px){.pagina{margin:0;padding:12px;border-radius:0}.cabecalho{grid-template-columns:1fr}.meta{text-align:left;max-width:none}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.kpi{padding:10px}.kpi .valor{font-size:17px}.grid{grid-template-columns:1fr}.marca h1{font-size:21px}.tabela th,.tabela td{font-size:10px;padding:6px 5px}.rodape{flex-direction:column}}
-            @media print{body{background:#fff}.pagina{max-width:none;margin:0;padding:0;box-shadow:none;border-radius:0}.acoes{display:none}.cabecalho,.kpi,.bloco,.resumo{break-inside:avoid}.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tabela th{-webkit-print-color-adjust:exact;print-color-adjust:exact}.kpi,.resumo,.bloco-titulo,.total,.frase{-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4 portrait;margin:9mm}}
+            @media print{body{background:#fff}.pagina{max-width:none;margin:0;padding:0;box-shadow:none;border-radius:0}.acoes{display:none}.cabecalho,.kpi,.bloco,.resumo{break-inside:avoid}.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tabela th{-webkit-print-color-adjust:exact;print-color-adjust:exact}.kpi,.resumo,.bloco-titulo,.total,.frase{-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4 portrait;margin:0}.pagina{padding:9mm!important}}
             </style>
 <style id="ajuste-filtro-tipo-antes-rubrica">
 /* Solicitação: Filtrar por Tipo antes de Rubrica. Mantém IDs e comportamento dos filtros. */
@@ -5076,12 +5140,12 @@ body:not(.dark-mode) .bg-slate-100 label {
               <div class="grafico">
                 <div class="grafico-titulo">Comparativo financeiro</div>
                 <div class="grafico-sub">${somenteDespesas ? 'Comparação mensal: despesas pagas x a vencer' : somenteReceitas ? 'Comparação mensal: receitas previstas x recebidas' : 'Comparação mensal de receitas e despesas'}</div>
-                <div class="grafico-area" style="height:${Math.max(235, 42 + mesesDados.length * 66)}px">${graficoComparativoSvg}</div>
+                <div class="grafico-area" >${graficoComparativoSvg}</div>
               </div>
               <div class="grafico">
                 <div class="grafico-titulo">Despesas por Descrição</div>
                 <div class="grafico-sub">Todas as descrições de despesas que atendem aos filtros, individualmente</div>
-                <div class="grafico-area" style="height:${Math.max(235, 20 + descricoesGrafico.length * 34)}px">${graficoCategoriasSvg}</div>
+                <div class="grafico-area" >${graficoCategoriasSvg}</div>
               </div>
             </section>
 
@@ -5364,15 +5428,31 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
                 document.getElementById('listaVencidos').innerHTML = '';
                 alertaVencido.classList.add('hidden');
             }
+            pfAtualizarAvisosDia();
         }
 
-        function fecharAlerta(tipo) {
-            if (tipo === 'hoje') {
-                document.getElementById('alertaVencimentoHoje').classList.add('hidden');
-            } else if (tipo === 'vencido') {
-                document.getElementById('alertaVencido').classList.add('hidden');
-            }
+        let pfAvisosOcultos=false;
+        let pfAvisosData='';
+        function pfAtualizarAvisosDia(){
+            const hoje=new Date(),dia=hoje.getFullYear()+'-'+hoje.getMonth()+'-'+hoje.getDate();
+            if(pfAvisosData!==dia){pfAvisosData=dia;pfAvisosOcultos=false;}
+            const temHoje=!!document.getElementById('listaVencimentoHoje').children.length;
+            const temVencidos=!!document.getElementById('listaVencidos').children.length;
+            let registro=null;try{registro=localStorage.getItem(CHAVE_ULTIMO_BACKUP);}catch(e){}
+            const dataBackup=registro?new Date(registro):null;
+            const diaNumero=d=>Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000;
+            const dias=dataBackup&&Number.isFinite(dataBackup.getTime())?Math.max(0,diaNumero(hoje)-diaNumero(dataBackup)):null;
+            const temBackup=dias===null||dias>=20;
+            document.getElementById('pfAvisoBackup').hidden=!temBackup;
+            document.getElementById('pfAvisoBackupTexto').textContent=dias===null?'Ainda não há backup registrado neste dispositivo. É importante salvar uma cópia de segurança dos seus dados.': 'Seu último backup registrado neste dispositivo foi há '+dias+' dias. É importante fazer um novo backup e guardar o arquivo em local seguro.';
+            const tem=temHoje||temVencidos||temBackup;
+            const btn=document.getElementById('pfAlternarAvisos');
+            document.getElementById('pfAvisosConteudo').hidden=pfAvisosOcultos||!tem;
+            document.getElementById('pfAvisosResumo').textContent=!tem?'Nenhum aviso no momento.':pfAvisosOcultos?'Avisos ocultos. Clique em Mostrar avisos para consultar.':'';
+            btn.hidden=!tem;btn.textContent=pfAvisosOcultos?'Mostrar avisos':'Ocultar avisos';btn.setAttribute('aria-expanded',String(!pfAvisosOcultos&&tem));
         }
+        function pfAlternarAvisosDia(){pfAtualizarAvisosDia();pfAvisosOcultos=!pfAvisosOcultos;pfAtualizarAvisosDia();}
+        function fecharAlerta(tipo){pfAvisosOcultos=true;pfAtualizarAvisosDia();}
 
         function limparFiltros() {
             // "Limpar" retorna ao comportamento padrão do Painel: mês vigente, sem filtros adicionais.
@@ -5516,6 +5596,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             const item = transacoes.find(t => t.id === id);
             if (item) {
                 if (campo === 'valor') {
+                    if (!validarValorLancamento(novoValor)) { renderTable(); return; }
                     item[campo] = parseFloat(novoValor) || 0;
                 } else if (campo === 'dataPg') {
                     item[campo] = novoValor;
@@ -5536,7 +5617,10 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
                 if (campo === 'tipo') item.idTipo = gerarIdTexto('TIP', item.tipo);
                 if (campo === 'categoria') item.idRubrica = gerarIdTexto('RUB', item.categoria);
                 if (campo === 'subItem') item.idSubItem = gerarIdTexto('SUB', item.subItem);
-                if (campo === 'descricao') item.idDescricao = gerarIdTexto('DSC', item.descricao);
+                if (campo === 'descricao') {
+                    item.descricao = String(item.descricao ?? '').trim() || 'Sem descrição';
+                    item.idDescricao = gerarIdTexto('DSC', item.descricao);
+                }
                 if (campo === 'status') item.idStatus = gerarIdTexto('STA', item.status);
 
                 // Se a despesa voltou a ficar Pendente, recalcula conforme a DT VCTO.
@@ -5795,10 +5879,10 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             document.getElementById('editId').value = '';
             document.getElementById('modalTitle').innerText = 'Novo Lançamento';
             document.getElementById('formLancamento').reset();
-            const hoje = new Date().toISOString().split('T')[0];
+            const hoje = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
             document.getElementById('vencimento').value = hoje;
-            document.getElementById('dataPg').value = hoje;
-            document.getElementById('status').value = 'Pago';
+            document.getElementById('dataPg').value = '';
+            verificarStatusAutomaticoModal();
             document.getElementById('modal').classList.remove('hidden');
         }
 
@@ -5826,8 +5910,20 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             document.getElementById('modal').classList.add('hidden');
         }
 
+        function validarValorLancamento(valor) {
+            if (Number(valor) < 0) {
+                alert('O valor do lançamento não pode ser negativo. Informe zero ou um valor maior que zero.');
+                return false;
+            }
+            return true;
+        }
+
         function salvarLancamento(event) {
             event.preventDefault();
+            if (!validarValorLancamento(document.getElementById('valor').value)) {
+                document.getElementById('valor').focus();
+                return;
+            }
             const editId = document.getElementById('editId').value;
             const vencimentoNovo = document.getElementById('vencimento').value;
             const dataPgNovo = document.getElementById('dataPg').value;
@@ -5846,7 +5942,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
                 tipo: corrigirOrtografiaLancamento(tipoNovo),
                 categoria: corrigirOrtografiaLancamento(document.getElementById('categoria').value),
                 subItem: corrigirOrtografiaLancamento(document.getElementById('subItem').value),
-                descricao: corrigirOrtografiaLancamento(document.getElementById('descricao').value),
+                descricao: corrigirOrtografiaLancamento(document.getElementById('descricao').value.trim() || 'Sem descrição'),
                 valor: parseFloat(document.getElementById('valor').value) || 0,
                 status: statusNovo,
                 observacao: document.getElementById('observacao').value
@@ -5940,6 +6036,16 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             if (rubrica) rubrica.value = 'Todas';
             if (subItem) subItem.value = 'Todos';
             if (descricao) descricao.value = '';
+            ['graficoValorMin', 'graficoValorMax', 'graficoVisoesSalvas'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            const status = document.getElementById('graficoStatusAvancado');
+            if (status) status.value = 'Todos';
+            const comparacao = document.getElementById('graficoModoComparacao');
+            if (comparacao) comparacao.value = 'anterior';
+            pfOrdemDespesas = null;
+
             comparativoReceitasDespesasAtivo = false;
             comparacaoRubricaMesAtiva = false;
             mudarAbaGrafico('prevReceita');
@@ -5971,31 +6077,30 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
         function atualizarVisibilidadeTipoGrafico() {
             const tipo = document.getElementById('graficoTipo')?.value || 'Todos';
             const somenteDespesas = tipo === 'Despesa';
-            // Em um recorte de despesas, esconder qualquer cartão/resumo que introduza receitas ou saldo misto.
-            const ocultarCartaoKpi = (id, ocultar) => {
+            const somenteReceitas = tipo === 'Receita';
+            const mostrar = (id, ocultar, cartao = false) => {
                 const el = document.getElementById(id);
-                const card = el?.closest('.rounded-xl');
-                if (card) card.style.display = ocultar ? 'none' : '';
+                const alvo = cartao ? el?.closest('.rounded-xl') : el;
+                if (alvo) alvo.style.display = ocultar ? 'none' : '';
             };
-            ['kpiGrafReceitas','kpiGrafRecebidas','kpiGrafSaldo','kpiGrafPoupanca','kpiGrafComprometimento'].forEach(id => ocultarCartaoKpi(id, somenteDespesas));
-            const resumoReceitas = document.getElementById('comparacaoTotaisGraficos');
-            if (resumoReceitas) resumoReceitas.style.display = somenteDespesas ? 'none' : '';
-            const idsReceita = ['tabBtnPrevReceita', 'tabBtnRecRecebidas'];
-            idsReceita.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = somenteDespesas ? 'none' : ''; });
-            const tabComparativo = document.getElementById('tabBtnComparativo');
-            const tabTotalReceitasDespesas = document.getElementById('tabBtnTotalReceitasDespesas');
-            if (tabComparativo) tabComparativo.style.display = tipo === 'Despesa' ? 'none' : '';
-            if (tabTotalReceitasDespesas) tabTotalReceitasDespesas.style.display = tipo === 'Despesa' ? 'none' : '';
-            const painelAvancado = document.getElementById('painelAvancadoGraficos');
-            if (painelAvancado) {
-                const cascata = painelAvancado.querySelector('#pfWaterfall')?.closest('.pf-chart-card');
-                if (cascata) cascata.style.display = tipo === 'Despesa' ? 'none' : '';
+            ['kpiGrafReceitas', 'kpiGrafRecebidas'].forEach(id => mostrar(id, somenteDespesas, true));
+            ['kpiGrafDespesas', 'kpiGrafVencidas'].forEach(id => mostrar(id, somenteReceitas, true));
+            ['kpiGrafSaldo', 'kpiGrafPoupanca', 'kpiGrafComprometimento'].forEach(id => mostrar(id, tipo !== 'Todos', true));
+            mostrar('comparacaoTotaisGraficos', tipo !== 'Todos');
+            ['tabBtnPrevReceita', 'tabBtnRecRecebidas'].forEach(id => mostrar(id, somenteDespesas));
+            mostrar('tabBtnTotalDespesas', somenteReceitas);
+            ['tabBtnComparativo', 'tabBtnTotalReceitasDespesas'].forEach(id => mostrar(id, tipo !== 'Todos'));
+            const painel = document.getElementById('painelAvancadoGraficos');
+            if (painel) {
+                const cards = {pfWaterfall: tipo !== 'Todos', pfRanking: somenteReceitas, pfAtrasos: somenteReceitas, pfHeatmap: somenteReceitas};
+                Object.entries(cards).forEach(([id, ocultar]) => {
+                    const card = painel.querySelector('#' + id)?.closest('.pf-chart-card');
+                    if (card) card.style.display = ocultar ? 'none' : '';
+                });
             }
-            const resumo = document.getElementById('comparacaoTotaisGraficos');
-            if (resumo) resumo.style.display = tipo === 'Despesa' ? 'none' : '';
-            if (tipo === 'Despesa' && ['prevReceita','recRecebidas','comparativo','totalReceitasDespesas'].includes(abaAtivaGrafico)) {
+            if (somenteDespesas && ['prevReceita','recRecebidas','comparativo','totalReceitasDespesas'].includes(abaAtivaGrafico)) {
                 abaAtivaGrafico = 'totalDespesas';
-            } else if (tipo === 'Receita' && abaAtivaGrafico === 'totalDespesas') {
+            } else if (somenteReceitas && ['totalDespesas','comparativo','totalReceitasDespesas'].includes(abaAtivaGrafico)) {
                 abaAtivaGrafico = 'prevReceita';
             }
         }
@@ -6035,6 +6140,10 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             else if (fim) periodo = `Período: até ${formatar(fim)}`;
             const tipo = document.getElementById('graficoTipo')?.value || 'Todos';
             if (tipo !== 'Todos') periodo += ` · Tipo: somente ${tipo.toLowerCase()}s`;
+            const rubrica = (document.getElementById('graficoRubrica')?.value || '').trim();
+            periodo += ` · Rubrica: ${!rubrica || ['Todos', 'Todas', 'Todas as rubricas'].includes(rubrica) ? 'Todas as rubricas' : rubrica}`;
+            const status = (document.getElementById('graficoStatusAvancado')?.value || 'Todos').trim();
+            periodo += ` · Status: ${!status || status === 'Todos' ? 'Todos os status' : status}`;
             const el = document.getElementById('printGraficosPeriodo');
             if (el) el.innerText = periodo;
             const titulo = document.getElementById('printGraficosTitulo');
@@ -6043,7 +6152,15 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
 
         // Imprime somente a página de Gráficos Evolutivos.
         // Na opção "Salvar em PDF", o navegador abrirá a janela de impressão; selecione "Salvar como PDF".
+        let temaEscuroAntesImpressaoGraficos = null;
+        function aplicarTemaClaroImpressaoGraficos() {
+            if (temaEscuroAntesImpressaoGraficos === null) {
+                temaEscuroAntesImpressaoGraficos = document.body.classList.contains('dark-mode');
+            }
+            document.body.classList.remove('dark-mode');
+        }
         function prepararImpressaoGraficos() {
+            aplicarTemaClaroImpressaoGraficos();
             const modal = document.getElementById('modalGraficos');
             modal.classList.remove('hidden');
             document.body.classList.add('imprimir-graficos');
@@ -6056,6 +6173,10 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
 
         function finalizarImpressaoGraficos() {
             document.body.classList.remove('imprimir-graficos');
+            if (temaEscuroAntesImpressaoGraficos !== null) {
+                document.body.classList.toggle('dark-mode', temaEscuroAntesImpressaoGraficos);
+                temaEscuroAntesImpressaoGraficos = null;
+            }
         }
 
         function salvarGraficosPDF() {
@@ -6069,6 +6190,9 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
         }
 
         window.addEventListener('afterprint', finalizarImpressaoGraficos);
+        window.addEventListener('beforeprint', () => {
+            if (document.body.classList.contains('imprimir-graficos')) aplicarTemaClaroImpressaoGraficos();
+        });
 
         // Compara os valores totais de Receitas e Despesas no período e filtros selecionados.
         function compararTotalReceitasDespesas() {
@@ -6537,36 +6661,116 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             const periodo = inicio || fim ? `${inicio ? inicio.split('-').reverse().join('/') : 'início aberto'} a ${fim ? fim.split('-').reverse().join('/') : 'fim aberto'}` : 'todo o período';
             set('painelExecutivoPeriodo', `${periodo} · ${lista.length} lançamento(s)`);
             let leitura = lista.length ? `No recorte selecionado, as receitas previstas somam ${moeda(receitas)} e as despesas ${moeda(despesas)}. ` : 'Nenhum lançamento corresponde aos filtros selecionados. ';
-            leitura += saldo >= 0 ? `O saldo previsto é positivo em ${moeda(saldo)}.` : `O saldo previsto é negativo em ${moeda(Math.abs(saldo))}; as despesas superam as receitas.`;
+            leitura += saldo === 0 ? `O saldo previsto é zero (${moeda(0)}).` : saldo > 0 ? `O saldo previsto é positivo em ${moeda(saldo)}.` : `O saldo previsto é negativo em ${moeda(Math.abs(saldo))}; as despesas superam as receitas.`;
             if (vencidas > 0) leitura += ` Há ${moeda(vencidas)} em despesas marcadas como vencidas.`;
+            const tipoSelecionado = document.getElementById('graficoTipo')?.value || 'Todos';
+            if (tipoSelecionado === 'Despesa') {
+                leitura = lista.length ? `No recorte selecionado, as despesas previstas somam ${moeda(despesas)}. Há ${moeda(vencidas)} em despesas marcadas como vencidas.` : 'Nenhuma despesa corresponde aos filtros selecionados.';
+            } else if (tipoSelecionado === 'Receita') {
+                leitura = lista.length ? `No recorte selecionado, as receitas previstas somam ${moeda(receitas)} e as receitas recebidas totalizam ${moeda(recebidas)}.` : 'Nenhuma receita corresponde aos filtros selecionados.';
+            }
             set('painelExecutivoLeitura', leitura);
         }
 
+        let pfOrdemDespesas = null;
         let pfLancamentosFiltrados=[];
         function pfFmt(n){return (Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
         function pfEsc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-        function atalhoPeriodoGraficos(tipo){const now=new Date(),iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;let a=new Date(now),b=new Date(now);if(tipo==='hoje'){}else if(tipo==='7dias')a.setDate(a.getDate()-6);else if(tipo==='mes'){a=new Date(now.getFullYear(),now.getMonth(),1);b=new Date(now.getFullYear(),now.getMonth()+1,0);}else if(tipo==='anterior'){a=new Date(now.getFullYear(),now.getMonth()-1,1);b=new Date(now.getFullYear(),now.getMonth(),0);}else if(tipo==='trimestre'){a=new Date(now.getFullYear(),now.getMonth()-2,1);}else if(tipo==='ano'){a=new Date(now.getFullYear(),0,1);}document.getElementById('graficoDataInicio').value=iso(a);document.getElementById('graficoDataFim').value=iso(b);atualizarGraficos();}
+        function atalhoPeriodoGraficos(tipo){const now=new Date(),iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;let a=new Date(now),b=new Date(now);if(tipo==='hoje'){}else if(tipo==='7dias')a.setDate(a.getDate()-6);else if(tipo==='mes'){a=new Date(now.getFullYear(),now.getMonth(),1);b=new Date(now.getFullYear(),now.getMonth()+1,0);}else if(tipo==='anterior'){a=new Date(now.getFullYear(),now.getMonth()-1,1);b=new Date(now.getFullYear(),now.getMonth(),0);}else if(tipo==='posterior'){a=new Date(now.getFullYear(),now.getMonth()+1,1);b=new Date(now.getFullYear(),now.getMonth()+2,0);}else if(tipo==='trimestre'){a=new Date(now.getFullYear(),now.getMonth()-2,1);}else if(tipo==='ano'){a=new Date(now.getFullYear(),0,1);}document.getElementById('graficoDataInicio').value=iso(a);document.getElementById('graficoDataFim').value=iso(b);atualizarGraficos();}
         function renderizarPainelAvancadoGraficos(lista){const arr=Array.isArray(lista)?lista:[],now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),money=pfFmt;pfLancamentosFiltrados=arr.slice();
           const sum=a=>a.reduce((s,t)=>s+(Number(t.valor)||0),0),rec=arr.filter(t=>t.tipo==='Receita'),des=arr.filter(t=>t.tipo==='Despesa'),tr=sum(rec),td=sum(des),saldo=tr-td;
           const wf=document.getElementById('pfWaterfall');if(wf){const rows=[['Receitas',tr,'#16a34a'],['Despesas',-td,'#dc2626'],['Saldo',saldo,'#2563eb']];wf.innerHTML=rows.map(([l,v,c])=>`<div class="pf-bar-row"><span>${l}</span><div class="pf-bar-track"><div class="pf-bar-fill" style="width:${Math.max(2,Math.abs(v)/Math.max(1,tr,td)*100)}%;background:${c}"></div></div><strong>${money(v)}</strong></div>`).join('');}
-          const ranks={};des.forEach(t=>{const k=t.categoria||'Outros';ranks[k]=(ranks[k]||0)+(Number(t.valor)||0)});const rank=Object.entries(ranks).sort((a,b)=>b[1]-a[1]).slice(0,10),maxRank=Math.max(1,...rank.map(x=>x[1]));const re=document.getElementById('pfRanking');if(re)re.innerHTML=rank.length?rank.map(([k,v])=>`<div class="pf-bar-row pf-click" onclick="filtrarRubricaGrafico('${pfEsc(k).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')"><span title="${pfEsc(k)}">${pfEsc(k).slice(0,22)}</span><div class="pf-bar-track"><div class="pf-bar-fill" style="width:${v/maxRank*100}%;background:#dc2626"></div></div><strong>${money(v)} <small>(${td?(v/td*100).toLocaleString('pt-BR',{maximumFractionDigits:1}):'0'}%)</small></strong></div>`).join(''):'<p class="text-xs text-slate-500">Nenhuma despesa no recorte.</p>';
+          const ranks={};des.forEach(t=>{const k=t.categoria||'Outros';ranks[k]=(ranks[k]||0)+(Number(t.valor)||0)});const rank=Object.entries(ranks).sort((a,b)=>pfOrdemDespesas==='asc'?a[1]-b[1]:b[1]-a[1]).slice(0,10),maxRank=Math.max(1,...rank.map(x=>x[1]));const re=document.getElementById('pfRanking');if(re)re.innerHTML=rank.length?rank.map(([k,v])=>`<div class="pf-bar-row pf-click" onclick="filtrarRubricaGrafico('${pfEsc(k).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')"><span title="${pfEsc(k)}">${pfEsc(k).slice(0,22)}</span><div class="pf-bar-track"><div class="pf-bar-fill" style="width:${v/maxRank*100}%;background:#dc2626"></div></div><strong>${money(v)} <small>(${td?(v/td*100).toLocaleString('pt-BR',{maximumFractionDigits:1}):'0'}%)</small></strong></div>`).join(''):'<p class="text-xs text-slate-500">Nenhuma despesa no recorte.</p>';
           const venc=des.filter(t=>t.status==='Vencido'),buckets=[['0–7 dias',0],['8–30 dias',0],['Mais de 30 dias',0],['Data não identificada',0]];venc.forEach(t=>{if(!t.vencimento){buckets[3][1]+=Number(t.valor)||0;return;}const d=new Date(t.vencimento+'T00:00:00');const days=Math.max(0,Math.floor((today-d)/86400000));buckets[days<=7?0:days<=30?1:2][1]+=Number(t.valor)||0;});const ae=document.getElementById('pfAtrasos');if(ae)ae.innerHTML=buckets.map(([k,v])=>`<div class="pf-bar-row"><span>${k}</span><div class="pf-bar-track"><div class="pf-bar-fill" style="width:${v/Math.max(1,...buckets.map(x=>x[1]))*100}%;background:#f59e0b"></div></div><strong>${money(v)}</strong></div>`).join('');
-          const heat=document.getElementById('pfHeatmap');if(heat){const daily=Array(31).fill(0);des.forEach(t=>{if(t.vencimento){const d=new Date(t.vencimento+'T00:00:00');if(d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth())daily[d.getDate()-1]+=Number(t.valor)||0;}});const mx=Math.max(1,...daily);const heatCell=(v,i)=>`<div class="pf-heat-cell" title="Dia ${i+1}: ${money(v)}"><span class="pf-heat-day">${i+1}</span><span class="pf-heat-value">${v?money(v):'—'}</span><span class="pf-heat-bar"><span style="display:block;width:${Math.max(0,Math.min(100,v/mx*100))}%;height:100%;background:rgba(220,38,38,${v?Math.min(.82,.18+.64*v/mx):0})"></span></span></div>`;heat.innerHTML=`<div class="pf-heat-columns"><div class="pf-heat-column">${daily.slice(0,15).map((v,i)=>heatCell(v,i)).join('')}</div><div class="pf-heat-column">${daily.slice(15).map((v,i)=>heatCell(v,i+15)).join('')}</div></div>`;}
-          const twelve=document.getElementById('pfDozeMeses');if(twelve){const months=[];for(let i=11;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,label:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}),r:0,d:0});}arr.forEach(t=>{const date=t.vencimento||'';const m=months.find(x=>x.key===date.slice(0,7));if(m){if(t.tipo==='Receita')m.r+=Number(t.valor)||0;else if(t.tipo==='Despesa')m.d+=Number(t.valor)||0;}});const mx=Math.max(1,...months.flatMap(m=>[m.r,m.d]));twelve.innerHTML=`<div class="grid grid-cols-6 md:grid-cols-12 gap-2 items-end" style="min-height:130px">${months.map(m=>`<div class="text-center"><div class="flex items-end justify-center gap-1" style="height:95px"><div title="Receitas ${money(m.r)}" style="width:35%;height:${m.r/mx*100}%;min-height:${m.r?3:0}px;background:#16a34a;border-radius:3px 3px 0 0"></div><div title="Despesas ${money(m.d)}" style="width:35%;height:${m.d/mx*100}%;min-height:${m.d?3:0}px;background:#dc2626;border-radius:3px 3px 0 0"></div></div><div class="text-[10px] text-slate-500">${m.label}</div><div class="text-[9px] ${m.r-m.d>=0?'text-blue-700':'text-rose-700'}">${(m.r-m.d)/1000>=0?'+':''}${((m.r-m.d)/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})}k</div></div>`).join('')}</div><div class="text-xs text-slate-500 mt-2">Verde: receitas · Vermelho: despesas · saldo em milhares abaixo de cada mês. Os meses sem lançamentos no filtro aparecem zerados.</div>`;}
-          const drill=document.getElementById('pfDrilldown');if(drill){const rows=arr.slice().sort((a,b)=>(a.vencimento||'').localeCompare(b.vencimento||'')).slice(0,100);drill.innerHTML=rows.length?`<table class="pf-table"><thead><tr><th>Vencimento</th><th>Tipo</th><th>Rubrica</th><th>Descrição</th><th>Status</th><th>Valor</th></tr></thead><tbody>${rows.map(t=>`<tr><td>${pfEsc(t.vencimento||'—')}</td><td>${pfEsc(t.tipo||'—')}</td><td>${pfEsc(t.categoria||'Outros')}</td><td>${pfEsc(t.descricao||'—')}</td><td>${pfEsc(t.status||'—')}</td><td>${money(t.valor)}</td></tr>`).join('')}</tbody></table><p class="text-xs text-slate-500 mt-2">Mostrando até 100 lançamentos do recorte.</p>`:'<p class="text-sm text-slate-500">Nenhum lançamento — use “Limpar filtros” ou ajuste o período.</p>';}
+          // O mês de referência acompanha o fim do filtro; sem fim, usa o início ou o mês atual.
+          const dataReferencia = document.getElementById('graficoDataFim')?.value || document.getElementById('graficoDataInicio')?.value || '';
+          let mesReferencia = now;
+          if (/^\d{4}-\d{2}-\d{2}$/.test(dataReferencia)) {
+            const [ano, mes, dia] = dataReferencia.split('-').map(Number);
+            const candidata = new Date(ano, mes - 1, dia);
+            if (candidata.getFullYear() === ano && candidata.getMonth() === mes - 1 && candidata.getDate() === dia) mesReferencia = candidata;
+          }
+          const heat=document.getElementById('pfHeatmap');if(heat){const daily=Array(new Date(mesReferencia.getFullYear(),mesReferencia.getMonth()+1,0).getDate()).fill(0);des.forEach(t=>{if(t.vencimento){const d=new Date(t.vencimento+'T00:00:00');if(d.getFullYear()===mesReferencia.getFullYear()&&d.getMonth()===mesReferencia.getMonth())daily[d.getDate()-1]+=Number(t.valor)||0;}});const mx=Math.max(1,...daily);const heatCell=(v,i)=>`<div class="pf-heat-cell" title="Dia ${i+1}: ${money(v)}"><span class="pf-heat-day">${i+1}</span><span class="pf-heat-value">${v?money(v):'—'}</span><span class="pf-heat-bar"><span style="display:block;width:${Math.max(0,Math.min(100,v/mx*100))}%;height:100%;background:rgba(220,38,38,${v?Math.min(.82,.18+.64*v/mx):0})"></span></span></div>`;heat.innerHTML=`<div class="pf-heat-columns"><div class="pf-heat-column">${daily.slice(0,15).map((v,i)=>heatCell(v,i)).join('')}</div><div class="pf-heat-column">${daily.slice(15).map((v,i)=>heatCell(v,i+15)).join('')}</div></div>`;}
+          const tipoPainel = document.getElementById('graficoTipo')?.value || 'Todos';
+          const tituloDoze = document.getElementById('pfTituloDozeMeses');
+          if (tituloDoze) tituloDoze.textContent = tipoPainel === 'Despesa' ? 'Últimos 12 meses — despesas' : tipoPainel === 'Receita' ? 'Últimos 12 meses — receitas' : 'Últimos 12 meses — receitas, despesas e saldo';
+          const twelve=document.getElementById('pfDozeMeses');if(twelve){const months=[];for(let i=11;i>=0;i--){const d=new Date(mesReferencia.getFullYear(),mesReferencia.getMonth()-i,1);months.push({key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,label:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}),r:0,d:0});}arr.forEach(t=>{const date=t.vencimento||'';const m=months.find(x=>x.key===date.slice(0,7));if(m){if(t.tipo==='Receita')m.r+=Number(t.valor)||0;else if(t.tipo==='Despesa')m.d+=Number(t.valor)||0;}});const mx=Math.max(1,...months.flatMap(m=>[m.r,m.d]));twelve.innerHTML=`<div class="grid grid-cols-6 md:grid-cols-12 gap-2 items-end" style="min-height:130px">${months.map(m=>`<div class="text-center"><div class="flex items-end justify-center gap-1" style="height:95px"><div title="Receitas ${money(m.r)}" style="display:${tipoPainel==='Despesa'?'none':'block'};width:35%;height:${m.r/mx*100}%;min-height:${m.r?3:0}px;background:#16a34a;border-radius:3px 3px 0 0"></div><div title="Despesas ${money(m.d)}" style="display:${tipoPainel==='Receita'?'none':'block'};width:35%;height:${m.d/mx*100}%;min-height:${m.d?3:0}px;background:#dc2626;border-radius:3px 3px 0 0"></div></div><div class="text-[10px] text-slate-500">${m.label}</div><div class="text-[9px] ${m.r-m.d>=0?'text-blue-700':'text-rose-700'}">${tipoPainel === 'Todos' ? ((m.r-m.d>=0?'+':'')+((m.r-m.d)/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+'k') : money(tipoPainel==='Despesa'?m.d:m.r)}</div></div>`).join('')}</div><div class="text-xs text-slate-500 mt-2">${tipoPainel==='Despesa'?'Vermelho: despesas · total de despesas abaixo de cada mês.':tipoPainel==='Receita'?'Verde: receitas · total de receitas abaixo de cada mês.':'Verde: receitas · Vermelho: despesas · saldo em milhares abaixo de cada mês.'} Os meses sem lançamentos no filtro aparecem zerados.</div>`;}
+          const drill=document.getElementById('pfDrilldown');if(drill){const rows=arr.slice().sort((a,b)=>pfOrdemDespesas ? (pfOrdemDespesas==='asc' ? (Number(a.valor)||0)-(Number(b.valor)||0) : (Number(b.valor)||0)-(Number(a.valor)||0)) : (a.vencimento||'').localeCompare(b.vencimento||'')).slice(0,100);drill.innerHTML=rows.length?`<table class="pf-table"><thead><tr><th>Vencimento</th><th>Tipo</th><th>Rubrica</th><th>Descrição</th><th>Status</th><th>Valor</th></tr></thead><tbody>${rows.map(t=>`<tr><td>${pfEsc(t.vencimento||'—')}</td><td>${pfEsc(t.tipo||'—')}</td><td>${pfEsc(t.categoria||'Outros')}</td><td>${pfEsc(t.descricao||'—')}</td><td>${pfEsc(t.status||'—')}</td><td>${money(t.valor)}</td></tr>`).join('')}</tbody></table><p class="text-xs text-slate-500 mt-2">Mostrando até 100 lançamentos do recorte.</p>`:'<p class="text-sm text-slate-500">Nenhum lançamento — use “Limpar filtros” ou ajuste o período.</p>';}
         }
         function filtrarRubricaGrafico(nome){const s=document.getElementById('graficoRubrica');if(!s)return;let opt=[...s.options].find(o=>o.value===nome);if(!opt){opt=document.createElement('option');opt.value=nome;opt.textContent=nome;s.appendChild(opt);}s.value=nome;atualizarGraficos();}
-        function consultarProntaGrafico(tipo){const status=document.getElementById('graficoStatusAvancado');if(status)status.value=tipo==='vencidas'?'Vencido':tipo==='naorecebidas'?'Não Recebido':'Todos';const tipoEl=document.getElementById('graficoTipo');if(tipoEl)tipoEl.value=tipo==='naorecebidas'?'Receita':'Despesa';if(tipo==='despesas'){document.getElementById('graficoDataInicio').value=new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0')+'-01';}atualizarGraficos();}
-        function salvarVisaoGrafico(){try{const ids=['graficoDataInicio','graficoDataFim','graficoTipo','graficoRubrica','graficoSubItem','graficoDescricao','graficoStatusAvancado','graficoValorMin','graficoValorMax','graficoModoComparacao'];const vis=JSON.parse(localStorage.getItem('pf_visoes_graficos')||'{}');const nome=prompt('Nome para esta visão:');if(!nome)return;vis[nome]=Object.fromEntries(ids.map(id=>[id,document.getElementById(id)?.value??'']));localStorage.setItem('pf_visoes_graficos',JSON.stringify(vis));atualizarListaVisoesGrafico();const sel=document.getElementById('graficoVisoesSalvas');if(sel)sel.value=nome;}catch(e){alert('Não foi possível salvar a visão neste navegador.');}}
-        function atualizarListaVisoesGrafico(){const sel=document.getElementById('graficoVisoesSalvas');if(!sel)return;const vis=JSON.parse(localStorage.getItem('pf_visoes_graficos')||'{}');sel.innerHTML='<option value="">Visões salvas…</option>'+Object.keys(vis).map(k=>`<option>${pfEsc(k)}</option>`).join('');}
+        function consultarProntaGrafico(tipo) {
+            pfOrdemDespesas = tipo === 'menoresDespesas' ? 'asc' : tipo === 'despesas' ? 'desc' : null;
+            const status = document.getElementById('graficoStatusAvancado');
+            if (status) status.value = tipo === 'vencidas' ? 'Vencido' : tipo === 'naorecebidas' ? 'Não Recebido' : 'Todos';
+            const tipoEl = document.getElementById('graficoTipo');
+            if (tipoEl) tipoEl.value = tipo === 'naorecebidas' ? 'Receita' : 'Despesa';
+            atualizarGraficos();
+        }
+        function salvarVisaoGrafico(){try{const ids=['graficoDataInicio','graficoDataFim','graficoTipo','graficoRubrica','graficoSubItem','graficoDescricao','graficoStatusAvancado','graficoValorMin','graficoValorMax','graficoModoComparacao'];const vis=JSON.parse(localStorage.getItem('pf_visoes_graficos')||'{}');const entrada=prompt('Nome para esta visão:');if(entrada===null)return;const nome=entrada.trim();if(!nome){alert('O nome da visão está vazio. Preencha um nome para salvar.');return;}vis[nome]=Object.fromEntries(ids.map(id=>[id,document.getElementById(id)?.value??'']));localStorage.setItem('pf_visoes_graficos',JSON.stringify(vis));atualizarListaVisoesGrafico();const sel=document.getElementById('graficoVisoesSalvas');if(sel)sel.value=nome;}catch(e){alert('Não foi possível salvar a visão neste navegador.');}}
+        function atualizarListaVisoesGrafico(){const sel=document.getElementById('graficoVisoesSalvas');if(!sel)return;const vis=JSON.parse(localStorage.getItem('pf_visoes_graficos')||'{}');let alterado=false;Object.keys(vis).forEach(k=>{if(!k.trim()){delete vis[k];alterado=true;}});if(alterado)localStorage.setItem('pf_visoes_graficos',JSON.stringify(vis));sel.innerHTML='<option value="">Visões salvas…</option>'+Object.keys(vis).map(k=>`<option>${pfEsc(k)}</option>`).join('');}
+        function excluirVisaoGrafico() {
+            const sel = document.getElementById('graficoVisoesSalvas');
+            const nome = sel?.value;
+            if (!nome) { alert('Selecione uma visão salva para excluir.'); return; }
+            try {
+                const vis = JSON.parse(localStorage.getItem('pf_visoes_graficos') || '{}');
+                if (!Object.prototype.hasOwnProperty.call(vis, nome)) {
+                    alert('Essa visão não está mais disponível.');
+                    atualizarListaVisoesGrafico();
+                    return;
+                }
+                if (!confirm(`Excluir a visão “${nome}”? Apenas os filtros salvos serão removidos. Os lançamentos serão preservados.`)) return;
+                delete vis[nome];
+                localStorage.setItem('pf_visoes_graficos', JSON.stringify(vis));
+                atualizarListaVisoesGrafico();
+                sel.value = '';
+                alert('Visão excluída. Os filtros atuais foram mantidos.');
+            } catch (e) { alert('Não foi possível excluir a visão neste navegador.'); }
+        }
+
         function carregarVisaoGrafico(){const sel=document.getElementById('graficoVisoesSalvas');if(!sel||!sel.value)return;const vis=JSON.parse(localStorage.getItem('pf_visoes_graficos')||'{}')[sel.value]||{};Object.entries(vis).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v;});atualizarGraficos();}
         function exportarDadosGraficosCSV(){const rows=Array.isArray(pfLancamentosFiltrados)?pfLancamentosFiltrados:[];const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv='Data;Tipo;Rubrica;Sub-item;Descrição;Status;Valor\n'+rows.map(t=>[t.vencimento,t.tipo,t.categoria,t.subItem,t.descricao,t.status,t.valor].map(esc).join(';')).join('\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lancamentos_planejamento_filtrados.csv';a.click();URL.revokeObjectURL(a.href);}
-        document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){const el=document.getElementById('graficoDescricao');if(el){e.preventDefault();el.focus();}}});
+        document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){const modal=document.getElementById('modalGraficos');if(!modal||modal.classList.contains('hidden'))return;const el=document.getElementById('graficoDescricao');if(el){e.preventDefault();el.focus();}}});
+
+        function validarPeriodoGraficos(inicio, fim) {
+            const invalido = Boolean(inicio && fim && inicio > fim);
+            const aviso = document.getElementById('graficoAvisoPeriodo');
+            if (aviso) aviso.style.display = invalido ? 'block' : 'none';
+            ['graficoDataInicio', 'graficoDataFim'].forEach(id => {
+                const campo = document.getElementById(id);
+                if (campo) {
+                    campo.setAttribute('aria-invalid', String(invalido));
+                    if (invalido) campo.setAttribute('aria-describedby', 'graficoAvisoPeriodo');
+                    else campo.removeAttribute('aria-describedby');
+                }
+            });
+            return !invalido;
+        }
+
+        function validarValoresGraficos() {
+            const minimo = document.getElementById('graficoValorMin');
+            const maximo = document.getElementById('graficoValorMax');
+            const min = minimo?.value ?? '';
+            const max = maximo?.value ?? '';
+            const invalido = min !== '' && max !== '' && Number(min) > Number(max);
+            const aviso = document.getElementById('graficoAvisoValores');
+            if (aviso) aviso.style.display = invalido ? 'block' : 'none';
+            [minimo, maximo].forEach(campo => {
+                if (campo) {
+                    campo.setAttribute('aria-invalid', String(invalido));
+                    if (invalido) campo.setAttribute('aria-describedby', 'graficoAvisoValores');
+                    else campo.removeAttribute('aria-describedby');
+                }
+            });
+            return !invalido;
+        }
 
         function atualizarGraficos() {
             comparacaoRubricaMesAtiva = false;
             const dataInicio = document.getElementById('graficoDataInicio').value;
             const dataFim = document.getElementById('graficoDataFim').value;
+            validarPeriodoGraficos(dataInicio, dataFim);
+            validarValoresGraficos();
             const rubricaFiltro = document.getElementById('graficoRubrica').value;
             const subItemFiltro = document.getElementById('graficoSubItem').value;
             const descFiltro = document.getElementById('graficoDescricao').value.toLowerCase();
@@ -6686,7 +6890,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
 
             const ctxEvolucao = document.getElementById('chartEvolucao').getContext('2d');
             if (chartEvolucaoInstance) chartEvolucaoInstance.destroy();
-            if (comparativoReceitasDespesasAtivo) {
+            if (comparativoReceitasDespesasAtivo && tipoFiltro === 'Todos') {
                 // Primeiro gráfico: duas linhas independentes, uma para Prev de Receita e outra para Total de Despesas.
                 // Os valores continuam sendo agregados por data, sem qualquer detalhamento por rubrica.
                 chartEvolucaoInstance = new Chart(ctxEvolucao, {
@@ -6733,7 +6937,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
 
             const ctxRubricas = document.getElementById('chartRubricas').getContext('2d');
             if (chartRubricasInstance) chartRubricasInstance.destroy();
-            if (comparativoReceitasDespesasAtivo) {
+            if (comparativoReceitasDespesasAtivo && tipoFiltro === 'Todos') {
                 // No comparativo específico, o segundo gráfico também trabalha somente
                 // com os totais gerais, sem qualquer detalhamento por rubrica.
                 chartRubricasInstance = new Chart(ctxRubricas, {
@@ -6848,6 +7052,10 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
         }
         function salvarLancamentoRapido(event){
             event.preventDefault();
+            if (!validarValorLancamento(document.getElementById('v43Valor').value)) {
+                document.getElementById('v43Valor').focus();
+                return;
+            }
             // Reaproveita a rotina oficial de salvamento, sem duplicar regras de negócio.
             document.getElementById('editId').value='';
             document.getElementById('vencimento').value=document.getElementById('v43Data').value;
@@ -6905,6 +7113,11 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
         if (icon) icon.className = aberto ? 'fa-solid fa-xmark' : 'fa-solid fa-ellipsis';
     }
 }
+// Fecha o painel antes de executar a ação escolhida, inclusive em botões movidos dinamicamente.
+        document.addEventListener('click', function(event) {
+            const acao = event.target.closest('#pfMobileMaisPanel .pf-mobile-mais-grid button, #pfMobileMaisPanel .pf-mobile-mais-grid a');
+            if (acao) fecharAcoesMobile();
+        }, true);
 function fecharAcoesMobile(){
     document.body.classList.remove('mobile-acoes-abertas');
     const painel = document.getElementById('pfMobileMaisPanel');
@@ -6928,7 +7141,6 @@ function fecharAcoesMobile(){
             if(!ehMobile) fecharAcoesMobile();
         });
 
-        let aplicacaoInicializada = false;
         async function iniciarAplicacao(){
             if(aplicacaoInicializada || !protecaoAutenticada) return;
             aplicacaoInicializada = true;
@@ -6947,6 +7159,7 @@ function fecharAcoesMobile(){
             // ao abrir o projeto, sem depender do botão Atualizar.
             atualizarPainelGerencial();
             atualizarInfoBanco();
+            requestAnimationFrame(pfMostrarInicioPagina);
         }
 
         // Atualização automática periódica: útil quando o PC e o celular ficam abertos ao mesmo tempo.
@@ -7172,8 +7385,7 @@ function setupSidebar(){
   };
 
   [...source.querySelectorAll(':scope > button.botao-acao')].forEach((b,i)=>{
-    // Novo Lançamento e Nuvem permanecem no cabeçalho.
-    if(i===0 || isCloud(b)) return;
+    // Todas as ações residuais ficam disponíveis no menu, inclusive a primeira.
     // Os recursos técnicos já estão agrupados dentro de SEGURANÇA.
     if(isTechnical(b)) { b.style.display='none'; return; }
     // Demais ações gerais passam uma única vez para a barra lateral.
@@ -7413,7 +7625,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 })();
 
 
-/* ===== MODO ESCURO — V4.10.4: inicia sempre claro e botão ao lado do status da nuvem ===== */
+/* ===== MODO ESCURO — V4.10.4: preserva a escolha de tema e o botão ao lado do status da nuvem ===== */
 (function(){
   const KEY='pf_theme_mode_v4103_test';
   function applyTheme(mode){
@@ -7427,9 +7639,9 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     }
   }
   function initTheme(){
-    /* Requisito: toda abertura começa em modo claro, independentemente da escolha anterior. */
-    try { localStorage.setItem(KEY, 'light'); } catch(e) {}
-    applyTheme('light');
+    let savedTheme = 'light';
+    try { savedTheme = localStorage.getItem(KEY) === 'dark' ? 'dark' : 'light'; } catch(e) {}
+    applyTheme(savedTheme);
 
     let b=document.getElementById('pf-theme-toggle');
     if(!b){
@@ -7448,25 +7660,37 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     }
 
     function positionBesideCloud(){
+      const greetingSlot=document.getElementById('pfGreetingTheme');
+      if(greetingSlot){
+        b.classList.add('pf-theme-inline');
+        if(b.parentElement!==greetingSlot)greetingSlot.appendChild(b);
+        b.style.setProperty('display','inline-flex','important');
+        b.style.setProperty('width','40px','important');
+        b.style.setProperty('height','40px','important');
+        b.style.setProperty('min-height','40px','important');
+        b.style.setProperty('margin','0','important');
+        return true;
+      }
+
       /* Correção restrita ao botão de tema: no celular ele fica dentro de Mais ações.
          Não altera o layout dos cartões, lançamentos ou barra inferior. */
-      const mobilePanelGrid=document.querySelector('#pfMobileMaisPanel .pf-mobile-mais-grid');
+      const mobileSlot=document.getElementById('pfMobileTemaPrincipal');
       const isMobile=(document.documentElement.classList.contains('pf-mobile-device') ||
         (window.matchMedia && window.matchMedia('(max-width: 800px), (pointer: coarse)').matches));
-      if(isMobile && mobilePanelGrid){
+      if(isMobile && mobileSlot){
         b.classList.add('pf-theme-inline');
-        if(b.parentElement !== mobilePanelGrid) mobilePanelGrid.appendChild(b);
+        if(b.parentElement !== mobileSlot) mobileSlot.appendChild(b);
         b.style.setProperty('display','inline-flex','important');
         b.style.setProperty('align-items','center','important');
         b.style.setProperty('justify-content','center','important');
-        b.style.setProperty('width','100%','important');
-        b.style.setProperty('min-height','46px','important');
-        b.style.setProperty('height','46px','important');
+        b.style.setProperty('width','44px','important');
+        b.style.setProperty('height','44px','important');
+        b.style.setProperty('min-height','44px','important');
         b.style.setProperty('margin','0','important');
         b.style.setProperty('border-radius','10px','important');
         b.textContent=document.body.classList.contains('dark-mode')?'☀️':'🌙';
         b.setAttribute('aria-label',document.body.classList.contains('dark-mode')?'Ativar tema claro':'Ativar tema escuro');
-        b.title=document.body.classList.contains('dark-mode')?'Ativar tema claro':'Ativar tema escuro';
+        b.title=b.getAttribute('aria-label');
         return true;
       }
       const badge=document.getElementById('statusNuvemBadge');
@@ -7487,7 +7711,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
       });
       observer.observe(document.body,{childList:true,subtree:true});
     }
-    applyTheme('light');
+    applyTheme(savedTheme);
     if(location.protocol==='file:'){
       console.info('Modo de teste local: a sincronização Supabase pode exigir HTTPS e sessão autenticada.');
     }
@@ -7601,7 +7825,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.10.10';
+ const CURRENT_VERSION='V4.11.0';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -7611,7 +7835,7 @@ body.dark-mode .pf-filtro-item > label {
   {label:'Manual do Administrador',file:'Manual_do_Administrador_V4.10.10.pdf',admin:true},
   {label:'Guia de Instalação dos Serviços Online',file:'Guia_de_Instalacao_dos_Servicos_Online_V4.10.10.pdf',admin:true}
  ];
- function show(title,html){const t=document.getElementById('pfHelpModalTitle'),b=document.getElementById('pfHelpModalBody'),m=document.getElementById('pfHelpModal');if(!t||!b||!m)return;t.textContent=title;b.innerHTML=html;m.classList.add('is-open');m.setAttribute('aria-hidden','false');}
+ function show(title,html){const t=document.getElementById('pfHelpModalTitle'),b=document.getElementById('pfHelpModalBody'),m=document.getElementById('pfHelpModal');if(!t||!b||!m)return;t.textContent=title;b.innerHTML=html;const card=m.querySelector('.pf-help-modal-card');if(card){card.classList.toggle('pf-help-search-view',title==='Pesquisar dúvidas nos manuais');}b.scrollTop=0;m.classList.add('is-open');m.setAttribute('aria-hidden','false');}
  function closeMenu(){const d=document.getElementById('pfHelpMenu');if(d)d.open=false;}
  function versionParts(v){return String(v||'').replace(/^v/i,'').match(/\d+/g)?.map(Number)||[0];}
  function compareVersions(a,b){const x=versionParts(a),y=versionParts(b);for(let i=0;i<Math.max(x.length,y.length);i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0?1:-1;}return 0;}
@@ -7621,10 +7845,72 @@ body.dark-mode .pf-filtro-item > label {
   const links=manuals.map((m,i)=>'<a href="#" data-pf-manual-index="'+i+'"><i class="fa-solid fa-file-pdf"></i><span>'+m.label+'</span><i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto"></i></a>').join('');
   show('Manuais e documentação','<p>Selecione um documento. O acesso será verificado pelo Supabase.</p><div class="pf-help-manuals">'+links+'</div><p id="pfManualStatus" role="status" aria-live="polite"></p>');closeMenu();
  };
- async function pfAbrirManualProtegido(item, novaAba){
+ let pfPesquisaExecucao=0;
+ async function contextoPesquisa(){
+  if(!inicializarSupabaseCliente()||!supabaseCliente)throw Error('O serviço de autenticação não está disponível.');
+  const {data,error}=await supabaseCliente.auth.getSession();if(error)throw error;
+  const user=data?.session?.user;if(!user)throw Error('Entre na conta de sincronização do Supabase antes de pesquisar os manuais.');
+  let admin=typeof window.ehAdministrador==='function'&&await window.ehAdministrador();
+  if(admin){const r=await supabaseCliente.from('manuais_administradores').select('user_id').eq('user_id',user.id).maybeSingle();if(r.error)throw r.error;admin=!!r.data;}
+  return {key:user.id+':'+admin,items:manuals.filter(m=>!m.admin||admin)};
+ }
+ let pfPdfLoader;
+ function carregarLeitor(){
+  if(!pfPdfLoader)pfPdfLoader=(async()=>{
+   for(const file of ['pdf.min.js','pdf.worker.min.js'])await new Promise((resolve,reject)=>{const el=document.createElement('script');el.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/'+file;el.onload=resolve;el.onerror=()=>reject(Error('Não foi possível carregar o leitor dos manuais. Verifique a conexão e tente novamente.'));document.head.appendChild(el);});
+   return window.pdfjsLib;
+  })().catch(e=>{pfPdfLoader=null;throw e;});return pfPdfLoader;
+ }
+ function termosPesquisa(text){
+  const stop=new Set('a o as os de da do das dos em no na nos nas um uma e ou que como para por qual quais meu minha eu fazer faz posso esta este isso nao ao com se'.split(' '));
+  return [...new Set(String(text).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().match(/[a-z0-9]+/g)||[])].filter(x=>x.length>2&&!stop.has(x));
+ }
+ function pontuarTrecho(text,terms){
+  const words=termosPesquisa(text);const groups=[['backup','copia','seguranca'],['restaurar','restauracao','recuperar'],['sincronizar','sincronizacao','nuvem'],['excluir','exclusao','apagar','deletar'],['instalar','instalacao'],['senha','senhas'],['lancamento','lancamentos'],['grafico','graficos'],['receita','receitas'],['despesa','despesas'],['pagar','pagamento','pago']];
+  let hits=0,score=0;for(const term of terms){const group=groups.find(g=>g.includes(term))||[term];if(words.some(w=>group.includes(w))){hits++;score+=words.includes(term)?3:2;}}
+  return hits>=Math.min(2,terms.length)?score:0;
+ }
+ window.pfPesquisarManuais=function(){
+  pfPesquisaExecucao++;
+  document.querySelector('#pfHelpModal .pf-help-modal-card')?.classList.remove('pf-help-pdf-viewer');
+  show('Pesquisar dúvidas nos manuais','<p>Digite sua dúvida. A pesquisa apresenta trechos dos manuais V4.10.10, com a página de origem. Recursos adicionados depois dessa versão podem não estar documentados.</p><form id="pfPesquisaForm"><label for="pfPesquisaPergunta">Qual é sua dúvida?</label><input id="pfPesquisaPergunta" maxlength="250" placeholder="Ex.: Como restaurar um backup?" style="display:block;width:100%;padding:12px;margin:10px 0;border:1px solid #94a3b8;border-radius:8px;color:#172033;background:#fff"><button type="submit" class="botao-acao">Pesquisar</button></form><p id="pfPesquisaStatus" role="status" aria-live="polite"></p><div id="pfPesquisaResultados"></div>');closeMenu();
+  document.getElementById('pfPesquisaForm').onsubmit=pesquisar;
+  document.getElementById('pfPesquisaPergunta').focus();
+ };
+ async function pesquisar(e){
+  e.preventDefault();const run=++pfPesquisaExecucao,form=e.currentTarget,status=document.getElementById('pfPesquisaStatus'),out=document.getElementById('pfPesquisaResultados');out.replaceChildren();
+  const terms=termosPesquisa(document.getElementById('pfPesquisaPergunta').value);if(!terms.length){status.textContent='Digite uma dúvida com palavras relacionadas ao aplicativo.';return;}
+  const button=form.querySelector('button');button.disabled=true;
+  try{
+   status.textContent='Verificando o acesso e pesquisando os documentos autorizados…';
+   const ctx=await contextoPesquisa(),pdfjs=await carregarLeitor(),results=[];
+   for(const item of ctx.items){
+    if(run!==pfPesquisaExecucao||!out.isConnected)return;
+    const {data,error}=await supabaseCliente.storage.from(MANUAIS_BUCKET).download(item.file);if(error)throw error;
+    const task=pdfjs.getDocument({data:new Uint8Array(await data.arrayBuffer()),isEvalSupported:false});const pdf=await task.promise;
+    try{for(let n=1;n<=pdf.numPages;n++){
+     const page=await pdf.getPage(n),content=await page.getTextContent();let text='',lastY=null;
+     for(const x of content.items){if(!('str' in x))continue;const y=x.transform?.[5];if(lastY!==null&&Math.abs(y-lastY)>4)text+='\n';text+=x.str+' ';lastY=y;}
+     const lines=text.split('\n').map(x=>x.trim()).filter(Boolean);let chunk='';
+     const add=()=>{const score=pontuarTrecho(chunk,terms);if(score)results.push({score,text:chunk.trim(),item,page:n});};
+     for(const line of lines){if(chunk.length+line.length>1000){add();chunk='';}chunk+=line+'\n';}if(chunk)add();
+    }}finally{await pdf.destroy();}
+   }
+   if(run!==pfPesquisaExecucao||!out.isConnected)return;
+   if((await contextoPesquisa()).key!==ctx.key)throw Error('A conta ou o perfil mudou. Faça uma nova pesquisa.');
+   const found=results.sort((a,b)=>b.score-a.score).filter((r,i,a)=>a.findIndex(x=>x.item.file===r.item.file&&x.page===r.page)===i).slice(0,3);
+   status.textContent=found.length?'Trechos encontrados. Confira o contexto no manual antes de seguir a orientação.':'Não encontrei uma orientação suficientemente relacionada nos manuais disponíveis para sua conta. Tente outras palavras ou consulte o manual.';
+   for(const r of found){const card=document.createElement('article');card.style.cssText='border:1px solid #94a3b8;border-radius:10px;padding:14px;margin:14px 0';const title=document.createElement('strong');title.textContent=r.item.label+' — página '+r.page;const passage=document.createElement('p');passage.style.whiteSpace='pre-line';passage.textContent=r.text;const open=document.createElement('button');open.type='button';open.className='botao-acao';open.textContent='Abrir esta página no manual';open.onclick=()=>{pfPesquisaExecucao++;pfAbrirManualProtegido(r.item,null,r.page);};card.append(title,passage,open);out.append(card);}
+  }catch(err){if(run===pfPesquisaExecucao&&out.isConnected){out.replaceChildren();status.textContent=err.message||'Não foi possível pesquisar os manuais. Tente novamente.';}}finally{button.disabled=false;}
+ }
+
+ async function pfAbrirManualProtegido(item, novaAba, pagina=1){
   const status=document.getElementById('pfManualStatus');
   const informar=(msg)=>{if(status)status.textContent=msg;};
   try{
+   if(item.admin && (typeof window.ehAdministrador !== 'function' || !(await window.ehAdministrador()))) {
+    throw new Error('Acesso restrito: este documento está disponível somente no perfil Administrador.');
+   }
    if(!inicializarSupabaseCliente()||!supabaseCliente)throw new Error('O serviço de autenticação não está disponível. Atualize a página e tente novamente.');
    const {data:sessionData,error:sessionError}=await supabaseCliente.auth.getSession();
    if(sessionError)throw sessionError;
@@ -7645,19 +7931,460 @@ body.dark-mode .pf-filtro-item > label {
    if(!card||!body||!title)throw new Error('Não foi possível abrir o visualizador de documentos.');
    card.classList.add('pf-help-pdf-viewer');
    title.textContent=item.label;
-   const safeUrl=data.signedUrl.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+   const safeUrl=(data.signedUrl+'#page='+Math.max(1,Number(pagina)||1)).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
    const safeTitle=item.label.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
    body.innerHTML='<iframe class="pf-help-pdf-frame" title="'+safeTitle+'" src="'+safeUrl+'"></iframe>';
    informar('Documento autorizado.');
-  }catch(err){if(novaAba&&!novaAba.closed)novaAba.close();console.error('Falha ao abrir manual protegido:',err);inform(err&&err.message?err.message:'Não foi possível abrir o documento. Verifique a sessão e as permissões no Supabase.');}
+  }catch(err){if(novaAba&&!novaAba.closed)novaAba.close();console.error('Falha ao abrir manual protegido:',err);informar(err&&err.message?err.message:'Não foi possível abrir o documento. Verifique a sessão e as permissões no Supabase.');}
  }
  document.addEventListener('click',function(e){const a=e.target.closest('[data-pf-manual-index]');if(!a)return;e.preventDefault();const item=manuals[Number(a.getAttribute('data-pf-manual-index'))];if(!item)return;pfAbrirManualProtegido(item,null);});
  window.pfShowCurrentVersion=function(){show('Versão atual do projeto','<p><strong>'+CURRENT_VERSION+'</strong></p><p>Planejamento Financeiro · Aplicativo Web / PWA</p><p>Versão identificada no arquivo de distribuição carregado.</p>');closeMenu();};
  window.pfShowAbout=function(){show('Sobre o Planejamento Financeiro','<p><strong>Planejamento Financeiro</strong></p><p>All rights reserved.<br>Ricardo Dávila Corporation.</p><p>Versão: '+CURRENT_VERSION+'</p>');closeMenu();};
- window.pfCheckUpdates=async function(){closeMenu();show('Verificar novas versões','<p>Consultando a versão mais recente publicada no GitHub…</p>');try{const response=await fetch(LATEST_API,{headers:{'Accept':'application/vnd.github+json'},cache:'no-store'});if(!response.ok)throw new Error('Não foi possível consultar a Release mais recente.');const release=await response.json();const latest=String(release.tag_name||'').trim();if(!latest)throw new Error('A publicação não contém uma tag de versão.');const publishedUrl=release.html_url||RELEASES_URL;const cmp=compareVersions(latest,CURRENT_VERSION);if(cmp>0){show('Nova versão disponível','<p>Versão instalada: <strong>'+CURRENT_VERSION+'</strong></p><p>Versão mais recente no GitHub: <strong>'+latest+'</strong></p><p>Há uma versão mais recente publicada. Consulte as notas antes de atualizar o aplicativo.</p>'+linkButton(publishedUrl,'Ver notas da versão '+latest));}else if(cmp===0){show('Aplicativo atualizado','<p>Versão instalada: <strong>'+CURRENT_VERSION+'</strong></p><p>Versão mais recente publicada: <strong>'+latest+'</strong></p><p>Você está usando a versão mais recente publicada.</p>'+linkButton(publishedUrl,'Ver Release no GitHub'));}else{show('Versão publicada mais antiga','<p>Versão instalada: <strong>'+CURRENT_VERSION+'</strong></p><p>Última Release encontrada: <strong>'+latest+'</strong></p><p>A versão instalada é numericamente superior à última Release. Confira as publicações no GitHub para confirmar se uma nova Release foi criada corretamente.</p>'+linkButton(RELEASES_URL,'Ver todas as Releases'));}}catch(error){show('Não foi possível verificar','<p>Não foi possível consultar automaticamente a versão publicada neste momento. Verifique sua conexão e tente novamente.</p>'+linkButton(RELEASES_URL,'Abrir Releases do GitHub'));}};
+ window.pfCheckUpdates=async function(){
+  closeMenu();show('Verificar atualizações','<p>Consultando a versão publicada…</p>');
+  const base=new URL('https://ricardodavila.github.io/planejamento-financeiro/');
+  const local=location.origin!==base.origin||!location.pathname.startsWith(base.pathname);
+  try{
+   const response=await fetch(new URL('version.json?t='+Date.now(),base),{cache:'no-store',signal:AbortSignal.timeout(15000)});
+   if(!response.ok)throw Error(response.status===404?'A consulta de versões ainda não foi publicada no site.':'Não foi possível consultar a versão publicada.');
+   const release=await response.json();if(!/^v?\d+(\.\d+){1,3}$/i.test(release.version||''))throw Error('O arquivo de versão publicado está inválido.');
+   const latest=release.version,cmp=compareVersions(latest,CURRENT_VERSION);
+   const text=document.createElement('div');const info=document.createElement('p');info.textContent='Versão desta cópia: '+CURRENT_VERSION+'. Versão publicada: '+latest+'.';text.append(info);
+   const explanation=document.createElement('p');explanation.textContent=local?'Esta é uma cópia de teste ou local. Ela não será substituída pelo aplicativo publicado.':cmp>0?'Há uma nova versão disponível. Salve qualquer edição em andamento antes de atualizar.':cmp===0?'Você está usando a versão publicada mais recente.':'Esta cópia tem uma versão superior à publicada.';text.append(explanation);
+   show(cmp>0?'Nova versão disponível':'Verificação de versão',text.innerHTML);
+   const body=document.getElementById('pfHelpModalBody');
+   if(local){const a=document.createElement('a');a.href=base.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Abrir aplicativo publicado';a.className='pf-help-primary';body.append(a);}
+   else if(cmp>0){const b=document.createElement('button');b.type='button';b.className='pf-help-primary';b.textContent='Atualizar agora';b.onclick=async()=>{
+    b.disabled=true;b.textContent='Preparando atualização…';
+    try{
+     if('serviceWorker' in navigator){const reg=await navigator.serviceWorker.getRegistration(base.href);if(reg){await reg.update();if(reg.installing)await new Promise((resolve,reject)=>{const w=reg.installing;const timer=setTimeout(()=>reject(Error('A atualização demorou. Tente novamente.')),20000);const check=()=>{if(w.state==='installed'){clearTimeout(timer);resolve();}else if(w.state==='redundant'){clearTimeout(timer);reject(Error('Não foi possível baixar a atualização.'));}};w.addEventListener('statechange',check);check();});if(reg.waiting){await new Promise((resolve,reject)=>{const timer=setTimeout(()=>{navigator.serviceWorker.removeEventListener('controllerchange',done);reject(Error('A versão instalada ainda não permite atualização imediata. Feche todas as janelas do aplicativo e abra novamente.'));},12000);function done(){clearTimeout(timer);resolve();}navigator.serviceWorker.addEventListener('controllerchange',done,{once:true});reg.waiting.postMessage({type:'SKIP_WAITING'});});}}}
+     const url=new URL(location.href);url.searchParams.set('pf_update',latest);location.replace(url.href);
+    }catch(e){b.disabled=false;b.textContent='Tentar atualizar novamente';const p=document.createElement('p');p.textContent=e.message;body.append(p);}
+   };body.append(b);}
+  }catch(error){show('Não foi possível verificar','<p id="pfUpdateError"></p>');document.getElementById('pfUpdateError').textContent=error.message+' Nenhuma alteração foi feita no aplicativo.';}
+ };
+
  document.addEventListener('click',e=>{const m=document.getElementById('pfHelpModal');if(e.target===m)window.pfCloseHelpModal();const d=document.getElementById('pfHelpMenu');if(d&&!d.contains(e.target)&&!e.target.closest('#pfHelpModal'))d.open=false;});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')window.pfCloseHelpModal();});
 })();
 </script>
+
+<style id="correcao-contraste-relatorio-mensal">
+body.dark-mode #modalRelatorioMensalMobile .rel46-card,
+body.dark-mode #modalRelatorioMensalMobile .rel46-head {background:#1e293b!important;color:#f8fafc!important;border-color:#475569!important;}
+body.dark-mode #modalRelatorioMensalMobile h3 {color:#f8fafc!important;}
+body.dark-mode #modalRelatorioMensalMobile #rel46Periodo,
+body.dark-mode #modalRelatorioMensalMobile .rel46-metrica span {color:#cbd5e1!important;}
+body.dark-mode #modalRelatorioMensalMobile .rel46-metrica {background:#0f172a!important;border-color:#475569!important;}
+body.dark-mode #modalRelatorioMensalMobile .receita strong {color:#6ee7b7!important;}
+body.dark-mode #modalRelatorioMensalMobile .despesa strong,
+body.dark-mode #modalRelatorioMensalMobile .vencido strong {color:#fda4af!important;}
+body.dark-mode #modalRelatorioMensalMobile .saldo strong,
+body.dark-mode #modalRelatorioMensalMobile .receber strong {color:#93c5fd!important;}
+body.dark-mode #modalRelatorioMensalMobile .vencer strong {color:#fcd34d!important;}
+body.dark-mode #modalRelatorioMensalMobile #rel46Mensagem {background:#334155!important;color:#f1f5f9!important;border-color:#64748b!important;}
+body.dark-mode #modalRelatorioMensalMobile button {color:#f8fafc!important;}
+body.dark-mode #modalRelatorioMensalMobile button.border {background:#334155!important;border-color:#94a3b8!important;}
+body.dark-mode #modalRelatorioMensalMobile button:focus-visible {outline:3px solid #93c5fd;outline-offset:2px;}
+</style>
+
+<style id="correcao-calendario-modo-escuro">
+body.dark-mode #modalCalendarioFinanceiro .cal45-card,
+body.dark-mode #modalCalendarioFinanceiro .cal45-head {background:#1e293b!important;color:#f8fafc!important;border-color:#475569!important;}
+body.dark-mode #modalCalendarioFinanceiro h3,
+body.dark-mode #modalCalendarioFinanceiro .cal45-num,
+body.dark-mode #modalCalendarioFinanceiro .cal45-item strong {color:#f8fafc!important;}
+body.dark-mode #modalCalendarioFinanceiro p,
+body.dark-mode #modalCalendarioFinanceiro small,
+body.dark-mode #modalCalendarioFinanceiro .cal45-week,
+body.dark-mode #modalCalendarioFinanceiro .cal45-total {color:#cbd5e1!important;}
+body.dark-mode #modalCalendarioFinanceiro button {color:#f8fafc!important;border-color:#64748b!important;}
+body.dark-mode #modalCalendarioFinanceiro .cal45-head button {background:#334155!important;}
+body.dark-mode #modalCalendarioFinanceiro .cal45-day,
+body.dark-mode #modalCalendarioFinanceiro .cal45-item {background:#0f172a!important;border-color:#475569!important;}
+body.dark-mode #modalCalendarioFinanceiro .cal45-day:hover {background:#334155!important;}
+body.dark-mode #modalCalendarioFinanceiro .cal45-day.today {background:#164e63!important;border-color:#67e8f9!important;}
+body.dark-mode #modalCalendarioFinanceiro .cal45-day.out {opacity:.65;}
+body.dark-mode #modalCalendarioFinanceiro .cal45-detail {border-color:#475569!important;}
+body.dark-mode #modalCalendarioFinanceiro .valor.text-emerald-700 {color:#6ee7b7!important;}
+body.dark-mode #modalCalendarioFinanceiro .valor.text-rose-700 {color:#fda4af!important;}
+body.dark-mode #modalCalendarioFinanceiro .valor.text-purple-700 {color:#d8b4fe!important;}
+body.dark-mode #modalCalendarioFinanceiro button:focus-visible {outline:3px solid #93c5fd;outline-offset:2px;}
+</style>
+<style id="graficos-impressao-fundo-claro">
+@media print {
+  body.imprimir-graficos {background:#fff!important;color:#0f172a!important;}
+}
+</style>
+<style>
+#modalGerenciarCadastros{position:fixed;inset:0;background:#0f172a99;z-index:10020;align-items:center;justify-content:center;padding:16px}
+#modalGerenciarCadastros[hidden]{display:none}#modalGerenciarCadastros:not([hidden]){display:flex}
+#modalGerenciarCadastros .gc-card{background:#fff;color:#0f172a;border-radius:16px;padding:22px;width:min(100%,560px);max-height:90vh;overflow:auto}
+#modalGerenciarCadastros label{display:block;margin-top:14px;font-weight:600}#modalGerenciarCadastros select{width:100%;padding:10px;margin-top:5px;background:#fff;color:#0f172a;border:1px solid #94a3b8;border-radius:8px}
+#modalGerenciarCadastros button{padding:10px 14px;border-radius:8px;background:#e2e8f0;color:#0f172a;margin:8px 5px 0 0}#modalGerenciarCadastros p{margin-top:12px}
+body.dark-mode #modalGerenciarCadastros .gc-card{background:#1e293b;color:#f8fafc}body.dark-mode #modalGerenciarCadastros h3,body.dark-mode #modalGerenciarCadastros label,body.dark-mode #modalGerenciarCadastros p{color:#f8fafc!important}
+body.dark-mode #modalGerenciarCadastros select,body.dark-mode #modalGerenciarCadastros button{background:#334155;color:#f8fafc}
+</style>
+<div id="modalGerenciarCadastros" hidden role="dialog" aria-modal="true" aria-labelledby="gcTitulo">
+ <div class="gc-card">
+  <h3 id="gcTitulo" style="font-size:20px;font-weight:700">Gerenciar cadastros</h3>
+  <p>Corrija nomes sem apagar os lançamentos. Excluir é permitido apenas quando o cadastro não estiver em uso.</p>
+  <label for="gcTipo">Cadastro</label><select id="gcTipo" onchange="gcAtualizar()"><option value="rubrica">Rubricas</option><option value="subitem">Subitens</option></select>
+  <label for="gcOrigem">Nome atual</label><select id="gcOrigem" onchange="gcAtualizarDestino()"></select>
+  <p id="gcUso"></p>
+  <button type="button" onclick="gcRenomear()">Renomear</button><button type="button" onclick="gcExcluir()">Excluir</button>
+  <label for="gcDestino">Unificar com</label><select id="gcDestino"></select>
+  <p>Os lançamentos do nome atual passarão a usar o nome escolhido acima.</p>
+  <button type="button" onclick="gcUnificar()">Unificar</button><button type="button" onclick="gcFechar()">Fechar</button>
+ </div>
+</div>
+<script>
+function gcConfig(){const sub=document.getElementById('gcTipo').value==='subitem';return {campo:sub?'subItem':'categoria',id:sub?'idSubItem':'idRubrica',prefixo:sub?'SUB':'RUB',extras:sub?'subitens_extras':'rubricas_extras',ocultos:sub?'pf_subitens_ocultos':'pf_rubricas_ocultas',lista:sub?getSubItensCadastrados():getRubricasCadastradas()};}
+function gcLer(chave){return JSON.parse(localStorage.getItem(chave)||'[]');}
+function gcOpcoes(el,nomes){el.replaceChildren();nomes.forEach(nome=>{const opt=document.createElement('option');opt.value=nome;opt.textContent=nome;el.appendChild(opt);});}
+let gcFocoAnterior=null;
+function abrirGerenciarCadastros(){gcFocoAnterior=document.activeElement;document.getElementById('modalGerenciarCadastros').hidden=false;gcAtualizar();document.getElementById('gcTipo').focus();}
+function gcFechar(){document.getElementById('modalGerenciarCadastros').hidden=true;gcFocoAnterior?.focus();}
+function gcAtualizar(){const cfg=gcConfig();gcOpcoes(document.getElementById('gcOrigem'),cfg.lista);gcAtualizarDestino();}
+function gcAtualizarDestino(){const cfg=gcConfig(),origem=document.getElementById('gcOrigem').value;gcOpcoes(document.getElementById('gcDestino'),cfg.lista.filter(n=>n!==origem));const n=transacoes.filter(t=>t[cfg.campo]===origem).length;document.getElementById('gcUso').textContent=`${n} lançamento(s) usam este nome.`;}
+function gcAplicar(acao,origem,destino){
+ const cfg=gcConfig();
+ if(!origem||!cfg.lista.includes(origem))throw new Error('Selecione um cadastro existente.');
+ const usados=transacoes.filter(t=>t[cfg.campo]===origem);
+ const lixeira=obterLixeira();
+ if(acao==='excluir'&&(usados.length||lixeira.some(r=>r.item?.[cfg.campo]===origem)))throw new Error('Este cadastro está em uso em lançamentos ou na Lixeira. Use Renomear ou Unificar.');
+ if(acao!=='excluir'){
+  destino=String(destino??'').trim();
+  if(!destino)throw new Error('Preencha o novo nome.');
+  if(cfg.campo==='categoria')destino=destino.toUpperCase();
+  if(destino===origem)throw new Error('Escolha um nome diferente do atual.');
+  if(acao==='unificar'&&!cfg.lista.includes(destino))throw new Error('Selecione um destino existente.');
+  if(acao==='renomear'&&cfg.lista.some(n=>n.trim().toLocaleUpperCase('pt-BR')===destino.toLocaleUpperCase('pt-BR')))throw new Error('Esse nome já existe. Use Unificar.');
+ }
+ // Mantém uma cópia recuperável antes de alterar os cadastros.
+ baixarBackupJSON('backup_antes_gerenciar_cadastros');
+ const extras=gcLer(cfg.extras).filter(n=>n!==origem);
+ const ocultos=new Set(gcLer(cfg.ocultos));ocultos.add(origem);
+ if(acao!=='excluir'){
+  ocultos.delete(destino);extras.push(destino);
+  usados.forEach(t=>{t[cfg.campo]=destino;t[cfg.id]=gerarIdTexto(cfg.prefixo,destino);});
+  lixeira.forEach(r=>{if(r.item?.[cfg.campo]===origem){r.item[cfg.campo]=destino;r.item[cfg.id]=gerarIdTexto(cfg.prefixo,destino);}});
+ }
+ localStorage.setItem(cfg.extras,JSON.stringify([...new Set(extras)]));
+ localStorage.setItem(cfg.ocultos,JSON.stringify([...ocultos]));
+ localStorage.setItem(CHAVE_LIXEIRA,JSON.stringify(lixeira));
+ salvarLocalStorage();registrarHistorico('CADASTRO','',`${acao}: ${origem}${destino?' → '+destino:''}`);
+ popularSelectsDinamicos();if(typeof popularFiltrosGraficos==='function')popularFiltrosGraficos();renderTable();gcAtualizar();
+ return usados.length;
+}
+function gcRenomear(){const origem=document.getElementById('gcOrigem').value;const nome=prompt('Novo nome:',origem);if(nome===null)return;try{const n=gcAplicar('renomear',origem,nome);alert(`Cadastro renomeado. ${n} lançamento(s) atualizado(s).`);}catch(e){alert(e.message);}}
+function gcExcluir(){const origem=document.getElementById('gcOrigem').value;if(!confirm(`Excluir o cadastro “${origem}”?`))return;try{gcAplicar('excluir',origem);alert('Cadastro excluído.');}catch(e){alert(e.message);}}
+function gcUnificar(){const origem=document.getElementById('gcOrigem').value,destino=document.getElementById('gcDestino').value;if(!destino){alert('Selecione o cadastro de destino.');return;}if(!confirm(`Unificar “${origem}” com “${destino}”, preservando os lançamentos?`))return;try{const n=gcAplicar('unificar',origem,destino);alert(`Cadastros unificados. ${n} lançamento(s) atualizado(s).`);}catch(e){alert(e.message);}}
+document.getElementById('modalGerenciarCadastros').addEventListener('keydown',e=>{if(e.key==='Escape')gcFechar();});
+</script>
+
+<style>
+#pfInstalarCelular{position:fixed;inset:0;z-index:10030;background:#0f172a99;padding:16px;align-items:center;justify-content:center}
+#pfInstalarCelular[hidden]{display:none}#pfInstalarCelular:not([hidden]){display:flex}
+#pfInstalarCelular .pf-install-card{width:min(100%,540px);max-height:90vh;overflow:auto;border-radius:16px;background:#fff;color:#0f172a;padding:24px}
+#pfInstalarCelular h3{font-size:20px;font-weight:700}#pfInstalarCelular p{margin:12px 0;line-height:1.5}
+#pfInstalarCelular input{width:100%;padding:12px;border:1px solid #94a3b8;border-radius:8px;background:#f8fafc;color:#0f172a}
+#pfInstalarCelular button{padding:11px 16px;margin:10px 5px 0 0;border-radius:8px;background:#e2e8f0;color:#0f172a}#pfInstalarCelular .primary{background:#2563eb;color:white}
+body.dark-mode #pfInstalarCelular .pf-install-card{background:#1e293b;color:#f8fafc}body.dark-mode #pfInstalarCelular h3,body.dark-mode #pfInstalarCelular p{color:#f8fafc!important}
+body.dark-mode #pfInstalarCelular input{background:#0f172a;color:#f8fafc}body.dark-mode #pfInstalarCelular button:not(.primary){background:#334155;color:#f8fafc}
+</style>
+<div id="pfInstalarCelular" hidden role="dialog" aria-modal="true" aria-labelledby="pfInstalarCelularTitulo">
+ <div class="pf-install-card">
+  <h3 id="pfInstalarCelularTitulo">Instalar aplicativo</h3>
+  <div id="pfInstalarEscolha">
+   <p>Onde você deseja instalar o Planejamento Financeiro?</p>
+   <button type="button" class="primary" onclick="pfInstalarEscolherComputador()">Neste computador</button>
+   <button type="button" onclick="pfInstalarEscolherCelular()">No celular</button>
+  </div>
+  <div id="pfInstalarPassosCelular" hidden>
+  <p>Copie o link e abra no navegador do celular para instalar o Planejamento Financeiro e criar o ícone na tela inicial.</p>
+  <label for="pfLinkCelular">Link do aplicativo</label>
+  <input id="pfLinkCelular" readonly value="https://ricardodavila.github.io/planejamento-financeiro/?instalar=1" onclick="this.select()">
+  <button type="button" class="primary" onclick="pfCopiarLinkCelular()">Copiar link</button>
+  <button type="button" onclick="pfCompartilharLinkCelular()" id="pfCompartilharCelular">Compartilhar link</button>
+  <p><strong>Android:</strong> abra no Chrome. Toque em “Instalar aplicativo” quando disponível ou no menu ⋮ → “Adicionar à tela inicial” → “Instalar”.</p>
+  <p><strong>iPhone:</strong> abra no Safari. Toque em Compartilhar → “Adicionar à Tela de Início”.</p>
+  <button type="button" class="primary" id="pfInstalarNesteCelular" onclick="pfInstalarNesteCelular()" hidden>Instalar neste celular</button>
+  </div>
+  <p id="pfInstalarCelularStatus" role="status" aria-live="polite"></p>
+  <button type="button" onclick="pfFecharInstalarCelular()">Fechar</button>
+ </div>
+</div>
+<script>
+let pfFocoInstalacao=null;
+function pfLinkInstalacaoCelular(){return 'https://ricardodavila.github.io/planejamento-financeiro/?instalar=1';}
+function pfAbrirInstalarAplicativo(){
+ pfAbrirInstalarCelular();
+ document.getElementById('pfInstalarPassosCelular').hidden=true;
+ document.getElementById('pfInstalarEscolha').hidden=false;
+ document.querySelector('#pfInstalarEscolha button').focus();
+}
+function pfInstalarEscolherCelular(){
+ document.getElementById('pfInstalarPassosCelular').hidden=false;
+ document.getElementById('pfLinkCelular').focus();
+}
+function pfInstalarEscolherComputador(){
+ if(location.protocol==='file:'){
+  document.getElementById('pfInstalarCelularStatus').textContent='Para instalar neste computador, abra a versão publicada no Chrome. Esta cópia local serve para testes.';
+  document.getElementById('pfInstalarPassosCelular').hidden=false;
+  return;
+ }
+ if(typeof window.pfSolicitarInstalacaoPWA==='function')window.pfSolicitarInstalacaoPWA();
+}
+function pfAbrirInstalarCelular(){
+ document.getElementById('pfInstalarEscolha').hidden=false;
+ document.getElementById('pfInstalarPassosCelular').hidden=false;
+ pfFocoInstalacao=document.activeElement;
+ document.getElementById('pfInstalarCelular').hidden=false;
+ document.getElementById('pfLinkCelular').value=pfLinkInstalacaoCelular();
+ document.getElementById('pfInstalarCelularStatus').textContent='';
+ document.getElementById('pfCompartilharCelular').hidden=typeof navigator.share!=='function';
+ document.getElementById('pfInstalarNesteCelular').hidden=!/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'');
+ document.getElementById('pfLinkCelular').focus();
+}
+function pfFecharInstalarCelular(){document.getElementById('pfInstalarCelular').hidden=true;pfFocoInstalacao?.focus();}
+async function pfCopiarLinkCelular(){
+ const campo=document.getElementById('pfLinkCelular'),status=document.getElementById('pfInstalarCelularStatus');
+ try{if(!navigator.clipboard?.writeText)throw new Error('Cópia manual');await navigator.clipboard.writeText(pfLinkInstalacaoCelular());status.textContent='Link copiado. Abra-o no navegador do celular.';}
+ catch(e){campo.focus();campo.select();status.textContent='O link está selecionado. Use Ctrl+C no computador ou toque e segure para copiar no celular.';}
+}
+async function pfCompartilharLinkCelular(){try{await navigator.share({title:'Planejamento Financeiro',text:'Abra no navegador do celular para instalar.',url:pfLinkInstalacaoCelular()});}catch(e){if(e.name!=='AbortError')document.getElementById('pfInstalarCelularStatus').textContent='Não foi possível compartilhar. Use Copiar link.';}}
+async function pfInstalarNesteCelular(){
+ const status=document.getElementById('pfInstalarCelularStatus');
+ if(eventoInstalacaoPWA){try{const evento=eventoInstalacaoPWA;await evento.prompt();const choice=await evento.userChoice;eventoInstalacaoPWA=null;status.textContent=choice.outcome==='accepted'?'Instalação aceita. Confira o ícone no celular.':'Instalação cancelada. Você pode tentar novamente pelo menu do navegador.';}catch(e){status.textContent='Use o menu do navegador para instalar conforme as instruções acima.';}}
+ else status.textContent='Se o aplicativo já estiver instalado, abra pelo ícone. Caso contrário, use o menu do Chrome ou Compartilhar no Safari conforme as instruções acima.';
+}
+document.getElementById('pfInstalarCelular').addEventListener('keydown',e=>{if(e.key==='Escape')pfFecharInstalarCelular();});
+if(new URLSearchParams(location.search).get('instalar')==='1'){
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pfAbrirInstalarCelular,{once:true});else pfAbrirInstalarCelular();
+}
+</script>
+
+
+<style id="correcao-rolagem-relatorio-mensal-celular">
+@media (max-width:800px), (pointer:coarse) {
+ html.pf-mobile-device #modalRelatorioMensalMobile,
+ #modalRelatorioMensalMobile {
+  box-sizing:border-box;align-items:flex-end!important;
+  padding:8px 8px calc(82px + env(safe-area-inset-bottom, 0px))!important;
+ }
+ #modalRelatorioMensalMobile .rel46-card {
+  min-height:0;max-height:calc(100vh - 110px - env(safe-area-inset-bottom, 0px))!important;
+  max-height:calc(100dvh - 110px - env(safe-area-inset-bottom, 0px))!important;
+  overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  border-radius:16px!important;
+ }
+ #modalRelatorioMensalMobile .rel46-actions {
+  position:sticky;bottom:0;z-index:3;background:#fff;padding:10px 0 4px;flex-shrink:0;
+ }
+ body.dark-mode #modalRelatorioMensalMobile .rel46-actions {background:#1e293b;}
+ #modalRelatorioMensalMobile .rel46-actions button {min-height:44px;}
+}
+</style>
+<style id="tema-principal-celular">
+#pfMobileTemaPrincipal{display:none}
+@media(max-width:800px),(pointer:coarse){
+.pf-mobile-theme-row{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}
+.pf-mobile-theme-row #subtituloMesAno{min-width:0;flex:1}
+#pfMobileTemaPrincipal{display:flex;flex:0 0 44px}
+#pfMobileTemaPrincipal #pf-theme-toggle{position:static!important;inset:auto!important;width:44px!important;height:44px!important;margin:0!important;flex:0 0 44px!important;z-index:auto!important}
+}
+</style>
+<style id="correcao-contraste-barra-mobile">
+body.dark-mode #barraRapidaMobile{background:#0f172a!important;border-top:1px solid #64748b!important;box-shadow:0 -3px 12px #0004;color:#f8fafc!important;}
+body.dark-mode #barraRapidaMobile button:not(#btnNuvemMobile){background:#0f172a!important;color:#f8fafc!important;border-color:transparent!important;}
+body.dark-mode #barraRapidaMobile button i,
+body.dark-mode #barraRapidaMobile button span,
+body.dark-mode #barraRapidaMobile button small{color:#f8fafc!important;opacity:1!important;}
+body.dark-mode #barraRapidaMobile #btnNuvemMobile{color:#fff!important;}
+body.dark-mode #barraRapidaMobile button:not(#btnNuvemMobile):hover,
+body.dark-mode #barraRapidaMobile button:not(#btnNuvemMobile):active{background:#334155!important;}
+body.dark-mode #barraRapidaMobile button:focus-visible{outline:2px solid #93c5fd!important;outline-offset:-2px;}
+</style>
+<style id="pf-menu-superior-estilo">
+body:not(.auth-pendente){padding-left:0!important;padding-top:64px!important}
+#pfSaasSidebar{display:none!important}
+#pfMenuTopo{position:fixed;inset:0 0 auto;height:60px;z-index:150;background:#14263d;color:#fff;display:flex;align-items:center;gap:10px;padding:8px 20px;box-shadow:0 2px 8px #0003}
+#pfMenuTopo .pf-menu-marca{font-weight:700;margin-right:auto;white-space:nowrap;font-size:14px}
+#pfMenuTopo button{border:1px solid transparent;border-radius:8px;padding:10px 13px;color:#f8fafc;background:transparent;font-weight:600;font-size:13px;white-space:nowrap}
+#pfMenuTopo button:hover,#pfMenuTopo button[aria-expanded="true"]{background:#284766;border-color:#6e8dad}
+#pfMenuTopo #pfMenuCompacto{display:none}
+#pfMenuCortina{position:fixed;inset:60px 0 0;z-index:151;background:#0f172a66}
+#pfMenuLateral{position:fixed;top:60px;left:0;bottom:0;width:min(340px,92vw);z-index:152;background:#14263d;color:#f8fafc;box-shadow:8px 0 24px #0003;overflow:auto;padding:18px;}
+#pfMenuCortina[hidden],#pfMenuLateral[hidden]{display:none!important}
+#pfMenuLateral header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}#pfMenuLateral h2{color:#fff!important;font-size:17px;font-weight:700}
+#pfMenuLateral button{display:flex;align-items:center;gap:12px;width:100%;padding:12px;border-radius:9px;text-align:left;background:transparent;color:#e2e8f0!important;margin:4px 0;border:1px solid transparent}
+#pfMenuLateral button:hover{background:#284766;color:#fff!important}#pfMenuLateral header button{width:42px;justify-content:center;margin:0;padding:9px}
+#pfMenuLateral button i{width:20px;text-align:center}#pfMenuTopo button:focus-visible,#pfMenuLateral button:focus-visible{outline:3px solid #93c5fd;outline-offset:1px}
+body.auth-pendente #pfMenuTopo{display:none}
+@media(max-width:800px){#pfMenuTopo{padding:8px 12px}#pfMenuTopo .pf-menu-categoria{display:none}#pfMenuTopo #pfMenuCompacto{display:block}#pfMenuTopo .pf-menu-marca{font-size:13px}#pfMenuLateral{bottom:calc(80px + env(safe-area-inset-bottom,0px))}}
+@media print{#pfMenuTopo,#pfMenuLateral,#pfMenuCortina{display:none!important}body:not(.auth-pendente){padding-top:0!important}}
+</style>
+<nav id="pfMenuTopo" aria-label="Navegação do aplicativo">
+ <div id="pfMenuLinhaTitulo"><span class="pf-menu-marca"><i class="fa-solid fa-chart-pie"></i> Planejamento Financeiro</span><button id="pfSairBarraTopo" type="button" onclick="sairAplicativo()" title="Sair e bloquear o aplicativo" aria-label="Sair do aplicativo"
+                        class="ml-2 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm align-middle">
+                        <i class="fa-solid fa-right-from-bracket"></i><span>Sair</span>
+                    </button></div>
+ <button class="pf-menu-categoria" type="button" data-pf-categoria="principal" aria-expanded="false" aria-controls="pfMenuLateral">Menu principal ▾</button>
+ <button class="pf-menu-categoria" type="button" data-pf-categoria="acoes" aria-expanded="false" aria-controls="pfMenuLateral">Ações e ferramentas ▾</button>
+ <button class="pf-menu-categoria" type="button" data-pf-categoria="seguranca" aria-expanded="false" aria-controls="pfMenuLateral">Segurança ▾</button>
+ <button class="pf-menu-categoria" type="button" data-pf-categoria="ajuda" aria-expanded="false" aria-controls="pfMenuLateral">Ajuda e informações ▾</button>
+ <button id="pfMenuCompacto" type="button" data-pf-categoria="categorias" aria-expanded="false" aria-controls="pfMenuLateral">☰ Menu</button>
+</nav>
+<div id="pfMenuCortina" hidden></div>
+<aside id="pfMenuLateral" hidden role="dialog" aria-modal="true" aria-labelledby="pfMenuTitulo">
+ <header><h2 id="pfMenuTitulo"></h2><button type="button" id="pfMenuFechar" aria-label="Fechar menu">✕</button></header>
+ <div id="pfMenuItens"></div>
+</aside>
+<script>
+(function(){
+ const titles={principal:'Menu principal',acoes:'Ações e ferramentas',seguranca:'Segurança',ajuda:'Ajuda e informações',categorias:'Menu'};
+ let active=null,returnFocus=null;
+ const drawer=document.getElementById('pfMenuLateral'),veil=document.getElementById('pfMenuCortina'),items=document.getElementById('pfMenuItens');
+ function close(restore=true){drawer.hidden=true;veil.hidden=true;active=null;document.querySelectorAll('#pfMenuTopo button').forEach(b=>b.setAttribute('aria-expanded','false'));if(restore)returnFocus?.focus();}
+ function action(label,icon,run){const b=document.createElement('button');b.type='button';const i=document.createElement('i');i.className=icon||'fa-solid fa-angle-right';const text=document.createElement('span');text.textContent=label;b.append(i,text);b.addEventListener('click',run);items.appendChild(b);}
+ function proxy(source){if(!source)return;const label=source.textContent.replace(/\s+/g,' ').trim();if(!label)return;action(label,source.querySelector('i')?.className,()=>{close(false);source.click();});}
+ function sourceAction(name){return document.querySelector('#pf493Actions [onclick*="'+name+'"]')||document.querySelector('#pfMobileMaisPanel [onclick*="'+name+'"]')||document.querySelector('[onclick*="'+name+'"]');}
+ async function open(category,trigger){
+  if(category==='seguranca' && (typeof window.ehAdministrador!=='function'||!(await window.ehAdministrador()))){alert('Acesso permitido somente para usuários com perfil de Administrador.');return;}
+  if(active===category){close();return;}
+  if(trigger)returnFocus=trigger;
+  if(typeof fecharAcoesMobile==='function')fecharAcoesMobile();
+  items.replaceChildren();document.getElementById('pfMenuTitulo').textContent=titles[category];
+  if(category==='categorias')Object.keys(titles).filter(k=>k!=='categorias').forEach(k=>action(titles[k],'fa-solid fa-angle-right',()=>open(k)));
+  if(category==='principal')document.querySelectorAll('#pfSaasSidebar .pf-nav a').forEach(proxy);
+  if(category==='acoes'){
+   ['abrirConfiguracaoNomeUsuario','openModal','abrirGerenciarCadastros','adicionarNovaRubricaPrompt','adicionarNovoSubItemPrompt','abrirCalendarioFinanceiro','abrirRelatorioMensalMobile','openGraficosModal','abrirCalculadora','abrirSegurancaBanco'].forEach(name=>{
+    if(name==='abrirSegurancaBanco')return;
+    proxy(sourceAction(name));
+   });
+   proxy(document.getElementById('btnInstalarDesktop'));
+   // Include named actions whose function names vary across supported versions.
+   const originals=[...document.querySelectorAll('#pf493Actions button,#pfMobileMaisPanel .pf-mobile-mais-grid button')];
+   for(const term of ['Calendário','Calculadora','Histórico','Lixeira','Exportar PDF']){
+    if([...items.querySelectorAll('button')].some(b=>b.textContent.includes(term)))continue;
+    proxy(originals.find(b=>b.textContent.includes(term)));
+   }
+  }
+  if(category==='seguranca')document.querySelectorAll('#pf493Actions .pf-seguranca-dropdown button').forEach(proxy);
+  if(category==='ajuda')document.querySelectorAll('#pfHelpMenu .pf-help-dropdown button').forEach(proxy);
+  active=category;drawer.hidden=false;veil.hidden=false;
+  document.querySelectorAll('#pfMenuTopo button').forEach(b=>b.setAttribute('aria-expanded',String(Boolean(b.dataset.pfCategoria===category||(b.id==='pfMenuCompacto'&&category)))));
+  document.getElementById('pfMenuFechar').focus();
+ }
+ document.querySelectorAll('#pfMenuTopo [data-pf-categoria]').forEach(b=>b.addEventListener('click',()=>open(b.dataset.pfCategoria,b)));
+ veil.addEventListener('click',()=>close());document.getElementById('pfMenuFechar').addEventListener('click',()=>close());
+ document.addEventListener('keydown',e=>{
+  if(drawer.hidden)return;
+  if(e.key==='Escape'){e.preventDefault();close();}
+  if(e.key==='Tab'){const buttons=[...drawer.querySelectorAll('button')];const first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
+ });
+})();
+</script>
+
+<style id="ajuste-menu-abaixo-titulo">
+@media(min-width:801px){
+ body:not(.auth-pendente){padding-top:104px!important;}
+ #pfMenuTopo{height:100px!important;display:flex!important;flex-wrap:wrap;align-content:center;justify-content:flex-start!important;gap:2px 8px;padding:10px 20px!important;}
+ #pfMenuTopo .pf-menu-marca{flex:0 0 100%;width:100%;margin:0 0 5px!important;line-height:24px;}
+ #pfMenuTopo .pf-menu-categoria{margin:0!important;}
+ #pfMenuCortina{top:100px!important;}
+ #pfMenuLateral{top:100px!important;}
+}
+@media print{body:not(.auth-pendente){padding-top:0!important;}}
+</style>
+<style id="sair-na-barra-superior">
+#pfMenuTopo #pfMenuLinhaTitulo{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:1;min-width:0;}
+#pfMenuTopo #pfMenuLinhaTitulo .pf-menu-marca{width:auto;flex:initial;margin:0!important;}
+#pfMenuTopo #pfSairBarraTopo{margin:0!important;flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;background:#334155;color:#fff;border:1px solid #64748b;padding:8px 12px;}
+#pfMenuTopo #pfSairBarraTopo:hover{background:#475569;}
+@media(min-width:801px){#pfMenuTopo #pfMenuLinhaTitulo{flex:0 0 100%;width:100%;margin-bottom:4px;}}
+@media(max-width:800px){#pfMenuTopo #pfMenuLinhaTitulo .pf-menu-marca{white-space:normal;font-size:12px;}#pfMenuTopo #pfSairBarraTopo{padding:7px 9px;font-size:12px;}}
+</style>
+<style id="posicao-nuvem-tema-novo-lancamento">
+#pfGreetingControls{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-left:auto;}
+#pfGreetingControls button[onclick="abrirConfiguracaoNuvem()"]{display:inline-flex!important;align-items:center;gap:6px;min-height:40px;white-space:nowrap;}
+#pfGreetingTheme{display:flex;flex:0 0 40px;}
+#pfGreetingTheme #pf-theme-toggle{position:static!important;inset:auto!important;display:inline-flex!important;flex:0 0 40px!important;width:40px!important;height:40px!important;margin:0!important;z-index:auto!important;align-items:center;justify-content:center;}
+#pfPainelAcoes{flex-wrap:wrap;justify-content:flex-end;align-items:center;}
+#pfPainelAcoes button{display:inline-flex!important;align-items:center;justify-content:center;gap:5px;min-height:40px;white-space:nowrap;}
+@media(max-width:600px){#pfGreetingControls{gap:6px;}#pfGreetingControls button{padding:8px!important;font-size:11px;}#pfPainelAcoes{justify-content:flex-start;}}
+@media print{#pfGreetingControls,#pfPainelAcoes{display:none!important;}}
+</style>
+<style id="deslocamento-ancoras-menu">html{scroll-padding-top:116px}#pf495Greeting,#painelGerencial,#tabelaLancamentosWrapper{scroll-margin-top:116px}@media(max-width:800px){html{scroll-padding-top:72px}#pf495Greeting,#painelGerencial,#tabelaLancamentosWrapper{scroll-margin-top:72px}}</style>
+<style id="cabecalho-titulo-sem-botoes">
+#appConteudo > header .acoes-profissionais{display:none!important;}
+#appConteudo > header{justify-content:flex-start!important;}
+</style>
+
+<style id="correcao-janela-nuvem-sobre-menu">
+#modalConfiguracaoNuvem{z-index:10060!important;box-sizing:border-box;overflow-y:auto;padding:16px!important;}
+#modalConfiguracaoNuvem > div{max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow-y:auto!important;}
+#modalConfiguracaoNuvem > div > div:first-child{position:sticky;top:0;z-index:2;}
+#modalConfiguracaoNuvem button[onclick="fecharConfiguracaoNuvem()"]{min-width:40px;min-height:40px;display:flex;align-items:center;justify-content:center;color:#fff!important;}
+</style>
+<script>
+document.addEventListener('keydown',function(event){
+ const modal=document.getElementById('modalConfiguracaoNuvem');
+ if(event.key==='Escape' && modal && !modal.classList.contains('hidden')){
+  event.preventDefault();fecharConfiguracaoNuvem();
+ }
+});
+</script>
+<style id="graficos-acima-barra-superior">
+@media screen {
+ #modalGraficos{z-index:10060!important;}
+ #modalGraficos > div{max-height:calc(100vh - 32px)!important;max-height:calc(100dvh - 32px)!important;overflow-y:auto!important;}
+}
+</style>
+<style id="barra-superior-compacta">
+@media(min-width:801px){
+ body:not(.auth-pendente){padding-top:80px!important;}
+ #pfMenuTopo{height:76px!important;padding:5px 18px!important;gap:0 6px!important;}
+ #pfMenuTopo #pfMenuLinhaTitulo{margin-bottom:1px!important;min-height:28px;}
+ #pfMenuTopo #pfMenuLinhaTitulo .pf-menu-marca{font-size:13px;line-height:20px;}
+ #pfMenuTopo .pf-menu-categoria{padding:7px 11px!important;font-size:12px;line-height:18px;}
+ #pfMenuTopo #pfSairBarraTopo{padding:5px 10px!important;font-size:12px;min-height:28px;}
+ #pfMenuCortina,#pfMenuLateral{top:76px!important;}
+ html{scroll-padding-top:88px!important;}
+ #pf495Greeting,#painelGerencial,#tabelaLancamentosWrapper{scroll-margin-top:88px!important;}
+}
+@media print{body:not(.auth-pendente){padding-top:0!important;}}
+</style>
+<style>
+#pfIndicadores{position:fixed;left:0;right:0;bottom:var(--pf-ind-bottom,0px);height:34px;z-index:94;display:flex;align-items:center;gap:8px;padding:0 10px;background:#eef3f8;color:#24364b;border-top:1px solid #cbd5e1;font-size:12px;box-sizing:border-box}
+#pfIndicadores a{color:inherit;white-space:nowrap;text-decoration:underline}#pfIndicadores button,#pfMostrarIndicadores{font-size:12px;border:1px solid #94a3b8;border-radius:5px;padding:3px 7px;background:#fff;color:#24364b;cursor:pointer;white-space:nowrap}
+#pfIndViewport{overflow:hidden;flex:1;min-width:0}#pfIndTrack{display:flex;width:max-content;animation:pfIndMove 65s linear infinite}#pfIndTrack span{white-space:nowrap;padding-right:64px}#pfIndicadores:hover #pfIndTrack,#pfIndicadores:focus-within #pfIndTrack,#pfIndicadores.pf-paused #pfIndTrack{animation-play-state:paused}
+@keyframes pfIndMove{to{transform:translateX(-50%)}}#pfMostrarIndicadores{position:fixed;right:10px;bottom:var(--pf-ind-bottom,0px);z-index:94;height:30px}#pfIndicadores[hidden],#pfMostrarIndicadores[hidden]{display:none!important}
+body{padding-bottom:calc(var(--pf-ind-bottom,0px) + 44px)!important}body.dark-mode #pfIndicadores{background:#172033;color:#e2e8f0;border-color:#475569}body.dark-mode #pfIndicadores button,body.dark-mode #pfMostrarIndicadores{background:#26364d;color:#f1f5f9;border-color:#64748b}body.auth-pendente #pfIndicadores,body.auth-pendente #pfMostrarIndicadores{display:none!important}
+@media(prefers-reduced-motion:reduce){#pfIndTrack{animation:none}#pfIndViewport{overflow-x:auto}}
+@media(max-width:600px){#pfIndicadores{gap:5px;padding:0 5px;font-size:11px}#pfIndicadores a{font-size:10px}}
+@media print{#pfIndicadores,#pfMostrarIndicadores{display:none!important}body{padding-bottom:0!important}}
+</style>
+<aside id="pfIndicadores" aria-label="Indicadores econômicos do Banco Central"><a href="https://www.bcb.gov.br/estatisticas" target="_blank" rel="noopener noreferrer" title="Fonte: Banco Central do Brasil, séries SGS 432, 195 e 1">BCB · SGS</a><div id="pfIndViewport" tabindex="0" aria-label="Indicadores; passe o mouse ou use Pausar para parar o movimento"><div id="pfIndTrack"><span>Consultando indicadores econômicos…</span><span aria-hidden="true">Consultando indicadores econômicos…</span></div></div><button id="pfPausarIndicadores" type="button" aria-pressed="false">Pausar</button><button id="pfOcultarIndicadores" type="button" aria-label="Ocultar indicadores">Ocultar</button></aside><button id="pfMostrarIndicadores" type="button" hidden>Mostrar indicadores</button>
+<script>
+(()=>{
+ const bar=document.getElementById('pfIndicadores'),restore=document.getElementById('pfMostrarIndicadores'),pause=document.getElementById('pfPausarIndicadores'),key='pf_indicadores_bcb_v1';let paused=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const series=[{id:432,label:'Meta Selic',unit:'% a.a.'},{id:195,label:'Poupança (depósitos desde 04/05/2012)',unit:'% no período mensal'},{id:1,label:'Dólar comercial venda',unit:'R$/US$'}];
+ function layout(){const nav=document.getElementById('barraRapidaMobile'),r=nav?.getBoundingClientRect();const height=r&&getComputedStyle(nav).display!=='none'&&r.height>0?Math.max(0,innerHeight-r.top):0;document.documentElement.style.setProperty('--pf-ind-bottom',height+'px');}
+ function setPause(){bar.classList.toggle('pf-paused',paused);pause.textContent=paused?'Continuar':'Pausar';pause.setAttribute('aria-pressed',String(paused));}
+ pause.onclick=()=>{paused=!paused;setPause();};document.getElementById('pfOcultarIndicadores').onclick=()=>{bar.hidden=true;restore.hidden=false;};restore.onclick=()=>{bar.hidden=false;restore.hidden=true;layout();};setPause();layout();addEventListener('resize',layout);if(window.ResizeObserver){const nav=document.getElementById('barraRapidaMobile');if(nav)new ResizeObserver(layout).observe(nav);}
+ function date(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();}
+ function valid(row){return row&&/^\d{2}\/\d{2}\/\d{4}$/.test(row.data)&&String(row.valor).trim()!==''&&Number.isFinite(Number(row.valor));}
+ let busy=false;
+ async function update(){if(busy)return;busy=true;let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){}const end=new Date(),start=new Date();start.setDate(end.getDate()-45);
+ try{const results=await Promise.allSettled(series.map(async s=>{const url='https://api.bcb.gov.br/dados/serie/bcdata.sgs.'+s.id+'/dados?formato=json&dataInicial='+date(start)+'&dataFinal='+date(end);const response=await fetch(url,{signal:AbortSignal.timeout(12000),cache:'no-store'});if(!response.ok)throw Error('BCB indisponível');const rows=await response.json();if(!Array.isArray(rows))throw Error('Resposta inválida');const row=rows.filter(valid).sort((a,b)=>a.data.split('/').reverse().join('').localeCompare(b.data.split('/').reverse().join(''))).pop();if(!row)throw Error('Sem dados');return row;}));
+ const texts=series.map((s,i)=>{const result=results[i],fresh=result.status==='fulfilled';let row=fresh?result.value:saved[s.id];if(fresh)saved[s.id]=row;if(!valid(row))return s.label+': indisponível';const value=Number(row.valor).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:s.id===1?4:4});return s.label+': '+value+' '+s.unit+' · referência '+row.data+(fresh?'':' · último dado salvo; consulta indisponível');});
+ try{localStorage.setItem(key,JSON.stringify(saved));}catch(e){}const text=texts.join('     •     ');bar.querySelectorAll('#pfIndTrack span').forEach(span=>span.textContent=text);
+ }finally{busy=false;}}
+ update();setInterval(()=>{if(!document.hidden)update();},3600000);addEventListener('online',update);
+})();
+</script>
+
 </body>
 </html>

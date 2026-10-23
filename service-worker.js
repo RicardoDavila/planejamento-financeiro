@@ -1,6 +1,6 @@
 
-/* Planejamento Financeiro - PWA V4.10.10 */
-const CACHE_NAME = 'planejamento-financeiro-v4-10-10-cache-fix';
+/* Planejamento Financeiro - PWA V4.11.0 */
+const CACHE_NAME = 'planejamento-financeiro-v4-11-0';
 
 const APP_SHELL = [
   './',
@@ -14,16 +14,18 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
+
   );
 });
+
+self.addEventListener('message', event => { if(event.data?.type === 'SKIP_WAITING') self.skipWaiting(); });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(
         keys
-          .filter((key) => key !== CACHE_NAME)
+          .filter((key) => key.startsWith('planejamento-financeiro-') && key !== CACHE_NAME)
           .map((key) => caches.delete(key))
       ))
       .then(() => self.clients.claim())
@@ -36,6 +38,11 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
 
+  const scopeUrl = new URL(self.registration.scope);
+  if(url.origin === scopeUrl.origin && !url.pathname.startsWith(scopeUrl.pathname)) return;
+  if(url.origin === scopeUrl.origin && url.pathname === scopeUrl.pathname + 'version.json'){event.respondWith(fetch(request,{cache:'no-store'}));return;}
+  // Não interceptar indicadores econômicos nem conteúdo protegido.
+  if(url.hostname === 'api.bcb.gov.br') return;
   // Não interceptar chamadas do Supabase.
   if (url.hostname.endsWith('.supabase.co')) return;
 
