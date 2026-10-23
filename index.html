@@ -2998,6 +2998,14 @@ body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{ba
             });
 
             const instalar = async () => {
+                if (jaInstalado()) {
+                    alert('APLICATIVO JÁ ABERTO COMO INSTALADO\n\nVocê já está usando o Planejamento Financeiro na janela do aplicativo. Não é necessário instalar novamente.\n\nPara instalar em outro PC ou celular, abra o link do aplicativo no navegador daquele aparelho.');
+                    return;
+                }
+                if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+                    alert('Abra a versão publicada em https://ricardodavila.github.io/planejamento-financeiro/ no Chrome para instalar.');
+                    return;
+                }
                 if (eventoInstalacaoPWA) {
                     eventoInstalacaoPWA.prompt();
                     try { await eventoInstalacaoPWA.userChoice; } catch(e) {}
@@ -3019,12 +3027,12 @@ body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{ba
                 } else {
                     alert(
                         'INSTALAR PLANEJAMENTO FINANCEIRO\n\n' +
-                        'O Chrome não disponibilizou a instalação diretamente neste momento.\n\n' +
+                        'A instalação automática não está disponível nesta aba. Isso também pode acontecer se o aplicativo já estiver instalado neste perfil do Chrome.\n\n' +
                         'Para criar o aplicativo no Desktop:\n' +
                         '1. Abra o Planejamento Financeiro pelo Google Chrome na versão publicada no GitHub Pages.\n' +
-                        '2. Procure o ícone de instalação na barra de endereço (⊕).\n' +
-                        '3. Clique no ícone e escolha “Instalar”.\n\n' +
-                        'Se o ícone não aparecer, atualize a página e aguarde alguns segundos.'
+                        '2. Abra o menu ⋮ do Chrome e procure Transmitir, salvar e compartilhar > Instalar página como app (o nome pode variar).\n' +
+                        '3. Se houver a opção, confirme em Instalar. O ícone de instalação na barra de endereço também pode ser usado.\n\n' +
+                        'Se aparecer Abrir no aplicativo, ele já está instalado. Para conferir os aplicativos deste perfil, digite chrome://apps na barra de endereço. Não é necessário desinstalar nem apagar dados.'
                     );
                 }
             };
@@ -7825,7 +7833,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.11.0';
+ const CURRENT_VERSION='V4.11.1';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
