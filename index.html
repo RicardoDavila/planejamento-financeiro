@@ -1883,6 +1883,8 @@ body.dark-mode #pfHelpModal .pf-help-close{background:#334155;color:#f8fafc}
 #pfAvisosConteudo button[onclick^="fecharAlerta"]{display:none}
 body.dark-mode #pfAvisosDia{background:#172033;color:#f1f5f9;border-color:#475569}
 body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{background:#26364d;color:#dbeafe;border-color:#64748b}
+</style><style>
+.pf-mobile-pdf{height:100%;min-height:0;display:flex;flex-direction:column;gap:8px}.pf-mobile-pdf-controls{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;flex-shrink:0;padding:4px;background:#f1f5f9;border-radius:8px}.pf-mobile-pdf-controls button{border:1px solid #94a3b8;border-radius:7px;background:#fff;color:#1e293b;padding:9px;font-size:12px}.pf-mobile-pdf-controls button:disabled{opacity:.45}.pf-mobile-pdf-controls span{font-size:12px;min-width:55px;text-align:center}.pf-mobile-pdf-area{min-height:0;flex:1;overflow:auto;background:#cbd5e1;text-align:center;padding:10px;overscroll-behavior:contain}.pf-mobile-pdf-area canvas{display:block;margin:0 auto;background:#fff;box-shadow:0 2px 6px #0003}.pf-mobile-pdf-area canvas[hidden],.pf-mobile-pdf-area p[hidden]{display:none}.pf-mobile-pdf-area p{background:white;color:#1e293b;padding:10px;border-radius:8px}body.dark-mode .pf-mobile-pdf-controls{background:#26364d}body.dark-mode .pf-mobile-pdf-controls button{background:#334155;color:#f1f5f9}#pfHelpModal .pf-help-pdf-viewer #pfHelpModalBody{overflow:hidden}
 </style></head>
 <aside id="pfSaasSidebar" aria-label="Navegação principal"><div class="pf-brand"><div class="pf-brand-icon"><i class="fa-solid fa-chart-pie"></i></div><div><strong>Planejamento<br>Financeiro</strong><small>GESTÃO FINANCEIRA</small></div></div><div class="pf-nav-label">Menu principal</div><nav class="pf-nav"><a class="active" href="#painelGerencial"><i class="fa-solid fa-house"></i>Dashboard</a><a href="#tabelaLancamentosWrapper"><i class="fa-solid fa-arrow-right-arrow-left"></i>Lançamentos</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroTipo')?.focus(),80)"><i class="fa-solid fa-circle-arrow-up"></i>Receitas e despesas</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroRubrica')?.focus(),80)"><i class="fa-solid fa-layer-group"></i>Cadastros e rubricas</a><a href="#painelGerencial"><i class="fa-solid fa-chart-column"></i>Relatórios</a></nav>
 <div class="pf-nav-label pf-help-section-label">Ajuda e informações</div>
@@ -7778,7 +7780,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.11.4';
+ const CURRENT_VERSION='V4.11.5';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -7788,12 +7790,12 @@ body.dark-mode .pf-filtro-item > label {
   {label:'Manual do Administrador',file:'Manual_do_Administrador_V4.10.10.pdf',admin:true},
   {label:'Guia de Instalação dos Serviços Online',file:'Guia_de_Instalacao_dos_Servicos_Online_V4.10.10.pdf',admin:true}
  ];
- function show(title,html){const t=document.getElementById('pfHelpModalTitle'),b=document.getElementById('pfHelpModalBody'),m=document.getElementById('pfHelpModal');if(!t||!b||!m)return;t.textContent=title;b.innerHTML=html;const card=m.querySelector('.pf-help-modal-card');if(card){card.classList.toggle('pf-help-search-view',title==='Pesquisar dúvidas nos manuais');}b.scrollTop=0;m.classList.add('is-open');m.setAttribute('aria-hidden','false');}
+ function show(title,html){pfEncerrarLeitorManual();const t=document.getElementById('pfHelpModalTitle'),b=document.getElementById('pfHelpModalBody'),m=document.getElementById('pfHelpModal');if(!t||!b||!m)return;t.textContent=title;b.innerHTML=html;const card=m.querySelector('.pf-help-modal-card');if(card){card.classList.toggle('pf-help-search-view',title==='Pesquisar dúvidas nos manuais');}b.scrollTop=0;m.classList.add('is-open');m.setAttribute('aria-hidden','false');}
  function closeMenu(){const d=document.getElementById('pfHelpMenu');if(d)d.open=false;}
  function versionParts(v){return String(v||'').replace(/^v/i,'').match(/\d+/g)?.map(Number)||[0];}
  function compareVersions(a,b){const x=versionParts(a),y=versionParts(b);for(let i=0;i<Math.max(x.length,y.length);i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0?1:-1;}return 0;}
  function linkButton(url,label){return '<div class="pf-help-manuals"><a href="'+url+'" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i><span>'+label+'</span><i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto"></i></a></div>';}
- window.pfCloseHelpModal=function(){const m=document.getElementById('pfHelpModal');if(m){m.classList.remove('is-open');m.setAttribute('aria-hidden','true');}const c=document.querySelector('#pfHelpModal .pf-help-modal-card');if(c)c.classList.remove('pf-help-pdf-viewer');}
+ window.pfCloseHelpModal=function(){pfEncerrarLeitorManual();const m=document.getElementById('pfHelpModal');if(m){m.classList.remove('is-open');m.setAttribute('aria-hidden','true');}const c=document.querySelector('#pfHelpModal .pf-help-modal-card');if(c)c.classList.remove('pf-help-pdf-viewer');}
  window.pfOpenManuals=function(){
   const links=manuals.map((m,i)=>'<a href="#" data-pf-manual-index="'+i+'"><i class="fa-solid fa-file-pdf"></i><span>'+m.label+'</span><i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto"></i></a>').join('');
   show('Manuais e documentação','<p>Selecione um documento. O acesso será verificado pelo Supabase.</p><div class="pf-help-manuals">'+links+'</div><p id="pfManualStatus" role="status" aria-live="polite"></p>');closeMenu();
@@ -7885,6 +7887,45 @@ body.dark-mode .pf-filtro-item > label {
   }catch(err){if(run===pfPesquisaExecucao&&out.isConnected){out.replaceChildren();status.textContent=err.message||'Não foi possível pesquisar os manuais. Tente novamente.';}}finally{button.disabled=false;}
  }
 
+ let pfLeitorManual=null;
+ function pfEncerrarLeitorManual(){const viewer=pfLeitorManual;pfLeitorManual=null;if(viewer)viewer.close();}
+ async function pfMostrarPdfCelular(item,auth,body,pagina){
+  pfEncerrarLeitorManual();
+  let closed=false,pdf=null,task=null,pageNumber=1,renderNumber=0,resizeTimer=null;
+  const viewer={close(){closed=true;clearTimeout(resizeTimer);window.removeEventListener('resize',onResize);task?.cancel();if(pdf)pdf.destroy().catch(()=>{});}};
+  pfLeitorManual=viewer;
+  const root=document.createElement('div');root.className='pf-mobile-pdf';
+  const controls=document.createElement('div');controls.className='pf-mobile-pdf-controls';
+  const previous=document.createElement('button');previous.type='button';previous.textContent='Anterior';previous.disabled=true;
+  const next=document.createElement('button');next.type='button';next.textContent='Próxima';next.disabled=true;
+  const counter=document.createElement('span');counter.setAttribute('role','status');counter.textContent='Carregando…';
+  const download=document.createElement('button');download.type='button';download.textContent='Baixar PDF';download.disabled=true;
+  const area=document.createElement('div');area.className='pf-mobile-pdf-area';
+  const status=document.createElement('p');status.setAttribute('role','status');status.textContent='Carregando as páginas do manual…';
+  const canvas=document.createElement('canvas');canvas.setAttribute('role','img');canvas.hidden=true;
+  area.append(status,canvas);controls.append(previous,counter,next,download);root.append(controls,area);body.replaceChildren(root);
+  async function render(){
+   if(closed||!pdf)return;const run=++renderNumber;task?.cancel();
+   previous.disabled=true;next.disabled=true;status.hidden=false;status.textContent='Carregando página '+pageNumber+'…';
+   try{
+    const page=await pdf.getPage(pageNumber);if(closed||run!==renderNumber)return;
+    const width=Math.max(160,Math.min(1200,area.clientWidth-20));const unit=page.getViewport({scale:1});const scale=width/unit.width;const ratio=Math.min(window.devicePixelRatio||1,2);const viewport=page.getViewport({scale:scale*ratio});
+    canvas.hidden=false;canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);canvas.style.width=width+'px';canvas.style.height=(viewport.height/ratio)+'px';canvas.setAttribute('aria-label',item.label+' — página '+pageNumber+' de '+pdf.numPages);
+    task=page.render({canvasContext:canvas.getContext('2d'),viewport});await task.promise;
+    if(closed||run!==renderNumber)return;status.hidden=true;counter.textContent=pageNumber+' / '+pdf.numPages;area.scrollTop=0;
+   }catch(error){if(closed||run!==renderNumber||error.name==='RenderingCancelledException')return;status.textContent='Não foi possível desenhar esta página. Você pode usar Baixar PDF para consultar o documento.';}
+   finally{if(!closed&&run===renderNumber){previous.disabled=pageNumber<=1;next.disabled=pageNumber>=pdf.numPages;}}
+  }
+  function onResize(){clearTimeout(resizeTimer);resizeTimer=setTimeout(render,180);}
+  previous.onclick=()=>{if(pageNumber>1){pageNumber--;render();}};next.onclick=()=>{if(pdf&&pageNumber<pdf.numPages){pageNumber++;render();}};
+  try{
+   const data=await pfPedidoArquivoManual(item,auth,false);if(closed)return;
+   download.disabled=false;download.onclick=async()=>{download.disabled=true;try{const current=await pfAutenticacaoManuais();if(current.user.id!==auth.user.id)throw Error('A conta mudou. Abra o manual novamente.');const blob=await pfPedidoArquivoManual(item,current,false);if(closed)return;const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=item.file;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}catch(e){status.hidden=false;status.textContent=e.message;}finally{download.disabled=false;}};
+   const pdfjs=await carregarLeitor();if(closed)return;const loader=pdfjs.getDocument({data:new Uint8Array(await data.arrayBuffer()),isEvalSupported:false});pdf=await loader.promise;if(closed){await pdf.destroy();return;}
+   pageNumber=Math.max(1,Math.min(pdf.numPages,Number(pagina)||1));window.addEventListener('resize',onResize);await render();
+  }catch(error){if(!closed){counter.textContent='PDF';status.textContent='Não foi possível exibir as páginas: '+error.message+(download.disabled?'':' Use Baixar PDF para abrir no leitor do aparelho.');}}
+ }
+
  async function pfAbrirManualProtegido(item, novaAba, pagina=1){
   const status=document.getElementById('pfManualStatus');
   const informar=(msg)=>{if(status)status.textContent=msg;};
@@ -7902,6 +7943,7 @@ body.dark-mode .pf-filtro-item > label {
    if(!card||!body||!title)throw new Error('Não foi possível abrir o visualizador de documentos.');
    card.classList.add('pf-help-pdf-viewer');
    title.textContent=item.label;
+   if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.matchMedia('(pointer: coarse)').matches){await pfMostrarPdfCelular(item,auth,body,pagina);return;}
    const safeUrl=(data.signedUrl+'#page='+Math.max(1,Number(pagina)||1)).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
    const safeTitle=item.label.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
    body.innerHTML='<iframe class="pf-help-pdf-frame" title="'+safeTitle+'" src="'+safeUrl+'"></iframe>';
