@@ -4299,7 +4299,7 @@ body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{ba
         function atualizarStatusNuvem(texto, ok=false) {
             const badge = document.getElementById('statusNuvemBadge');
             const msg = document.getElementById('nuvemStatusMsg');
-            if (badge) badge.textContent = ok ? 'Online' : texto;
+            if (badge) {badge.textContent=ok?'Online':/falha|erro|conflito/i.test(texto)?'Falha na sincronização':/sincronizando/i.test(texto)?'Sincronizando…':'Conectar';badge.title=texto;}
             if (msg) {
                 msg.textContent = texto;
                 msg.className = 'text-xs rounded-lg border p-3 ' + (ok ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-600');
@@ -4406,36 +4406,67 @@ body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{ba
             return Array.isArray(linhas) && linhas.length ? linhas[0] : null;
         }
 
-        async function salvarPacoteNuvem() {
-            // Sincronização habilitada na distribuição.
-            const session = await obterSessaoNuvem();
-            if (!session) throw new Error('Este dispositivo ainda não está conectado à conta de nuvem.');
-            // Proteção conservadora: não sobrescrever alterações remotas não vistas por este dispositivo.
-            // Esta verificação reduz riscos, mas não substitui uma operação atômica no servidor.
-            const remotoAntesDeSalvar = await carregarPacoteNuvem();
-            const ultimaSyncConhecida = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
-            const versaoRemota = remotoAntesDeSalvar?.updated_at || '';
-            if (remotoAntesDeSalvar?.payload && (!ultimaSyncConhecida || versaoRemota !== ultimaSyncConhecida)) {
-                const aviso = 'Sincronização interrompida para proteger seus dados: a nuvem contém uma versão que este dispositivo ainda não confirmou. Nenhum dado local foi apagado. Faça um backup antes de resolver a divergência.';
-                atualizarStatusNuvem(aviso);
-                throw new Error(aviso);
-            }
-            const pacote = coletarPacoteNuvem();
-            const agora = new Date().toISOString();
-            const headers = await obterHeadersRestNuvem(session);
-            headers['Prefer'] = 'resolution=merge-duplicates,return=minimal';
-            const resposta = await fetch(REST_SYNC_URL, {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({ user_id: session.user.id, payload: pacote, updated_at: agora })
-            });
-            if (!resposta.ok) {
-                const texto = await resposta.text();
-                throw new Error('Supabase REST ' + resposta.status + ': ' + (texto || resposta.statusText));
-            }
-            localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, agora);
-            atualizarStatusNuvem('Dados enviados para a nuvem com sucesso.', true);
-            return true;
+
+
+        let pfFilaEnvio=Promise.resolve();
+        let pfEnviosPendentes=0;
+        function pfInstanteNuvem(valor){
+            if(!valor)return null;
+            const ms=Date.parse(valor);if(!Number.isFinite(ms))throw new Error('Data de sincronização inválida.');
+            const fraction=(String(valor).match(/\.(\d+)(?:Z|[+-]\d\d:?\d\d)$/i)?.[1]||'').padEnd(6,'0');
+            return BigInt(ms)*1000n+BigInt(fraction.slice(3,6)||'0');
+        }
+        function pfMesmaVersao(a,b){return !!a&&!!b&&pfInstanteNuvem(a)===pfInstanteNuvem(b);}
+        function pfTemAlteracoesLocais(){
+            const token=localStorage.getItem('pf_alteracao_token');
+            if(token)return token!==localStorage.getItem('pf_alteracao_confirmada');
+            const local=localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL),base=localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO);
+            return !!local&&(!base||pfInstanteNuvem(local)>pfInstanteNuvem(base));
+        }
+        async function salvarPacoteNuvem(){
+            pfEnviosPendentes++;
+            const operation=async()=>{
+                const session=await obterSessaoNuvem();
+                if(!session)throw new Error('Entre novamente na conta.');
+                const remote=await carregarPacoteNuvem();
+                const known=localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO)||'';
+                if(remote?.payload&&!pfMesmaVersao(remote.updated_at,known))throw new Error('Conflito de sincronização: a nuvem foi alterada desde a última confirmação. Os dados locais foram preservados.');
+                const payload=coletarPacoteNuvem(),token=localStorage.getItem('pf_alteracao_token')||'';
+                const headers=await obterHeadersRestNuvem(session);headers.Prefer='return=representation';
+                
+                const url=remote?.payload?REST_SYNC_URL+'?user_id=eq.'+encodeURIComponent(session.user.id)+'&updated_at=eq.'+encodeURIComponent(remote.updated_at):REST_SYNC_URL;
+                const nextTime=Math.max(Date.now(),remote?.updated_at?Date.parse(remote.updated_at)+1:0);
+                const body={payload,updated_at:new Date(nextTime).toISOString()};if(!remote?.payload)body.user_id=session.user.id;
+                const response=await fetch(url,{method:remote?.payload?'PATCH':'POST',headers,body:JSON.stringify(body)});
+                if(!response.ok)throw new Error('Não foi possível confirmar o envio: Supabase '+response.status+'. Seus dados locais foram preservados.');
+                const rows=await response.json();
+                if(!Array.isArray(rows)||rows.length!==1||!rows[0].updated_at)throw new Error('O banco remoto mudou durante o envio. Nenhuma confirmação foi registrada. Seus dados locais foram preservados.');
+                localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO,rows[0].updated_at);
+                localStorage.setItem('pf_alteracao_confirmada',token);
+                atualizarStatusNuvem('Dados enviados para a nuvem com sucesso.',true);return true;
+            };
+            const run=async()=>{const current=await obterSessaoNuvem();if(!current)throw new Error('Entre na conta da nuvem.');return navigator.locks?.request?navigator.locks.request('pf-pessoal-envio-'+current.user.id,{mode:'exclusive'},operation):operation();};
+            const pending=pfFilaEnvio.then(run,run);pfFilaEnvio=pending.catch(()=>{});
+            try{return await pending;}finally{pfEnviosPendentes--;}
+        }
+        async function pfSincronizarConta(){
+            await pfFilaEnvio;
+            const remote=await carregarPacoteNuvem();
+            if(!remote?.payload){await salvarPacoteNuvem();return 'enviado';}
+            if(pfTemAlteracoesLocais()){await salvarPacoteNuvem();return 'enviado';}
+            aplicarPacoteNuvem(remote.payload);
+            localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO,remote.updated_at);
+            localStorage.setItem(CHAVE_ULTIMA_ALTERACAO_LOCAL,remote.updated_at);
+            localStorage.setItem('pf_alteracao_confirmada',localStorage.getItem('pf_alteracao_token')||'');
+            atualizarStatusNuvem('Banco da sua conta carregado neste dispositivo.',true);return 'carregado';
+        }
+        async function sincronizarNuvemAoAbrir(){
+            try{await pfSincronizarConta();return true;}
+            catch(error){atualizarStatusNuvem('Falha na sincronização: '+error.message);return false;}
+        }
+        async function sincronizarAgoraNuvem(){
+            try{clearTimeout(sincronizacaoNuvemTimer);atualizarStatusNuvem('Sincronizando…');const result=await pfSincronizarConta();popularSelectsDinamicos();renderTable();atualizarPainelGerencial();atualizarInfoBanco();verificarContasVencendoHoje();alert(result==='enviado'?'Sincronização concluída. Os dados desta conta foram enviados para a nuvem.':'Sincronização concluída. Os dados desta conta foram carregados neste dispositivo.');}
+            catch(error){atualizarStatusNuvem('Falha na sincronização: '+error.message);alert('Não foi possível sincronizar com a nuvem: '+error.message);}
         }
 
         function agendarSincronizacaoNuvem() {
@@ -4458,96 +4489,9 @@ body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{ba
             return partes.join(' | ') || String(e);
         }
 
-        async function sincronizarNuvemAoAbrir() {
-            // Sincroniza com a sessão autenticada deste dispositivo.
-            try {
-                if (!supabaseCliente && !inicializarSupabaseCliente()) {
-                    atualizarStatusNuvem('Biblioteca da nuvem não carregada; os dados locais estão sendo usados.');
-                    return false;
-                }
-                const session = await obterSessaoNuvem();
-                if (!session) {
-                    atualizarStatusNuvem('Local — conecte a conta da nuvem neste dispositivo.');
-                    return false;
-                }
 
-                atualizarStatusNuvem('Conectado. Verificando a versão mais recente da nuvem...');
-                const remoto = await carregarPacoteNuvem();
-                const ultimaAlteracaoLocal = localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
-                const atualizadoRemoto = remoto?.updated_at || '';
 
-                if (remoto?.payload) {
-                    if (ultimaAlteracaoLocal && atualizadoRemoto && ultimaAlteracaoLocal > atualizadoRemoto) {
-                        // O salvamento verifica se esta versão remota já foi confirmada neste dispositivo.
-                        await salvarPacoteNuvem();
-                        atualizarStatusNuvem('Dados locais mais recentes foram enviados para a nuvem.', true);
-                    } else {
-                        const base = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
-                        if (base && ultimaAlteracaoLocal > base && atualizadoRemoto !== base) {
-                            throw new Error('Conflito de sincronização: existem alterações locais e remotas. Nenhum dado foi substituído. Faça backup antes de resolver.');
-                        }
-                        aplicarPacoteNuvem(remoto.payload);
-                        localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, atualizadoRemoto || new Date().toISOString());
-                        atualizarStatusNuvem('Banco da nuvem carregado neste dispositivo.', true);
-                    }
-                } else {
-                    await salvarPacoteNuvem();
-                    atualizarStatusNuvem('Primeiro banco criado na nuvem com os dados deste dispositivo.', true);
-                }
-                return true;
-            } catch (e) {
-                console.error('Falha na sincronização:', e);
-                atualizarStatusNuvem('Erro na nuvem: ' + resumirErroSupabase(e));
-                return false;
-            }
-        }
 
-        async function sincronizarAgoraNuvem() {
-            // Sincronização habilitada na distribuição.
-            try {
-                if (!supabaseCliente && !inicializarSupabaseCliente()) {
-                    throw new Error('Biblioteca Supabase não foi carregada. Verifique a conexão com a internet.');
-                }
-
-                const session = await obterSessaoNuvem();
-                if (!session) {
-                    abrirConfiguracaoNuvem();
-                    atualizarStatusNuvem('Faça login na conta de sincronização para continuar.');
-                    return;
-                }
-
-                atualizarStatusNuvem('Sincronizando com a nuvem...');
-                const remoto = await carregarPacoteNuvem();
-                const ultimaAlteracaoLocal = localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
-                const atualizadoRemoto = remoto?.updated_at || '';
-
-                if (!remoto?.payload) {
-                    await salvarPacoteNuvem();
-                    alert('Sincronização concluída. O banco local foi enviado para a nuvem.');
-                } else if (ultimaAlteracaoLocal && atualizadoRemoto && ultimaAlteracaoLocal > atualizadoRemoto) {
-                    await salvarPacoteNuvem();
-                    alert('Sincronização concluída. As alterações mais recentes deste dispositivo foram enviadas para a nuvem.');
-                } else {
-                    const base = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
-                    if (base && ultimaAlteracaoLocal > base && atualizadoRemoto !== base) {
-                        throw new Error('Conflito de sincronização: há alterações locais e remotas. Nenhum dado foi substituído. Faça backup antes de resolver.');
-                    }
-                    aplicarPacoteNuvem(remoto.payload);
-                    localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, atualizadoRemoto);
-                    atualizarStatusNuvem('Banco da nuvem carregado neste dispositivo.', true);
-                    popularSelectsDinamicos();
-                    renderTable();
-                    atualizarPainelGerencial();
-                    atualizarInfoBanco();
-                    alert('Sincronização concluída. Os dados mais recentes da nuvem foram carregados neste dispositivo.');
-                }
-            } catch (e) {
-                console.error('Erro na sincronização manual:', e);
-                const detalhe = resumirErroSupabase(e);
-                atualizarStatusNuvem('Falha na sincronização: ' + detalhe);
-                alert('Não foi possível sincronizar com a nuvem:\n\n' + detalhe);
-            }
-        }
 
         async function entrarNuvem() {
             const btn = document.querySelector('#modalConfiguracaoNuvem button[onclick="entrarNuvem()"]');
@@ -4707,6 +4651,7 @@ body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{ba
             // Mantém também uma cópia mensal por compatibilidade com versões anteriores.
             localStorage.setItem(getChaveStorageAtual(), JSON.stringify(dados));
             localStorage.setItem(CHAVE_ULTIMA_ALTERACAO_LOCAL, new Date().toISOString());
+            localStorage.setItem('pf_alteracao_token',crypto.randomUUID());
             agendarSincronizacaoNuvem();
         }
 
@@ -7178,9 +7123,9 @@ function fecharAcoesMobile(){
                 const remoto = await carregarPacoteNuvem();
                 if (!remoto?.payload) return;
                 const ultimaSincronizacao = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
-                if (remoto.updated_at && remoto.updated_at > ultimaSincronizacao) {
+                if (remoto.updated_at && !pfMesmaVersao(remoto.updated_at,ultimaSincronizacao) && !pfEnviosPendentes) {
                     const ultimaAlteracaoLocal = localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
-                    if (!ultimaAlteracaoLocal || ultimaAlteracaoLocal <= ultimaSincronizacao) {
+                    if (!pfTemAlteracoesLocais()) {
                         aplicarPacoteNuvem(remoto.payload);
                         localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, remoto.updated_at);
                         popularSelectsDinamicos(); renderTable(); atualizarPainelGerencial(); atualizarInfoBanco();
@@ -7833,7 +7778,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.11.1';
+ const CURRENT_VERSION='V4.11.3';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
