@@ -7778,7 +7778,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.11.3';
+ const CURRENT_VERSION='V4.11.4';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -7799,14 +7799,42 @@ body.dark-mode .pf-filtro-item > label {
   show('Manuais e documentação','<p>Selecione um documento. O acesso será verificado pelo Supabase.</p><div class="pf-help-manuals">'+links+'</div><p id="pfManualStatus" role="status" aria-live="polite"></p>');closeMenu();
  };
  let pfPesquisaExecucao=0;
- async function contextoPesquisa(){
+ async function pfAutenticacaoManuais(){
   if(!inicializarSupabaseCliente()||!supabaseCliente)throw Error('O serviço de autenticação não está disponível.');
-  const {data,error}=await supabaseCliente.auth.getSession();if(error)throw error;
-  const user=data?.session?.user;if(!user)throw Error('Entre na conta de sincronização do Supabase antes de pesquisar os manuais.');
-  let admin=typeof window.ehAdministrador==='function'&&await window.ehAdministrador();
-  if(admin){const r=await supabaseCliente.from('manuais_administradores').select('user_id').eq('user_id',user.id).maybeSingle();if(r.error)throw r.error;admin=!!r.data;}
-  return {key:user.id+':'+admin,items:manuals.filter(m=>!m.admin||admin)};
+  const session=await obterSessaoNuvem();
+  if(!session?.access_token||!session?.user?.id)throw Error('Entre na conta de sincronização do Supabase antes de abrir os manuais.');
+  const headers=await obterHeadersRestNuvem(session);
+  const response=await fetch(SUPABASE_URL+'/auth/v1/user',{headers,cache:'no-store'});
+  if(!response.ok)throw Error('A sessão não foi validada pelo Supabase. Entre novamente em Nuvem.');
+  const user=await response.json();
+  if(user.id!==session.user.id)throw Error('A conta da sessão não corresponde à conta validada. Entre novamente.');
+  return {session,headers,user};
  }
+ async function pfAdministradorManuais(auth){
+  const response=await fetch(SUPABASE_URL+'/rest/v1/manuais_administradores?select=user_id&user_id=eq.'+encodeURIComponent(auth.user.id)+'&limit=1',{headers:auth.headers,cache:'no-store'});
+  if(!response.ok)throw Error('Não foi possível verificar a autorização administrativa.');
+  const rows=await response.json();return Array.isArray(rows)&&rows.some(row=>row.user_id===auth.user.id);
+ }
+ async function pfPedidoArquivoManual(item,auth,assinar){
+  if(!manuals.some(m=>m.file===item.file))throw Error('Documento não reconhecido.');
+  if(item.admin&&!(await pfAdministradorManuais(auth)))throw Error('Acesso restrito: esta conta não está autorizada como administradora.');
+  const path=encodeURIComponent(MANUAIS_BUCKET)+'/'+encodeURIComponent(item.file);
+  const response=await fetch(SUPABASE_URL+'/storage/v1/object/'+(assinar?'sign/':'authenticated/')+path,{method:assinar?'POST':'GET',headers:auth.headers,cache:'no-store',...(assinar?{body:JSON.stringify({expiresIn:120})}:{})});
+  if(!response.ok)throw Error('O Supabase não autorizou o acesso ao documento ('+response.status+').');
+  if(!assinar)return response.blob();
+  const result=await response.json(),raw=result.signedURL||result.signedUrl;
+  if(!raw)throw Error('O Supabase não retornou o link seguro do documento.');
+  const url=new URL(raw.startsWith('/object/')?'/storage/v1'+raw:raw,SUPABASE_URL+'/storage/v1/');
+  if(url.origin!==new URL(SUPABASE_URL).origin||!url.pathname.startsWith('/storage/v1/object/sign/'))throw Error('O link retornado não pertence ao serviço de documentos.');
+  return {signedUrl:url.href};
+ }
+ async function contextoPesquisa(){
+  const auth=await pfAutenticacaoManuais();
+  let admin=typeof window.ehAdministrador==='function'&&await window.ehAdministrador();
+  if(admin)admin=await pfAdministradorManuais(auth);
+  return {key:auth.user.id+':'+admin,items:manuals.filter(m=>!m.admin||admin),auth};
+ }
+
  let pfPdfLoader;
  function carregarLeitor(){
   if(!pfPdfLoader)pfPdfLoader=(async()=>{
@@ -7839,7 +7867,7 @@ body.dark-mode .pf-filtro-item > label {
    const ctx=await contextoPesquisa(),pdfjs=await carregarLeitor(),results=[];
    for(const item of ctx.items){
     if(run!==pfPesquisaExecucao||!out.isConnected)return;
-    const {data,error}=await supabaseCliente.storage.from(MANUAIS_BUCKET).download(item.file);if(error)throw error;
+    const data=await pfPedidoArquivoManual(item,ctx.auth,false);
     const task=pdfjs.getDocument({data:new Uint8Array(await data.arrayBuffer()),isEvalSupported:false});const pdf=await task.promise;
     try{for(let n=1;n<=pdf.numPages;n++){
      const page=await pdf.getPage(n),content=await page.getTextContent();let text='',lastY=null;
@@ -7864,18 +7892,8 @@ body.dark-mode .pf-filtro-item > label {
    if(item.admin && (typeof window.ehAdministrador !== 'function' || !(await window.ehAdministrador()))) {
     throw new Error('Acesso restrito: este documento está disponível somente no perfil Administrador.');
    }
-   if(!inicializarSupabaseCliente()||!supabaseCliente)throw new Error('O serviço de autenticação não está disponível. Atualize a página e tente novamente.');
-   const {data:sessionData,error:sessionError}=await supabaseCliente.auth.getSession();
-   if(sessionError)throw sessionError;
-   if(!sessionData||!sessionData.session||!sessionData.session.user){if(novaAba)novaAba.close();throw new Error('Entre na conta de sincronização do Supabase antes de abrir os manuais.');}
-   if(item.admin){
-    const {data:autorizacao,error:erroAutorizacao}=await supabaseCliente.from('manuais_administradores').select('user_id').eq('user_id',sessionData.session.user.id).maybeSingle();
-    if(erroAutorizacao)throw erroAutorizacao;
-    if(!autorizacao){if(novaAba)novaAba.close();throw new Error('Acesso restrito: esta conta não está autorizada como administradora.');}
-   }
-   const {data,error}=await supabaseCliente.storage.from(MANUAIS_BUCKET).createSignedUrl(item.file,120);
-   if(error)throw error;
-   if(!data||!data.signedUrl)throw new Error('O Supabase não retornou o link seguro do documento.');
+   const auth=await pfAutenticacaoManuais();
+   const data=await pfPedidoArquivoManual(item,auth,true);
    // Abre o PDF dentro do aplicativo para evitar bloqueios de nova aba no PWA instalado.
    if(novaAba&&!novaAba.closed)novaAba.close();
    const card=document.querySelector('#pfHelpModal .pf-help-modal-card');
