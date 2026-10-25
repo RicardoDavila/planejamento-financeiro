@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src https: data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://oflbclvieeknffjtndxo.supabase.co https://ricardodavila.github.io https://api.bcb.gov.br https://api.emailjs.com; img-src 'self' file: https: data: blob:; manifest-src 'self' file:; worker-src 'self'; form-action 'none'; frame-src https://oflbclvieeknffjtndxo.supabase.co blob:;">
-    <!-- Distribuição V4.11.0: dados locais e sincronização financeira habilitados. -->
+    <!-- Distribuição V4.11.6: Painel Gerencial com ocultação e confirmação da senha ao reabrir. -->
     <!-- V4.10.10 — versão publicada com menu Ajuda e verificação de novas versões -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2482,7 +2482,7 @@ body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{ba
         <section id="painelGerencial" class="mb-6 bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
                 <div><h2 class="text-lg font-bold text-slate-800">Painel Gerencial</h2><p id="periodoPainelGerencial" class="text-xs text-slate-500">Visão consolidada do banco e projeção dos próximos 30 dias.</p></div>
-                <div id="pfPainelAcoes" class="flex gap-2 no-print"><button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Cadastrar uma nova receita, despesa ou investimento."><i class="fa-solid fa-plus"></i> Novo Lançamento</button><button onclick="atualizarPainelGerencial()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-arrows-rotate"></i> Atualizar</button><button onclick="abrirRelatorioGerencial()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-file-pdf"></i> Relatório</button></div>
+                <div id="pfPainelAcoes" class="flex gap-2 no-print"><button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Cadastrar uma nova receita, despesa ou investimento."><i class="fa-solid fa-plus"></i> Novo Lançamento</button><button onclick="atualizarPainelGerencial()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-arrows-rotate"></i> Atualizar</button><button onclick="abrirRelatorioGerencial()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-file-pdf"></i> Relatório</button><button type="button" id="btnAlternarPainelGerencial" onclick="alternarVisibilidadePainelGerencial()" aria-expanded="true" aria-controls="painelResumoGerencial painelDetalhesGerencial painelFiltroAtivo" class="bg-slate-600 hover:bg-slate-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-eye-slash" aria-hidden="true"></i> <span>Ocultar painel</span></button></div>
             </div>
             <div id="painelResumoGerencial" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-5">
                 <div class="bg-emerald-50 rounded-lg p-3"><p class="text-[10px] font-bold text-emerald-700 uppercase">RECEITAS</p><p id="pgReceitas" class="text-sm font-bold text-emerald-800 mt-1">R$ 0,00</p></div>
@@ -7780,7 +7780,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.11.5';
+ const CURRENT_VERSION='V4.11.6';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -8399,5 +8399,73 @@ body{padding-bottom:calc(var(--pf-ind-bottom,0px) + 44px)!important}body.dark-mo
 })();
 </script>
 
+<style id="pf-visibilidade-painel-gerencial">
+    #painelGerencial.pf-painel-oculto > div:not(:first-child) { display: none !important; }
+    #painelGerencial.pf-painel-oculto > div:first-child { margin-bottom: 0 !important; }
+</style>
+<dialog id="pfSenhaPainelDialog" aria-labelledby="pfSenhaPainelTitulo" style="border:0;border-radius:16px;padding:24px;width:400px;max-width:calc(100% - 32px);color:#1e293b;box-shadow:0 20px 60px #0005">
+<form onsubmit="confirmarSenhaPainelGerencial(event)">
+<h2 id="pfSenhaPainelTitulo" style="font-size:18px;font-weight:700;margin-bottom:8px">Mostrar Painel Gerencial</h2>
+<p style="font-size:14px;margin-bottom:16px">Digite a senha de abertura do projeto.</p>
+<label for="pfSenhaPainelInput">Senha do projeto</label>
+<input id="pfSenhaPainelInput" type="password" autocomplete="current-password" required style="display:block;width:100%;border:1px solid #94a3b8;border-radius:8px;padding:10px;margin-top:6px;color:#1e293b;background:white">
+<p id="pfSenhaPainelErro" role="alert" style="color:#b91c1c;font-size:13px;margin-top:8px"></p>
+<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px">
+<button type="button" onclick="document.getElementById('pfSenhaPainelDialog').close()" style="padding:10px;border-radius:8px;background:#e2e8f0;color:#1e293b">Cancelar</button>
+<button id="pfSenhaPainelConfirmar" type="submit" style="padding:10px;border-radius:8px;background:#2563eb;color:white">Mostrar painel</button>
+</div></form></dialog>
+<style>#pfSenhaPainelDialog::backdrop{background:rgba(15,23,42,.6)}</style>
+<script id="pf-visibilidade-painel-gerencial-logic">
+    function definirVisibilidadePainelGerencial(oculto) {
+        const painel = document.getElementById('painelGerencial');
+        const botao = document.getElementById('btnAlternarPainelGerencial');
+        painel.classList.toggle('pf-painel-oculto', oculto);
+        botao.setAttribute('aria-expanded', String(!oculto));
+        botao.querySelector('span').textContent = oculto ? 'Mostrar painel' : 'Ocultar painel';
+        botao.querySelector('i').className = oculto ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+    }
+    function alternarVisibilidadePainelGerencial() {
+        const painel = document.getElementById('painelGerencial');
+        if (!painel.classList.contains('pf-painel-oculto')) {
+            definirVisibilidadePainelGerencial(true);
+            return;
+        }
+        const dialog = document.getElementById('pfSenhaPainelDialog');
+        document.getElementById('pfSenhaPainelInput').value = '';
+        document.getElementById('pfSenhaPainelErro').textContent = '';
+        if (!dialog.open) dialog.showModal();
+        document.getElementById('pfSenhaPainelInput').focus();
+    }
+    async function confirmarSenhaPainelGerencial(event) {
+        event.preventDefault();
+        const dialog = document.getElementById('pfSenhaPainelDialog');
+        const input = document.getElementById('pfSenhaPainelInput');
+        const botao = document.getElementById('pfSenhaPainelConfirmar');
+        const erro = document.getElementById('pfSenhaPainelErro');
+        if (botao.disabled) return;
+        botao.disabled = true;
+        erro.textContent = '';
+        try {
+            const cfg = obterConfigProtecao();
+            if (!cfg?.ativo) { erro.textContent = 'Configure a senha de abertura em Segurança e Acesso para liberar o painel.'; return; }
+            const senha = input.value;
+            input.value = '';
+            const ok = await validarSenha(senha, cfg);
+            if (!dialog.open) return;
+            if (!ok) { erro.textContent = 'Senha incorreta. Tente novamente.'; input.focus(); return; }
+            definirVisibilidadePainelGerencial(false);
+            dialog.close();
+        } catch (e) {
+            erro.textContent = 'Não foi possível validar a senha. Tente novamente.';
+        } finally {
+            input.value = '';
+            botao.disabled = false;
+        }
+    }
+    document.getElementById('pfSenhaPainelDialog').addEventListener('close', function() {
+        document.getElementById('pfSenhaPainelInput').value = '';
+        document.getElementById('pfSenhaPainelErro').textContent = '';
+    });
+</script>
 </body>
 </html>
