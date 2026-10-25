@@ -12,8 +12,8 @@
   if(user?.id===session.user.id&&frame&&!recovering)return;
   closeApp();if(recovering){$('pfdForm').hidden=true;$('pfdRecovery').hidden=false;return;}
   const run=generation;status('Verificando sua conta…');
-  const {data,error}=await client.auth.getUser();if(run!==generation)return;
-  if(error||!data?.user||data.user.id!==session.user.id){status('Não foi possível validar sua conta. Verifique a conexão e entre novamente.');return;}
+  const {data,error}=await client.auth.getUser(session.access_token);if(run!==generation)return;
+  if(error||!data?.user||data.user.id!==session.user.id){status(error?.message ? 'Não foi possível validar sua conta: '+error.message : 'A sessão não corresponde à conta informada. Entre novamente.');return;}
   user=Object.freeze({id:data.user.id,email:data.user.email||''});
   $('pfdPassword').value='';$('pfdLogin').hidden=true;
   frame=document.createElement('iframe');frame.title='Seu planejamento financeiro';frame.src='./app.html';document.body.append(frame);
@@ -30,6 +30,21 @@
  async function sendReset(email){if(!/^\S+@\S+\.\S+$/.test(email))throw Error('Informe seu e-mail.');const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:base.href});if(error)throw error;return 'Se houver uma conta com esse e-mail, um link de recuperação será enviado. Confira também o spam. Abra o link neste navegador.';}
  $('pfdForgot').onclick=async()=>{try{status(await sendReset($('pfdEmail').value.trim()));}catch(e){status(e.message);}};
  $('pfdRecovery').onsubmit=async e=>{e.preventDefault();if($('pfdNew').value!==$('pfdConfirm').value){status('As senhas não conferem.');return;}const button=e.currentTarget.querySelector('button');button.disabled=true;try{const {error}=await client.auth.updateUser({password:$('pfdNew').value});if(error)throw error;$('pfdNew').value='';$('pfdConfirm').value='';recovering=false;await client.auth.signOut({scope:'local'});$('pfdForm').hidden=false;$('pfdRecovery').hidden=true;status('Senha alterada. Entre com sua nova senha.');}catch(e){status(e.message);}finally{button.disabled=false;}};
+
+ window.pfdConfirmPassword=async password=>{
+  if(!user?.id||!user.email)throw Error('Entre novamente na sua conta.');
+  const ownerId=user.id,run=generation,email=user.email;
+  const response=await fetch('https://oflbclvieeknffjtndxo.supabase.co/auth/v1/token?grant_type=password',{
+   method:'POST',headers:{apikey:'sb_publishable_n_k8Yggb0xq8ESLo0rYVsw_SZ5LTSpJ','Content-Type':'application/json'},
+   body:JSON.stringify({email,password}),cache:'no-store',signal:AbortSignal.timeout(15000)
+  });
+  if(user?.id!==ownerId||generation!==run)throw Error('A conta foi alterada. Entre novamente.');
+  if(response.status===400||response.status===401)return false;
+  if(!response.ok)throw Error(response.status===429?'Muitas tentativas. Aguarde antes de tentar novamente.':'Não foi possível validar a senha. Verifique a conexão e tente novamente.');
+  const data=await response.json();
+  if(user?.id!==ownerId||generation!==run)throw Error('A conta foi alterada. Entre novamente.');
+  return data.user?.id===ownerId;
+ };
  window.pfdOpenAccount=()=>{if(!user)return;$('pfdAccountEmail').textContent=user.email;$('pfdAccountStatus').textContent='';$('pfdAccount').showModal();};
  window.pfdLogout=async()=>{const old=user;closeApp();try{const {error}=await client.auth.signOut({scope:'local'});if(error)throw error;status('Você saiu da conta.');}catch(e){status('A sessão não pôde ser encerrada: '+e.message+' Tente sair novamente.');if(old){const {data}=await client.auth.getSession();await enter(data.session);}}};
  $('pfdLogout').onclick=()=>window.pfdLogout();$('pfdAccountClose').onclick=()=>$('pfdAccount').close();$('pfdResetInside').onclick=async()=>{const email=user?.email;try{$('pfdAccountStatus').textContent=await sendReset(email||'');}catch(e){$('pfdAccountStatus').textContent=e.message;}};

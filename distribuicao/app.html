@@ -2481,7 +2481,7 @@ body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{ba
         <section id="painelGerencial" class="mb-6 bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
                 <div><h2 class="text-lg font-bold text-slate-800">Painel Gerencial</h2><p id="periodoPainelGerencial" class="text-xs text-slate-500">Visão consolidada do banco e projeção dos próximos 30 dias.</p></div>
-                <div id="pfPainelAcoes" class="flex gap-2 no-print"><button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Cadastrar uma nova receita, despesa ou investimento."><i class="fa-solid fa-plus"></i> Novo Lançamento</button><button onclick="atualizarPainelGerencial()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-arrows-rotate"></i> Atualizar</button><button onclick="abrirRelatorioGerencial()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-file-pdf"></i> Relatório</button></div>
+                <div id="pfPainelAcoes" class="flex gap-2 no-print"><button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow text-xs font-medium transition flex items-center justify-center gap-2" title="Cadastrar uma nova receita, despesa ou investimento."><i class="fa-solid fa-plus"></i> Novo Lançamento</button><button onclick="atualizarPainelGerencial()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-arrows-rotate"></i> Atualizar</button><button onclick="abrirRelatorioGerencial()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-file-pdf"></i> Relatório</button><button type="button" id="btnAlternarPainelGerencial" onclick="alternarVisibilidadePainelGerencial()" aria-expanded="true" aria-controls="painelResumoGerencial painelDetalhesGerencial painelFiltroAtivo" class="bg-slate-600 hover:bg-slate-700 text-white px-3 py-2 rounded-lg text-xs font-semibold"><i class="fa-solid fa-eye-slash" aria-hidden="true"></i> <span>Ocultar painel</span></button></div>
             </div>
             <div id="painelResumoGerencial" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-5">
                 <div class="bg-emerald-50 rounded-lg p-3"><p class="text-[10px] font-bold text-emerald-700 uppercase">RECEITAS</p><p id="pgReceitas" class="text-sm font-bold text-emerald-800 mt-1">R$ 0,00</p></div>
@@ -6789,6 +6789,7 @@ function fecharAcoesMobile(){
             atualizarPainelGerencial();
             atualizarInfoBanco();
             requestAnimationFrame(pfMostrarInicioPagina);
+            setTimeout(() => { if(typeof window.pfCheckUpdates === 'function') window.pfCheckUpdates(true); }, 1500);
         }
 
         // Atualização automática periódica: útil quando o PC e o celular ficam abertos ao mesmo tempo.
@@ -7445,7 +7446,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.1';
+ const CURRENT_VERSION='V4.12.2';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -7560,28 +7561,33 @@ body.dark-mode .pf-filtro-item > label {
  document.addEventListener('click',function(e){const a=e.target.closest('[data-pf-manual-index]');if(!a)return;e.preventDefault();const item=manuals[Number(a.getAttribute('data-pf-manual-index'))];if(!item)return;pfAbrirManualProtegido(item,null);});
  window.pfShowCurrentVersion=function(){show('Versão atual do projeto','<p><strong>'+CURRENT_VERSION+'</strong></p><p>Planejamento Financeiro · Aplicativo Web / PWA</p><p>Versão identificada no arquivo de distribuição carregado.</p>');closeMenu();};
  window.pfShowAbout=function(){show('Sobre o Planejamento Financeiro','<p><strong>Planejamento Financeiro</strong></p><p>All rights reserved.<br>Ricardo Dávila Corporation.</p><p>Versão: '+CURRENT_VERSION+'</p>');closeMenu();};
- window.pfCheckUpdates=async function(){
-  closeMenu();show('Verificar atualizações','<p>Consultando a versão publicada…</p>');
+ let pfVerificacaoAutomaticaIniciada=false;
+ window.pfCheckUpdates=async function(automatica=false){
+  automatica = automatica === true;
+  if(automatica){if(pfVerificacaoAutomaticaIniciada)return;pfVerificacaoAutomaticaIniciada=true;}
+  if(!automatica){closeMenu();show('Verificar atualizações','<p>Consultando a versão publicada…</p>');}
   const base=new URL('./',window.parent.location.href);
-  const local=true;
+  const local=!/^https?:$/.test(window.parent.location.protocol);
   try{
    const response=await fetch(new URL('version.json?t='+Date.now(),base),{cache:'no-store',signal:AbortSignal.timeout(15000)});
    if(!response.ok)throw Error(response.status===404?'A consulta de versões ainda não foi publicada no site.':'Não foi possível consultar a versão publicada.');
    const release=await response.json();if(!/^v?\d+(\.\d+){1,3}$/i.test(release.version||''))throw Error('O arquivo de versão publicado está inválido.');
    const latest=release.version,cmp=compareVersions(latest,CURRENT_VERSION);
+   if(automatica && (local || cmp<=0))return;
    const text=document.createElement('div');const info=document.createElement('p');info.textContent='Versão desta cópia: '+CURRENT_VERSION+'. Versão publicada: '+latest+'.';text.append(info);
    const explanation=document.createElement('p');explanation.textContent=local?'Esta é a versão de distribuição. Feche e reabra o aplicativo para carregar uma atualização publicada.':cmp>0?'Há uma nova versão disponível. Salve qualquer edição em andamento antes de atualizar.':cmp===0?'Você está usando a versão publicada mais recente.':'Esta cópia tem uma versão superior à publicada.';text.append(explanation);
    show(cmp>0?'Nova versão disponível':'Verificação de versão',text.innerHTML);
    const body=document.getElementById('pfHelpModalBody');
+   if(automatica){const depois=document.createElement('button');depois.type='button';depois.className='pf-help-primary';depois.textContent='Agora não';depois.onclick=()=>window.pfCloseHelpModal();body.append(depois);}
    if(local){const a=document.createElement('a');a.href=base.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Abrir página de acesso atualizada';a.className='pf-help-primary';body.append(a);}
    else if(cmp>0){const b=document.createElement('button');b.type='button';b.className='pf-help-primary';b.textContent='Atualizar agora';b.onclick=async()=>{
     b.disabled=true;b.textContent='Preparando atualização…';
     try{
      if('serviceWorker' in navigator){const reg=await navigator.serviceWorker.getRegistration(base.href);if(reg){await reg.update();if(reg.installing)await new Promise((resolve,reject)=>{const w=reg.installing;const timer=setTimeout(()=>reject(Error('A atualização demorou. Tente novamente.')),20000);const check=()=>{if(w.state==='installed'){clearTimeout(timer);resolve();}else if(w.state==='redundant'){clearTimeout(timer);reject(Error('Não foi possível baixar a atualização.'));}};w.addEventListener('statechange',check);check();});if(reg.waiting){await new Promise((resolve,reject)=>{const timer=setTimeout(()=>{navigator.serviceWorker.removeEventListener('controllerchange',done);reject(Error('A versão instalada ainda não permite atualização imediata. Feche todas as janelas do aplicativo e abra novamente.'));},12000);function done(){clearTimeout(timer);resolve();}navigator.serviceWorker.addEventListener('controllerchange',done,{once:true});reg.waiting.postMessage({type:'SKIP_WAITING'});});}}}
-     const url=new URL(location.href);url.searchParams.set('pf_update',latest);location.replace(url.href);
+     const url=new URL(window.parent.location.href);url.searchParams.set('pf_update',latest);window.parent.location.replace(url.href);
     }catch(e){b.disabled=false;b.textContent='Tentar atualizar novamente';const p=document.createElement('p');p.textContent=e.message;body.append(p);}
    };body.append(b);}
-  }catch(error){show('Não foi possível verificar','<p id="pfUpdateError"></p>');document.getElementById('pfUpdateError').textContent=error.message+' Nenhuma alteração foi feita no aplicativo.';}
+  }catch(error){if(automatica)return;show('Não foi possível verificar','<p id="pfUpdateError"></p>');document.getElementById('pfUpdateError').textContent=error.message+' Nenhuma alteração foi feita no aplicativo.';}
  };
 
  document.addEventListener('click',e=>{const m=document.getElementById('pfHelpModal');if(e.target===m)window.pfCloseHelpModal();const d=document.getElementById('pfHelpMenu');if(d&&!d.contains(e.target)&&!e.target.closest('#pfHelpModal'))d.open=false;});
@@ -8001,5 +8007,56 @@ body{padding-bottom:calc(var(--pf-ind-bottom,0px) + 44px)!important}body.dark-mo
 })();
 </script>
 
+<style id="pf-visibilidade-painel-gerencial">
+#painelGerencial.pf-painel-oculto > div:not(:first-child){display:none!important}
+#painelGerencial.pf-painel-oculto > div:first-child{margin-bottom:0!important}
+#pfSenhaPainelDialog::backdrop{background:#0f172a99}
+</style>
+<dialog id="pfSenhaPainelDialog" aria-labelledby="pfSenhaPainelTitulo" style="border:0;border-radius:16px;padding:24px;width:400px;max-width:calc(100% - 32px);color:#1e293b;background:white">
+<form onsubmit="confirmarSenhaPainelGerencial(event)">
+<h2 id="pfSenhaPainelTitulo" style="font-size:18px;font-weight:700">Mostrar Painel Gerencial</h2>
+<p style="margin:12px 0">Digite a senha da sua conta para mostrar o painel.</p>
+<label for="pfSenhaPainelInput">Senha da sua conta</label>
+<input id="pfSenhaPainelInput" type="password" autocomplete="current-password" required style="width:100%;border:1px solid #94a3b8;border-radius:8px;padding:10px;margin-top:6px;color:#1e293b;background:white">
+<p id="pfSenhaPainelErro" role="alert" style="color:#b91c1c;margin-top:8px"></p>
+<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px">
+<button type="button" onclick="document.getElementById('pfSenhaPainelDialog').close()" style="padding:10px;background:#e2e8f0;border-radius:8px">Cancelar</button>
+<button id="pfSenhaPainelConfirmar" type="submit" style="padding:10px;background:#2563eb;color:white;border-radius:8px">Mostrar painel</button></div>
+</form></dialog>
+<script id="pf-visibilidade-painel-gerencial-logic">
+function definirVisibilidadePainelGerencial(oculto){
+ const painel=document.getElementById('painelGerencial'),botao=document.getElementById('btnAlternarPainelGerencial');
+ painel.classList.toggle('pf-painel-oculto',oculto);
+ botao.setAttribute('aria-expanded',String(!oculto));
+ botao.querySelector('span').textContent=oculto?'Mostrar painel':'Ocultar painel';
+ botao.querySelector('i').className=oculto?'fa-solid fa-eye':'fa-solid fa-eye-slash';
+}
+function alternarVisibilidadePainelGerencial(){
+ window.pfdAssert();
+ if(!document.getElementById('painelGerencial').classList.contains('pf-painel-oculto')){definirVisibilidadePainelGerencial(true);return;}
+ const dialog=document.getElementById('pfSenhaPainelDialog');
+ document.getElementById('pfSenhaPainelInput').value='';document.getElementById('pfSenhaPainelErro').textContent='';
+ if(!dialog.open)dialog.showModal();document.getElementById('pfSenhaPainelInput').focus();
+}
+async function confirmarSenhaPainelGerencial(event){
+ event.preventDefault();
+ const dialog=document.getElementById('pfSenhaPainelDialog'),input=document.getElementById('pfSenhaPainelInput'),botao=document.getElementById('pfSenhaPainelConfirmar'),erro=document.getElementById('pfSenhaPainelErro');
+ if(botao.disabled)return;botao.disabled=true;erro.textContent='';
+ try{
+            window.pfdAssert();
+            const ownerId = window.parent.pfdUser.id;
+            const senha = input.value;
+            input.value = '';
+            const ok = await window.parent.pfdConfirmPassword(senha);
+            window.pfdAssert();
+            if (window.parent.pfdUser.id !== ownerId) return;
+  if(!dialog.open)return;
+  if(!ok){erro.textContent='Senha incorreta. Tente novamente.';input.focus();return;}
+  definirVisibilidadePainelGerencial(false);dialog.close();
+ }catch(e){erro.textContent = e.message || 'Não foi possível validar a senha. Verifique sua conexão e tente novamente.';}
+ finally{input.value='';botao.disabled=false;}
+}
+document.getElementById('pfSenhaPainelDialog').addEventListener('close',()=>{document.getElementById('pfSenhaPainelInput').value='';document.getElementById('pfSenhaPainelErro').textContent='';});
+</script>
 </body>
 </html>

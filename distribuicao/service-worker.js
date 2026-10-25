@@ -1,5 +1,5 @@
 /* Distribuição: o cache guarda somente arquivos públicos desta pasta. */
-const CACHE='pf-distribuicao-v4-12-1';
+const CACHE='pf-distribuicao-v4-12-2';
 const BASE=new URL(self.registration.scope);
 const FILES=['./','index.html','app.html','conta.js','isolamento.js','manifest.webmanifest','icon-192.png','icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
