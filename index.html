@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src https: data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://oflbclvieeknffjtndxo.supabase.co https://ricardodavila.github.io https://api.bcb.gov.br https://api.emailjs.com; img-src 'self' file: https: data: blob:; manifest-src 'self' file:; worker-src 'self'; form-action 'none'; frame-src https://oflbclvieeknffjtndxo.supabase.co blob:;">
-    <!-- Distribuição V4.11.7: aviso automático de novas versões após abrir o projeto. -->
+    <!-- Distribuição V4.11.8: aviso automático de novas versões após abrir o projeto. -->
     <!-- V4.10.10 — versão publicada com menu Ajuda e verificação de novas versões -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1885,7 +1885,18 @@ body.dark-mode #pfAvisosDia{background:#172033;color:#f1f5f9;border-color:#47556
 body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{background:#26364d;color:#dbeafe;border-color:#64748b}
 </style><style>
 .pf-mobile-pdf{height:100%;min-height:0;display:flex;flex-direction:column;gap:8px}.pf-mobile-pdf-controls{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;flex-shrink:0;padding:4px;background:#f1f5f9;border-radius:8px}.pf-mobile-pdf-controls button{border:1px solid #94a3b8;border-radius:7px;background:#fff;color:#1e293b;padding:9px;font-size:12px}.pf-mobile-pdf-controls button:disabled{opacity:.45}.pf-mobile-pdf-controls span{font-size:12px;min-width:55px;text-align:center}.pf-mobile-pdf-area{min-height:0;flex:1;overflow:auto;background:#cbd5e1;text-align:center;padding:10px;overscroll-behavior:contain}.pf-mobile-pdf-area canvas{display:block;margin:0 auto;background:#fff;box-shadow:0 2px 6px #0003}.pf-mobile-pdf-area canvas[hidden],.pf-mobile-pdf-area p[hidden]{display:none}.pf-mobile-pdf-area p{background:white;color:#1e293b;padding:10px;border-radius:8px}body.dark-mode .pf-mobile-pdf-controls{background:#26364d}body.dark-mode .pf-mobile-pdf-controls button{background:#334155;color:#f1f5f9}#pfHelpModal .pf-help-pdf-viewer #pfHelpModalBody{overflow:hidden}
-</style></head>
+</style><style id="pf-privacidade-resumo-mobile">
+#dashboardMobileV40.pf-resumo-oculto .dashboard-v40-grid,
+#dashboardMobileV40.pf-resumo-oculto #dashboardV40Alerta{display:none!important}
+#dashboardMobileV40:not(.pf-resumo-oculto) #pfResumoOcultoAviso{display:none!important}
+#dashboardMobileV40 .dashboard-v40-head{flex-wrap:wrap}
+.pf-resumo-controles{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+#btnAlternarResumoMobile{min-height:44px;padding:9px 12px;border:1px solid #cbd5e1;border-radius:9px;background:#f1f5f9;color:#1e293b;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+#pfResumoOcultoAviso{font-size:13px;color:#475569;padding:12px 0}
+body.dark-mode #btnAlternarResumoMobile{background:#334155;color:#f8fafc;border-color:#64748b}
+body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
+</style>
+</head>
 <aside id="pfSaasSidebar" aria-label="Navegação principal"><div class="pf-brand"><div class="pf-brand-icon"><i class="fa-solid fa-chart-pie"></i></div><div><strong>Planejamento<br>Financeiro</strong><small>GESTÃO FINANCEIRA</small></div></div><div class="pf-nav-label">Menu principal</div><nav class="pf-nav"><a class="active" href="#painelGerencial"><i class="fa-solid fa-house"></i>Dashboard</a><a href="#tabelaLancamentosWrapper"><i class="fa-solid fa-arrow-right-arrow-left"></i>Lançamentos</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroTipo')?.focus(),80)"><i class="fa-solid fa-circle-arrow-up"></i>Receitas e despesas</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroRubrica')?.focus(),80)"><i class="fa-solid fa-layer-group"></i>Cadastros e rubricas</a><a href="#painelGerencial"><i class="fa-solid fa-chart-column"></i>Relatórios</a></nav>
 <div class="pf-nav-label pf-help-section-label">Ajuda e informações</div>
 <details id="pfHelpMenu" class="pf-help-menu pf-help-sidebar">
@@ -2454,15 +2465,16 @@ body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{ba
 
 
         <!-- V4.0 — Dashboard inicial mobile -->
-        <section id="dashboardMobileV40" class="dashboard-v40" aria-label="Resumo financeiro no celular">
+        <section id="dashboardMobileV40" class="dashboard-v40 pf-resumo-oculto" aria-label="Resumo financeiro no celular">
             <div class="dashboard-v40-head">
                 <div>
                     <h2 class="dashboard-v40-title">Resumo Financeiro</h2>
                     <p id="dashboardV40Periodo" class="dashboard-v40-period">Período atual</p>
                 </div>
-                <span id="dashboardV40Nuvem" class="dashboard-v40-sync">Nuvem Online</span>
+                <div class="pf-resumo-controles"><span id="dashboardV40Nuvem" class="dashboard-v40-sync">Nuvem Online</span><button type="button" id="btnAlternarResumoMobile" onclick="alternarVisibilidadeResumoMobile()" aria-expanded="false" aria-controls="pfResumoMobileValores dashboardV40Alerta"><i class="fa-solid fa-eye" aria-hidden="true"></i><span>Mostrar resumo</span></button></div>
             </div>
-            <div class="dashboard-v40-grid">
+            <p id="pfResumoOcultoAviso">Valores ocultos. Confirme sua senha em Mostrar resumo para visualizar.</p>
+            <div id="pfResumoMobileValores" class="dashboard-v40-grid">
                 <div class="dashboard-v40-card receita"><div class="lbl">RECEITAS</div><div id="d40Receitas" class="val">R$ 0,00</div></div>
                 <div class="dashboard-v40-card recebido"><div class="lbl">RECEBIDO</div><div id="d40Recebido" class="val">R$ 0,00</div></div>
                 <div class="dashboard-v40-card despesa"><div class="lbl">DESPESAS</div><div id="d40Despesas" class="val">R$ 0,00</div></div>
@@ -7781,7 +7793,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.11.7';
+ const CURRENT_VERSION='V4.11.8';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -8422,56 +8434,58 @@ body{padding-bottom:calc(var(--pf-ind-bottom,0px) + 44px)!important}body.dark-mo
 </div></form></dialog>
 <style>#pfSenhaPainelDialog::backdrop{background:rgba(15,23,42,.6)}</style>
 <script id="pf-visibilidade-painel-gerencial-logic">
-    function definirVisibilidadePainelGerencial(oculto) {
-        const painel = document.getElementById('painelGerencial');
-        const botao = document.getElementById('btnAlternarPainelGerencial');
-        painel.classList.toggle('pf-painel-oculto', oculto);
-        botao.setAttribute('aria-expanded', String(!oculto));
-        botao.querySelector('span').textContent = oculto ? 'Mostrar painel' : 'Ocultar painel';
-        botao.querySelector('i').className = oculto ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
-    }
-    function alternarVisibilidadePainelGerencial() {
-        const painel = document.getElementById('painelGerencial');
-        if (!painel.classList.contains('pf-painel-oculto')) {
-            definirVisibilidadePainelGerencial(true);
-            return;
-        }
-        const dialog = document.getElementById('pfSenhaPainelDialog');
-        document.getElementById('pfSenhaPainelInput').value = '';
-        document.getElementById('pfSenhaPainelErro').textContent = '';
-        if (!dialog.open) dialog.showModal();
-        document.getElementById('pfSenhaPainelInput').focus();
-    }
-    async function confirmarSenhaPainelGerencial(event) {
-        event.preventDefault();
-        const dialog = document.getElementById('pfSenhaPainelDialog');
-        const input = document.getElementById('pfSenhaPainelInput');
-        const botao = document.getElementById('pfSenhaPainelConfirmar');
-        const erro = document.getElementById('pfSenhaPainelErro');
-        if (botao.disabled) return;
-        botao.disabled = true;
-        erro.textContent = '';
-        try {
-            const cfg = obterConfigProtecao();
-            if (!cfg?.ativo) { erro.textContent = 'Configure a senha de abertura em Segurança e Acesso para liberar o painel.'; return; }
-            const senha = input.value;
-            input.value = '';
-            const ok = await validarSenha(senha, cfg);
-            if (!dialog.open) return;
-            if (!ok) { erro.textContent = 'Senha incorreta. Tente novamente.'; input.focus(); return; }
-            definirVisibilidadePainelGerencial(false);
-            dialog.close();
-        } catch (e) {
-            erro.textContent = 'Não foi possível validar a senha. Tente novamente.';
-        } finally {
-            input.value = '';
-            botao.disabled = false;
-        }
-    }
-    document.getElementById('pfSenhaPainelDialog').addEventListener('close', function() {
-        document.getElementById('pfSenhaPainelInput').value = '';
-        document.getElementById('pfSenhaPainelErro').textContent = '';
-    });
+let pfPainelSolicitado='gerencial',pfPedidoSenha=0;
+function definirVisibilidadePainelGerencial(oculto){
+ const painel=document.getElementById('painelGerencial'),botao=document.getElementById('btnAlternarPainelGerencial');
+ painel.classList.toggle('pf-painel-oculto',oculto);botao.setAttribute('aria-expanded',String(!oculto));
+ botao.querySelector('span').textContent=oculto?'Mostrar painel':'Ocultar painel';
+ botao.querySelector('i').className=oculto?'fa-solid fa-eye':'fa-solid fa-eye-slash';
+}
+function definirVisibilidadeResumoMobile(oculto){
+ const painel=document.getElementById('dashboardMobileV40'),botao=document.getElementById('btnAlternarResumoMobile');
+ painel.classList.toggle('pf-resumo-oculto',oculto);botao.setAttribute('aria-expanded',String(!oculto));
+ botao.querySelector('span').textContent=oculto?'Mostrar resumo':'Ocultar resumo';
+ botao.querySelector('i').className=oculto?'fa-solid fa-eye':'fa-solid fa-eye-slash';
+}
+function solicitarSenhaPainel(alvo){
+ pfPainelSolicitado=alvo;pfPedidoSenha++;
+ const dialog=document.getElementById('pfSenhaPainelDialog');
+ document.getElementById('pfSenhaPainelInput').value='';document.getElementById('pfSenhaPainelErro').textContent='';
+ document.getElementById('pfSenhaPainelTitulo').textContent=alvo==='resumo'?'Mostrar Resumo Financeiro':'Mostrar Painel Gerencial';
+ document.getElementById('pfSenhaPainelConfirmar').textContent=alvo==='resumo'?'Mostrar resumo':'Mostrar painel';
+ if(!dialog.open)dialog.showModal();document.getElementById('pfSenhaPainelInput').focus();
+}
+function alternarVisibilidadePainelGerencial(){
+ if(!document.getElementById('painelGerencial').classList.contains('pf-painel-oculto')){definirVisibilidadePainelGerencial(true);return;}
+ solicitarSenhaPainel('gerencial');
+}
+function alternarVisibilidadeResumoMobile(){
+ if(!document.getElementById('dashboardMobileV40').classList.contains('pf-resumo-oculto')){definirVisibilidadeResumoMobile(true);return;}
+ solicitarSenhaPainel('resumo');
+}
+async function confirmarSenhaPainelGerencial(event){
+ event.preventDefault();
+ const dialog=document.getElementById('pfSenhaPainelDialog'),input=document.getElementById('pfSenhaPainelInput'),botao=document.getElementById('pfSenhaPainelConfirmar'),erro=document.getElementById('pfSenhaPainelErro');
+ if(botao.disabled)return;const pedido=pfPedidoSenha,alvo=pfPainelSolicitado;
+ botao.disabled=true;erro.textContent='';
+ try{
+  const cfg=obterConfigProtecao();if(!cfg?.ativo){erro.textContent='Configure a senha de abertura em Segurança e Acesso.';return;}
+  const senha=input.value;input.value='';const ok=await validarSenha(senha,cfg);
+  if(!dialog.open||pedido!==pfPedidoSenha)return;
+  if(!ok){erro.textContent='Senha incorreta. Tente novamente.';input.focus();return;}
+  if(alvo==='resumo')definirVisibilidadeResumoMobile(false);else definirVisibilidadePainelGerencial(false);
+  dialog.close();
+ }catch(e){if(dialog.open&&pedido===pfPedidoSenha)erro.textContent=e.message||'Não foi possível validar a senha. Tente novamente.';}
+ finally{input.value='';botao.disabled=false;}
+}
+document.getElementById('pfSenhaPainelDialog').addEventListener('close',()=>{pfPedidoSenha++;document.getElementById('pfSenhaPainelInput').value='';document.getElementById('pfSenhaPainelErro').textContent='';});
+function bloquearResumoMobile(){
+ definirVisibilidadeResumoMobile(true);
+ if(pfPainelSolicitado==='resumo'){pfPedidoSenha++;const dialog=document.getElementById('pfSenhaPainelDialog');if(dialog.open)dialog.close();}
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)bloquearResumoMobile();});
+window.addEventListener('pagehide',bloquearResumoMobile);
+window.addEventListener('pageshow',bloquearResumoMobile);
 </script>
 </body>
 </html>

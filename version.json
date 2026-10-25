@@ -1,9 +1,8 @@
 {
-  "version": "V4.11.7",
-  "name": "V4.11.7",
+  "version": "V4.11.8",
+  "name": "V4.11.8",
   "date": "2026-10-25",
   "notes": [
-    "Aviso automático de nova versão após autenticação e abertura do projeto.",
-    "Mantém a confirmação de senha para mostrar o Painel Gerencial."
+    "Resumo Financeiro do celular oculto ao abrir e liberado mediante senha."
   ]
 }
