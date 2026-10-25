@@ -1,9 +1,9 @@
 {
-  "version": "V4.11.6",
-  "name": "V4.11.6",
+  "version": "V4.11.7",
+  "name": "V4.11.7",
   "date": "2026-10-25",
   "notes": [
-    "Botão Ocultar painel após Relatório.",
-    "Exibição do painel mediante a senha de abertura do projeto."
+    "Aviso automático de nova versão após autenticação e abertura do projeto.",
+    "Mantém a confirmação de senha para mostrar o Painel Gerencial."
   ]
 }

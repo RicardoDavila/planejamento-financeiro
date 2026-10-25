@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src https: data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://oflbclvieeknffjtndxo.supabase.co https://ricardodavila.github.io https://api.bcb.gov.br https://api.emailjs.com; img-src 'self' file: https: data: blob:; manifest-src 'self' file:; worker-src 'self'; form-action 'none'; frame-src https://oflbclvieeknffjtndxo.supabase.co blob:;">
-    <!-- Distribuição V4.11.6: Painel Gerencial com ocultação e confirmação da senha ao reabrir. -->
+    <!-- Distribuição V4.11.7: aviso automático de novas versões após abrir o projeto. -->
     <!-- V4.10.10 — versão publicada com menu Ajuda e verificação de novas versões -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7115,6 +7115,7 @@ function fecharAcoesMobile(){
             atualizarPainelGerencial();
             atualizarInfoBanco();
             requestAnimationFrame(pfMostrarInicioPagina);
+            setTimeout(() => { if(typeof window.pfCheckUpdates === 'function') window.pfCheckUpdates(true); }, 1500);
         }
 
         // Atualização automática periódica: útil quando o PC e o celular ficam abertos ao mesmo tempo.
@@ -7780,7 +7781,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.11.6';
+ const CURRENT_VERSION='V4.11.7';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -7953,8 +7954,11 @@ body.dark-mode .pf-filtro-item > label {
  document.addEventListener('click',function(e){const a=e.target.closest('[data-pf-manual-index]');if(!a)return;e.preventDefault();const item=manuals[Number(a.getAttribute('data-pf-manual-index'))];if(!item)return;pfAbrirManualProtegido(item,null);});
  window.pfShowCurrentVersion=function(){show('Versão atual do projeto','<p><strong>'+CURRENT_VERSION+'</strong></p><p>Planejamento Financeiro · Aplicativo Web / PWA</p><p>Versão identificada no arquivo de distribuição carregado.</p>');closeMenu();};
  window.pfShowAbout=function(){show('Sobre o Planejamento Financeiro','<p><strong>Planejamento Financeiro</strong></p><p>All rights reserved.<br>Ricardo Dávila Corporation.</p><p>Versão: '+CURRENT_VERSION+'</p>');closeMenu();};
- window.pfCheckUpdates=async function(){
-  closeMenu();show('Verificar atualizações','<p>Consultando a versão publicada…</p>');
+ let pfVerificacaoAutomaticaIniciada=false;
+ window.pfCheckUpdates=async function(automatica=false){
+  automatica = automatica === true;
+  if(automatica){if(pfVerificacaoAutomaticaIniciada)return;pfVerificacaoAutomaticaIniciada=true;}
+  if(!automatica){closeMenu();show('Verificar atualizações','<p>Consultando a versão publicada…</p>');}
   const base=new URL('https://ricardodavila.github.io/planejamento-financeiro/');
   const local=location.origin!==base.origin||!location.pathname.startsWith(base.pathname);
   try{
@@ -7962,10 +7966,12 @@ body.dark-mode .pf-filtro-item > label {
    if(!response.ok)throw Error(response.status===404?'A consulta de versões ainda não foi publicada no site.':'Não foi possível consultar a versão publicada.');
    const release=await response.json();if(!/^v?\d+(\.\d+){1,3}$/i.test(release.version||''))throw Error('O arquivo de versão publicado está inválido.');
    const latest=release.version,cmp=compareVersions(latest,CURRENT_VERSION);
+   if(automatica && (local || cmp<=0))return;
    const text=document.createElement('div');const info=document.createElement('p');info.textContent='Versão desta cópia: '+CURRENT_VERSION+'. Versão publicada: '+latest+'.';text.append(info);
    const explanation=document.createElement('p');explanation.textContent=local?'Esta é uma cópia de teste ou local. Ela não será substituída pelo aplicativo publicado.':cmp>0?'Há uma nova versão disponível. Salve qualquer edição em andamento antes de atualizar.':cmp===0?'Você está usando a versão publicada mais recente.':'Esta cópia tem uma versão superior à publicada.';text.append(explanation);
    show(cmp>0?'Nova versão disponível':'Verificação de versão',text.innerHTML);
    const body=document.getElementById('pfHelpModalBody');
+   if(automatica){const depois=document.createElement('button');depois.type='button';depois.className='pf-help-primary';depois.textContent='Agora não';depois.onclick=()=>window.pfCloseHelpModal();body.append(depois);}
    if(local){const a=document.createElement('a');a.href=base.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Abrir aplicativo publicado';a.className='pf-help-primary';body.append(a);}
    else if(cmp>0){const b=document.createElement('button');b.type='button';b.className='pf-help-primary';b.textContent='Atualizar agora';b.onclick=async()=>{
     b.disabled=true;b.textContent='Preparando atualização…';
@@ -7974,7 +7980,7 @@ body.dark-mode .pf-filtro-item > label {
      const url=new URL(location.href);url.searchParams.set('pf_update',latest);location.replace(url.href);
     }catch(e){b.disabled=false;b.textContent='Tentar atualizar novamente';const p=document.createElement('p');p.textContent=e.message;body.append(p);}
    };body.append(b);}
-  }catch(error){show('Não foi possível verificar','<p id="pfUpdateError"></p>');document.getElementById('pfUpdateError').textContent=error.message+' Nenhuma alteração foi feita no aplicativo.';}
+  }catch(error){if(automatica)return;show('Não foi possível verificar','<p id="pfUpdateError"></p>');document.getElementById('pfUpdateError').textContent=error.message+' Nenhuma alteração foi feita no aplicativo.';}
  };
 
  document.addEventListener('click',e=>{const m=document.getElementById('pfHelpModal');if(e.target===m)window.pfCloseHelpModal();const d=document.getElementById('pfHelpMenu');if(d&&!d.contains(e.target)&&!e.target.closest('#pfHelpModal'))d.open=false;});
