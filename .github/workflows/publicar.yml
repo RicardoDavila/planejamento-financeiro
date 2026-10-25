@@ -1,0 +1,56 @@
+name: Publicar aplicativo e distribuicao
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'version.json'
+      - 'manifest.webmanifest'
+      - 'service-worker.js'
+      - 'sw.js'
+      - 'icon-*.png'
+      - 'CNAME'
+      - 'distribuicao/**'
+      - 'automacao/**'
+      - '.github/workflows/publicar.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publicar-pages
+  cancel-in-progress: false
+jobs:
+  gerar:
+    permissions:
+      contents: read
+      pages: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar isolamento e adaptacao
+        run: python -m unittest discover -s automacao -p 'test_*.py' -v
+      - name: Gerar site com nova versao de distribuicao
+        run: python automacao/gerar.py --output build/site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/site
+  publicar:
+    needs: gerar
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar versoes verificadas
+        id: deployment
+        uses: actions/deploy-pages@v4
