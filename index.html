@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src https: data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://oflbclvieeknffjtndxo.supabase.co https://ricardodavila.github.io https://api.bcb.gov.br https://api.emailjs.com; img-src 'self' file: https: data: blob:; manifest-src 'self' file:; worker-src 'self'; form-action 'none'; frame-src https://oflbclvieeknffjtndxo.supabase.co blob:;">
-    <!-- Distribuição V4.11.8: aviso automático de novas versões após abrir o projeto. -->
+    <!-- Distribuição V4.11.9: aviso automático de novas versões após abrir o projeto. -->
     <!-- V4.10.10 — versão publicada com menu Ajuda e verificação de novas versões -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -5016,18 +5016,17 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             </svg>`;
             const filtroInfo = `Rubrica: ${rubrica} • Tipo: ${filtroTipo}`;
 
-            w.document.open();
-            w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1"><title>Relatório Gerencial de Planejamento Financeiro</title>
+            const relatorioHtml = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Relatório Gerencial de Planejamento Financeiro</title>
             <style>
             :root{--navy:#173b62;--azul:#e7f1fb;--verde:#e7f4eb;--laranja:#fbf0dc;--vermelho:#fbe7e9;--linha:#dbe3ed;--texto:#24364b;--muted:#63758a}
-            *{box-sizing:border-box}body{margin:0;background:#edf1f6;color:var(--texto);font-family:Arial,Helvetica,sans-serif}
-            .pagina{max-width:1380px;margin:22px auto;padding:28px;background:#fff;box-shadow:0 8px 30px #19324b16;border-radius:14px}
-            .acoes{display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px}.btn{border:0;border-radius:7px;padding:10px 14px;background:#1e64a5;color:white;font-weight:bold;cursor:pointer}.btn.sec{background:#e6ebf1;color:#253b52}
+            *{box-sizing:border-box}html{width:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}body{width:100%;min-width:0;margin:0;background:#edf1f6;color:var(--texto);font-family:Arial,Helvetica,sans-serif}
+            .pagina{width:100%;max-width:1380px;margin:22px auto;padding:28px;background:#fff;box-shadow:0 8px 30px #19324b16;border-radius:14px}
+            .acoes{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-bottom:12px}.btn{border:0;border-radius:7px;padding:10px 14px;background:#1e64a5;color:white;font-weight:bold;cursor:pointer}.btn.sec{background:#e6ebf1;color:#253b52}
             .cabecalho{display:grid;grid-template-columns:1fr auto;gap:20px;border-bottom:2px solid var(--navy);padding-bottom:16px;align-items:start}
             .marca{border-left:7px solid var(--navy);padding-left:13px}.marca h1{font-size:25px;line-height:1.15;margin:0;color:#163b65;text-transform:uppercase}.marca p{margin:7px 0 0;color:#566a80;font-size:12px}
             .meta{text-align:right;font-size:11px;line-height:1.6;color:#53677c;max-width:270px}.selo{margin-top:7px;font-style:italic;color:#315b45}
-            .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:15px 0}
+            .kpis{display:grid;grid-template-columns:repeat(var(--pf-kpi-colunas,4),minmax(0,1fr));gap:10px;margin:15px 0}
             .kpi{padding:14px;border-radius:9px;border:1px solid transparent;min-width:0}.kpi .rotulo{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.kpi .valor{font-size:clamp(16px,2vw,23px);font-weight:800;margin-top:9px;white-space:nowrap}.kpi .nota{font-size:10px;margin-top:6px;line-height:1.4}
             .kpi.receita{background:var(--verde);border-color:#c7e5d0;color:#216342}.kpi.paga{background:var(--laranja);border-color:#ecd7a9;color:#80551b}.kpi.vencer{background:var(--vermelho);border-color:#f0c6cc;color:#a62b3b}.kpi.saldo{background:var(--azul);border-color:#c9ddf4;color:#214f84}
             .bloco{border:1px solid var(--linha);border-radius:9px;overflow:hidden;margin-bottom:13px;break-inside:avoid}.bloco-titulo{background:#eaf1f8;color:#173b62;padding:10px 12px;font-size:13px;font-weight:800;text-transform:uppercase;display:flex;gap:9px;align-items:center}.bloco-corpo{padding:12px}
@@ -5042,8 +5041,9 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             .grafico-titulo{font-size:12px;font-weight:800;color:#173b62}
             .grafico-sub{font-size:10px;color:var(--muted);margin-top:4px;margin-bottom:9px}
             .grafico-area{height:auto;position:relative}
-            @media(max-width:750px){.pagina{margin:0;padding:12px;border-radius:0}.cabecalho{grid-template-columns:1fr}.meta{text-align:left;max-width:none}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.kpi{padding:10px}.kpi .valor{font-size:17px}.grid{grid-template-columns:1fr}.marca h1{font-size:21px}.tabela th,.tabela td{font-size:10px;padding:6px 5px}.rodape{flex-direction:column}}
-            @media print{body{background:#fff}.pagina{max-width:none;margin:0;padding:0;box-shadow:none;border-radius:0}.acoes{display:none}.cabecalho,.kpi,.bloco,.resumo{break-inside:avoid}.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tabela th{-webkit-print-color-adjust:exact;print-color-adjust:exact}.kpi,.resumo,.bloco-titulo,.total,.frase{-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4 portrait;margin:0}.pagina{padding:9mm!important}}
+            @media screen and (max-width:750px){.pagina{margin:0;padding:12px;border-radius:0}.cabecalho{grid-template-columns:1fr}.meta{text-align:left;max-width:none}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.kpi{padding:10px}.kpi .valor{font-size:clamp(14px,4vw,18px);white-space:normal;overflow-wrap:anywhere;text-align:left;line-height:1.25}.kpi .rotulo{overflow-wrap:anywhere}.bloco-corpo{max-width:100%;overflow-x:auto}.marca h1{overflow-wrap:anywhere}.total{flex-wrap:wrap}.grid{grid-template-columns:1fr}.marca h1{font-size:21px}.tabela th,.tabela td{font-size:10px;padding:6px 5px}.rodape{flex-direction:column}}
+            @media screen and (max-width:340px){.kpis{grid-template-columns:minmax(0,1fr)}.acoes .btn{flex:1 1 100%}}
+            @media print{body{background:#fff}.pagina{max-width:none;margin:0;padding:0;box-shadow:none;border-radius:0}.acoes{display:none}.cabecalho,.kpi,.bloco,.resumo{break-inside:avoid}.kpis{grid-template-columns:repeat(var(--pf-kpi-colunas,4),minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tabela th{-webkit-print-color-adjust:exact;print-color-adjust:exact}.kpi,.resumo,.bloco-titulo,.total,.frase{-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4 portrait;margin:0}.pagina{padding:9mm!important}}
             </style>
 <style id="ajuste-filtro-tipo-antes-rubrica">
 /* Solicitação: Filtrar por Tipo antes de Rubrica. Mantém IDs e comportamento dos filtros. */
@@ -5090,12 +5090,12 @@ body:not(.dark-mode) .bg-slate-100 label {
 }
 </style>
 
-</head><body><main class="pagina">
+</head><body${exportarPdf ? ' onload="setTimeout(function(){window.focus();window.print();},350)"' : ''}><main class="pagina">
             <div class="acoes"><button class="btn sec" onclick="window.close()">Fechar relatório</button><button class="btn" onclick="window.print()">Imprimir / Salvar PDF</button></div>
             <header class="cabecalho"><div class="marca"><h1>Relatório Gerencial<br>de Planejamento Financeiro</h1><p>Visão consolidada do fluxo financeiro • ${esc(periodo)}</p><p>${esc(filtroInfo)}</p></div>
             <div class="meta">▦ &nbsp; Data de emissão<br><strong>${esc(dataEmissao)}</strong><div class="selo">Organização financeira hoje<br>para um futuro mais seguro.</div></div></header>
 
-            <section class="kpis" style="grid-template-columns:repeat(${somenteDespesas?3:4},minmax(0,1fr))">
+            <section class="kpis" style="--pf-kpi-colunas:${somenteReceitas?1:somenteDespesas?3:4}">
               ${somenteDespesas || somenteReceitas ? (somenteReceitas ? `<article class="kpi receita"><div class="rotulo">▮ Receitas previstas</div><div class="valor">${moedaRel(receitasPrevistas)}</div><div class="nota">Receitas cadastradas no período filtrado</div></article>` : ``) : `<article class="kpi receita"><div class="rotulo">▮ Receitas previstas</div><div class="valor">${moedaRel(receitasPrevistas)}</div><div class="nota">Receitas cadastradas no período filtrado</div></article>`}
               ${somenteReceitas ? `` : `<article class="kpi paga"><div class="rotulo">▤ Despesas pagas</div><div class="valor">${moedaRel(despesasPagas)}</div><div class="nota">Lançamentos identificados como pagos</div></article>
               <article class="kpi vencer"><div class="rotulo">▣ Despesas a vencer</div><div class="valor">${moedaRel(despesasVencer)}</div><div class="nota">Compromissos pendentes identificados</div></article>${somenteDespesas ? `<article class="kpi saldo"><div class="rotulo">▣ Total da despesa no período</div><div class="valor">${moedaRel(totalDespesasPeriodo)}</div><div class="nota">Total das despesas dentro dos filtros selecionados</div></article>` : ` <article class="kpi saldo"><div class="rotulo">⚖ Saldo projetado</div><div class="valor">${moedaRel(saldoProjetado)}</div><div class="nota">Receitas menos despesas e investimentos</div></article>`}`}
@@ -5272,16 +5272,12 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
 
 
 
-</body></html>`);
-            w.document.close();
-            if (exportarPdf) {
-                // Os gráficos agora são SVG estáticos, já incluídos no HTML; não dependem de CDN nem de Chart.js.
-                setTimeout(() => {
-                    try { w.focus(); w.print(); } catch (e) {
-                        alert('O relatório foi aberto, mas não foi possível iniciar a impressão automaticamente. Use o botão “Imprimir / Salvar PDF” no relatório.');
-                    }
-                }, 350);
-            }
+</body></html>`;
+            // A navegação completa inicializa o viewport do relatório no Chrome móvel.
+            const relatorioUrl = URL.createObjectURL(new Blob([relatorioHtml], {type:'text/html;charset=utf-8'}));
+            try { w.location.replace(relatorioUrl); }
+            catch (erro) { URL.revokeObjectURL(relatorioUrl); w.close(); alert('Não foi possível abrir o relatório. Tente novamente.'); return; }
+            setTimeout(() => URL.revokeObjectURL(relatorioUrl), 60000);
         }
 
 
@@ -7793,7 +7789,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.11.8';
+ const CURRENT_VERSION='V4.11.9';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';

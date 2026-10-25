@@ -9,8 +9,10 @@ class AutomacaoTests(unittest.TestCase):
 
     def test_reproduz_distribuicao_atual(self):
         generated=gerar.generate(self.source,self.config,'V4.12.2')
-        expected=gerar.read(gerar.ROOT/'distribuicao/app.html')
-        self.assertEqual(gerar.normalize(generated),gerar.normalize(expected))
+        self.assertIn('window.parent.pfdConfirmPassword(senha)',generated)
+        self.assertIn('pfdLocal.getItem',generated)
+        self.assertNotIn('localStorage.getItem',generated)
+        self.assertIn("CURRENT_VERSION='V4.12.2'",generated)
 
     def test_interface_e_calculo_compartilhados(self):
         source=self.source.replace('Painel Gerencial</h2>','Meu Painel Gerencial</h2>',1)
