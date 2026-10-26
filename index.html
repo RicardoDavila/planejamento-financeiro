@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src https: data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://oflbclvieeknffjtndxo.supabase.co https://ricardodavila.github.io https://api.bcb.gov.br https://api.emailjs.com; img-src 'self' file: https: data: blob:; manifest-src 'self' file:; worker-src 'self'; form-action 'none'; frame-src https://oflbclvieeknffjtndxo.supabase.co blob:;">
-    <!-- Distribuição V4.11.9: aviso automático de novas versões após abrir o projeto. -->
+    <!-- Distribuição V4.11.10: aviso automático de novas versões após abrir o projeto. -->
     <!-- V4.10.10 — versão publicada com menu Ajuda e verificação de novas versões -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -5272,6 +5272,17 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
 
 
 
+
+<style id="pf-menu-mobile-toque-seguro">
+@media(max-width:800px){
+ #pfMenuTopo #pfSairBarraTopo{display:none!important}
+ #pfMenuTopo #pfMenuCompacto{min-height:48px;min-width:88px;padding:12px 16px;font-size:14px}
+ #pfMenuLateral button{min-height:48px}
+ #pfMenuLateral header button{min-width:48px;min-height:48px}
+ #pfMenuLateral .pf-menu-separador-sair{border:0;border-top:1px solid #64748b;margin:24px 0 12px}
+ #pfMenuLateral #pfSairMenuMobile{color:#fecaca!important;margin-top:12px}
+}
+</style>
 </body></html>`;
             // A navegação completa inicializa o viewport do relatório no Chrome móvel.
             const relatorioUrl = URL.createObjectURL(new Blob([relatorioHtml], {type:'text/html;charset=utf-8'}));
@@ -7789,7 +7800,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.11.9';
+ const CURRENT_VERSION='V4.11.10';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -8300,6 +8311,11 @@ body.auth-pendente #pfMenuTopo{display:none}
   }
   if(category==='seguranca')document.querySelectorAll('#pf493Actions .pf-seguranca-dropdown button').forEach(proxy);
   if(category==='ajuda')document.querySelectorAll('#pfHelpMenu .pf-help-dropdown button').forEach(proxy);
+  if(category==='categorias'){
+   const separator=document.createElement('hr');separator.className='pf-menu-separador-sair';items.appendChild(separator);
+   action('Sair do aplicativo','fa-solid fa-right-from-bracket',()=>{close(false);sairAplicativo();if(drawer.hidden)returnFocus?.focus();});
+   items.lastElementChild.id='pfSairMenuMobile';
+  }
   active=category;drawer.hidden=false;veil.hidden=false;
   document.querySelectorAll('#pfMenuTopo button').forEach(b=>b.setAttribute('aria-expanded',String(Boolean(b.dataset.pfCategoria===category||(b.id==='pfMenuCompacto'&&category)))));
   document.getElementById('pfMenuFechar').focus();
@@ -8483,5 +8499,16 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)bloquearRes
 window.addEventListener('pagehide',bloquearResumoMobile);
 window.addEventListener('pageshow',bloquearResumoMobile);
 </script>
+
+<style id="pf-menu-mobile-toque-seguro">
+@media(max-width:800px){
+ #pfMenuTopo #pfSairBarraTopo{display:none!important}
+ #pfMenuTopo #pfMenuCompacto{min-height:48px;min-width:88px;padding:12px 16px;font-size:14px}
+ #pfMenuLateral button{min-height:48px}
+ #pfMenuLateral header button{min-width:48px;min-height:48px}
+ #pfMenuLateral .pf-menu-separador-sair{border:0;border-top:1px solid #64748b;margin:24px 0 12px}
+ #pfMenuLateral #pfSairMenuMobile{color:#fecaca!important;margin-top:12px}
+}
+</style>
 </body>
 </html>

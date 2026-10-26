@@ -1,8 +1,8 @@
 {
-  "version": "V4.11.9",
-  "name": "V4.11.9",
-  "date": "2026-10-25",
+  "version": "V4.11.10",
+  "name": "V4.11.10",
+  "date": "2026-10-26",
   "notes": [
-    "Relatório com abertura e indicadores ajustados para celular."
+    "No celular, Sair fica no final do Menu, separado das opções; áreas de toque ampliadas."
   ]
 }
