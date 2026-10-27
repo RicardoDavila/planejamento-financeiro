@@ -4157,7 +4157,15 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             else iniciar();
         })();
 
-        async function obterSessaoNuvem(){window.pfdAssert();inicializarSupabaseCliente();const {data,error}=await supabaseCliente.auth.getSession();if(error)throw error;window.pfdAssert();if(data.session?.user?.id!==window.parent.pfdUser?.id)throw Error('A sessão mudou. Entre novamente.');return data.session;}
+        async function obterSessaoNuvem(){
+            window.pfdAssert();
+            if(window.parent.PF_IA_DEMO)return null;
+            if(typeof window.parent.pfdGetSession!=='function')throw Error('Atualize esta página com Ctrl+F5 para carregar a correção da sessão.');
+            const session=await window.parent.pfdGetSession();
+            window.pfdAssert();
+            if(!session?.access_token||session.user?.id!==window.parent.pfdUser?.id)throw Error('A sessão não corresponde à conta conectada. Entre novamente.');
+            return session;
+        }
 
         function coletarPacoteNuvem() {
             window.pfdAssert();
@@ -8274,8 +8282,8 @@ body.auth-pendente #pfIaLaunch{display:none!important}
   $('pfIaSend').disabled=true;$('pfIaStatus').textContent='Consultando Gemini…';let timer;
   try{
    const summary=core.summarize(rows,month);
-   const session=await obterSessaoNuvem();if(run!==revision||owner()!==capturedOwner)return;
    timer=setTimeout(()=>currentController.abort(),30000);
+   const session=await Promise.race([obterSessaoNuvem(),new Promise((_,reject)=>{currentController.signal.addEventListener('abort',()=>reject(new DOMException('Consulta interrompida','AbortError')),{once:true});})]);if(run!==revision||owner()!==capturedOwner)return;
    const answer=await window.PFGemini.query({question,summary,session,ownerId:capturedOwner,baseUrl:SUPABASE_URL,publicKey:SUPABASE_PUBLISHABLE_KEY,signal:currentController.signal});
    if(run===revision&&owner()===capturedOwner)add(answer,'Gemini');
   }catch(error){if(run===revision&&owner()===capturedOwner)add(error.name==='AbortError'?'O tempo de consulta esgotou. Tente novamente ou use o modo local.':error.message,'Aviso');}

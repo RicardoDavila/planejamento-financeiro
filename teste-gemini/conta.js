@@ -2,7 +2,7 @@
  'use strict';
  const $=id=>document.getElementById(id),base=new URL('./',location.href),client=window.supabase?.createClient('https://oflbclvieeknffjtndxo.supabase.co','sb_publishable_n_k8Yggb0xq8ESLo0rYVsw_SZ5LTSpJ',{auth:{storageKey:'pf-gemini-teste-auth-v1',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}});
  let user=null,frame=null,generation=0,recovering=false,installEvent=null;
- let latestSession=null,sessionCheck=null,retryTimer=null,authRevision=0;
+ let latestSession=null,sessionCheck=null,retryTimer=null,authRevision=0,requestedSession=null;
  Object.defineProperty(window,'pfdUser',{get:()=>user});
  Object.defineProperty(window,'pfdClient',{value:client});
  function status(text){$('pfdStatus').textContent=text;}
@@ -30,6 +30,7 @@
   return [400,401,403].includes(Number(error?.status))||['refresh_token_not_found','refresh_token_already_used','session_not_found','session_expired','user_not_found','user_banned'].includes(error?.code);
  }
  async function checkSession(){
+  if(requestedSession){try{await requestedSession;}catch{}return;}
   if(sessionCheck)return sessionCheck;
   if(recovering)return;
   const run=generation,revision=authRevision;
@@ -51,6 +52,33 @@
   sessionCheck=operation();
   try{await sessionCheck;}finally{sessionCheck=null;}
  }
+ // O painel e o chat usam a mesma recuperação da sessão do login.
+ // Uma leitura temporariamente vazia não pode ser tratada como outra conta.
+ window.pfdGetSession=async()=>{
+  if(requestedSession)return requestedSession;
+  const ownerId=user?.id,run=generation;
+  if(!ownerId||recovering)throw Error('Entre novamente na conta de testes.');
+  function assertOwner(){if(user?.id!==ownerId||generation!==run||recovering)throw Error('A conta foi alterada. Entre novamente antes de continuar.');}
+  function accept(session){
+   assertOwner();
+   if(!session?.access_token||!session?.user?.id)throw Error('Não foi possível recuperar a sessão. Tente novamente em alguns segundos.');
+   if(session.user.id!==ownerId){closeApp();throw Error('A sessão pertence a outra conta. Entre novamente na conta de testes.');}
+   latestSession=session;return session;
+  }
+  const operation=async()=>{
+   // Espera uma renovação que já tenha começado ao retornar à aba.
+   if(sessionCheck)await sessionCheck;
+   assertOwner();
+   const result=await client.auth.getSession();assertOwner();
+   if(result.data?.session)return accept(result.data.session);
+   if(!latestSession?.refresh_token)throw Error('Sua sessão não está disponível. Entre novamente na conta de testes.');
+   const restored=await client.auth.refreshSession({refresh_token:latestSession.refresh_token});assertOwner();
+   if(restored.error)throw Error('Não foi possível renovar a sessão. Entre novamente se o problema continuar.');
+   return accept(restored.data?.session);
+  };
+  requestedSession=operation();
+  try{return await requestedSession;}finally{requestedSession=null;}
+ };
  client.auth.onAuthStateChange((event,session)=>{
   const revision=++authRevision;
   if(event==='PASSWORD_RECOVERY'){recovering=true;closeApp();$('pfdForm').hidden=true;$('pfdRecovery').hidden=false;status('Defina uma nova senha.');return;}
