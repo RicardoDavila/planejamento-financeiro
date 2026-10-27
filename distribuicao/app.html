@@ -8113,5 +8113,167 @@ window.addEventListener('pageshow',bloquearResumoMobile);
  #pfMenuLateral #pfSairMenuMobile{color:#fecaca!important;margin-top:12px}
 }
 </style>
+
+<!-- INICIO ASSISTENTE LOCAL: somente leitura, sem API -->
+<style id="pf-assistente-local-css">#pfTesteBanner{position:fixed;z-index:1100;bottom:0;left:0;right:0;background:#fef3c7;color:#78350f;border-top:1px solid #f59e0b;padding:8px 16px;font:600 12px/1.4 system-ui;text-align:center}
+#pfIaLaunch{position:fixed;right:22px;bottom:88px;z-index:990;border:0;border-radius:999px;background:#4f46e5;color:#fff;padding:15px 21px;font:600 14px system-ui;box-shadow:0 6px 25px #312e8155;cursor:pointer}
+body.auth-pendente #pfIaLaunch{display:none!important}
+#pfIaDialog{border:0;border-radius:22px;padding:0;width:780px;max-width:calc(100vw - 28px);height:760px;max-height:calc(100dvh - 80px);background:#f8fafc;color:#0f172a;box-shadow:0 24px 90px #0f172a55}
+#pfIaDialog::backdrop{background:#0f172a99;backdrop-filter:blur(3px)}
+#pfIaDialog *{box-sizing:border-box}
+#pfIaDialog .ia-shell{height:100%;display:flex;flex-direction:column;font:14px/1.5 system-ui}
+#pfIaDialog header{display:flex;justify-content:space-between;align-items:center;background:#312e81;color:#fff;padding:20px 24px}
+#pfIaDialog h2{font-size:20px;font-weight:700;margin:0}#pfIaDialog header p{margin:3px 0 0;font-size:12px;color:#ddd6fe}
+#pfIaDialog button{cursor:pointer}#pfIaClose{background:#ffffff20;border:0;color:#fff;width:36px;height:36px;border-radius:10px;font-size:24px}
+#pfIaDialog .ia-controls{padding:14px 24px;border-bottom:1px solid #e2e8f0;background:#fff;display:flex;gap:14px;align-items:end;flex-wrap:wrap}
+#pfIaDialog label{display:block;font-size:12px;font-weight:600}#pfIaDialog select,#pfIaDialog input{border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:white;color:#0f172a;font:14px system-ui}
+#pfIaClear{border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;background:#f8fafc;color:#334155;font-size:12px}#pfIaDialog .ia-controls span{font-size:12px;color:#64748b}
+#pfIaDialog .ia-notice{padding:10px 24px;background:#eef2ff;color:#3730a3;font-size:12px}
+#pfIaDialog .ia-chips{display:flex;flex-wrap:wrap;gap:7px;padding:12px 24px 4px}
+#pfIaDialog .ia-chips button{border:1px solid #c7d2fe;background:#fff;border-radius:999px;color:#4338ca;padding:7px 11px;font-size:12px}
+#pfIaMessages{flex:1;min-height:80px;overflow-y:auto;padding:14px 24px;display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain}
+#pfIaMessages article{white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid #e2e8f0;border-radius:14px;padding:12px 15px;background:#fff;max-width:94%}
+#pfIaMessages article.user{align-self:flex-end;background:#4f46e5;color:#fff;border:0}
+#pfIaMessages article small{display:block;font-size:10px;opacity:.7;margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+#pfIaDialog .ia-footer{padding:12px 24px 18px;background:#fff;border-top:1px solid #e2e8f0}#pfIaForm{display:flex;gap:8px}#pfIaQuestion{flex:1;min-width:0}#pfIaSend{border:0;border-radius:10px;background:#4f46e5;color:white;padding:10px 16px;font-weight:600}
+#pfIaDialog button:disabled{opacity:.5;cursor:wait}#pfIaDialog :focus-visible{outline:3px solid #818cf8;outline-offset:2px}
+#pfIaStatus{font-size:11px;color:#64748b;min-height:16px;margin:7px 0 0}#pfIaConsent{display:none;padding:8px 24px;font-size:12px;background:#fff7ed}#pfIaConsent label{display:flex;gap:8px;align-items:start;font-weight:400}
+@media(max-width:600px){#pfIaDialog{max-width:100vw;width:100vw;height:calc(100dvh - 44px);max-height:calc(100dvh - 44px);border-radius:16px 16px 0 0;margin:auto 0 44px}#pfIaDialog header{padding:14px 16px}#pfIaDialog h2{font-size:18px}#pfIaDialog .ia-controls{padding:10px 16px;gap:8px}#pfIaDialog .ia-notice,#pfIaDialog .ia-chips,#pfIaMessages,#pfIaDialog .ia-footer{padding-left:16px;padding-right:16px}#pfIaLaunch{bottom:100px;right:12px;padding:13px 16px}#pfTesteBanner{font-size:11px;padding:6px}#pfIaDialog .ia-chips button{min-height:36px}}
+@media print{#pfTesteBanner,#pfIaLaunch,#pfIaDialog{display:none!important}}
+/* Mantém cabeçalho e entrada visíveis mesmo em telas estreitas. */
+#pfIaDialog{overflow:hidden}#pfIaDialog .ia-shell{overflow:hidden;min-height:0}#pfIaDialog header,#pfIaDialog .ia-controls,#pfIaDialog .ia-notice,#pfIaDialog .ia-chips,#pfIaDialog .ia-footer{flex-shrink:0}#pfIaMessages{min-height:0}
+@media(max-width:600px){#pfIaDialog .ia-controls span{display:none}#pfIaDialog .ia-controls{align-items:center;justify-content:space-between}#pfIaDialog .ia-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px}#pfIaDialog .ia-chips button{white-space:nowrap;flex-shrink:0}#pfIaDialog .ia-notice{font-size:11px;line-height:1.4;padding-top:8px;padding-bottom:8px}#pfIaDialog header{padding-top:10px;padding-bottom:10px}#pfIaDialog header p{font-size:11px}#pfIaDialog .ia-footer{padding-top:8px;padding-bottom:10px}}
+</style>
+<script>window.PF_IA_CONFIG={teste:false,demo:false};</script>
+<script id="pf-assistente-local-core">(function (root) {
+  'use strict';
+  const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const money = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const cents = n => Math.round((Number(n) || 0) * 100);
+  function summarize(rows, month, now = new Date()) {
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) throw Error('Selecione um mês válido.');
+    const [y,m] = month.split('-').map(Number);
+    const previous = iso(new Date(y,m-2,1)).slice(0,7);
+    const today = iso(now), until = iso(new Date(now.getFullYear(),now.getMonth(),now.getDate()+30));
+    const categories = new Map();
+    const make = () => ({ receitas:0, despesas:0, recebido:0, pago:0, pendente:0, quantidade:0 });
+    const current = make(), prior = make(), due = { vencido:0, hoje:0, proximos30:0, quantidade:0 };
+    for (const row of rows) {
+      if (!row || !Number.isFinite(Number(row.valor)) || Number(row.valor)<0) continue;
+      const type = norm(row.tipo), expense = type === 'despesa', income = type === 'receita';
+      if (!expense && !income) continue;
+      const value = cents(row.valor), date = String(row.vencimento || '').slice(0,10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+      const paid = !!row.dataPg || ['pago','recebido'].includes(norm(row.status));
+      const bucket = date.startsWith(month) ? current : date.startsWith(previous) ? prior : null;
+      if (bucket) {
+        bucket.quantidade++;
+        bucket[income?'receitas':'despesas'] += value;
+        if(paid) bucket[income?'recebido':'pago'] += value;
+        else if(expense) bucket.pendente += value;
+        if(expense) {
+          const label=String(row.categoria || 'Sem categoria');
+          if(!categories.has(label)) categories.set(label,{nome:label,atual:0,anterior:0});
+          categories.get(label)[bucket===current?'atual':'anterior'] += value;
+        }
+      }
+      if(expense && !paid) {
+        if(date<today) due.vencido+=value;
+        else if(date===today) due.hoje+=value;
+        else if(date<=until) {due.proximos30+=value;due.quantidade++;}
+      }
+    }
+    return {mes:month,mesAnterior:previous,hoje:today,atual:current,anterior:prior,
+      saldoPrevisto:current.receitas-current.despesas, saldoLiquidado:current.recebido-current.pago,
+      variacaoDespesas:current.despesas-prior.despesas,
+      variacaoPercentual:prior.despesas?Math.round((current.despesas-prior.despesas)/prior.despesas*10000)/100:null,
+      categorias:[...categories.values()].sort((a,b)=>b.atual-a.atual),vencimentos:due};
+  }
+  function demo(question, s) {
+    const q=norm(question), c=s.atual, fmt=money;
+    const label=s.mes.split('-').reverse().join('/');
+    const category=s.categorias.find(x=>q.includes(norm(x.nome)));
+    if(category) return `Em ${label}, a categoria ${category.nome} tem ${fmt(category.atual)} em despesas previstas por vencimento. No mês anterior: ${fmt(category.anterior)}. Variação: ${fmt(category.atual-category.anterior)}.`;
+    if(/vencer|vencid|vence|vencimento|atrasad/.test(q)) return `Considerando todos os lançamentos em aberto em ${s.hoje.split('-').reverse().join('/')}:\n• Vencidos: ${fmt(s.vencimentos.vencido)}\n• Vencendo hoje: ${fmt(s.vencimentos.hoje)}\n• Próximos 30 dias (após hoje): ${fmt(s.vencimentos.proximos30)} em ${s.vencimentos.quantidade} lançamento(s).`;
+    if(/compar|aument|anterior|variacao|diminui/.test(q)) return `Despesas previstas por vencimento:\n• ${label}: ${fmt(c.despesas)}\n• ${s.mesAnterior.split('-').reverse().join('/')}: ${fmt(s.anterior.despesas)}\n• Diferença: ${fmt(s.variacaoDespesas)}${s.variacaoPercentual===null?' (sem base para percentual).':` (${s.variacaoPercentual.toLocaleString('pt-BR')}%).`}\n${s.categorias.filter(x=>x.atual>x.anterior).slice(0,3).map(x=>`• ${x.nome}: aumento de ${fmt(x.atual-x.anterior)}`).join('\n')}`;
+    if(/maior|categoria|ranking|onde/.test(q)) return `Maiores categorias de despesas previstas em ${label}:\n${s.categorias.filter(x=>x.atual>0).slice(0,5).map((x,i)=>`${i+1}. ${x.nome}: ${fmt(x.atual)}`).join('\n') || 'Nenhuma despesa no período.'}`;
+    if(/receita|recebi|recebido|renda/.test(q)) return `Em ${label}: receitas previstas de ${fmt(c.receitas)}, das quais ${fmt(c.recebido)} estão recebidas. Critério: mês do vencimento.`;
+    if(/gast|despesa|paguei|pago/.test(q)) return `Em ${label}: despesas previstas de ${fmt(c.despesas)}, das quais ${fmt(c.pago)} estão pagas e ${fmt(c.pendente)} em aberto. Critério: mês do vencimento; pagamentos de outros meses não entram neste total.`;
+    if(/resumo|saldo|situacao|sobr|economiz/.test(q)) return `Resumo de ${label} por vencimento:\n• Receitas previstas: ${fmt(c.receitas)}\n• Despesas previstas: ${fmt(c.despesas)}\n• Saldo previsto: ${fmt(s.saldoPrevisto)}\n• Recebido: ${fmt(c.recebido)}\n• Pago: ${fmt(c.pago)}\n• Diferença entre recebido e pago: ${fmt(s.saldoLiquidado)}\nEste resultado não inclui saldo inicial de conta.`;
+    return 'Posso consultar resumo, gastos, receitas, saldo, categorias, comparação com o mês anterior, contas a vencer, valores a pagar e possíveis duplicados. Use os atalhos ou pergunte, por exemplo: “Quanto falta pagar?”. Perguntas fora dessas consultas ainda não são reconhecidas pelo assistente local.';
+  }
+  function answer(question,rows,month,now=new Date()) {
+    const s=summarize(rows,month,now),q=norm(question),label=month.split('-').reverse().join('/');
+    const current=rows.filter(r=>r&&['despesa','receita'].includes(norm(r.tipo))&&Number.isFinite(Number(r.valor))&&Number(r.valor)>=0&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.vencimento||''))&&String(r.vencimento).startsWith(month));
+    const paid=r=>!!r.dataPg||['pago','recebido'].includes(norm(r.status));
+    const category=s.categorias.slice().sort((a,b)=>b.nome.length-a.nome.length).find(c=>q.includes(norm(c.nome)));
+    const named=q.match(/(?:na|da|pela)\s+(?:rubrica|categoria)\s+(.+?)\s*[?!.]*$/);
+    if(named&&!category)return `Não encontrei a categoria “${named[1]}” nas despesas deste mês ou do mês anterior. Categorias disponíveis: ${s.categorias.map(c=>c.nome).join(', ')||'nenhuma'}. Nenhum total geral foi usado no lugar dessa categoria.`;
+    const filtered=category?current.filter(r=>norm(r.categoria)===norm(category.nome)):current;
+    const scope=category?` na categoria ${category.nome}`:'';
+    const details=list=>list.slice(0,8).map(r=>`• ${r.vencimento.split('-').reverse().join('/')} · ${String(r.descricao||r.subItem||r.categoria||'Sem descrição')} · ${money(cents(r.valor))}`).join('\n');
+    if(/duplicad|repetid/.test(q)){
+      const groups=new Map();
+      filtered.forEach(r=>{const description=norm(r.descricao).trim();if(!description)return;const key=JSON.stringify([norm(r.tipo),r.vencimento,cents(r.valor),description,norm(r.categoria),norm(r.subItem)]);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r);});
+      const duplicates=[...groups.values()].filter(g=>g.length>1);
+      return duplicates.length?`Possíveis duplicados em ${label}${scope}:\n${duplicates.slice(0,8).map(g=>`${g.length} lançamentos semelhantes: ${g[0].descricao} · ${money(cents(g[0].valor))} cada · vencimento ${g[0].vencimento.split('-').reverse().join('/')}`).join('\n')}\nCritério: mesmo tipo, vencimento, valor, descrição, categoria e subitem. Confira antes de qualquer alteração; nenhum registro foi modificado.`:`Não encontrei possíveis duplicados em ${label}${scope} pelo critério de mesmo tipo, vencimento, valor, descrição, categoria e subitem. Registros sem descrição não foram comparados. Nenhum registro foi alterado.`;
+    }
+    if(/falta.*receber|a receber|nao recebid/.test(q)){
+      const list=filtered.filter(r=>norm(r.tipo)==='receita'&&!paid(r));
+      return `Receitas a receber em ${label}${scope}: ${money(list.reduce((a,r)=>a+cents(r.valor),0))} em ${list.length} lançamento(s).\n${details(list)}\nCritério: mês do vencimento; lista limitada aos primeiros 8 registros.`;
+    }
+    if(/falta.*pagar|a pagar|em aberto|pendent/.test(q)){
+      const list=filtered.filter(r=>norm(r.tipo)==='despesa'&&!paid(r));
+      return `Despesas em aberto em ${label}${scope}: ${money(list.reduce((a,r)=>a+cents(r.valor),0))} em ${list.length} lançamento(s).\n${details(list)}\nCritério: mês do vencimento; lista limitada aos primeiros 8 registros.`;
+    }
+    if(/quantos|quantas|quantidade/.test(q)&&/lancamento|conta|despesa|receita/.test(q))return `Em ${label}${scope}: ${filtered.filter(r=>norm(r.tipo)==='despesa').length} despesa(s) e ${filtered.filter(r=>norm(r.tipo)==='receita').length} receita(s), totalizando ${filtered.length} lançamento(s). Critério: mês do vencimento.`;
+    if(/ajuda|como usar/.test(q))return 'Experimente: “Faça um resumo do mês”, “Quanto gastei?”, “Quanto falta pagar?”, “Tenho receitas a receber?”, “Compare com o mês anterior”, “Quais contas estão a vencer?” ou “Há lançamentos duplicados?”. Você também pode escrever o nome de uma categoria cadastrada. O período selecionado controla as consultas; vencimentos consideram a data atual e toda a base. O assistente usa regras e cálculos locais, sem modelo de IA e sem alterar lançamentos.';
+    return demo(question,s);
+  }
+  function privateSummary(s) {
+    const labels={};
+    const categorias=s.categorias.slice(0,40).map((x,i)=>{const codigo=`C${String(i+1).padStart(2,'0')}`;labels[codigo]=x.nome;return {codigo,atual:x.atual,anterior:x.anterior};});
+    return {labels, data:{...s,categorias}};
+  }
+  const api={summarize,demo,answer,privateSummary,money,norm};
+  if(typeof module!=='undefined' && module.exports) module.exports=api;
+  else root.PFAssistenteCore=api;
+})(typeof window==='undefined'?globalThis:window);
+</script>
+<script id="pf-assistente-local-ui">(function(){
+'use strict';
+const core=window.PFAssistenteCore,config=window.PF_IA_CONFIG||{teste:true};
+const element=document.createElement('div');
+element.innerHTML=`<div id="pfTesteBanner">CÓPIA PARA TESTES • Dados fictícios • Original preservado</div>
+<button id="pfIaLaunch" type="button" aria-haspopup="dialog">✦ Assistente financeiro</button>
+<dialog id="pfIaDialog" aria-labelledby="pfIaTitle"><div class="ia-shell">
+<header><div><h2 id="pfIaTitle">✦ Assistente financeiro local</h2><p>Gratuito · Sem cartão · Sem chave de API</p></div><button id="pfIaClose" type="button" aria-label="Fechar assistente">×</button></header>
+<div class="ia-controls"><label>Período de análise<br><input type="month" id="pfIaMonth" required></label><span>Respostas calculadas neste navegador</span><button id="pfIaClear" type="button">Nova conversa</button></div>
+<div class="ia-notice" id="pfIaNotice"></div>
+<div class="ia-chips"><button type="button" data-q="Faça um resumo do mês">Resumo do mês</button><button type="button" data-q="Quanto gastei neste mês?">Meus gastos</button><button type="button" data-q="Quais são as maiores categorias?">Maiores categorias</button><button type="button" data-q="Compare com o mês anterior">Comparar meses</button><button type="button" data-q="Quais contas estão a vencer?">Contas a vencer</button><button type="button" data-q="Quanto falta pagar?">A pagar</button><button type="button" data-q="Tenho receitas a receber?">A receber</button><button type="button" data-q="Há lançamentos duplicados?">Possíveis duplicados</button></div>
+<div id="pfIaMessages" role="log" aria-label="Conversa com o assistente" aria-live="polite" aria-relevant="additions"></div>
+<div class="ia-footer"><form id="pfIaForm"><input id="pfIaQuestion" aria-label="Sua pergunta" maxlength="600" placeholder="Ex.: quanto falta pagar?" required autocomplete="off"><button id="pfIaSend" type="submit">Enviar</button></form><p id="pfIaStatus" role="status">Somente leitura · Conversa apenas nesta aba · Valores por vencimento</p></div>
+</div></dialog>`;
+document.body.appendChild(element);
+const $=id=>document.getElementById(id),dialog=$('pfIaDialog'),messages=$('pfIaMessages');
+if(!config.teste)$('pfTesteBanner').remove();else if(!config.demo)$('pfTesteBanner').textContent='CÓPIA PARA TESTES • Conta indicada • Leitura da nuvem • Gravação remota bloqueada • Original preservado';
+$('pfIaNotice').textContent='O assistente usa regras e cálculos locais, sem modelo de IA. As perguntas e respostas não são enviadas a serviços de IA.'+(config.demo?' Esta demonstração contém dados fictícios.':' Os números vêm dos lançamentos carregados da sua conta.');
+const now=new Date();$('pfIaMonth').value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+function add(text,user=false){const article=document.createElement('article'),label=document.createElement('small');article.className=user?'user':'assistant';label.textContent=user?'Você':'Assistente local';article.append(label,document.createTextNode(text));messages.appendChild(article);while(messages.children.length>60)messages.firstElementChild.remove();messages.scrollTop=messages.scrollHeight;}
+function welcome(){add('Olá! Posso consultar gastos, receitas, saldo, categorias, comparação entre meses, contas em aberto e possíveis duplicados. Use um atalho ou escreva sua pergunta. As consultas usam o mês selecionado; contas a vencer consideram a data de hoje e toda a base.');}
+welcome();
+const allowed=()=>{try{if(typeof window.pfdAssert==='function')window.pfdAssert();return config.demo||(typeof protecaoAutenticada!=='undefined'&&protecaoAutenticada&&!document.body.classList.contains('auth-pendente'));}catch{return false;}};
+$('pfIaLaunch').addEventListener('click',()=>{if(!allowed())return;dialog.showModal();$('pfIaQuestion').focus();});
+$('pfIaClose').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>$('pfIaLaunch').focus());
+new MutationObserver(()=>{if(!allowed()){messages.replaceChildren();$('pfIaQuestion').value='';if(dialog.open)dialog.close();}}).observe(document.body,{attributes:true,attributeFilter:['class']});
+$('pfIaClear').addEventListener('click',()=>{messages.replaceChildren();$('pfIaQuestion').value='';welcome();$('pfIaQuestion').focus();});
+$('pfIaMonth').addEventListener('change',()=>{messages.replaceChildren();add('Período alterado. Faça uma nova pergunta para consultar os valores deste mês.');});
+function send(question){question=String(question||'').trim();if(!question||!allowed())return;if(!$('pfIaMonth').checkValidity()){$('pfIaMonth').reportValidity();return;}add(question,true);$('pfIaQuestion').value='';try{const rows=typeof transacoes!=='undefined'?transacoes:[];add(core.answer(question,rows,$('pfIaMonth').value));}catch{add('Não foi possível analisar os lançamentos. Verifique o mês selecionado e tente novamente.');}}
+$('pfIaForm').addEventListener('submit',e=>{e.preventDefault();send($('pfIaQuestion').value);});document.querySelectorAll('#pfIaDialog [data-q]').forEach(b=>b.addEventListener('click',()=>send(b.dataset.q)));
+if(new URLSearchParams(location.search).get('assistente')==='1')window.addEventListener('load',()=>$('pfIaLaunch').click(),{once:true});
+})();
+</script>
+<!-- FIM ASSISTENTE LOCAL -->
 </body>
 </html>
