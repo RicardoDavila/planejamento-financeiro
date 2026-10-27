@@ -8638,37 +8638,108 @@ body.auth-pendente #pfIaLaunch{display:none!important}
   else root.PFAssistenteCore=api;
 })(typeof window==='undefined'?globalThis:window);
 </script>
+<script id="pf-gemini-transport">(function(root){
+ 'use strict';
+ async function query({question,summary,session,ownerId,baseUrl,publicKey,signal,fetcher=fetch}){
+  if(!session?.access_token||!ownerId||session.user?.id!==ownerId)throw Error('Entre novamente na sua conta da nuvem.');
+  if(typeof question!=='string'||!question.trim()||question.length>600)throw Error('Informe uma pergunta de até 600 caracteres.');
+  const core=typeof module!=='undefined'&&module.exports?require('../outputs/planejamento-ia-teste/assistente-core.js'):root.PFAssistenteCore;
+  const {data,labels}=core.privateSummary(summary);
+  let text=question;
+  for(const [code,name]of Object.entries(labels).sort((a,b)=>b[1].length-a[1].length))text=text.replace(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),()=>code);
+  const response=await fetcher(baseUrl+'/functions/v1/assistente-financeiro',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token,apikey:publicKey},body:JSON.stringify({pergunta:text,resumo:data}),signal});
+  let result;try{result=await response.json();}catch{throw Error('O servidor retornou uma resposta inválida. O assistente local continua disponível.');}
+  if(!response.ok){
+   const errors={401:'Sua sessão expirou. Entre novamente na sua conta da nuvem.',403:'Acesso não autorizado. Confira se está na conta da Luciane e no endereço de testes publicado.',404:'A função assistente-financeiro não foi encontrada no Supabase.',429:'Limite de consultas atingido. Aguarde e use o assistente local.',503:'O Gemini está desativado ou indisponível. O assistente local continua disponível.'};
+   throw Error(typeof result.error==='string'?result.error:errors[response.status]||'Não foi possível consultar o Gemini. Use o assistente local.');
+  }
+  if(typeof result.resposta!=='string'||!result.resposta.trim())throw Error('O Gemini não retornou uma resposta. Reformule a pergunta.');
+  return result.resposta.slice(0,10000).replace(/\bC\d{2}\b/g,code=>labels[code]||code);
+ }
+ if(typeof module!=='undefined'&&module.exports)module.exports={query};else root.PFGemini={query};
+})(typeof window==='undefined'?globalThis:window);
+</script>
 <script id="pf-assistente-local-ui">(function(){
-'use strict';
-const core=window.PFAssistenteCore,config=window.PF_IA_CONFIG||{teste:true};
-const element=document.createElement('div');
-element.innerHTML=`<div id="pfTesteBanner">CÓPIA PARA TESTES • Dados fictícios • Original preservado</div>
-<button id="pfIaLaunch" type="button" aria-haspopup="dialog">✦ Assistente financeiro</button>
-<dialog id="pfIaDialog" aria-labelledby="pfIaTitle"><div class="ia-shell">
-<header><div><h2 id="pfIaTitle">✦ Assistente financeiro local</h2><p>Gratuito · Sem cartão · Sem chave de API</p></div><button id="pfIaClose" type="button" aria-label="Fechar assistente">×</button></header>
-<div class="ia-controls"><label>Período de análise<br><input type="month" id="pfIaMonth" required></label><span>Respostas calculadas neste navegador</span><button id="pfIaClear" type="button">Nova conversa</button></div>
-<div class="ia-notice" id="pfIaNotice"></div>
-<div class="ia-chips"><button type="button" data-q="Faça um resumo do mês">Resumo do mês</button><button type="button" data-q="Quanto gastei neste mês?">Meus gastos</button><button type="button" data-q="Quais são as maiores categorias?">Maiores categorias</button><button type="button" data-q="Compare com o mês anterior">Comparar meses</button><button type="button" data-q="Quais contas estão a vencer?">Contas a vencer</button><button type="button" data-q="Quanto falta pagar?">A pagar</button><button type="button" data-q="Tenho receitas a receber?">A receber</button><button type="button" data-q="Há lançamentos duplicados?">Possíveis duplicados</button></div>
-<div id="pfIaMessages" role="log" aria-label="Conversa com o assistente" aria-live="polite" aria-relevant="additions"></div>
-<div class="ia-footer"><form id="pfIaForm"><input id="pfIaQuestion" aria-label="Sua pergunta" maxlength="600" placeholder="Ex.: quanto falta pagar?" required autocomplete="off"><button id="pfIaSend" type="submit">Enviar</button></form><p id="pfIaStatus" role="status">Somente leitura · Conversa apenas nesta aba · Valores por vencimento</p></div>
-</div></dialog>`;
-document.body.appendChild(element);
-const $=id=>document.getElementById(id),dialog=$('pfIaDialog'),messages=$('pfIaMessages');
-if(!config.teste)$('pfTesteBanner').remove();else if(!config.demo)$('pfTesteBanner').textContent='CÓPIA PARA TESTES • Conta indicada • Leitura da nuvem • Gravação remota bloqueada • Original preservado';
-$('pfIaNotice').textContent='O assistente usa regras e cálculos locais, sem modelo de IA. As perguntas e respostas não são enviadas a serviços de IA.'+(config.demo?' Esta demonstração contém dados fictícios.':' Os números vêm dos lançamentos carregados da sua conta.');
-const now=new Date();$('pfIaMonth').value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-function add(text,user=false){const article=document.createElement('article'),label=document.createElement('small');article.className=user?'user':'assistant';label.textContent=user?'Você':'Assistente local';article.append(label,document.createTextNode(text));messages.appendChild(article);while(messages.children.length>60)messages.firstElementChild.remove();messages.scrollTop=messages.scrollHeight;}
-function welcome(){add('Olá! Posso consultar gastos, receitas, saldo, categorias, comparação entre meses, contas em aberto e possíveis duplicados. Use um atalho ou escreva sua pergunta. As consultas usam o mês selecionado; contas a vencer consideram a data de hoje e toda a base.');}
-welcome();
-const allowed=()=>{try{if(typeof window.pfdAssert==='function')window.pfdAssert();return config.demo||(typeof protecaoAutenticada!=='undefined'&&protecaoAutenticada&&!document.body.classList.contains('auth-pendente'));}catch{return false;}};
-$('pfIaLaunch').addEventListener('click',()=>{if(!allowed())return;dialog.showModal();$('pfIaQuestion').focus();});
-$('pfIaClose').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>$('pfIaLaunch').focus());
-new MutationObserver(()=>{if(!allowed()){messages.replaceChildren();$('pfIaQuestion').value='';if(dialog.open)dialog.close();}}).observe(document.body,{attributes:true,attributeFilter:['class']});
-$('pfIaClear').addEventListener('click',()=>{messages.replaceChildren();$('pfIaQuestion').value='';welcome();$('pfIaQuestion').focus();});
-$('pfIaMonth').addEventListener('change',()=>{messages.replaceChildren();add('Período alterado. Faça uma nova pergunta para consultar os valores deste mês.');});
-function send(question){question=String(question||'').trim();if(!question||!allowed())return;if(!$('pfIaMonth').checkValidity()){$('pfIaMonth').reportValidity();return;}add(question,true);$('pfIaQuestion').value='';try{const rows=typeof transacoes!=='undefined'?transacoes:[];add(core.answer(question,rows,$('pfIaMonth').value));}catch{add('Não foi possível analisar os lançamentos. Verifique o mês selecionado e tente novamente.');}}
-$('pfIaForm').addEventListener('submit',e=>{e.preventDefault();send($('pfIaQuestion').value);});document.querySelectorAll('#pfIaDialog [data-q]').forEach(b=>b.addEventListener('click',()=>send(b.dataset.q)));
-if(new URLSearchParams(location.search).get('assistente')==='1')window.addEventListener('load',()=>$('pfIaLaunch').click(),{once:true});
+ 'use strict';
+ const core=window.PFAssistenteCore,config=window.PF_IA_CONFIG||{};
+ const box=document.createElement('div');
+ box.innerHTML=`<div id="pfTesteBanner">Assistente Gemini</div>
+ <button id="pfIaLaunch" type="button" aria-haspopup="dialog">✦ Assistente financeiro</button>
+ <dialog id="pfIaDialog" aria-labelledby="pfIaTitle"><div class="ia-shell">
+ <header><div><h2 id="pfIaTitle">Assistente financeiro</h2><p>Escolha entre cálculo local e consulta à IA.</p></div><button id="pfIaClose" type="button" aria-label="Fechar assistente">×</button></header>
+ <div class="ia-controls"><label>Período de análise<br><input type="month" id="pfIaMonth" required></label><label>Modo de resposta<br><select id="pfIaMode"><option value="local">Assistente local · sem envio</option><option value="gemini">Gemini · IA online</option></select></label><button id="pfIaClear" type="button">Nova conversa</button></div>
+ <div class="ia-notice" id="pfIaNotice"></div>
+ <div id="pfIaConsent"><label><input type="checkbox" id="pfIaAccept">Autorizo enviar minha pergunta e totais financeiros ao Gemini via Supabase. Categorias vão como códigos, sem enviar automaticamente descrições, nomes ou observações. Na faixa gratuita, o Google pode usar o conteúdo para melhorar seus produtos. Não incluirei dados pessoais na pergunta.</label></div>
+ <div class="ia-chips"><button type="button" data-q="Faça um resumo do mês">Resumo</button><button type="button" data-q="Quanto gastei?">Gastos</button><button type="button" data-q="Compare com o mês anterior">Comparar meses</button><button type="button" data-q="Quais são as maiores categorias?">Categorias</button><button type="button" data-q="Quanto falta pagar?">A pagar</button></div>
+ <div id="pfIaMessages" role="log" aria-label="Conversa com o assistente" aria-live="polite" aria-relevant="additions"></div>
+ <div class="ia-footer"><form id="pfIaForm"><input id="pfIaQuestion" aria-label="Sua pergunta" placeholder="Pergunte sobre o mês selecionado…" maxlength="600" autocomplete="off" required><button id="pfIaSend" type="submit">Enviar</button></form><p id="pfIaStatus" role="status">Somente leitura · Conversa apenas nesta aba</p></div>
+ </div></dialog>`;
+ document.body.appendChild(box);
+ const $=id=>document.getElementById(id),dialog=$('pfIaDialog'),messages=$('pfIaMessages');
+ if(!config.teste)$('pfTesteBanner').remove();
+ const now=new Date();$('pfIaMonth').value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+ let controller=null,revision=0,cloudOwner=null;
+ function distributed(){return window.parent!==window&&typeof window.pfdAssert==='function';}
+ function owner(){try{if(distributed()){window.pfdAssert();return window.parent.pfdUser?.id||null;}return cloudOwner;}catch{return null;}}
+ function allowed(){try{if(distributed())window.pfdAssert();return typeof protecaoAutenticada!=='undefined'&&protecaoAutenticada&&!document.body.classList.contains('auth-pendente');}catch{return false;}}
+ async function getSession(){
+  if(distributed()){
+   if(typeof window.parent.pfdGetSession!=='function')throw Error('Atualize a página para carregar a nova sessão do assistente.');
+   return await window.parent.pfdGetSession();
+  }
+  if(typeof obterSessaoNuvem!=='function')throw Error('Entre na sua conta em Nuvem para usar o Gemini.');
+  return await obterSessaoNuvem();
+ }
+ function add(text,by='Assistente local'){const article=document.createElement('article'),label=document.createElement('small');if(by==='Você')article.className='user';label.textContent=by;article.append(label,document.createTextNode(text));messages.appendChild(article);while(messages.children.length>60)messages.firstElementChild.remove();messages.scrollTop=messages.scrollHeight;}
+ function cancel(){revision++;controller?.abort();controller=null;$('pfIaSend').disabled=false;$('pfIaStatus').textContent='Somente leitura · Conversa apenas nesta aba';}
+ function note(){const live=$('pfIaMode').value==='gemini';$('pfIaConsent').style.display=live?'block':'none';$('pfIaAccept').checked=false;$('pfIaNotice').textContent=live?(config.demo?'Prévia com dados fictícios: o Gemini real não pode ser consultado aqui.':'Gemini usa a pergunta e um resumo do mês escolhido. Limite inicial: 10 consultas por conta e 30 no total por dia UTC, sujeito também à cota gratuita do Google. Nenhuma consulta é enviada sem sua autorização.'):'Cálculo local no navegador. Não envia perguntas nem totais a serviços de IA.';}
+ function welcome(){add('Escolha o mês e o modo de resposta. O modo local continua disponível sem API. As consultas usam o mês do vencimento; saldo não inclui saldo inicial de conta.');}
+ note();welcome();
+ $('pfIaLaunch').onclick=()=>{if(!allowed())return;dialog.showModal();$('pfIaQuestion').focus();};
+ $('pfIaClose').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{cancel();$('pfIaAccept').checked=false;$('pfIaLaunch').focus();});
+ $('pfIaClear').onclick=()=>{cancel();messages.replaceChildren();$('pfIaQuestion').value='';$('pfIaAccept').checked=false;welcome();};
+ $('pfIaMode').onchange=()=>{cancel();note();};
+ $('pfIaMonth').onchange=()=>{cancel();messages.replaceChildren();$('pfIaAccept').checked=false;add('Período alterado. Faça uma nova pergunta.');};
+ new MutationObserver(()=>{if(!allowed()){cancel();messages.replaceChildren();$('pfIaQuestion').value='';$('pfIaAccept').checked=false;if(dialog.open)dialog.close();}}).observe(document.body,{attributes:true,attributeFilter:['class']});
+ async function send(raw){
+  const question=String(raw||'').trim();if(!question||controller||!allowed())return;
+  if(!$('pfIaMonth').checkValidity()){$('pfIaMonth').reportValidity();return;}
+  const mode=$('pfIaMode').value,month=$('pfIaMonth').value;
+  if(mode==='gemini'){
+   if(config.demo){add('Esta prévia usa dados fictícios e não chama a API. Use o endereço publicado e entre na sua conta da nuvem para consultar o Gemini.');return;}
+   if(location.origin!=='https://ricardodavila.github.io'){add('Para usar o Gemini, abra o endereço publicado do projeto. Arquivos locais continuam com o assistente local.');return;}
+   if(!$('pfIaAccept').checked){add('Marque a autorização de envio acima antes de consultar o Gemini.');return;}
+  }
+  add(question,'Você');$('pfIaQuestion').value='';
+  const rows=typeof transacoes!=='undefined'?transacoes:[];
+  if(mode==='local'){try{add(core.answer(question,rows,month));}catch{add('Não foi possível analisar os dados deste mês.');}return;}
+  let capturedOwner=null;const run=++revision;controller=new AbortController();const currentController=controller;
+  $('pfIaSend').disabled=true;$('pfIaStatus').textContent='Consultando Gemini…';let timer;
+  try{
+   const summary=core.summarize(rows,month);
+   timer=setTimeout(()=>currentController.abort(),30000);
+   const session=await Promise.race([getSession(),new Promise((_,reject)=>{currentController.signal.addEventListener('abort',()=>reject(new DOMException('Consulta interrompida','AbortError')),{once:true});})]);
+   if(run!==revision||!allowed())return;
+   if(!session?.access_token||!session.user?.id)throw Error('Entre na sua conta em Nuvem para usar o Gemini. O modo local continua disponível.');
+   capturedOwner=session.user.id;
+   if((distributed()&&owner()!==capturedOwner)||(cloudOwner&&cloudOwner!==capturedOwner))throw Error('A conta conectada mudou. Faça uma nova consulta.');
+   cloudOwner=capturedOwner;
+   const answer=await window.PFGemini.query({question,summary,session,ownerId:capturedOwner,baseUrl:SUPABASE_URL,publicKey:SUPABASE_PUBLISHABLE_KEY,signal:currentController.signal});
+   if(run===revision&&allowed()&&owner()===capturedOwner)add(answer,'Gemini');
+  }catch(error){if(run===revision&&allowed()&&(!capturedOwner||owner()===capturedOwner))add(error.name==='AbortError'?'O tempo de consulta esgotou. Tente novamente ou use o modo local.':error.message,'Aviso');}
+  finally{clearTimeout(timer);if(run===revision){controller=null;$('pfIaSend').disabled=false;$('pfIaStatus').textContent='Somente leitura · Conversa apenas nesta aba';}}
+ }
+ // Uma troca de conta ou logout invalida respostas e conversa anteriores.
+ try{
+  const client=typeof supabaseCliente!=='undefined'?supabaseCliente:window.supabaseCliente;
+  client?.auth?.onAuthStateChange((event,session)=>{
+   const next=session?.user?.id||null;
+   if(event==='SIGNED_OUT'||(next&&cloudOwner&&next!==cloudOwner)){cancel();messages.replaceChildren();$('pfIaAccept').checked=false;$('pfIaQuestion').value='';}
+   if(event==='SIGNED_OUT')cloudOwner=null;else if(next)cloudOwner=next;
+  });
+ }catch{}
+ $('pfIaForm').onsubmit=e=>{e.preventDefault();send($('pfIaQuestion').value);};document.querySelectorAll('#pfIaDialog [data-q]').forEach(b=>b.onclick=()=>send(b.dataset.q));
+ if(new URLSearchParams(location.search).get('assistente')==='1')window.addEventListener('load',()=>$('pfIaLaunch').click(),{once:true});
 })();
 </script>
 <!-- FIM ASSISTENTE LOCAL -->
@@ -8710,5 +8781,5 @@ body.pf-edicao-lancamento {overflow:hidden!important}
  update();
 })();
 </script>
-</body>
+<style id="pf-gemini-general-css">#pfIaConsent{display:none;flex-shrink:0;max-height:120px;overflow:auto}#pfIaConsent label{font-weight:400;line-height:1.4}#pfIaConsent input{margin-top:2px;flex-shrink:0}#pfIaDialog .ia-notice{max-height:100px;overflow:auto}@media(max-width:600px){#pfIaDialog .ia-controls{gap:6px;padding-top:8px;padding-bottom:8px}#pfIaDialog .ia-controls input,#pfIaDialog .ia-controls select{padding:5px;font-size:12px}#pfIaDialog header h2{font-size:16px}#pfIaConsent{padding:8px 16px;font-size:11px;max-height:100px}}</style></body>
 </html>
