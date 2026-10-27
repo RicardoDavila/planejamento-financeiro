@@ -1,0 +1,19 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Demonstração — Assistente financeiro</title><style>html,body,iframe{margin:0;border:0;width:100%;height:100%;display:block}</style></head><body>
+<script>
+window.PF_IA_DEMO=true;
+const user=Object.freeze({id:'demonstracao-ia-local-v1',email:'demonstracao@exemplo.invalid'});
+Object.defineProperty(window,'pfdUser',{value:user});
+const auth={getSession:async()=>({data:{session:null},error:null}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})};
+Object.defineProperty(window,'pfdClient',{value:{auth}});
+window.pfdOpenAccount=()=>alert('Demonstração local com dados fictícios. Não há conta conectada.');
+window.pfdLogout=()=>location.href='./index.html';
+window.pfdOpenInstall=()=>alert('A cópia de testes não instala nem substitui o aplicativo.');
+window.pfdVersionCheck=async()=>({version:'teste-ia'});
+window.pfdConfirmPassword=async()=>true;
+const date=new Date(),year=date.getFullYear(),month=date.getMonth();
+const day=(offset,d)=>{const dt=new Date(year,month+offset,d);return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');};
+const row=(id,offset,d,tipo,categoria,valor,paid)=>({id,vencimento:day(offset,d),dataPg:paid?day(offset,d):'',tipo,categoria,subItem:categoria,descricao:'Exemplo fictício '+id,valor,status:paid?(tipo==='Receita'?'Recebido':'Pago'):'Pendente'});
+const data=[row(1,0,5,'Receita','RECEITA',6500,true),row(2,0,6,'Despesa','MORADIA',1800,true),row(3,0,10,'Despesa','ALIMENTAÇÃO',950,true),row(4,0,15,'Despesa','TRANSPORTE',420,true),row(5,0,28,'Despesa','SAÚDE',350,false),row(6,0,30,'Despesa','ALIMENTAÇÃO',250,false),row(7,-1,5,'Receita','RECEITA',6200,true),row(8,-1,6,'Despesa','MORADIA',1800,true),row(9,-1,10,'Despesa','ALIMENTAÇÃO',850,true),row(10,-1,15,'Despesa','TRANSPORTE',380,true),row(11,1,5,'Despesa','MORADIA',1800,false)];
+localStorage.setItem('pfd:gemini-teste:v1:'+user.id+':local:planejamento_financeiro_banco_mestre_v1',JSON.stringify(data));
+const frame=document.createElement('iframe');frame.title='Demonstração do planejamento financeiro';frame.src='./app.html?assistente=1';document.body.appendChild(frame);
+</script></body></html>

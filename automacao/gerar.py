@@ -97,6 +97,15 @@ def build(output, version):
         (dist/'service-worker.js').write_text(worker,encoding='utf-8')
         (dist/'version.json').write_text(json.dumps({'version':version,'name':version,'channel':'distribuicao'},indent=2)+'\n',encoding='utf-8')
         check_scripts(app,dist)
+        # Publica somente os arquivos estáticos conhecidos da cópia opcional.
+        gemini_source=ROOT/'teste-gemini'
+        if gemini_source.exists():
+            validate_distribution_entry(read(gemini_source/'index.html'))
+            gemini_target=staging/'teste-gemini';gemini_target.mkdir()
+            for name in ['index.html','app.html','conta.js','isolamento.js','teste-guard.js','demonstracao.html','preview-celular.html','icon-192.png','icon-512.png']:
+                shutil.copy2(gemini_source/name,gemini_target/name)
+            check_scripts(read(gemini_target/'app.html'),dist)
+
         # Nada é alterado no repositório nem em armazenamento do navegador.
         if output.exists() and any(output.iterdir()): raise ValueError('Escolha uma pasta de saída vazia.')
         shutil.copytree(staging,output,dirs_exist_ok=True)
