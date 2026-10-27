@@ -12,6 +12,24 @@ def normalize(text):
 def read(path):
     return path.read_text(encoding='utf-8-sig')
 
+def validate_distribution_entry(html):
+    class Entry(HTMLParser):
+        def __init__(self):
+            super().__init__(); self.ids={}; self.scripts=[]
+        def handle_starttag(self,tag,attrs):
+            attrs=dict(attrs)
+            if attrs.get('id'): self.ids[attrs['id']]=(tag,attrs)
+            if tag=='script': self.scripts.append(attrs.get('src','').split('?')[0])
+    entry=Entry(); entry.feed(html)
+    if 'telaProtecaoAcesso' in entry.ids or 'authSetupView' in entry.ids:
+        raise ValueError('Publicação bloqueada: distribuicao/index.html contém a versão pessoal. Restaure a tela de entrada com e-mail e senha; o index.html pessoal pertence à raiz.')
+    for field,tag,kind in [('pfdForm','form',None),('pfdEmail','input','email'),('pfdPassword','input','password')]:
+        actual,attrs=entry.ids.get(field,('',{}))
+        if actual!=tag or (kind and attrs.get('type')!=kind):
+            raise ValueError('Publicação bloqueada: tela de entrada da distribuição inválida; falta '+field+'.')
+    if './conta.js' not in entry.scripts and 'conta.js' not in entry.scripts:
+        raise ValueError('Publicação bloqueada: a tela de entrada da distribuição não carrega conta.js.')
+
 def generate(source, config, version):
     source = normalize(source)
     if not re.search(r'const dadosPadraoCompletos\s*=\s*\[\s*\]\s*;', source):
@@ -56,6 +74,7 @@ def check_scripts(html, directory):
 
 def build(output, version):
     if not re.fullmatch(r'V\d+\.\d+\.\d+',version): raise ValueError('Versão inválida.')
+    validate_distribution_entry(read(ROOT/'distribuicao/index.html'))
     config=json.loads(read(ROOT/'automacao/adaptacoes.json'))
     for name,expected in config['protectedFiles'].items():
         if hashlib.sha256(read(ROOT/'distribuicao'/name).replace('\r\n','\n').encode()).hexdigest()!=expected:
