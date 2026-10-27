@@ -6,12 +6,15 @@ function setup(){
  const elements=new Map(),frames=[],timers=[],listeners={};let callback,session=a,reads=0,refreshes=0,verify=0;
  const el=id=>{if(!elements.has(id))elements.set(id,{value:'',hidden:false,disabled:false,textContent:'',querySelectorAll:()=>[],querySelector:()=>({disabled:false}),reportValidity:()=>true,showModal(){this.open=true;},close(){this.open=false;},select(){}});return elements.get(id);};
  const auth={getSession:async()=>{reads++;return {data:{session},error:null};},getUser:async token=>{verify++;const selected=token===b.access_token?b:a;return {data:{user:selected.user},error:null};},refreshSession:async()=>{refreshes++;return {data:{session:a},error:null};},onAuthStateChange:fn=>{callback=fn;return {data:{subscription:{unsubscribe(){}}}};},signOut:async()=>{callback('SIGNED_OUT',null);return {error:null};}};
+ const applied=[];
+ auth.setSession=async tokens=>{applied.push(tokens);session={...a,...tokens};callback('TOKEN_REFRESHED',session);return {data:{session},error:null};};
+ let request=async()=>{throw Error('Rede não permitida no teste');};
  const client={auth};const window={supabase:{createClient:(_u,_k,cfg)=>{assert.equal(cfg.auth.storageKey,'pf-distribuicao-auth-v1');return client;}}};
  const document={hidden:false,getElementById:el,querySelectorAll:()=>[],createElement:()=>{const frame={removed:false,remove(){this.removed=true;}};frames.push(frame);return frame;},body:{append(){}},addEventListener:(name,fn)=>listeners[name]=fn};
- const ctx={window,document,URL,location:{href:'https://example.invalid/distribuicao/',protocol:'https:'},navigator:{},setTimeout:(fn,ms)=>{const timer={fn,ms};timers.push(timer);return timer;},clearTimeout:t=>{if(t)t.cancelled=true;},addEventListener:(name,fn)=>listeners[name]=fn,matchMedia:()=>({matches:false}),fetch:()=>{throw Error('Rede não permitida no teste');},AbortSignal};
+ const ctx={window,document,URL,location:{href:'https://example.invalid/distribuicao/',protocol:'https:'},navigator:{},setTimeout:(fn,ms)=>{const timer={fn,ms};timers.push(timer);return timer;},clearTimeout:t=>{if(t)t.cancelled=true;},addEventListener:(name,fn)=>listeners[name]=fn,matchMedia:()=>({matches:false}),fetch:(...args)=>request(...args),AbortSignal};
  vm.createContext(ctx);vm.runInContext(code,ctx);
  async function flush(){for(let n=0;n<20;n++){const zero=timers.filter(t=>!t.cancelled&&!t.done&&t.ms===0);for(const t of zero){t.done=true;t.fn();}await new Promise(setImmediate);}}
- return {window,document,auth,frames,elements,listeners,timers,event:(e,s)=>callback(e,s),flush,setSession:s=>session=s,counts:()=>({reads,refreshes,verify})};
+ return {window,document,auth,frames,elements,listeners,timers,applied,setFetch:fn=>request=fn,event:(e,s)=>callback(e,s),flush,setSession:s=>session=s,counts:()=>({reads,refreshes,verify})};
 }
 (async()=>{
  let checks=0;const ok=(v,msg)=>{assert.ok(v,msg);checks++;};
@@ -26,5 +29,13 @@ function setup(){
  const w=setup();w.event('SIGNED_IN',a);await w.flush();w.setSession(null);w.auth.refreshSession=async()=>({data:{session:null},error:{status:400,code:'refresh_token_not_found'}});w.listeners.visibilitychange();await w.flush();ok(!w.window.pfdUser,'sessão inválida exige novo login');
  const p=setup();p.event('SIGNED_IN',a);await p.flush();let finish;p.auth.getSession=()=>new Promise(r=>finish=r);p.listeners.visibilitychange();await p.flush();p.listeners.visibilitychange();p.listeners.visibilitychange();finish({data:{session:a},error:null});await p.flush();ok(p.frames.length===1,'verificações concorrentes não recriam o aplicativo');
  const r=setup();r.event('PASSWORD_RECOVERY',a);r.listeners.visibilitychange();await r.flush();ok(!r.window.pfdUser&&r.elements.get('pfdRecovery').hidden===false,'recuperação de senha não abre painel');
- console.log(`PASS: ${checks} verificações de sessão: retorno à aba, renovação, rede, concorrência, conta diferente, logout e respostas tardias.`);
+ const panel=setup();panel.event('SIGNED_IN',a);await panel.flush();const panelFrame=panel.frames.at(-1);
+ panel.setFetch(async()=>({ok:true,status:200,json:async()=>({...a,access_token:'novo-token-painel',refresh_token:'novo-refresh-painel'})}));
+ ok(await panel.window.pfdConfirmPassword('senha-ficticia'),'senha correta aceita');
+ ok(panel.applied.length===1,'REGRESSÃO: senha do painel deve atualizar a sessão ativa');
+ ok(panel.applied[0].access_token==='novo-token-painel'&&panel.applied[0].refresh_token==='novo-refresh-painel','par de tokens novo aplicado junto');
+ await panel.flush();panel.listeners.visibilitychange();await panel.flush();ok(panel.window.pfdUser?.id===a.user.id&&!panelFrame.removed,'mostrar painel e voltar à aba mantém a mesma conta');
+ panel.setFetch(async()=>({ok:false,status:400}));ok((await panel.window.pfdConfirmPassword('senha-incorreta'))===false,'senha incorreta rejeitada');ok(panel.applied.length===1,'senha incorreta não altera sessão');
+ panel.setFetch(async()=>({ok:true,status:200,json:async()=>({...b})}));ok((await panel.window.pfdConfirmPassword('outra-conta'))===false,'identidade diferente rejeitada');ok(panel.applied.length===1,'não troca sessão para outra conta');
+ console.log(`PASS: ${checks} verificações de sessão, incluindo senha do painel, tokens novos e retorno à aba.`);
 })().catch(error=>{console.error(error);process.exitCode=1;});

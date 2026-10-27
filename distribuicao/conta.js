@@ -83,7 +83,16 @@
   if(!response.ok)throw Error(response.status===429?'Muitas tentativas. Aguarde antes de tentar novamente.':'Não foi possível validar a senha. Verifique a conexão e tente novamente.');
   const data=await response.json();
   if(user?.id!==ownerId||generation!==run)throw Error('A conta foi alterada. Entre novamente.');
-  return data.user?.id===ownerId;
+  if(data.user?.id!==ownerId)return false;
+  if(typeof data.access_token!=='string'||typeof data.refresh_token!=='string')throw Error('Não foi possível renovar a sessão após validar a senha. Tente novamente.');
+  // A confirmação de senha cria uma sessão Auth nova. Mantém o cliente
+  // ativo com esse mesmo par de tokens, inclusive quando há limite de sessões.
+  const refreshed=await client.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});
+  if(user?.id!==ownerId||generation!==run)throw Error('A conta foi alterada. Entre novamente.');
+  if(refreshed.error)throw Error('Não foi possível atualizar a sessão após validar a senha. Verifique a conexão e tente novamente.');
+  if(refreshed.data?.session?.user?.id!==ownerId)throw Error('A sessão não corresponde à conta atual. Entre novamente.');
+  latestSession=refreshed.data.session;
+  return true;
  };
  window.pfdOpenAccount=()=>{if(!user)return;$('pfdAccountEmail').textContent=user.email;$('pfdAccountStatus').textContent='';$('pfdAccount').showModal();};
  window.pfdLogout=async()=>{const old=user;closeApp();try{const {error}=await client.auth.signOut({scope:'local'});if(error)throw error;status('Você saiu da conta.');}catch(e){status('A sessão não pôde ser encerrada: '+e.message+' Tente sair novamente.');if(old){const {data}=await client.auth.getSession();await enter(data.session);}}};
