@@ -1,8 +1,8 @@
 {
-  "version": "V4.11.10",
-  "name": "V4.11.10",
-  "date": "2026-10-26",
+  "version": "V4.11.11",
+  "name": "V4.11.11",
+  "date": "2026-10-28",
   "notes": [
-    "No celular, Sair fica no final do Menu, separado das opções; áreas de toque ampliadas."
+    "Assistente ajustado ao teclado do celular e botão Limpar pesquisa junto ao campo."
   ]
 }

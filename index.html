@@ -7800,7 +7800,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.11.10';
+ const CURRENT_VERSION='V4.11.11';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -8540,6 +8540,22 @@ body.auth-pendente #pfIaLaunch{display:none!important}
 /* Mantém cabeçalho e entrada visíveis mesmo em telas estreitas. */
 #pfIaDialog{overflow:hidden}#pfIaDialog .ia-shell{overflow:hidden;min-height:0}#pfIaDialog header,#pfIaDialog .ia-controls,#pfIaDialog .ia-notice,#pfIaDialog .ia-chips,#pfIaDialog .ia-footer{flex-shrink:0}#pfIaMessages{min-height:0}
 @media(max-width:600px){#pfIaDialog .ia-controls span{display:none}#pfIaDialog .ia-controls{align-items:center;justify-content:space-between}#pfIaDialog .ia-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px}#pfIaDialog .ia-chips button{white-space:nowrap;flex-shrink:0}#pfIaDialog .ia-notice{font-size:11px;line-height:1.4;padding-top:8px;padding-bottom:8px}#pfIaDialog header{padding-top:10px;padding-bottom:10px}#pfIaDialog header p{font-size:11px}#pfIaDialog .ia-footer{padding-top:8px;padding-bottom:10px}}
+/* Ajusta o diálogo à área realmente visível, inclusive com teclado virtual. */
+#pfIaDialog .ia-footer-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:8px}
+#pfIaDialog .ia-footer-actions #pfIaStatus{margin:0;flex:1 1 150px}
+#pfIaClear{min-height:44px;flex-shrink:0}
+#pfIaDialog input,#pfIaDialog select{font-size:16px}
+@media(max-width:820px),(pointer:coarse){
+ #pfIaDialog{position:fixed;inset:auto;top:var(--pf-ia-top,0px);left:var(--pf-ia-left,0px);margin:8px;width:calc(var(--pf-ia-width,100vw) - 16px);max-width:calc(var(--pf-ia-width,100vw) - 16px);height:calc(var(--pf-ia-height,100dvh) - 16px);max-height:calc(var(--pf-ia-height,100dvh) - 16px);border-radius:16px}
+ #pfIaDialog .ia-shell{overflow-y:auto;overscroll-behavior:contain}
+ #pfIaMessages{flex:1 0 80px}
+ #pfIaDialog .ia-controls{gap:8px;padding:8px 16px}
+ #pfIaDialog .ia-controls label{min-width:0;flex:1 1 145px}
+ #pfIaDialog .ia-controls input,#pfIaDialog .ia-controls select{width:100%;min-width:0;max-width:100%}
+ #pfIaDialog header,#pfIaDialog .ia-footer{padding:8px 16px}
+ #pfIaClose{flex-shrink:0}
+ #pfIaDialog .ia-footer{position:sticky;bottom:0;z-index:1}
+}
 </style>
 <script>window.PF_IA_CONFIG={teste:false,demo:false};</script>
 <script id="pf-assistente-local-core">(function (root) {
@@ -8667,12 +8683,12 @@ body.auth-pendente #pfIaLaunch{display:none!important}
  <button id="pfIaLaunch" type="button" aria-haspopup="dialog">✦ Assistente financeiro</button>
  <dialog id="pfIaDialog" aria-labelledby="pfIaTitle"><div class="ia-shell">
  <header><div><h2 id="pfIaTitle">Assistente financeiro</h2><p>Escolha entre cálculo local e consulta à IA.</p></div><button id="pfIaClose" type="button" aria-label="Fechar assistente">×</button></header>
- <div class="ia-controls"><label>Período de análise<br><input type="month" id="pfIaMonth" required></label><label>Modo de resposta<br><select id="pfIaMode"><option value="local">Assistente local · sem envio</option><option value="gemini">Gemini · IA online</option></select></label><button id="pfIaClear" type="button">Nova conversa</button></div>
+ <div class="ia-controls"><label>Período de análise<br><input type="month" id="pfIaMonth" required></label><label>Modo de resposta<br><select id="pfIaMode"><option value="local">Assistente local · sem envio</option><option value="gemini">Gemini · IA online</option></select></label></div>
  <div class="ia-notice" id="pfIaNotice"></div>
  <div id="pfIaConsent"><label><input type="checkbox" id="pfIaAccept">Autorizo enviar minha pergunta e totais financeiros ao Gemini via Supabase. Categorias vão como códigos, sem enviar automaticamente descrições, nomes ou observações. Na faixa gratuita, o Google pode usar o conteúdo para melhorar seus produtos. Não incluirei dados pessoais na pergunta.</label></div>
  <div class="ia-chips"><button type="button" data-q="Faça um resumo do mês">Resumo</button><button type="button" data-q="Quanto gastei?">Gastos</button><button type="button" data-q="Compare com o mês anterior">Comparar meses</button><button type="button" data-q="Quais são as maiores categorias?">Categorias</button><button type="button" data-q="Quanto falta pagar?">A pagar</button></div>
  <div id="pfIaMessages" role="log" aria-label="Conversa com o assistente" aria-live="polite" aria-relevant="additions"></div>
- <div class="ia-footer"><form id="pfIaForm"><input id="pfIaQuestion" aria-label="Sua pergunta" placeholder="Pergunte sobre o mês selecionado…" maxlength="600" autocomplete="off" required><button id="pfIaSend" type="submit">Enviar</button></form><p id="pfIaStatus" role="status">Somente leitura · Conversa apenas nesta aba</p></div>
+ <div class="ia-footer"><form id="pfIaForm"><input id="pfIaQuestion" aria-label="Sua pergunta" placeholder="Pergunte sobre o mês selecionado…" maxlength="600" autocomplete="off" required><button id="pfIaSend" type="submit">Enviar</button></form><div class="ia-footer-actions"><p id="pfIaStatus" role="status">Somente leitura · Conversa apenas nesta aba</p><button id="pfIaClear" type="button" aria-label="Limpar pesquisa e conversa para fazer uma nova pergunta">Limpar pesquisa</button></div></div>
  </div></dialog>`;
  document.body.appendChild(box);
  const $=id=>document.getElementById(id),dialog=$('pfIaDialog'),messages=$('pfIaMessages');
@@ -8695,9 +8711,19 @@ body.auth-pendente #pfIaLaunch{display:none!important}
  function note(){const live=$('pfIaMode').value==='gemini';$('pfIaConsent').style.display=live?'block':'none';$('pfIaAccept').checked=false;$('pfIaNotice').textContent=live?(config.demo?'Prévia com dados fictícios: o Gemini real não pode ser consultado aqui.':'Gemini usa a pergunta e um resumo do mês escolhido. Limite inicial: 10 consultas por conta e 30 no total por dia UTC, sujeito também à cota gratuita do Google. Nenhuma consulta é enviada sem sua autorização.'):'Cálculo local no navegador. Não envia perguntas nem totais a serviços de IA.';}
  function welcome(){add('Escolha o mês e o modo de resposta. O modo local continua disponível sem API. As consultas usam o mês do vencimento; saldo não inclui saldo inicial de conta.');}
  note();welcome();
- $('pfIaLaunch').onclick=()=>{if(!allowed())return;dialog.showModal();$('pfIaQuestion').focus();};
+ function fitViewport(){
+  const viewport=window.visualViewport;
+  dialog.style.setProperty('--pf-ia-top',(viewport?.offsetTop||0)+'px');
+  dialog.style.setProperty('--pf-ia-left',(viewport?.offsetLeft||0)+'px');
+  dialog.style.setProperty('--pf-ia-width',(viewport?.width||window.innerWidth)+'px');
+  dialog.style.setProperty('--pf-ia-height',(viewport?.height||window.innerHeight)+'px');
+ }
+ window.visualViewport?.addEventListener('resize',fitViewport);
+ window.visualViewport?.addEventListener('scroll',fitViewport);
+ window.addEventListener('resize',fitViewport);
+ $('pfIaLaunch').onclick=()=>{if(!allowed())return;fitViewport();dialog.showModal();$('pfIaClose').focus({preventScroll:true});requestAnimationFrame(fitViewport);};
  $('pfIaClose').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{cancel();$('pfIaAccept').checked=false;$('pfIaLaunch').focus();});
- $('pfIaClear').onclick=()=>{cancel();messages.replaceChildren();$('pfIaQuestion').value='';$('pfIaAccept').checked=false;welcome();};
+ $('pfIaClear').onclick=()=>{cancel();messages.replaceChildren();$('pfIaQuestion').value='';$('pfIaAccept').checked=false;welcome();$('pfIaQuestion').focus({preventScroll:true});requestAnimationFrame(fitViewport);};
  $('pfIaMode').onchange=()=>{cancel();note();};
  $('pfIaMonth').onchange=()=>{cancel();messages.replaceChildren();$('pfIaAccept').checked=false;add('Período alterado. Faça uma nova pergunta.');};
  new MutationObserver(()=>{if(!allowed()){cancel();messages.replaceChildren();$('pfIaQuestion').value='';$('pfIaAccept').checked=false;if(dialog.open)dialog.close();}}).observe(document.body,{attributes:true,attributeFilter:['class']});
