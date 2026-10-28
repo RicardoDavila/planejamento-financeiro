@@ -1,8 +1,8 @@
 {
-  "version": "V4.11.12",
-  "name": "V4.11.12",
+  "version": "V4.11.13",
+  "name": "V4.11.13",
   "date": "2026-10-28",
   "notes": [
-    "Assistente com seleção por mês ou intervalo inclusivo de datas, comparação de períodos e correções de teclado e limpeza."
+    "Novo layout clean no computador, menus agrupados e análise do período; interface do celular preservada."
   ]
 }
