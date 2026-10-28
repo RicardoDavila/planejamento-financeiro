@@ -1,0 +1,14 @@
+{
+  "pf-desktop-clean-css": [
+    "style",
+    "655a298d6a03251b056eb354ff5f1f8b849c9b8908a552d32fa7e9419b6fb96b"
+  ],
+  "pf-desktop-clean-layout": [
+    "script",
+    "4e08f6052c3699ba46e66a5e279e92c3a7dc8eca630d11ae4bc20591baad50e4"
+  ],
+  "pf-desktop-clean-menu": [
+    "script",
+    "649d07b4b9af5c2e25e6d10f17170bd1f091f57e1becaf9b751b5966de20a38a"
+  ]
+}

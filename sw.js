@@ -1,5 +1,5 @@
 /* Planejamento Financeiro - PWA V3.2 */
-const CACHE_NAME = 'planejamento-financeiro-v4-11-13-shell';
+const CACHE_NAME = 'planejamento-financeiro-v4-11-14-shell';
 const APP_SHELL = [
   './',
   './index.html',
