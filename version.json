@@ -1,8 +1,8 @@
 {
-  "version": "V4.11.15",
-  "name": "V4.11.15",
+  "version": "V4.11.16",
+  "name": "V4.11.16",
   "date": "2026-10-28",
   "notes": [
-    "Corrige despesas vencidas exibidas como A Vencer usando a data local atual, preservando lançamentos pagos e o layout."
+    "Renova sessão expirada antes da sincronização, repete uma vez após REST 401 e atualiza o indicador de conexão sem apagar dados locais."
   ]
 }

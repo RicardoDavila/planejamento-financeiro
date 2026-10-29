@@ -8825,7 +8825,7 @@ function install(){
  el('recover').onclick=()=>{el('toast').hidden=true;if(!deletedRecord||document.body.classList.contains('auth-pendente'))return;const bin=obterLixeira(),index=bin.findIndex(x=>String(x.item.id)===String(deletedRecord.id)&&JSON.stringify(x.item)===deletedRecord.fingerprint);deletedRecord=null;clearTimeout(undoTimer);if(index>=0){recuperarDaLixeira(index);fecharSegurancaBanco();}};el('more-rows').onclick=()=>{limit+=30;render();};
  el('assistant').onclick=()=>original('pfIaLaunch').click();el('new').onclick=()=>openModal();el('home').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});el('entries').onclick=()=>el('q').scrollIntoView({behavior:'smooth',block:'center'});el('charts').onclick=()=>openGraficosModal();el('more').onclick=()=>original('pfMenuCompacto').click();el('menu').onclick=()=>original('pfMenuCompacto').click();el('theme').onclick=()=>original('pf-theme-toggle').click();
  function themeLabel(){el('theme').textContent=document.body.classList.contains('dark-mode')?'☀ Claro':'◐ Escuro';}new MutationObserver(themeLabel).observe(document.body,{attributes:true,attributeFilter:['class']});themeLabel();
- async function cloud(){const run=++cloudRun;try{const session=await obterSessaoNuvem();if(run!==cloudRun)return;sessionConnected=Boolean(session?.access_token&&session?.user?.id);}catch{sessionConnected=false;}const raw=(original('statusNuvemBadge')?.textContent||'').trim();el('cloud').classList.toggle('online',sessionConnected);el('cloud').textContent=/sincronizando/i.test(raw)?'↻ Sincronizando':sessionConnected?'● Conectada':'○ Desconectada';el('cloud').title=original('statusNuvemBadge')?.title||'Conexão e sincronização com a nuvem';}
+ async function cloud(){const run=++cloudRun;try{const session=await obterSessaoNuvem();if(run!==cloudRun)return;sessionConnected=Boolean(session?.access_token&&session?.user?.id&&(!session.expires_at||Number(session.expires_at)>Date.now()/1000));}catch{sessionConnected=false;}const raw=(original('statusNuvemBadge')?.textContent||'').trim();el('cloud').classList.toggle('online',sessionConnected);el('cloud').textContent=/sincronizando/i.test(raw)?'↻ Sincronizando':sessionConnected?'● Conectada':'○ Desconectada';el('cloud').title=original('statusNuvemBadge')?.title||'Conexão e sincronização com a nuvem';}
  el('cloud').onclick=()=>abrirConfiguracaoNuvem();if(original('statusNuvemBadge'))new MutationObserver(cloud).observe(original('statusNuvemBadge'),{childList:true,characterData:true,subtree:true});cloud();
  for(const id of ['pf495GreetingTitle','pf495PerfilBadge'])if(original(id))new MutationObserver(render).observe(original(id),{childList:true,characterData:true,subtree:true});
  const originalRender=window.renderTable;window.renderTable=function(...args){const result=originalRender.apply(this,args);render();return result;};render();
@@ -8869,6 +8869,50 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  }
  document.querySelectorAll('#pfMenuTopo [data-pf-categoria]').forEach(b=>b.addEventListener('click',e=>{e.stopImmediatePropagation();open(b.dataset.pfCategoria,b);},{capture:true}));veil.onclick=()=>close();el('pfMenuFechar').onclick=()=>close();
  document.addEventListener('keydown',e=>{if(drawer.hidden)return;e.stopImmediatePropagation();if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const focusables=[...drawer.querySelectorAll('button,input')].filter(b=>!b.hidden&&!b.closest('[hidden]'));const first=focusables[0],last=focusables.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}},true);
+})();
+</script>
+<script id="pf-cloud-session-renewal">(function(){
+'use strict';
+const baseSession=window.obterSessaoNuvem,baseFetch=window.fetch.bind(window);
+let pendingRefresh=null,epoch=0,observedClient=null,observedOwner=null;
+function client(){const value=typeof supabaseCliente!=='undefined'?supabaseCliente:null;if(value&&value!==observedClient){observedClient=value;value.auth?.onAuthStateChange((event,session)=>{const next=session?.user?.id||null;if(event==='SIGNED_OUT'||(observedOwner&&next&&next!==observedOwner))epoch++;observedOwner=next;});}return value;}
+function expiry(session){const direct=Number(session?.expires_at);if(direct>0)return direct;try{const part=session.access_token.split('.')[1],payload=JSON.parse(atob(part.replace(/-/g,'+').replace(/_/g,'/')));return Number(payload.exp)||null;}catch{return null;}}
+function expired(session,margin=30){const exp=expiry(session);return exp!==null&&exp<=Date.now()/1000+margin;}
+function indicator(text){const badge=document.getElementById('statusNuvemBadge');if(badge&&badge.textContent!==text)badge.textContent=text;}
+function assertOwner(session,owner,started){if(epoch!==started||session?.user?.id!==owner)throw Error('A conta da nuvem mudou. Refaça a sincronização na conta atual.');if(window.parent!==window&&window.parent.pfdUser?.id&&window.parent.pfdUser.id!==owner)throw Error('A conta da nuvem mudou. Refaça a sincronização na conta atual.');}
+async function renew(session){
+ const owner=session?.user?.id;if(!owner)throw Error('Sessão expirada. Entre novamente na conta da nuvem. Seus dados locais foram preservados.');
+ if(pendingRefresh){if(pendingRefresh.owner!==owner)throw Error('A conta da nuvem mudou. Refaça a sincronização.');return pendingRefresh.promise;}
+ const auth=client()?.auth,started=epoch;if(!auth?.refreshSession){indicator('Sessão expirada');throw Error('Sessão expirada. Entre novamente na conta da nuvem. Seus dados locais foram preservados.');}
+ const operation=(async()=>{
+  try{
+   const result=await auth.refreshSession(session.refresh_token?{refresh_token:session.refresh_token}:undefined);
+   if(result.error)throw result.error;
+   const fresh=result.data?.session;if(!fresh?.access_token||expired(fresh,0))throw Error('A sessão renovada não está válida.');
+   assertOwner(fresh,owner,started);
+   const current=await auth.getSession();assertOwner(current.data?.session,owner,started);
+   if(typeof salvarSessaoNuvemManual==='function')salvarSessaoNuvemManual(fresh);
+   indicator('Online');return fresh;
+  }catch(error){indicator('Sessão expirada');if(/mudou/.test(error.message||''))throw error;throw Error('Não foi possível renovar a sessão da nuvem. Entre novamente na sua conta; os dados locais foram preservados.');}
+ })();
+ pendingRefresh={owner,promise:operation};try{return await operation;}finally{if(pendingRefresh?.promise===operation)pendingRefresh=null;}
+}
+window.obterSessaoNuvem=async function(){client();const session=await baseSession();if(!session?.access_token||!session?.user?.id)return null;if(expired(session))return renew(session);if(typeof salvarSessaoNuvemManual==='function')salvarSessaoNuvemManual(session);return session;};
+window.fetch=async function(input,options){
+ let url;try{url=new URL(typeof input==='string'?input:input.url,location.href);}catch{return baseFetch(input,options);}
+ if(url.origin!==new URL(SUPABASE_URL).origin||url.pathname!=='/rest/v1/planejamento_financeiro_sync')return baseFetch(input,options);
+ const result=await baseFetch(input,options);if(result.status!==401)return result;
+ // An unauthorized REST call has not committed a write: renew once and preserve the exact request.
+ const session=await baseSession();if(!session?.access_token||!session?.user?.id){indicator('Sessão expirada');throw Error('Sessão expirada. Entre novamente na conta da nuvem. Seus dados locais foram preservados.');}
+ let owner=url.searchParams.get('user_id');owner=owner?.startsWith('eq.')?owner.slice(3):null;
+ if(!owner&&typeof options?.body==='string'){try{const body=JSON.parse(options.body);owner=(Array.isArray(body)?body[0]:body)?.user_id||null;}catch{}}
+ if(!owner||owner!==session.user.id)throw Error('A conta da nuvem mudou. A sincronização foi interrompida para preservar seus dados.');
+ const fresh=await renew(session);const current=await baseSession();if(current?.user?.id!==owner)throw Error('A conta da nuvem mudou. Refaça a sincronização.');
+ const headers=new Headers(options?.headers||{});headers.set('Authorization','Bearer '+fresh.access_token);
+ const retry=await baseFetch(input,{...options,headers});if(retry.status===401){indicator('Sessão expirada');throw Error('A sessão não foi aceita. Entre novamente na conta da nuvem. Seus dados locais foram preservados.');}
+ return retry;
+};
+client();
 })();
 </script>
 </body>
