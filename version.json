@@ -1,8 +1,8 @@
 {
-  "version": "V4.11.14",
-  "name": "V4.11.14",
+  "version": "V4.11.15",
+  "name": "V4.11.15",
   "date": "2026-10-28",
   "notes": [
-    "Layout do celular com menus completos, filtros inferiores, cartões compactos, valores protegidos por senha e conexão real à nuvem. Layout do PC preservado."
+    "Corrige despesas vencidas exibidas como A Vencer usando a data local atual, preservando lançamentos pagos e o layout."
   ]
 }

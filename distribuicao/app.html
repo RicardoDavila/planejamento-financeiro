@@ -3514,20 +3514,21 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
         let DATA_ABERTURA_PROJETO = obterDataAberturaProjeto();
 
         // Regra automática de STATUS para DESPESAS sem DT PG:
-        // DT VCTO < abertura = Vencido; = abertura = Pendente; > abertura = A Vencer.
+        // DT VCTO < hoje = Vencido; = hoje = Pendente; > hoje = A Vencer.
         // Se houver DT PG preenchida, o status informado/pago não é sobrescrito.
         function atualizarStatusDespesasAutomaticamente(lista) {
+            const dataReferencia = obterDataLocalISO();
             const dados = Array.isArray(lista) ? lista : [];
             let alterou = false;
 
             dados.forEach(t => {
                 if (!t || t.tipo !== 'Despesa' || !t.vencimento) return;
                 const temDataPagamento = !!(t.dataPg && String(t.dataPg).trim() !== '');
-                if (temDataPagamento) return;
+                if (temDataPagamento || ['pago','paga','recebido','recebida','liquidado','liquidada'].includes(String(t.status || '').trim().toLowerCase())) return;
 
                 let novoStatus = 'Pendente';
-                if (t.vencimento < DATA_ABERTURA_PROJETO) novoStatus = 'Vencido';
-                else if (t.vencimento > DATA_ABERTURA_PROJETO) novoStatus = 'A Vencer';
+                if (t.vencimento < dataReferencia) novoStatus = 'Vencido';
+                else if (t.vencimento > dataReferencia) novoStatus = 'A Vencer';
 
                 if (t.status !== novoStatus) {
                     t.status = novoStatus;
@@ -4421,6 +4422,7 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
         }
 
         function atualizarPainelGerencial() {
+            if (atualizarStatusDespesasAutomaticamente(transacoes)) salvarLocalStorage();
             // As métricas sempre usam exatamente os filtros atuais.
             // Na abertura, os filtros de data já foram preenchidos com o mês vigente.
             const filtradasPainel = getFilteredTransactions();
@@ -5375,6 +5377,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
         }
 
         function renderTable() {
+            if (atualizarStatusDespesasAutomaticamente(transacoes)) salvarLocalStorage();
             verificarContasVencendoHoje();
             const tbody = document.getElementById('tabelaCorpo');
             tbody.innerHTML = '';
@@ -5497,9 +5500,9 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             }
 
             if (tipoVal === 'Despesa') {
-                if (vencimentoVal && vencimentoVal < DATA_ABERTURA_PROJETO) {
+                if (vencimentoVal && vencimentoVal < obterDataLocalISO()) {
                     statusSelect.value = 'Vencido';
-                } else if (vencimentoVal && vencimentoVal > DATA_ABERTURA_PROJETO) {
+                } else if (vencimentoVal && vencimentoVal > obterDataLocalISO()) {
                     statusSelect.value = 'A Vencer';
                 } else {
                     statusSelect.value = 'Pendente';
@@ -5579,8 +5582,8 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             let statusNovo = document.getElementById('status').value;
 
             if (tipoNovo === 'Despesa' && !dataPgNovo && statusNovo === 'Pendente' && vencimentoNovo) {
-                if (vencimentoNovo < DATA_ABERTURA_PROJETO) statusNovo = 'Vencido';
-                else if (vencimentoNovo > DATA_ABERTURA_PROJETO) statusNovo = 'A Vencer';
+                if (vencimentoNovo < obterDataLocalISO()) statusNovo = 'Vencido';
+                else if (vencimentoNovo > obterDataLocalISO()) statusNovo = 'A Vencer';
             }
 
             const novo = {
@@ -7465,7 +7468,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.11';
+ const CURRENT_VERSION='V4.12.12';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
