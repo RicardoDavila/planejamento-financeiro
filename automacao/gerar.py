@@ -3,6 +3,7 @@ from correcao_distribuicao import corrigir_distribuicao
 from correcao_sincronizacao import corrigir_sincronizacao
 from correcao_atualizacoes import corrigir_atualizacoes
 from notas_publicacao import carregar_notas
+from correcao_rodape import corrigir_rodape
 import argparse, hashlib, json, os, pathlib, re, shutil, subprocess, tempfile
 from html.parser import HTMLParser
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -52,6 +53,7 @@ def generate(source, config, version):
     source = corrigir_distribuicao(source)
     source = corrigir_sincronizacao(source, distribuicao=True)
     source = corrigir_atualizacoes(source, distribuicao=True)
+    source = corrigir_rodape(source)
     source = source.replace('__PF_VERSION__', version)
     if re.search(r'\b(?:localStorage|sessionStorage)\b', source):
         raise ValueError('Publicação bloqueada: acesso direto ao armazenamento no painel distribuído.')
@@ -93,7 +95,7 @@ def build(output, version):
         for name in ['index.html','version.json','manifest.webmanifest','service-worker.js','sw.js','icon-192.png','icon-512.png']:
             path=ROOT/name
             if path.exists(): shutil.copy2(path,staging/name)
-        pessoal=corrigir_atualizacoes(corrigir_sincronizacao(read(ROOT/'index.html')))
+        pessoal=corrigir_rodape(corrigir_atualizacoes(corrigir_sincronizacao(read(ROOT/'index.html'))))
         pessoal=re.sub(r"const CURRENT_VERSION='V[0-9.]+';","const CURRENT_VERSION='"+version+"';",pessoal)
         (staging/'index.html').write_text(pessoal,encoding='utf-8')
         (staging/'version.json').write_text(json.dumps({'version':version,'name':version,'channel':'pessoal','notes':notes['pessoal']},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

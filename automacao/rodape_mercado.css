@@ -1,0 +1,56 @@
+/* Contraste adicional somente no tema Dia. */
+body:not(.dark-mode) #pfIndicadores {
+  background:#dbeafe!important;
+  color:#12345a!important;
+  border-top:2px solid #2563eb!important;
+  box-shadow:0 -2px 10px #1e40af18;
+  font-size:13px!important;
+  font-weight:650;
+}
+body:not(.dark-mode) #pfIndicadores a {color:#12345a!important;font-weight:700;}
+body:not(.dark-mode) #pfIndicadores button,
+body:not(.dark-mode) #pfMostrarIndicadores {
+  color:#12345a!important;
+  background:#eff6ff!important;
+  border:1px solid #93b4e8!important;
+  font-weight:650;
+}
+/* O rodapé fica acima dos totais e da navegação no celular. */
+body.pf-mobile-layout #pfIndicadores:not([hidden]) {
+  display:flex!important;
+  bottom:var(--pf-market-bottom,104px)!important;
+  height:44px!important;
+  gap:4px;
+  padding:0 6px;
+  font-size:12px!important;
+}
+body.pf-mobile-layout #pfMostrarIndicadores:not([hidden]) {
+  display:block!important;
+  bottom:var(--pf-market-bottom,104px)!important;
+  height:44px!important;
+}
+body.pf-mobile-layout #pfIndicadores button {
+  min-height:36px;
+  padding:4px 6px;
+  font-size:11px;
+}
+body.pf-mobile-layout #pfIndicadores a {font-size:10px;}
+body.pf-mobile-layout #pfIndTrack span {padding-right:32px;}
+body.pf-mobile-layout #pfMobileShell {
+  padding-bottom:calc(var(--pf-market-bottom,104px) + var(--pf-market-space,44px) + 24px)!important;
+}
+body.pf-mobile-layout #pfMobileShell .ai {
+  bottom:calc(var(--pf-market-bottom,104px) + var(--pf-market-space,44px) + 16px)!important;
+}
+body.pf-mobile-layout.auth-pendente #pfIndicadores,
+body.pf-mobile-layout.auth-pendente #pfMostrarIndicadores,
+body.pf-mobile-layout.pf-edicao-lancamento #pfIndicadores,
+body.pf-mobile-layout.pf-edicao-lancamento #pfMostrarIndicadores,
+body.pf-mobile-layout:has(dialog[open]) #pfIndicadores,
+body.pf-mobile-layout:has(dialog[open]) #pfMostrarIndicadores {
+  display:none!important;
+}
+@media print {
+  body.pf-mobile-layout #pfIndicadores:not([hidden]),
+  body.pf-mobile-layout #pfMostrarIndicadores:not([hidden]) {display:none!important;}
+}

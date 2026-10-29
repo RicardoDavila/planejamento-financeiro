@@ -2,6 +2,7 @@ import hashlib, json, pathlib, subprocess, tempfile, unittest
 import gerar
 from correcao_sincronizacao import corrigir_sincronizacao
 from correcao_atualizacoes import corrigir_atualizacoes
+from correcao_rodape import corrigir_rodape
 
 class AutomacaoTests(unittest.TestCase):
     @classmethod
@@ -61,7 +62,7 @@ const a=make('A'),b=make('B');a.pfdLocal.setItem('saldo','100');assert.equal(b.p
         with tempfile.TemporaryDirectory() as temp:
             output=pathlib.Path(temp)/'site'
             gerar.build(output,'V4.12.3')
-            expected=corrigir_atualizacoes(corrigir_sincronizacao(gerar.read(gerar.ROOT/'index.html')))
+            expected=corrigir_rodape(corrigir_atualizacoes(corrigir_sincronizacao(gerar.read(gerar.ROOT/'index.html'))))
             import re
             expected=re.sub(r"const CURRENT_VERSION='V[0-9.]+';","const CURRENT_VERSION='V4.12.3';",expected)
             self.assertEqual(gerar.read(output/'index.html'),expected)
