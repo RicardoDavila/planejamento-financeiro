@@ -13,6 +13,8 @@ class DistribuicaoCorrecaoTests(unittest.TestCase):
         html = gerar.generate(source, config, 'V4.12.27')
         self.assertIn('const session=await window.parent.pfdGetSession()', html)
         self.assertIn('Backup dos meus dados', html)
+        self.assertEqual(html.count("button(groups['Ferramentas'],'Sincronizar com a Nuvem'"), 2)
+        self.assertIn("()=>{window.pfdAssert();sincronizarAgoraNuvem();}", html)
         self.assertNotIn("if (badge) badge.textContent = 'Online';", html)
         self.assertNotIn("indicator('Online');return fresh;", html)
         self.assertNotIn("estado.includes('conect')", html)
