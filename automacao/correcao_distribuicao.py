@@ -1,4 +1,5 @@
 """Correções específicas da distribuição aplicadas depois do adaptador de acesso."""
+from pathlib import Path
 
 def corrigir_distribuicao(s):
     old="async function obterSessaoNuvem(){window.pfdAssert();inicializarSupabaseCliente();const {data,error}=await supabaseCliente.auth.getSession();if(error)throw error;window.pfdAssert();if(data.session?.user?.id!==window.parent.pfdUser?.id)throw Error('A sessão mudou. Entre novamente.');return data.session;}"
@@ -26,4 +27,11 @@ def corrigir_distribuicao(s):
     region=s[start:end]
     region=region.replace('            });', "            }).catch(error => atualizarStatusNuvem('Falha ao recuperar a sessão: '+error.message));")
     s=s[:start]+region+s[end:]
+    recovery = Path(__file__).with_name('recuperacao_nuvem.js').read_text(encoding='utf-8')
+    marker = '        async function sincronizarAgoraNuvem(){'
+    if s.count(marker) != 1:
+        raise ValueError('Não foi possível localizar a sincronização para incluir a recuperação.')
+    s=s.replace(marker,recovery+'\n'+marker,1)
+    button="button(groups['Ferramentas'],'Sincronizar com a Nuvem','folder',()=>{window.pfdAssert();sincronizarAgoraNuvem();});"
+    s=s.replace(button,button+"\n button(groups['Ferramentas'],'Resolver conflito da nuvem','folder',()=>{window.pfdAssert();resolverConflitoNuvem();});")
     return s
