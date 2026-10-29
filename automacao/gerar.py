@@ -2,6 +2,7 @@
 from correcao_distribuicao import corrigir_distribuicao
 from correcao_sincronizacao import corrigir_sincronizacao
 from correcao_atualizacoes import corrigir_atualizacoes
+from notas_publicacao import carregar_notas
 import argparse, hashlib, json, os, pathlib, re, shutil, subprocess, tempfile
 from html.parser import HTMLParser
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -86,6 +87,7 @@ def build(output, version):
         if hashlib.sha256(read(ROOT/'distribuicao'/name).replace('\r\n','\n').encode()).hexdigest()!=expected:
             raise ValueError('Arquivo de acesso alterado: '+name+'. Revise as verificações antes de publicar.')
     app=generate(read(ROOT/'index.html'), config, version)
+    notes=carregar_notas(ROOT)
     with tempfile.TemporaryDirectory() as temporary:
         staging=pathlib.Path(temporary)/'site'; staging.mkdir()
         for name in ['index.html','version.json','manifest.webmanifest','service-worker.js','sw.js','icon-192.png','icon-512.png']:
@@ -94,7 +96,7 @@ def build(output, version):
         pessoal=corrigir_atualizacoes(corrigir_sincronizacao(read(ROOT/'index.html')))
         pessoal=re.sub(r"const CURRENT_VERSION='V[0-9.]+';","const CURRENT_VERSION='"+version+"';",pessoal)
         (staging/'index.html').write_text(pessoal,encoding='utf-8')
-        (staging/'version.json').write_text(json.dumps({'version':version,'name':version,'channel':'pessoal','notes':['Verifica novas versões ao abrir e retornar ao aplicativo e avisa quando uma atualização já foi carregada.']},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+        (staging/'version.json').write_text(json.dumps({'version':version,'name':version,'channel':'pessoal','notes':notes['pessoal']},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         for worker_name in ['service-worker.js','sw.js']:
             worker_path=staging/worker_name
             if worker_path.exists():
@@ -109,7 +111,7 @@ def build(output, version):
         (dist/'index.html').write_text(index,encoding='utf-8')
         worker=re.sub(r"const CACHE='pf-distribuicao-v[^']+';", "const CACHE='pf-distribuicao-"+version.lower().replace('.','-')+"';", read(dist/'service-worker.js'))
         (dist/'service-worker.js').write_text(worker,encoding='utf-8')
-        (dist/'version.json').write_text(json.dumps({'version':version,'name':version,'channel':'distribuicao'},indent=2)+'\n',encoding='utf-8')
+        (dist/'version.json').write_text(json.dumps({'version':version,'name':version,'channel':'distribuicao','notes':notes['distribuicao']},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         check_scripts(app,dist)
         check_scripts(pessoal,dist)
         # Publica somente os arquivos estáticos conhecidos da cópia opcional.

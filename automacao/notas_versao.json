@@ -1,0 +1,12 @@
+{
+  "pessoal": [
+    "Os avisos de atualização agora mostram um resumo do que mudou na versão.",
+    "As novidades aparecem antes de atualizar e também quando a nova versão já foi carregada.",
+    "O resumo pode ser consultado novamente em Ajuda e informações → Verificar novas versões."
+  ],
+  "distribuicao": [
+    "Os avisos de atualização agora mostram um resumo das novidades da distribuição.",
+    "As mudanças aparecem no aviso de nova versão e na confirmação de aplicativo atualizado.",
+    "O resumo pode ser consultado novamente em Ajuda e informações → Verificar novas versões."
+  ]
+}

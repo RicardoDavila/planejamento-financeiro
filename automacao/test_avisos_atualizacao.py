@@ -20,6 +20,8 @@ class AvisosAtualizacaoTests(unittest.TestCase):
                     html=gerar.read(folder/('app.html' if channel else 'index.html'))
                     self.assertIn("CURRENT_VERSION='"+version+"'",html)
                     self.assertEqual(json.loads(gerar.read(folder/'version.json'))['version'],version)
+                    self.assertIsInstance(json.loads(gerar.read(folder/'version.json'))['notes'],list)
+                    self.assertIn('O que foi atualizado nesta versão:',html)
                     self.assertIn('pfUpdateBanner',html)
                     self.assertIn('version.json?t=',html)
                     self.assertNotIn('__PF_UPDATE_',html)

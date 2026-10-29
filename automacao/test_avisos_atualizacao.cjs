@@ -1,5 +1,5 @@
 const fs=require('fs'),vm=require('vm'),path=require('path'),assert=require('assert/strict');
-function setup({current='V4.12.40',latest='V4.12.41',previous='',distribution=false,offline=false,local=false}={}){
+function setup({current='V4.12.40',latest='V4.12.41',previous='',distribution=false,offline=false,local=false,notes=['Exemplo de melhoria da versão']}={}){
  const base='https://ricardodavila.github.io/planejamento-financeiro/'+(distribution?'distribuicao/':'');
  const script=fs.readFileSync(path.join(__dirname,'avisos_atualizacao.js'),'utf8').replaceAll('__PF_UPDATE_BASE__',base).replaceAll('__PF_UPDATE_HOST__',distribution?'window.parent':'window').replaceAll('__PF_UPDATE_STORAGE__',distribution?'pfdLocal':'localStorage');
  const elements=new Map(),data=new Map(previous?[['pf_ultima_versao_aberta_v1',previous]]:[]),events={},timers=[],fetches=[],navigation=[];let failure=offline;
@@ -10,7 +10,7 @@ function setup({current='V4.12.40',latest='V4.12.41',previous='',distribution=fa
  if(!distribution)window.parent=window;
  const storage={getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)};
  const document={hidden:false,body,getElementById:id=>elements.get(id)||null,createElement:make,addEventListener:(name,fn)=>events[name]=fn};
- const ctx={window,document,location,navigator:{},localStorage:storage,pfdLocal:storage,CURRENT_VERSION:current,URL,Date,AbortSignal,fetch:async(url,opts)=>{fetches.push({url:String(url),opts});if(failure)throw Error('offline');return {ok:true,json:async()=>({version:latest})};},compareVersions:(a,b)=>{const p=s=>s.replace(/^v/i,'').split('.').map(Number);a=p(a);b=p(b);for(let i=0;i<Math.max(a.length,b.length);i++){if((a[i]||0)!==(b[i]||0))return (a[i]||0)-(b[i]||0);}return 0;},closeMenu(){},show(title){elements.set('pfHelpModalBody',make('div'));},setInterval:(fn,ms)=>{timers.push({fn,ms});},setTimeout,clearTimeout};
+ const ctx={window,document,location,navigator:{},localStorage:storage,pfdLocal:storage,CURRENT_VERSION:current,URL,Date,AbortSignal,fetch:async(url,opts)=>{fetches.push({url:String(url),opts});if(failure)throw Error('offline');return {ok:true,json:async()=>({version:latest,notes})};},compareVersions:(a,b)=>{const p=s=>s.replace(/^v/i,'').split('.').map(Number);a=p(a);b=p(b);for(let i=0;i<Math.max(a.length,b.length);i++){if((a[i]||0)!==(b[i]||0))return (a[i]||0)-(b[i]||0);}return 0;},closeMenu(){},show(title){elements.set('pfHelpModalBody',make('div'));},setInterval:(fn,ms)=>{timers.push({fn,ms});},setTimeout,clearTimeout};
  vm.createContext(ctx);vm.runInContext(script,ctx);
  return {window,ctx,events,timers,fetches,navigation,elements,data,setOffline:v=>failure=v,notice:()=>elements.get('pfUpdateNotice'),resetDelay:()=>vm.runInContext('pfUpdateLastCheck=0',ctx)};
 }
@@ -26,5 +26,9 @@ function setup({current='V4.12.40',latest='V4.12.41',previous='',distribution=fa
  x=setup({offline:true});await x.window.pfCheckUpdates(true);assert(!x.notice());x.setOffline(false);await x.events.online();assert.equal(x.fetches.length,2);assert(x.notice());
  x=setup();x.ctx.document.hidden=true;await x.events.visibilitychange();assert.equal(x.fetches.length,0);x.ctx.document.hidden=false;await x.events.visibilitychange();assert.equal(x.fetches.length,1);assert.equal(x.timers[0].ms,120000);x.resetDelay();await x.timers[0].fn();assert.equal(x.fetches.length,2);
  x=setup({local:true});await x.window.pfCheckUpdates(true);assert.equal(x.fetches.length,0);assert.equal(x.navigation.length,0);
+ x=setup({notes:['Ajuste de sincronização','<img src=x onerror=alert(1)>',null,'']});await x.window.pfCheckUpdates(true);assert(x.notice().children.some(e=>e.textContent==='O que foi atualizado nesta versão:'));let list=x.notice().children.find(e=>e.tag==='ul');assert.equal(list.children.length,2);assert.equal(list.children[1].textContent,'<img src=x onerror=alert(1)>');assert.equal(list.children[1].innerHTML,undefined);
+ x=setup({current:'V4.12.41',latest:'V4.12.41',previous:'V4.12.40',notes:['Resumo da versão instalada']});await x.window.pfCheckUpdates(true);assert.equal(x.notice().children.find(e=>e.tag==='ul').children[0].textContent,'Resumo da versão instalada');
+ x=setup({notes:[]});await x.window.pfCheckUpdates(true);assert(x.notice().children.some(e=>e.textContent==='Os detalhes desta publicação não foram informados.'));
+ x=setup({notes:['Consulta manual']});await x.window.pfCheckUpdates();assert.equal(x.elements.get('pfHelpModalBody').children.find(e=>e.tag==='ul').children[0].textContent,'Consulta manual');
  console.log('PASS: versão nova, já atualizada, primeira abertura, ausência de repetição, canal pessoal/distribuição, retorno à aba, modo offline, concorrência e atualização sem recarga automática.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
