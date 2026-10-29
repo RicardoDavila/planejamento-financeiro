@@ -1,6 +1,7 @@
 """Gera as duas versões públicas sem ler bancos, sessões ou senhas de usuários."""
 from correcao_distribuicao import corrigir_distribuicao
-from correcao_sincronizacao import corrigir_sincronizacao, PERSONAL_VERSION
+from correcao_sincronizacao import corrigir_sincronizacao
+from correcao_atualizacoes import corrigir_atualizacoes
 import argparse, hashlib, json, os, pathlib, re, shutil, subprocess, tempfile
 from html.parser import HTMLParser
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -49,6 +50,7 @@ def generate(source, config, version):
         source = source.replace(patch['context'], patch['replacement'], 1)
     source = corrigir_distribuicao(source)
     source = corrigir_sincronizacao(source, distribuicao=True)
+    source = corrigir_atualizacoes(source, distribuicao=True)
     source = source.replace('__PF_VERSION__', version)
     if re.search(r'\b(?:localStorage|sessionStorage)\b', source):
         raise ValueError('Publicação bloqueada: acesso direto ao armazenamento no painel distribuído.')
@@ -89,13 +91,14 @@ def build(output, version):
         for name in ['index.html','version.json','manifest.webmanifest','service-worker.js','sw.js','icon-192.png','icon-512.png']:
             path=ROOT/name
             if path.exists(): shutil.copy2(path,staging/name)
-        pessoal=corrigir_sincronizacao(read(ROOT/'index.html'))
+        pessoal=corrigir_atualizacoes(corrigir_sincronizacao(read(ROOT/'index.html')))
+        pessoal=re.sub(r"const CURRENT_VERSION='V[0-9.]+';","const CURRENT_VERSION='"+version+"';",pessoal)
         (staging/'index.html').write_text(pessoal,encoding='utf-8')
-        (staging/'version.json').write_text(json.dumps({'version':PERSONAL_VERSION,'name':PERSONAL_VERSION,'notes':['Corrige a reconciliação de cópias equivalentes e verifica a nuvem ao retornar ao aplicativo.']},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+        (staging/'version.json').write_text(json.dumps({'version':version,'name':version,'channel':'pessoal','notes':['Verifica novas versões ao abrir e retornar ao aplicativo e avisa quando uma atualização já foi carregada.']},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         for worker_name in ['service-worker.js','sw.js']:
             worker_path=staging/worker_name
             if worker_path.exists():
-                worker_path.write_text(re.sub(r'planejamento-financeiro-v[0-9-]+', 'planejamento-financeiro-'+PERSONAL_VERSION.lower().replace('.','-'),read(worker_path)),encoding='utf-8')
+                worker_path.write_text(re.sub(r'planejamento-financeiro-v[0-9-]+', 'planejamento-financeiro-'+version.lower().replace('.','-'),read(worker_path)),encoding='utf-8')
         if (ROOT/'CNAME').exists(): shutil.copy2(ROOT/'CNAME',staging/'CNAME')
         (staging/'.nojekyll').write_text('')
         dist=staging/'distribuicao';dist.mkdir()
