@@ -1,4 +1,5 @@
 """Gera as duas versões públicas sem ler bancos, sessões ou senhas de usuários."""
+from correcao_distribuicao import corrigir_distribuicao
 import argparse, hashlib, json, os, pathlib, re, shutil, subprocess, tempfile
 from html.parser import HTMLParser
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -45,6 +46,7 @@ def generate(source, config, version):
             raise ValueError('Publicação bloqueada: conflito no adaptador próximo da linha '+str(patch['line'])+'. A versão publicada será mantida.')
     for patch in patches:
         source = source.replace(patch['context'], patch['replacement'], 1)
+    source = corrigir_distribuicao(source)
     source = source.replace('__PF_VERSION__', version)
     if re.search(r'\b(?:localStorage|sessionStorage)\b', source):
         raise ValueError('Publicação bloqueada: acesso direto ao armazenamento no painel distribuído.')
