@@ -1,5 +1,6 @@
 import hashlib, json, pathlib, subprocess, tempfile, unittest
 import gerar
+from correcao_sincronizacao import corrigir_sincronizacao
 
 class AutomacaoTests(unittest.TestCase):
     @classmethod
@@ -59,7 +60,7 @@ const a=make('A'),b=make('B');a.pfdLocal.setItem('saldo','100');assert.equal(b.p
         with tempfile.TemporaryDirectory() as temp:
             output=pathlib.Path(temp)/'site'
             gerar.build(output,'V4.12.3')
-            self.assertEqual((output/'index.html').read_bytes(),original)
+            self.assertEqual(gerar.read(output/'index.html'),corrigir_sincronizacao(gerar.read(gerar.ROOT/'index.html')))
             self.assertEqual(json.loads(gerar.read(output/'distribuicao/version.json'))['version'],'V4.12.3')
             self.assertIn('pf-distribuicao-v4-12-3',gerar.read(output/'distribuicao/service-worker.js'))
             self.assertFalse((output/'automacao').exists())
