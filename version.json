@@ -1,8 +1,11 @@
 {
-  "version": "V4.11.17",
-  "name": "V4.11.17",
-  "date": "2026-10-28",
+  "version": "V4.12.33",
+  "name": "V4.12.33",
+  "channel": "pessoal",
   "notes": [
-    "Aumenta as fontes no celular e ajusta a altura do cabeçalho para manter a saudação com nome visível; PC preservado."
+    "Corrige o enquadramento do fluxo de caixa ao abrir pelo menu e adiciona relatório completo com saldo inicial, agrupamentos, projeção e exportações.",
+    "Padroniza cores, fontes e logotipo dos relatórios gerencial/mensal, gráficos evolutivos e fluxo de caixa.",
+    "Mostra valores nas barras dos gráficos e mantém os painéis, filtros, indicadores e cálculos originais.",
+    "Uniformiza o ícone azul do aplicativo no cabeçalho, na navegação e nos relatórios."
   ]
 }

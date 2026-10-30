@@ -1895,8 +1895,112 @@ body.dark-mode #pfAvisosResumo{color:#cbd5e1}body.dark-mode #pfAlternarAvisos{ba
 body.dark-mode #btnAlternarResumoMobile{background:#334155;color:#f8fafc;border-color:#64748b}
 body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
 </style>
+<script id="pf-report-theme">
+/* Identidade compartilhada dos relatórios de impressão e PDF. */
+(function(){
+'use strict';
+const palette=Object.freeze({navy:'#203c64',green:'#047857',red:'#bd2b20',text:'#243247',muted:'#526176',line:'#d7e1ee',pale:'#edf2f8',series:['#203c64','#52658d','#047857','#bd2b20','#63758a','#8ba5c5']});
+const font='system-ui, -apple-system, "Segoe UI", sans-serif';
+const logo='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEFElEQVR4nO3d0XHaQBSGUcikBGqgMpflylyDeyAPMROHsRMk7WpX9z/nObGJuJ/uEjP4fLvdTpDqx+gHACMJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoP0c/gP+5vrx7r8bBvb1ezqMfw3fOs70XyMDXN1MQUwRg6HONjmFYAIaeRyNiGPIi2PDzlRFzsesGMPg8a69tsNsGMPwssde8dN8ABp+tem6DrhvA8NNCzznqFoDhp6Ve89QlAMNPDz3mqnkAhp+eWs9X0wAMP3toOWfNAjD87KnVvHk7NNGaBODuzwgt5m5zAIafkbbOnyMQ0TYF4O7PDLbM4eoADD8zWTuPjkBEEwDRVgXg+MOM1sylDUA0ARBtcQCOP8xs6XzaAEQTANEEQLRFATj/cwRL5tQGIJoAiCYAogmAaAIg2vS/Immrt9fL6IfQxPXlfdGfb/nvXvq9j6TsBnh7vcQO/9q/851K1/JRyQCqPlmjVbyupY5AFZ+g2dyvcZVjUckNAM8qE4C7/76qXO8SAVR5Mo6mwnUvEQCsdfgAKtyFjuzo1//wAcAWAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKKV+lSImYz8ICueZwN0MPqDrHieAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCI5mNRPvgYk0w2wMnHmCQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEE8Bp3W97+dffmf3r8YdfkfSh9cDM/vX4zQYgmgCIJgCiCYBoAiCaAIgmAKIJgGiHD+D68j76IUQ7+vU/fACwRYkAjn4XOqoK171EAKdTjSfjSKpc7zIBwBql3g16vyt552Q/Ve78dyU3QLUnaRYVr2upDfCZbdBOxcG/KxvAXeUnj+1KHoHgWQIgmgCIJgCiCYBoAiDaogDeXi/nXg8EWlkypzYA0QRANAEQbXEAXgcws6XzaQMQTQBEWxWAYxAzWjOXNgDRBEC01QE4BjGTtfO4aQOIgBlsmUNHIKJtDsAWYKSt89dkA4iAEVrMnSMQ0ZoFYAuwp1bz1nQDiIA9tJyz5kcgEdBT6/nq8hpABPTQY666vQgWAS31mqeu/wskAlroOUfn2+3W62v/5fryvs83oow9bqC7/RzANmCJveZltw3wmW3Ad/a+UQ75SbBtwFdGzMWQDfDIRsg1+mY4RQCfiaG+0UP/2XQBPBLE8c008I+mDwB68nZoogmAaAIgmgCIJgCiCYBoAiCaAIgmAKL9Ak4GGSSo34cHAAAAAElFTkSuQmCC';
+const money=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const css=`
+:root{--navy:${palette.navy};--texto:${palette.text};--muted:${palette.muted};--linha:${palette.line}}
+body,.pagina,.pagina svg,.fc-report-header{font-family:${font}!important;color:${palette.text}}
+.pf-report-logo{width:48px;height:48px;object-fit:contain;display:block}
+.pf-history-value{display:none}
+.pagina .marca{position:relative;border-left:0;padding-left:63px;min-height:50px}
+.pagina .marca>.pf-report-logo{position:absolute;left:0;top:0}
+.pagina h1,.pagina h2,.pagina h3,.pagina .grafico-titulo,.pagina .bloco-titulo{color:${palette.navy}}
+.pagina .marca h1{text-transform:none;letter-spacing:-.4px}
+.pagina .kpi{background:white;border:1px solid ${palette.line};border-left:4px solid ${palette.navy};border-radius:0;color:${palette.text}}
+.pagina .kpi.receita .valor{color:${palette.green}}.pagina .kpi.paga .valor,.pagina .kpi.vencer .valor{color:${palette.red}}
+.pagina .bloco,.pagina .grafico,.pagina .resumo{border-radius:3px;border-color:${palette.line}}
+.pagina .bloco-titulo,.pagina .resumo{background:${palette.pale}}.pagina .tabela th{background:${palette.navy};color:#fff}
+.pagina .tabela tbody tr:nth-child(even){background:#f8fafc}.pagina .tabela td.valor{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.pagina .frase{background:${palette.pale};color:${palette.muted};font-style:normal}
+@media print{@page{size:A4 landscape;margin:12mm 12mm 15mm;@bottom-left{content:"Planejamento Financeiro | Relatório Financeiro";font:7pt sans-serif;color:#64748b}@bottom-right{content:"Página " counter(page) " de " counter(pages);font:7pt sans-serif;color:#64748b}}
+html body,html body.imprimir-graficos{font-family:${font}!important;color:${palette.text}!important;background:white!important}
+body.imprimir-graficos #modalGraficos,body.imprimir-graficos #modalGraficos *{font-family:${font}!important}
+body.imprimir-graficos #modalGraficos .print-graficos-header{position:relative;padding:0 0 10px 64px!important;min-height:54px;text-align:left!important;border-bottom:2px solid ${palette.navy}!important}
+body.imprimir-graficos #modalGraficos .print-graficos-header>.pf-report-logo{position:absolute;left:0;top:0}
+body.imprimir-graficos #modalGraficos h1,body.imprimir-graficos #modalGraficos h4{color:${palette.navy}!important}
+html body.imprimir-graficos #modalGraficos .grafico-print-bloco canvas,html body.imprimir-graficos #modalGraficos .relative.h-72{height:300px!important;max-height:300px!important}
+body.imprimir-graficos #modalGraficos #pfRanking .pf-bar-fill,body.imprimir-graficos #modalGraficos #pfAtrasos .pf-bar-fill{background:${palette.red}!important}
+body.imprimir-graficos #modalGraficos #pfWaterfall .pf-bar-row:nth-child(1) .pf-bar-fill{background:${palette.green}!important}
+body.imprimir-graficos #modalGraficos #pfWaterfall .pf-bar-row:nth-child(2) .pf-bar-fill{background:${palette.red}!important}
+body.imprimir-graficos #modalGraficos #pfWaterfall .pf-bar-row:nth-child(3) .pf-bar-fill{background:${palette.navy}!important}
+body.imprimir-graficos #modalGraficos #kpiGrafReceitas,body.imprimir-graficos #modalGraficos #kpiGrafRecebidas{color:${palette.green}!important}
+body.imprimir-graficos #modalGraficos #kpiGrafDespesas,body.imprimir-graficos #modalGraficos #kpiGrafVencidas{color:${palette.red}!important}
+body.imprimir-graficos #modalGraficos #kpiGrafPoupanca,body.imprimir-graficos #modalGraficos #kpiGrafComprometimento{color:${palette.navy}!important}
+body.imprimir-graficos #modalGraficos .pf-table{width:100%;table-layout:auto!important}
+body.imprimir-graficos #modalGraficos .pf-table thead{display:table-header-group}
+body.imprimir-graficos #modalGraficos .pf-table td:last-child{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+body.imprimir-graficos #modalGraficos #pfDrilldown,body.imprimir-graficos #modalGraficos #pfDrilldown .overflow-auto{max-height:none!important;height:auto!important;overflow:visible!important}
+body.imprimir-graficos #modalGraficos #pfDozeMeses>.grid{grid-template-columns:repeat(6,minmax(0,1fr))!important;row-gap:16px!important}
+body.imprimir-graficos #modalGraficos #pfDozeMeses>.grid>div{padding-top:70px;break-inside:avoid}
+body.imprimir-graficos #modalGraficos #pfDozeMeses .pf-history-bar{position:relative;overflow:visible!important}
+body.imprimir-graficos #modalGraficos #pfDozeMeses .pf-history-value{display:block;position:absolute;bottom:100%;left:50%;transform:rotate(-60deg);transform-origin:left bottom;white-space:nowrap;font:600 8px ${font};color:${palette.navy};padding-bottom:3px}
+body:not(.imprimir-graficos) .pf-standard-print-header{position:relative;padding-left:64px!important;min-height:54px;text-align:left!important;border-bottom:2px solid ${palette.navy}!important}
+.pf-standard-print-header>.pf-report-logo{position:absolute;left:0;top:0}
+body:not(.imprimir-graficos) th{background:${palette.navy}!important;color:white!important}
+body:not(.imprimir-graficos) table{table-layout:auto!important}body:not(.imprimir-graficos) tr{break-inside:avoid}
+.pagina{padding:0!important;margin:0!important}.pagina .grid{grid-template-columns:minmax(0,1fr)!important}.pagina .bloco{break-inside:auto}.pagina .bloco-titulo{break-after:avoid}
+thead{display:table-header-group}tfoot{display:table-row-group}tr,.kpi,.cabecalho,.grafico{break-inside:avoid}h1,h2,h3,h4{break-after:avoid}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+`;
+function logoHtml(){return '<img class="pf-report-logo" src="'+logo+'" alt="Logotipo do Planejamento Financeiro" width="48" height="48">';}
+function decorate(html){if(html.includes('id="pf-report-shared-style"'))return html;return html.replace('</head>','<style id="pf-report-shared-style">'+css+'</style></head>').replace('<div class="marca">','<div class="marca">'+logoHtml());}
+function seriesColor(label,i=0){const t=String(label||'').toLocaleLowerCase('pt-BR');if(/anterior/.test(t))return palette.navy;if(/receit|recebid|entrad|atual/.test(t))return palette.green;if(/despes|saíd|said|pag[ao]|vencid|vencer/.test(t))return palette.red;return palette.series[i%palette.series.length];}
+const valueLabels={
+ id:'pfReportValueLabels',
+ beforeInit(chart){if(chart.options.plugins?.legend&&chart.options.plugins.legend.display!==false)chart.options.plugins.legend.position='bottom';},
+ beforeUpdate(chart){
+  const type=chart.config.type,sets=chart.data.datasets||[];
+  for(const [i,d]of sets.entries()){
+   const kind=d.type||type;
+   if(['doughnut','pie','bar'].includes(kind)&&sets.length===1){const semantic=/receit|despes|recebid|saíd|said|pag[ao]/i.test(d.label||'');d.backgroundColor=(chart.data.labels||[]).map((label,j)=>Number(d.data[j])<0?palette.red:seriesColor(semantic?d.label:label,j));d.borderColor=d.backgroundColor;}
+   else {const color=seriesColor(d.label,i);d.borderColor=color;d.backgroundColor=kind==='line'?color+'1a':color;}
+  }
+  const bar=sets.some(d=>(d.type||type)==='bar');if(!bar)return;
+  const horizontal=chart.options.indexAxis==='y',count=Math.max(1,(chart.data.labels||[]).length),dense=!horizontal&&(chart.width||700)/count/Math.max(1,sets.length)<92;
+  chart.$pfDenseLabels=dense;
+  const layout=chart.options.layout||(chart.options.layout={}),p=layout.padding;
+  const padding=typeof p==='number'?{top:p,right:p,bottom:p,left:p}:{...(p||{})};
+  const negative=sets.some(d=>(d.data||[]).some(v=>Number(v&&typeof v==='object'?v[horizontal?'x':'y']:v)<0));
+  padding.top=Math.max(padding.top||0,dense?100:35);padding.bottom=Math.max(padding.bottom||0,negative&&dense?75:15);padding.right=Math.max(padding.right||0,horizontal?115:20);layout.padding=padding;
+  if(chart.options.plugins?.legend&&chart.options.plugins.legend.display!==false)chart.options.plugins.legend.position='bottom';
+ },
+ afterDatasetsDraw(chart){
+  const ctx=chart.ctx,dark=typeof document!=='undefined'&&document.body?.classList.contains('dark-mode');
+  for(const [di,d]of (chart.data.datasets||[]).entries()){
+   const meta=chart.getDatasetMeta(di);if(meta.type!=='bar'||!chart.isDatasetVisible(di))continue;
+   for(const [i,bar]of meta.data.entries()){
+    if(chart.getDataVisibility&&chart.getDataVisibility(i)===false)continue;
+    const raw=d.data[i],horizontal=chart.options.indexAxis==='y';if(raw==null)continue;const n=Number(raw&&typeof raw==='object'?raw[horizontal?'x':'y']:raw);if(!Number.isFinite(n))continue;
+    const p=bar.getProps?bar.getProps(['x','y','base'],false):bar;if(!Number.isFinite(p.x)||!Number.isFinite(p.y))continue;
+    const text=money(n);ctx.save();ctx.font='600 10px '+font;ctx.fillStyle=dark?'#e2e8f0':palette.navy;ctx.strokeStyle=dark?'#111827':'#ffffff';ctx.lineWidth=3;
+    ctx.translate(p.x,p.y);if(horizontal){ctx.textAlign=n<0?'right':'left';ctx.textBaseline='middle';ctx.translate(n<0?-6:6,0);}else{ctx.translate(0,n<0?7:-7);if(chart.$pfDenseLabels){ctx.rotate(-Math.PI/3);ctx.textAlign=n<0?'right':'left';ctx.textBaseline='middle';}else{ctx.textAlign='center';ctx.textBaseline=n<0?'top':'bottom';}}
+    ctx.strokeText(text,0,0);ctx.fillText(text,0,0);ctx.restore();
+   }
+  }
+ }
+};
+function installCharts(ChartClass){if(!ChartClass||ChartClass.$pfReportTheme)return;ChartClass.$pfReportTheme=true;ChartClass.defaults.font.family=font;ChartClass.defaults.color=palette.muted;ChartClass.defaults.devicePixelRatio=2;ChartClass.register(valueLabels);}
+function enhanceOriginalCharts(){for(const bar of document.querySelectorAll('#pfDozeMeses [title^="Receitas "],#pfDozeMeses [title^="Despesas "]')){bar.classList.add('pf-history-bar');if(!bar.querySelector('.pf-history-value')){const value=document.createElement('span');value.className='pf-history-value';value.textContent=bar.getAttribute('title').replace(/^(Receitas|Despesas)\s+/,'');bar.append(value);}}}
+function preparePrintCharts(){enhanceOriginalCharts();if(typeof Chart==='undefined')return;installCharts(Chart);for(const chart of Object.values(Chart.instances||{})){chart.stop();chart.update('none');}}
+function init(){
+ if(!document.getElementById('pf-report-shared-style')){const style=document.createElement('style');style.id='pf-report-shared-style';style.textContent=css;document.head.append(style);}
+ const headers=[document.getElementById('printGraficosHeader'),document.getElementById('printMesAnoHeader')?.parentElement].filter(Boolean);
+ for(const h of headers){if(!h.querySelector('.pf-report-logo'))h.insertAdjacentHTML('afterbegin',logoHtml());h.classList.add('pf-standard-print-header');}
+ if(typeof Chart!=='undefined')installCharts(Chart);
+}
+window.PFReportTheme=Object.freeze({palette,font,logo,css,logoHtml,decorate,seriesColor,valueLabels,installCharts,preparePrintCharts,enhanceOriginalCharts});
+window.addEventListener('beforeprint',preparePrintCharts);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+
+</script>
 </head>
-<aside id="pfSaasSidebar" aria-label="Navegação principal"><div class="pf-brand"><div class="pf-brand-icon"><i class="fa-solid fa-chart-pie"></i></div><div><strong>Planejamento<br>Financeiro</strong><small>GESTÃO FINANCEIRA</small></div></div><div class="pf-nav-label">Menu principal</div><nav class="pf-nav"><a class="active" href="#painelGerencial"><i class="fa-solid fa-house"></i>Dashboard</a><a href="#tabelaLancamentosWrapper"><i class="fa-solid fa-arrow-right-arrow-left"></i>Lançamentos</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroTipo')?.focus(),80)"><i class="fa-solid fa-circle-arrow-up"></i>Receitas e despesas</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroRubrica')?.focus(),80)"><i class="fa-solid fa-layer-group"></i>Cadastros e rubricas</a><a href="#painelGerencial"><i class="fa-solid fa-chart-column"></i>Relatórios</a></nav>
+<aside id="pfSaasSidebar" aria-label="Navegação principal"><div class="pf-brand"><div class="pf-brand-icon"><img class="pf-project-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEFElEQVR4nO3d0XHaQBSGUcikBGqgMpflylyDeyAPMROHsRMk7WpX9z/nObGJuJ/uEjP4fLvdTpDqx+gHACMJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoP0c/gP+5vrx7r8bBvb1ezqMfw3fOs70XyMDXN1MQUwRg6HONjmFYAIaeRyNiGPIi2PDzlRFzsesGMPg8a69tsNsGMPwssde8dN8ABp+tem6DrhvA8NNCzznqFoDhp6Ve89QlAMNPDz3mqnkAhp+eWs9X0wAMP3toOWfNAjD87KnVvHk7NNGaBODuzwgt5m5zAIafkbbOnyMQ0TYF4O7PDLbM4eoADD8zWTuPjkBEEwDRVgXg+MOM1sylDUA0ARBtcQCOP8xs6XzaAEQTANEEQLRFATj/cwRL5tQGIJoAiCYAogmAaAIg2vS/Immrt9fL6IfQxPXlfdGfb/nvXvq9j6TsBnh7vcQO/9q/851K1/JRyQCqPlmjVbyupY5AFZ+g2dyvcZVjUckNAM8qE4C7/76qXO8SAVR5Mo6mwnUvEQCsdfgAKtyFjuzo1//wAcAWAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKKV+lSImYz8ICueZwN0MPqDrHieAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCI5mNRPvgYk0w2wMnHmCQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEE8Bp3W97+dffmf3r8YdfkfSh9cDM/vX4zQYgmgCIJgCiCYBoAiCaAIgmAKIJgGiHD+D68j76IUQ7+vU/fACwRYkAjn4XOqoK171EAKdTjSfjSKpc7zIBwBql3g16vyt552Q/Ve78dyU3QLUnaRYVr2upDfCZbdBOxcG/KxvAXeUnj+1KHoHgWQIgmgCIJgCiCYBoAiDaogDeXi/nXg8EWlkypzYA0QRANAEQbXEAXgcws6XzaQMQTQBEWxWAYxAzWjOXNgDRBEC01QE4BjGTtfO4aQOIgBlsmUNHIKJtDsAWYKSt89dkA4iAEVrMnSMQ0ZoFYAuwp1bz1nQDiIA9tJyz5kcgEdBT6/nq8hpABPTQY666vQgWAS31mqeu/wskAlroOUfn2+3W62v/5fryvs83oow9bqC7/RzANmCJveZltw3wmW3Ad/a+UQ75SbBtwFdGzMWQDfDIRsg1+mY4RQCfiaG+0UP/2XQBPBLE8c008I+mDwB68nZoogmAaAIgmgCIJgCiCYBoAiCaAIgmAKL9Ak4GGSSo34cHAAAAAElFTkSuQmCC" alt="Logotipo do Planejamento Financeiro" width="28" height="28"></div><div><strong>Planejamento<br>Financeiro</strong><small>GESTÃO FINANCEIRA</small></div></div><div class="pf-nav-label">Menu principal</div><nav class="pf-nav"><a class="active" href="#painelGerencial"><i class="fa-solid fa-house"></i>Dashboard</a><a href="#tabelaLancamentosWrapper"><i class="fa-solid fa-arrow-right-arrow-left"></i>Lançamentos</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroTipo')?.focus(),80)"><i class="fa-solid fa-circle-arrow-up"></i>Receitas e despesas</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroRubrica')?.focus(),80)"><i class="fa-solid fa-layer-group"></i>Cadastros e rubricas</a><a href="#painelGerencial"><i class="fa-solid fa-chart-column"></i>Relatórios</a></nav>
 <div class="pf-nav-label pf-help-section-label">Ajuda e informações</div>
 <details id="pfHelpMenu" class="pf-help-menu pf-help-sidebar">
   <summary class="botao-acao" title="Ajuda e informações do aplicativo"><i class="fa-solid fa-circle-question"></i><span>Ajuda / Help</span><i class="fa-solid fa-chevron-down pf-help-chevron"></i></summary>
@@ -2048,7 +2152,7 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
           <option value="usuario">Usuário</option>
           <option value="administrador" disabled>Administrador (autorização do serviço)</option>
         </select>
-        <p class="mt-1 text-xs text-slate-500">Para mudar de Usuário para Administrador será solicitada a senha do Planejamento Financeiro.</p>
+        <p class="mt-1 text-xs text-slate-500">O perfil Administrador depende de autorização no serviço. O backup dos seus dados está disponível em Ações e ferramentas.</p>
       </div>
       <p class="text-xs text-slate-500">O nome será guardado neste navegador e aparecerá em “Olá, [nome]!”.</p>
       <div class="flex justify-end gap-2"><button type="button" onclick="fecharConfiguracaoNomeUsuario()" class="rounded-lg border px-4 py-2 text-sm">Cancelar</button><button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white">Salvar nome</button></div>
@@ -4001,12 +4105,12 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             supabaseCliente.auth.onAuthStateChange((evento, sessao) => {
                 if (sessao?.user) {
                     const badge = document.getElementById('statusNuvemBadge');
-                    if (badge) badge.textContent = 'Online';
+                    if (badge && /^(Local|Conectar)$/.test(badge.textContent.trim())) atualizarStatusNuvem('Conta autenticada; aguardando sincronização.');
                     const emailEl = document.getElementById('nuvemEmail');
                     if (emailEl && !emailEl.value) emailEl.value = sessao.user.email || '';
                 } else {
                     const badge = document.getElementById('statusNuvemBadge');
-                    if (badge) badge.textContent = 'Local';
+                    atualizarStatusNuvem('Sessão indisponível; aguardando conexão.');
                 }
             });
         }
@@ -4037,11 +4141,11 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             restaurarSessaoNuvemManual().then(sessao => {
                 if (sessao?.user) {
                     const badge = document.getElementById('statusNuvemBadge');
-                    if (badge) badge.textContent = 'Online';
+                    if (badge && /^(Local|Conectar)$/.test(badge.textContent.trim())) atualizarStatusNuvem('Conta autenticada; aguardando sincronização.');
                     const emailEl = document.getElementById('nuvemEmail');
                     if (emailEl && !emailEl.value) emailEl.value = sessao.user.email || '';
                 }
-            });
+            }).catch(error => atualizarStatusNuvem('Falha ao recuperar a sessão: '+error.message));
         }, 150);
 
         function mostrarRecuperacaoSupabase(){window.pfdAssert();window.parent.pfdOpenAccount();}
@@ -4104,7 +4208,8 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
         function atualizarStatusNuvem(texto, ok=false) {
             const badge = document.getElementById('statusNuvemBadge');
             const msg = document.getElementById('nuvemStatusMsg');
-            if (badge) {badge.textContent=ok?'Online':/falha|erro|conflito/i.test(texto)?'Falha na sincronização':/sincronizando/i.test(texto)?'Sincronizando…':'Conectar';badge.title=texto;}
+            if (badge) {badge.textContent=ok?'Online':/falha|erro|conflito|pendente/i.test(texto)?'Falha na sincronização':/sincronizando/i.test(texto)?'Sincronizando…':'Conectar';badge.title=texto;}
+            document.querySelectorAll('button[onclick="abrirConfiguracaoNuvem()"]').forEach(btn=>{btn.style.setProperty('background-color',ok?'#047857':/falha|erro|conflito|pendente/i.test(texto)?'#b91c1c':/sincronizando/i.test(texto)?'#b45309':'#64748b','important');btn.title=texto;});
             if (msg) {
                 msg.textContent = texto;
                 msg.className = 'text-xs rounded-lg border p-3 ' + (ok ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-600');
@@ -4126,8 +4231,8 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             const txt = document.getElementById('statusNuvemMobile');
             if (!badge || !btn || !txt) return;
             const estado = (badge.textContent || '').trim().toLowerCase();
-            const online = estado === 'online' || estado.includes('conect');
-            const erro = estado.includes('falha') || estado.includes('erro');
+            const online = estado === 'online';
+            const erro = /falha|erro|expirada/.test(estado);
             const ultima = formatarHoraSincronizacao(pfdLocal.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '');
             btn.dataset.status = online ? 'online' : (erro ? 'erro' : 'local');
             if (estado.includes('sincronizando')) {
@@ -4158,7 +4263,7 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             else iniciar();
         })();
 
-        async function obterSessaoNuvem(){window.pfdAssert();inicializarSupabaseCliente();const {data,error}=await supabaseCliente.auth.getSession();if(error)throw error;window.pfdAssert();if(data.session?.user?.id!==window.parent.pfdUser?.id)throw Error('A sessão mudou. Entre novamente.');return data.session;}
+        async function obterSessaoNuvem(){window.pfdAssert();inicializarSupabaseCliente();const session=await window.parent.pfdGetSession();window.pfdAssert();if(session?.user?.id!==window.parent.pfdUser?.id)throw Error('A sessão pertence a outra conta. Entre novamente.');return session;}
 
         function coletarPacoteNuvem() {
             window.pfdAssert();
@@ -4255,11 +4360,60 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             const pending=pfFilaEnvio.then(run,run);pfFilaEnvio=pending.catch(()=>{});
             try{return await pending;}finally{pfEnviosPendentes--;}
         }
+        function pfCanonicoSync(valor) {
+            if (Array.isArray(valor)) return valor.map(pfCanonicoSync);
+            if (valor && typeof valor === 'object') return Object.fromEntries(Object.keys(valor).sort().map(k=>[k,pfCanonicoSync(valor[k])]));
+            return valor;
+        }
+        function pfDadosFinanceirosIguais(a,b) {
+            const campos=['transacoes','rubricas_ocultas','subitens_ocultos','rubricas_extras','subitens_extras','lixeira','data_abertura_projeto'];
+            const selecionar=p=>Object.fromEntries(campos.map(k=>[k,k==='transacoes'?[...(p?.[k]||[])].sort((x,y)=>String(x.id).localeCompare(String(y.id))):p?.[k]??(k==='data_abertura_projeto'?'':[])]));
+            return JSON.stringify(pfCanonicoSync(selecionar(a)))===JSON.stringify(pfCanonicoSync(selecionar(b)));
+        }
+        async function pfConfirmarCopiasIguais(remote) {
+            // Só reconcilia automaticamente se TODOS os dados financeiros coincidirem.
+            const local=coletarPacoteNuvem();
+            if (!remote?.updated_at || !pfDadosFinanceirosIguais(local,remote.payload)) return false;
+            const historico=[...(remote.payload.historico||[]),...(local.historico||[])];
+            const unicos=new Map(historico.map(h=>[JSON.stringify(pfCanonicoSync(h)),h]));
+            const combinado=[...unicos.values()].sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
+            const anterior=pfdLocal.getItem(CHAVE_ULTIMA_SINCRONIZACAO)||'';
+            pfdLocal.setItem(CHAVE_HISTORICO,JSON.stringify(combinado));
+            pfdLocal.setItem(CHAVE_ULTIMA_SINCRONIZACAO,remote.updated_at);
+            try {
+                // O envio existente ainda verifica a versão e usa PATCH condicional.
+                await salvarPacoteNuvem();
+                return true;
+            } catch(error) {
+                if (pfdLocal.getItem(CHAVE_ULTIMA_SINCRONIZACAO)===remote.updated_at) {
+                    if(anterior)pfdLocal.setItem(CHAVE_ULTIMA_SINCRONIZACAO,anterior);
+                    else pfdLocal.removeItem(CHAVE_ULTIMA_SINCRONIZACAO);
+                }
+                throw error;
+            }
+        }
+        let pfAtualizacaoAoRetornar=null;
+        async function pfVerificarNuvemAoRetornar() {
+            if(document.hidden||document.body.classList.contains('auth-pendente'))return;
+            if(pfAtualizacaoAoRetornar)return pfAtualizacaoAoRetornar;
+            const operation=(async()=>{
+                try {
+                    await pfSincronizarConta();
+                    popularSelectsDinamicos();renderTable();atualizarPainelGerencial();atualizarInfoBanco();verificarContasVencendoHoje();
+                }catch(error){atualizarStatusNuvem('Falha na sincronização automática: '+error.message);}
+            })();
+            pfAtualizacaoAoRetornar=operation;
+            try{await operation;}finally{pfAtualizacaoAoRetornar=null;}
+        }
+        document.addEventListener('visibilitychange',pfVerificarNuvemAoRetornar);
+        window.addEventListener('online',pfVerificarNuvemAoRetornar);
+        window.addEventListener('focus',pfVerificarNuvemAoRetornar);
+
         async function pfSincronizarConta(){
             await pfFilaEnvio;window.pfdAssert();
             const remote=await carregarPacoteNuvem();window.pfdAssert();
             if(!remote?.payload){await salvarPacoteNuvem();return 'enviado';}
-            if(pfTemAlteracoesLocais()){await salvarPacoteNuvem();return 'enviado';}
+            if(pfTemAlteracoesLocais()){if(await pfConfirmarCopiasIguais(remote))return 'enviado';await salvarPacoteNuvem();return 'enviado';}
             aplicarPacoteNuvem(remote.payload);
             pfdLocal.setItem(CHAVE_ULTIMA_SINCRONIZACAO,remote.updated_at);
             pfdLocal.setItem(CHAVE_ULTIMA_ALTERACAO_LOCAL,remote.updated_at);
@@ -4270,6 +4424,65 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             try{await pfSincronizarConta();return true;}
             catch(error){atualizarStatusNuvem('Falha na sincronização: '+error.message);return false;}
         }
+        let pfRecuperacaoEmAndamento = false;
+        function pfCompararPacotesRecuperacao(pacote) {
+            const copia = {...pacote};
+            delete copia.atualizado_localmente_em;
+            return JSON.stringify(copia);
+        }
+        async function resolverConflitoNuvem() {
+            if (pfRecuperacaoEmAndamento) return;
+            pfRecuperacaoEmAndamento = true;
+            let baseAnterior = null, baseRecuperacao = null;
+            try {
+                window.pfdAssert();
+                clearTimeout(sincronizacaoNuvemTimer);
+                await pfFilaEnvio;
+                const remoto = await carregarPacoteNuvem();
+                window.pfdAssert();
+                if (!remoto?.payload || !remoto.updated_at) throw Error('Não foi possível obter uma cópia válida da nuvem. Nenhum dado foi substituído.');
+                const local = coletarPacoteNuvem();
+                const confirmar = window.confirm(
+                    'Recuperar a nuvem usando os dados DESTE dispositivo?\n\n' +
+                    'Neste dispositivo: ' + local.transacoes.length + ' lançamento(s).\n' +
+                    'Na nuvem: ' + (remoto.payload.transacoes?.length || 0) + ' lançamento(s).\n' +
+                    'Versão da nuvem: ' + remoto.updated_at + '\n\n' +
+                    'Será baixado um arquivo com as duas cópias antes da substituição. ' +
+                    'Confirme somente se os dados deste dispositivo forem os que deseja manter.'
+                );
+                if (!confirmar) return;
+                const backup = {sistema:'Planejamento Financeiro', finalidade:'Cópias antes da recuperação da nuvem', user_id:window.pfdAssert(), data_backup:new Date().toISOString(), local, nuvem:remoto};
+                const url = URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json;charset=utf-8'}));
+                const link = document.createElement('a');
+                link.href=url;link.download='backup_conflito_nuvem_'+new Date().toISOString().slice(0,10)+'.json';
+                document.body.appendChild(link);link.click();link.remove();
+                setTimeout(()=>URL.revokeObjectURL(url),60000);
+                if (!window.confirm('Confira se o arquivo backup_conflito_nuvem foi baixado.\n\nClique em OK somente com o arquivo salvo, para substituir a nuvem pela cópia deste dispositivo. Se o download não terminou, clique em Cancelar.')) return;
+                await pfFilaEnvio;
+                const atual = await carregarPacoteNuvem();
+                window.pfdAssert();
+                if (!pfMesmaVersao(atual?.updated_at,remoto.updated_at)) throw Error('A nuvem mudou durante a recuperação. Nenhum dado foi substituído. Tente comparar novamente.');
+                if (pfCompararPacotesRecuperacao(local)!==pfCompararPacotesRecuperacao(coletarPacoteNuvem())) throw Error('Os dados locais mudaram durante a recuperação. Faça uma nova comparação antes de continuar.');
+                baseAnterior=pfdLocal.getItem(CHAVE_ULTIMA_SINCRONIZACAO)||'';
+                baseRecuperacao=remoto.updated_at;
+                pfdLocal.setItem(CHAVE_ULTIMA_SINCRONIZACAO,baseRecuperacao);
+                // Mantém o PATCH condicional e as verificações de conta existentes.
+                await salvarPacoteNuvem();
+                baseRecuperacao=null;
+                alert('Recuperação concluída. Os dados deste dispositivo foram confirmados na nuvem.');
+            } catch(error) {
+                if (baseRecuperacao && pfdLocal.getItem(CHAVE_ULTIMA_SINCRONIZACAO)===baseRecuperacao) {
+                    if (baseAnterior) pfdLocal.setItem(CHAVE_ULTIMA_SINCRONIZACAO,baseAnterior);
+                    else pfdLocal.removeItem(CHAVE_ULTIMA_SINCRONIZACAO);
+                }
+                atualizarStatusNuvem('Falha na recuperação: '+error.message);
+                alert('Não foi possível concluir a recuperação: '+error.message);
+            } finally {
+                pfRecuperacaoEmAndamento=false;
+            }
+        }
+
+
         async function sincronizarAgoraNuvem(){
             try{clearTimeout(sincronizacaoNuvemTimer);atualizarStatusNuvem('Sincronizando…');const result=await pfSincronizarConta();popularSelectsDinamicos();renderTable();atualizarPainelGerencial();atualizarInfoBanco();verificarContasVencendoHoje();alert(result==='enviado'?'Sincronização concluída. Os dados desta conta foram enviados para a nuvem.':'Sincronização concluída. Os dados desta conta foram carregados neste dispositivo.');}
             catch(error){atualizarStatusNuvem('Falha na sincronização: '+error.message);alert('Não foi possível sincronizar com a nuvem: '+error.message);}
@@ -4284,7 +4497,7 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
                     if (session) await salvarPacoteNuvem();
                 } catch (e) {
                     console.error('Erro ao salvar na nuvem:', e);
-                    atualizarStatusNuvem('Alteração salva neste dispositivo; sincronização pendente.');
+                    atualizarStatusNuvem('Falha na sincronização. Alteração salva neste dispositivo; sincronização pendente. '+e.message);
                 }
             }, 700);
         }
@@ -4615,7 +4828,7 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             const categoriasTop = Object.entries(categorias).sort((a,b)=>b[1]-a[1]).slice(0,6);
             const jsonCategorias = JSON.stringify(categoriasTop);
             const svgEsc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-            const coresGrafico = ['#244b70','#2f8b57','#c58a35','#8b6cc1','#3895bd','#d84b5b'];
+            const coresGrafico = ['#203c64','#047857','#bd2b20','#52658d','#63758a','#bd2b20'];
             // Agrupa os lançamentos filtrados por mês para comparar cada mês do período selecionado.
             const parseDataBR = s => {
                 const m = String(s || '').match(/(\d{2})\/(\d{2})\/(\d{4})/);
@@ -4655,10 +4868,10 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             });
             const mesesDados = [...mesesComparativo.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(x=>x[1]);
             const seriesMensais = somenteDespesas
-                ? [{key:'pagas',label:'Despesas pagas',color:'#c58a35'},{key:'vencer',label:'Despesas a vencer / vencidas',color:'#d84b5b'},{key:'total',label:'Total da despesa',color:'#244b70'}]
+                ? [{key:'pagas',label:'Despesas pagas',color:'#bd2b20'},{key:'vencer',label:'Despesas a vencer / vencidas',color:'#bd2b20'},{key:'total',label:'Total da despesa',color:'#203c64'}]
                 : somenteReceitas
-                    ? [{key:'receitas',label:'Receitas previstas',color:'#2f8b57'},{key:'recebidas',label:'Receitas recebidas',color:'#244b70'}]
-                    : [{key:'receitas',label:'Receitas previstas',color:'#2f8b57'},{key:'pagas',label:'Despesas pagas',color:'#c58a35'},{key:'vencer',label:'Despesas a vencer',color:'#d84b5b'}];
+                    ? [{key:'receitas',label:'Receitas previstas',color:'#047857'},{key:'recebidas',label:'Receitas recebidas',color:'#203c64'}]
+                    : [{key:'receitas',label:'Receitas previstas',color:'#047857'},{key:'pagas',label:'Despesas pagas',color:'#bd2b20'},{key:'vencer',label:'Despesas a vencer',color:'#bd2b20'}];
             const maxMensal = Math.max(1, ...mesesDados.flatMap(m=>seriesMensais.map(serie=>m[serie.key]||0)));
             const alturaLinha = 120;
             const alturaGrafico = Math.max(100, 12 + mesesDados.length * alturaLinha);
@@ -4673,7 +4886,7 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
                       const valorX = Math.min(770, 370+largura+8);
                       return `<text x="130" y="${y+13}" font-size="18" fill="#475569">${svgEsc(serie.label)}</text><rect x="370" y="${y}" width="${largura}" height="16" rx="3" fill="${serie.color}"/><text x="${valorX}" y="${y+13}" font-size="18" font-weight="700" fill="#334155">${svgEsc(moedaRel(valor))}</text>`;
                   }).join('');
-                  return `<text x="5" y="${yBase+16}" font-size="18" font-weight="700" fill="#173b62">${svgEsc(mes.label.toUpperCase())}</text><line x1="5" y1="${yBase+alturaLinha-3}" x2="895" y2="${yBase+alturaLinha-3}" stroke="#e8edf3" stroke-width="1"/>${linhas}`;
+                  return `<text x="5" y="${yBase+16}" font-size="18" font-weight="700" fill="#203c64">${svgEsc(mes.label.toUpperCase())}</text><line x1="5" y1="${yBase+alturaLinha-3}" x2="895" y2="${yBase+alturaLinha-3}" stroke="#e8edf3" stroke-width="1"/>${linhas}`;
               }).join('') : '<text x="12" y="35" font-size="12" fill="#64748b">Sem lançamentos no período selecionado</text>'}
             </svg>`;
             // O gráfico 2 apresenta todas as Descrições dos lançamentos de despesa filtrados, sem limitar a quantidade.
@@ -4692,29 +4905,29 @@ body.dark-mode #pfResumoOcultoAviso{color:#cbd5e1}
             </svg>`;
             const filtroInfo = `Rubrica: ${rubrica} • Tipo: ${filtroTipo}`;
 
-            const relatorioHtml = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+            let relatorioHtml = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Relatório Gerencial de Planejamento Financeiro</title>
             <style>
-            :root{--navy:#173b62;--azul:#e7f1fb;--verde:#e7f4eb;--laranja:#fbf0dc;--vermelho:#fbe7e9;--linha:#dbe3ed;--texto:#24364b;--muted:#63758a}
+            :root{--navy:#203c64;--azul:#e7f1fb;--verde:#e7f4eb;--laranja:#fbf0dc;--vermelho:#fbe7e9;--linha:#dbe3ed;--texto:#24364b;--muted:#63758a}
             *{box-sizing:border-box}html{width:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}body{width:100%;min-width:0;margin:0;background:#edf1f6;color:var(--texto);font-family:Arial,Helvetica,sans-serif}
             .pagina{width:100%;max-width:1380px;margin:22px auto;padding:28px;background:#fff;box-shadow:0 8px 30px #19324b16;border-radius:14px}
             .acoes{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-bottom:12px}.btn{border:0;border-radius:7px;padding:10px 14px;background:#1e64a5;color:white;font-weight:bold;cursor:pointer}.btn.sec{background:#e6ebf1;color:#253b52}
             .cabecalho{display:grid;grid-template-columns:1fr auto;gap:20px;border-bottom:2px solid var(--navy);padding-bottom:16px;align-items:start}
-            .marca{border-left:7px solid var(--navy);padding-left:13px}.marca h1{font-size:25px;line-height:1.15;margin:0;color:#163b65;text-transform:uppercase}.marca p{margin:7px 0 0;color:#566a80;font-size:12px}
+            .marca{border-left:7px solid var(--navy);padding-left:13px}.marca h1{font-size:25px;line-height:1.15;margin:0;color:#203c64;text-transform:uppercase}.marca p{margin:7px 0 0;color:#566a80;font-size:12px}
             .meta{text-align:right;font-size:11px;line-height:1.6;color:#53677c;max-width:270px}.selo{margin-top:7px;font-style:italic;color:#315b45}
             .kpis{display:grid;grid-template-columns:repeat(var(--pf-kpi-colunas,4),minmax(0,1fr));gap:10px;margin:15px 0}
             .kpi{padding:14px;border-radius:9px;border:1px solid transparent;min-width:0}.kpi .rotulo{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.kpi .valor{font-size:clamp(16px,2vw,23px);font-weight:800;margin-top:9px;white-space:nowrap}.kpi .nota{font-size:10px;margin-top:6px;line-height:1.4}
             .kpi.receita{background:var(--verde);border-color:#c7e5d0;color:#216342}.kpi.paga{background:var(--laranja);border-color:#ecd7a9;color:#80551b}.kpi.vencer{background:var(--vermelho);border-color:#f0c6cc;color:#a62b3b}.kpi.saldo{background:var(--azul);border-color:#c9ddf4;color:#214f84}
-            .bloco{border:1px solid var(--linha);border-radius:9px;overflow:hidden;margin-bottom:13px;break-inside:avoid}.bloco-titulo{background:#eaf1f8;color:#173b62;padding:10px 12px;font-size:13px;font-weight:800;text-transform:uppercase;display:flex;gap:9px;align-items:center}.bloco-corpo{padding:12px}
-            .resumo{background:#eaf3fc;border:1px solid #cfdfef;border-radius:9px;padding:14px 16px;margin-bottom:14px}.resumo h2{font-size:13px;color:#173b62;margin:0 0 8px;text-transform:uppercase}.resumo p{font-size:12px;line-height:1.55;margin:0}.resumo .obs{margin-top:8px;color:#405b78;font-size:11px}
-            .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}.coluna{min-width:0}.tabela{width:100%;border-collapse:collapse}.tabela th{background:#244b70;color:white;text-align:left;font-size:10px;padding:8px 7px}.tabela td{padding:7px;border-bottom:1px solid #e5eaf0;font-size:10px;vertical-align:top}.tabela tr:last-child td{border-bottom:0}.valor{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.status{display:inline-block;padding:4px 6px;border-radius:4px;font-size:9px;font-weight:bold;white-space:nowrap}.amarelo{background:#ffefc4;color:#805600}.vermelho{background:#ffe1e3;color:#9f2430}.azul{background:#e0edff;color:#24558a}.verde{background:#dcf4e4;color:#20633a}.vazio{text-align:center;color:#758398;padding:18px!important}
+            .bloco{border:1px solid var(--linha);border-radius:9px;overflow:hidden;margin-bottom:13px;break-inside:avoid}.bloco-titulo{background:#eaf1f8;color:#203c64;padding:10px 12px;font-size:13px;font-weight:800;text-transform:uppercase;display:flex;gap:9px;align-items:center}.bloco-corpo{padding:12px}
+            .resumo{background:#eaf3fc;border:1px solid #cfdfef;border-radius:9px;padding:14px 16px;margin-bottom:14px}.resumo h2{font-size:13px;color:#203c64;margin:0 0 8px;text-transform:uppercase}.resumo p{font-size:12px;line-height:1.55;margin:0}.resumo .obs{margin-top:8px;color:#405b78;font-size:11px}
+            .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}.coluna{min-width:0}.tabela{width:100%;border-collapse:collapse}.tabela th{background:#203c64;color:white;text-align:left;font-size:10px;padding:8px 7px}.tabela td{padding:7px;border-bottom:1px solid #e5eaf0;font-size:10px;vertical-align:top}.tabela tr:last-child td{border-bottom:0}.valor{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.status{display:inline-block;padding:4px 6px;border-radius:4px;font-size:9px;font-weight:bold;white-space:nowrap}.amarelo{background:#ffefc4;color:#805600}.vermelho{background:#ffe1e3;color:#9f2430}.azul{background:#e0edff;color:#24558a}.verde{background:#dcf4e4;color:#20633a}.vazio{text-align:center;color:#758398;padding:18px!important}
             .total{display:flex;justify-content:space-between;gap:8px;padding:11px 12px;font-size:12px;font-weight:800;background:#f4f7fa;border-top:1px solid var(--linha)}.total.verde-total{background:#e7f4eb;color:#205e3b}.total.amarelo-total{background:#fbf0dc;color:#80551b}.total.vermelho-total{background:#fbe7e9;color:#a62b3b}
-            .situacao td{font-size:11px;padding:9px}.linha-saldo td{font-weight:800;background:#e5f0fc;color:#173b62}
+            .situacao td{font-size:11px;padding:9px}.linha-saldo td{font-weight:800;background:#e5f0fc;color:#203c64}
             .observacoes{font-size:11px;line-height:1.6;margin:0;padding-left:18px}.observacoes li{margin:4px 0}.frase{margin-top:12px;background:#e6f3e9;color:#315b45;padding:13px;border-radius:8px;font-style:italic;font-size:13px;text-align:center}
             .rodape{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #aab8c8;padding-top:10px;margin-top:22px;font-size:9px;color:#5b6e83}
             .graficos{display:grid;grid-template-columns:minmax(0,1fr);gap:13px;margin:0 0 15px}
             .grafico{border:1px solid var(--linha);border-radius:9px;background:#fff;padding:13px;min-width:0;break-inside:avoid}
-            .grafico-titulo{font-size:12px;font-weight:800;color:#173b62}
+            .grafico-titulo{font-size:12px;font-weight:800;color:#203c64}
             .grafico-sub{font-size:10px;color:var(--muted);margin-top:4px;margin-bottom:9px}
             .grafico-area{height:auto;position:relative}
             @media screen and (max-width:750px){.pagina{margin:0;padding:12px;border-radius:0}.cabecalho{grid-template-columns:1fr}.meta{text-align:left;max-width:none}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.kpi{padding:10px}.kpi .valor{font-size:clamp(14px,4vw,18px);white-space:normal;overflow-wrap:anywhere;text-align:left;line-height:1.25}.kpi .rotulo{overflow-wrap:anywhere}.bloco-corpo{max-width:100%;overflow-x:auto}.marca h1{overflow-wrap:anywhere}.total{flex-wrap:wrap}.grid{grid-template-columns:1fr}.marca h1{font-size:21px}.tabela th,.tabela td{font-size:10px;padding:6px 5px}.rodape{flex-direction:column}}
@@ -4961,6 +5174,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
 </style>
 </body></html>`;
             // A navegação completa inicializa o viewport do relatório no Chrome móvel.
+            relatorioHtml = window.PFReportTheme.decorate(relatorioHtml);
             const relatorioUrl = URL.createObjectURL(new Blob([relatorioHtml], {type:'text/html;charset=utf-8'}));
             try { w.location.replace(relatorioUrl); }
             catch (erro) { URL.revokeObjectURL(relatorioUrl); w.close(); alert('Não foi possível abrir o relatório. Tente novamente.'); return; }
@@ -5204,7 +5418,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             definirDatasFiltroRapido(inicio, fim, opcao);
         }
 
-        function getFilteredTransactions() {
+        function getFilteredTransactions(opcoes = {}) {
             const filtroTipo = document.getElementById('filtroTipo').value;
             const filtroRubrica = document.getElementById('filtroRubrica').value;
             const filtroSubItem = document.getElementById('filtroSubItem').value;
@@ -5213,7 +5427,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             const filtroDescricao = document.getElementById('filtroDescricao').value.toLowerCase();
             const dataInicio = document.getElementById('filtroDataInicio').value;
             const dataFim = document.getElementById('filtroDataFim').value;
-            if (dataInicio && dataFim && dataInicio > dataFim) return [];
+            if (!opcoes.ignorarPeriodo && dataInicio && dataFim && dataInicio > dataFim) return [];
 
             return transacoes.filter(t => {
                 const matchTipo = (filtroTipo === 'Todos' || t.tipo === filtroTipo);
@@ -5226,7 +5440,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
                 // "Atrasados": somente despesas ainda não pagas, com vencimento
                 // anterior a hoje. Lançamentos antigos já pagos/recebidos ficam fora.
                 let matchAtrasados = true;
-                if (filtroRapidoEspecial === 'atrasados') {
+                if (!opcoes.ignorarAtrasados && filtroRapidoEspecial === 'atrasados') {
                     const hojeFiltro = new Date();
                     hojeFiltro.setHours(0,0,0,0);
                     const hojeISO = `${hojeFiltro.getFullYear()}-${String(hojeFiltro.getMonth()+1).padStart(2,'0')}-${String(hojeFiltro.getDate()).padStart(2,'0')}`;
@@ -5238,7 +5452,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
                 if ((dataInicio || dataFim) && !t.vencimento) matchData = false;
                 if (dataInicio && t.vencimento && t.vencimento < dataInicio) matchData = false;
                 if (dataFim && t.vencimento && t.vencimento > dataFim) matchData = false;
-                return matchTipo && matchRubrica && matchSubItem && matchBuscaRubrica && matchBuscaSubItem && matchDescricao && matchAtrasados && matchData;
+                return matchTipo && matchRubrica && matchSubItem && matchBuscaRubrica && matchBuscaSubItem && matchDescricao && matchAtrasados && (opcoes.ignorarPeriodo || matchData);
             });
         }
 
@@ -5820,6 +6034,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             // Se a comparação mensal da rubrica estiver ativa, preservar os gráficos exibidos na tela.
             // Regerá-los aqui substituiria a comparação correta pelos gráficos gerais.
             if (!comparacaoRubricaMesAtiva) atualizarGraficos();
+            window.PFReportTheme.preparePrintCharts();
         }
 
         function finalizarImpressaoGraficos() {
@@ -6824,14 +7039,17 @@ function fecharAcoesMobile(){
                 const ultimaSincronizacao = pfdLocal.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
                 if (remoto.updated_at && !pfMesmaVersao(remoto.updated_at,ultimaSincronizacao) && !pfEnviosPendentes) {
                     const ultimaAlteracaoLocal = pfdLocal.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
-                    if (!pfTemAlteracoesLocais()) {
+                    if (pfTemAlteracoesLocais()) {
+                        await pfSincronizarConta();
+                        popularSelectsDinamicos();renderTable();atualizarPainelGerencial();atualizarInfoBanco();verificarContasVencendoHoje();
+                    } else {
                         aplicarPacoteNuvem(remoto.payload);
                         pfdLocal.setItem(CHAVE_ULTIMA_SINCRONIZACAO, remoto.updated_at);
                         popularSelectsDinamicos(); renderTable(); atualizarPainelGerencial(); atualizarInfoBanco();
                         atualizarStatusNuvem('Banco atualizado automaticamente pela nuvem.', true);
                     }
                 }
-            } catch(e) { console.warn('Sincronização automática:', e); }
+            } catch(e) { console.warn('Sincronização automática:', e); atualizarStatusNuvem('Falha na sincronização automática: '+e.message); }
         }, 15000);
 
         window.onload = function() {
@@ -7468,7 +7686,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.14';
+ const CURRENT_VERSION='V4.12.33';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -7583,34 +7801,108 @@ body.dark-mode .pf-filtro-item > label {
  document.addEventListener('click',function(e){const a=e.target.closest('[data-pf-manual-index]');if(!a)return;e.preventDefault();const item=manuals[Number(a.getAttribute('data-pf-manual-index'))];if(!item)return;pfAbrirManualProtegido(item,null);});
  window.pfShowCurrentVersion=function(){show('Versão atual do projeto','<p><strong>'+CURRENT_VERSION+'</strong></p><p>Planejamento Financeiro · Aplicativo Web / PWA</p><p>Versão identificada no arquivo de distribuição carregado.</p>');closeMenu();};
  window.pfShowAbout=function(){show('Sobre o Planejamento Financeiro','<p><strong>Planejamento Financeiro</strong></p><p>All rights reserved.<br>Ricardo Dávila Corporation.</p><p>Versão: '+CURRENT_VERSION+'</p>');closeMenu();};
- let pfVerificacaoAutomaticaIniciada=false;
+ const pfUpdateBase=new URL('https://ricardodavila.github.io/planejamento-financeiro/distribuicao/');
+ const pfUpdateKey='pf_ultima_versao_aberta_v1';
+ const pfUpdateHost=window.parent;
+ const pfUpdateLocal=pfUpdateHost.location.origin!==pfUpdateBase.origin||![pfUpdateBase.pathname,pfUpdateBase.pathname+'index.html'].includes(pfUpdateHost.location.pathname);
+ let pfUpdatePending=null,pfUpdateLastCheck=0,pfUpdateNotified='',pfUpdateOpened=false;
+ function pfUpdateRead(){try{return pfdLocal.getItem(pfUpdateKey)||'';}catch{return '';}}
+ function pfUpdateRemember(){try{pfdLocal.setItem(pfUpdateKey,CURRENT_VERSION);}catch{}}
+ function pfUpdateAppendNotes(body,release){
+  const heading=document.createElement('strong');heading.textContent='O que foi atualizado nesta versão:';heading.style.cssText='display:block;margin:12px 0 6px';body.append(heading);
+  const notes=Array.isArray(release?.notes)?release.notes.filter(n=>typeof n==='string'&&n.trim()).map(n=>n.trim()):[];
+  if(!notes.length){const text=document.createElement('p');text.textContent='Os detalhes desta publicação não foram informados.';body.append(text);return;}
+  const list=document.createElement('ul');list.style.cssText='margin:6px 0 12px;padding-left:22px;list-style:disc;line-height:1.5';
+  for(const note of notes){const item=document.createElement('li');item.textContent=note;item.style.marginBottom='6px';list.append(item);}
+  body.append(list);
+ }
+ function pfUpdateBanner(title,message,latest='',release=null){
+  document.getElementById('pfUpdateNotice')?.remove();
+  const box=document.createElement('section');box.id='pfUpdateNotice';box.setAttribute('role','status');box.setAttribute('aria-live','polite');
+  box.style.cssText='position:fixed;bottom:88px;left:12px;right:12px;max-width:560px;margin:0 auto;z-index:15000;background:#fff;color:#1e293b;border:2px solid #2563eb;border-radius:14px;padding:16px;box-shadow:0 8px 30px #0f172a44;font:14px system-ui;max-height:45dvh;overflow:auto';
+  const heading=document.createElement('strong');heading.textContent=title;box.append(heading);
+  const text=document.createElement('p');text.textContent=message;text.style.cssText='margin:8px 0;line-height:1.5';box.append(text);
+  pfUpdateAppendNotes(box,release);
+  if(latest){const update=pfUpdateButton(latest,box);box.append(update);}
+  const close=document.createElement('button');close.type='button';close.textContent=latest?'Agora não':'Fechar';close.style.cssText='padding:9px 14px;border-radius:8px;border:1px solid #94a3b8;background:#f1f5f9;color:#1e293b;margin:4px';close.onclick=()=>box.remove();box.append(close);
+  document.body.append(box);
+ }
+ async function pfUpdateActivate(latest){
+  if('serviceWorker' in navigator){
+   const reg=await navigator.serviceWorker.getRegistration(pfUpdateBase.href);
+   if(reg){
+    await reg.update();
+    if(reg.installing)await new Promise((resolve,reject)=>{
+     const worker=reg.installing;
+     const finish=error=>{clearTimeout(timer);worker.removeEventListener('statechange',check);error?reject(error):resolve();};
+     const check=()=>{if(worker.state==='installed'||worker.state==='activated')finish();else if(worker.state==='redundant')finish(Error('Não foi possível baixar a atualização. Tente novamente.'));};
+     const timer=setTimeout(()=>finish(Error('O download da atualização demorou. Tente novamente.')),20000);
+     worker.addEventListener('statechange',check);check();
+    });
+    if(reg.waiting)await new Promise((resolve,reject)=>{
+     const done=()=>{clearTimeout(timer);navigator.serviceWorker.removeEventListener('controllerchange',done);resolve();};
+     const timer=setTimeout(()=>{navigator.serviceWorker.removeEventListener('controllerchange',done);reject(Error('Feche as janelas do aplicativo e abra novamente para concluir a atualização.'));},12000);
+     navigator.serviceWorker.addEventListener('controllerchange',done);
+     reg.waiting.postMessage({type:'SKIP_WAITING'});
+    });
+   }
+  }
+  const url=new URL(pfUpdateBase.href);url.searchParams.set('pf_update',latest);
+  pfUpdateHost.location.replace(url.href);
+ }
+ function pfUpdateButton(latest,body){
+  const button=document.createElement('button');button.type='button';button.textContent='Atualizar agora';button.style.cssText='padding:10px 14px;border:0;border-radius:8px;background:#1d4ed8;color:white;margin:4px';
+  button.onclick=async()=>{
+   if(!window.confirm('Salve qualquer edição em andamento antes de atualizar. Deseja carregar a nova versão agora?'))return;
+   button.disabled=true;button.textContent='Preparando atualização…';
+   try{await pfUpdateActivate(latest);}catch(error){button.disabled=false;button.textContent='Tentar novamente';const text=document.createElement('p');text.textContent=error.message;body.append(text);}
+  };
+  return button;
+ }
  window.pfCheckUpdates=async function(automatica=false){
-  automatica = automatica === true;
-  if(automatica){if(pfVerificacaoAutomaticaIniciada)return;pfVerificacaoAutomaticaIniciada=true;}
-  if(!automatica){closeMenu();show('Verificar atualizações','<p>Consultando a versão publicada…</p>');}
-  const base=new URL('./',window.parent.location.href);
-  const local=!/^https?:$/.test(window.parent.location.protocol);
-  try{
-   const response=await fetch(new URL('version.json?t='+Date.now(),base),{cache:'no-store',signal:AbortSignal.timeout(15000)});
-   if(!response.ok)throw Error(response.status===404?'A consulta de versões ainda não foi publicada no site.':'Não foi possível consultar a versão publicada.');
-   const release=await response.json();if(!/^v?\d+(\.\d+){1,3}$/i.test(release.version||''))throw Error('O arquivo de versão publicado está inválido.');
-   const latest=release.version,cmp=compareVersions(latest,CURRENT_VERSION);
-   if(automatica && (local || cmp<=0))return;
-   const text=document.createElement('div');const info=document.createElement('p');info.textContent='Versão desta cópia: '+CURRENT_VERSION+'. Versão publicada: '+latest+'.';text.append(info);
-   const explanation=document.createElement('p');explanation.textContent=local?'Esta é a versão de distribuição. Feche e reabra o aplicativo para carregar uma atualização publicada.':cmp>0?'Há uma nova versão disponível. Salve qualquer edição em andamento antes de atualizar.':cmp===0?'Você está usando a versão publicada mais recente.':'Esta cópia tem uma versão superior à publicada.';text.append(explanation);
-   show(cmp>0?'Nova versão disponível':'Verificação de versão',text.innerHTML);
-   const body=document.getElementById('pfHelpModalBody');
-   if(automatica){const depois=document.createElement('button');depois.type='button';depois.className='pf-help-primary';depois.textContent='Agora não';depois.onclick=()=>window.pfCloseHelpModal();body.append(depois);}
-   if(local){const a=document.createElement('a');a.href=base.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Abrir página de acesso atualizada';a.className='pf-help-primary';body.append(a);}
-   else if(cmp>0){const b=document.createElement('button');b.type='button';b.className='pf-help-primary';b.textContent='Atualizar agora';b.onclick=async()=>{
-    b.disabled=true;b.textContent='Preparando atualização…';
-    try{
-     if('serviceWorker' in navigator){const reg=await navigator.serviceWorker.getRegistration(base.href);if(reg){await reg.update();if(reg.installing)await new Promise((resolve,reject)=>{const w=reg.installing;const timer=setTimeout(()=>reject(Error('A atualização demorou. Tente novamente.')),20000);const check=()=>{if(w.state==='installed'){clearTimeout(timer);resolve();}else if(w.state==='redundant'){clearTimeout(timer);reject(Error('Não foi possível baixar a atualização.'));}};w.addEventListener('statechange',check);check();});if(reg.waiting){await new Promise((resolve,reject)=>{const timer=setTimeout(()=>{navigator.serviceWorker.removeEventListener('controllerchange',done);reject(Error('A versão instalada ainda não permite atualização imediata. Feche todas as janelas do aplicativo e abra novamente.'));},12000);function done(){clearTimeout(timer);resolve();}navigator.serviceWorker.addEventListener('controllerchange',done,{once:true});reg.waiting.postMessage({type:'SKIP_WAITING'});});}}}
-     const url=new URL(window.parent.location.href);url.searchParams.set('pf_update',latest);window.parent.location.replace(url.href);
-    }catch(e){b.disabled=false;b.textContent='Tentar atualizar novamente';const p=document.createElement('p');p.textContent=e.message;body.append(p);}
-   };body.append(b);}
-  }catch(error){if(automatica)return;show('Não foi possível verificar','<p id="pfUpdateError"></p>');document.getElementById('pfUpdateError').textContent=error.message+' Nenhuma alteração foi feita no aplicativo.';}
+  automatica=automatica===true;
+  if(automatica&&(document.hidden||pfUpdateLocal))return;
+  if(pfUpdatePending){await pfUpdatePending;if(automatica)return;}
+  if(automatica&&Date.now()-pfUpdateLastCheck<30000)return;
+  const operation=(async()=>{
+   pfUpdateLastCheck=Date.now();
+   if(!automatica){closeMenu();show('Verificar atualizações','<p>Consultando a versão publicada…</p>');}
+   try{
+    const response=await fetch(new URL('version.json?t='+Date.now(),pfUpdateBase),{cache:'no-store',signal:AbortSignal.timeout(15000)});
+    if(!response.ok)throw Error('Não foi possível consultar a versão publicada.');
+    const release=await response.json();
+    if(!/^v?\d+(\.\d+){1,3}$/i.test(release.version||''))throw Error('O arquivo de versão publicado está inválido.');
+    const latest=release.version,cmp=compareVersions(latest,CURRENT_VERSION);
+    const previous=pfUpdateRead();
+    if(!pfUpdateLocal)pfUpdateRemember();
+    if(automatica){
+     if(cmp>0&&latest!==pfUpdateNotified){
+      pfUpdateNotified=latest;
+      pfUpdateBanner('Nova versão disponível','Você está na '+CURRENT_VERSION+'. A versão '+latest+' já pode ser instalada. Seus dados serão mantidos.',latest,release);
+     }else if(cmp===0&&!pfUpdateOpened&&(!previous||compareVersions(CURRENT_VERSION,previous)>0)){
+      pfUpdateBanner(previous?'Aplicativo atualizado':'Versão atual do aplicativo','A versão '+CURRENT_VERSION+' foi carregada. Seus dados foram mantidos.','',release);
+     }
+     pfUpdateOpened=true;return;
+    }
+    show(cmp>0?'Nova versão disponível':'Verificação de versão','');
+    const body=document.getElementById('pfHelpModalBody'),text=document.createElement('p');
+    text.textContent='Versão desta cópia: '+CURRENT_VERSION+'. Versão publicada: '+latest+'.';body.append(text);
+    const explanation=document.createElement('p');explanation.textContent=pfUpdateLocal?'Esta cópia local ou de teste não será substituída.':cmp>0?'Salve qualquer edição em andamento antes de atualizar.':cmp===0?'Você está usando a versão publicada mais recente.':'Esta cópia tem uma versão superior à publicada.';body.append(explanation);
+    pfUpdateAppendNotes(body,release);
+    if(!pfUpdateLocal&&cmp>0)body.append(pfUpdateButton(latest,body));
+   }catch(error){
+    pfUpdateLastCheck=0;
+    if(!automatica){show('Não foi possível verificar','');const text=document.createElement('p');text.textContent=error.message+' Tente novamente quando a conexão estiver disponível.';document.getElementById('pfHelpModalBody').append(text);}
+   }
+  })();
+  pfUpdatePending=operation;
+  try{await operation;}finally{if(pfUpdatePending===operation)pfUpdatePending=null;}
  };
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)return window.pfCheckUpdates(true);});
+ window.addEventListener('focus',()=>window.pfCheckUpdates(true));
+ window.addEventListener('online',()=>window.pfCheckUpdates(true));
+ setInterval(()=>window.pfCheckUpdates(true),120000);
+
 
  document.addEventListener('click',e=>{const m=document.getElementById('pfHelpModal');if(e.target===m)window.pfCloseHelpModal();const d=document.getElementById('pfHelpMenu');if(d&&!d.contains(e.target)&&!e.target.closest('#pfHelpModal'))d.open=false;});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')window.pfCloseHelpModal();});
@@ -7869,7 +8161,7 @@ body.auth-pendente #pfMenuTopo{display:none}
 @media print{#pfMenuTopo,#pfMenuLateral,#pfMenuCortina{display:none!important}body:not(.auth-pendente){padding-top:0!important}}
 </style>
 <nav id="pfMenuTopo" aria-label="Navegação do aplicativo">
- <div id="pfMenuLinhaTitulo"><span class="pf-menu-marca"><i class="fa-solid fa-chart-pie"></i> Planejamento Financeiro</span><button id="pfSairBarraTopo" type="button" onclick="sairAplicativo()" title="Sair e bloquear o aplicativo" aria-label="Sair do aplicativo"
+ <div id="pfMenuLinhaTitulo"><span class="pf-menu-marca"><img class="pf-project-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEFElEQVR4nO3d0XHaQBSGUcikBGqgMpflylyDeyAPMROHsRMk7WpX9z/nObGJuJ/uEjP4fLvdTpDqx+gHACMJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoP0c/gP+5vrx7r8bBvb1ezqMfw3fOs70XyMDXN1MQUwRg6HONjmFYAIaeRyNiGPIi2PDzlRFzsesGMPg8a69tsNsGMPwssde8dN8ABp+tem6DrhvA8NNCzznqFoDhp6Ve89QlAMNPDz3mqnkAhp+eWs9X0wAMP3toOWfNAjD87KnVvHk7NNGaBODuzwgt5m5zAIafkbbOnyMQ0TYF4O7PDLbM4eoADD8zWTuPjkBEEwDRVgXg+MOM1sylDUA0ARBtcQCOP8xs6XzaAEQTANEEQLRFATj/cwRL5tQGIJoAiCYAogmAaAIg2vS/Immrt9fL6IfQxPXlfdGfb/nvXvq9j6TsBnh7vcQO/9q/851K1/JRyQCqPlmjVbyupY5AFZ+g2dyvcZVjUckNAM8qE4C7/76qXO8SAVR5Mo6mwnUvEQCsdfgAKtyFjuzo1//wAcAWAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKKV+lSImYz8ICueZwN0MPqDrHieAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCI5mNRPvgYk0w2wMnHmCQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEE8Bp3W97+dffmf3r8YdfkfSh9cDM/vX4zQYgmgCIJgCiCYBoAiCaAIgmAKIJgGiHD+D68j76IUQ7+vU/fACwRYkAjn4XOqoK171EAKdTjSfjSKpc7zIBwBql3g16vyt552Q/Ve78dyU3QLUnaRYVr2upDfCZbdBOxcG/KxvAXeUnj+1KHoHgWQIgmgCIJgCiCYBoAiDaogDeXi/nXg8EWlkypzYA0QRANAEQbXEAXgcws6XzaQMQTQBEWxWAYxAzWjOXNgDRBEC01QE4BjGTtfO4aQOIgBlsmUNHIKJtDsAWYKSt89dkA4iAEVrMnSMQ0ZoFYAuwp1bz1nQDiIA9tJyz5kcgEdBT6/nq8hpABPTQY666vQgWAS31mqeu/wskAlroOUfn2+3W62v/5fryvs83oow9bqC7/RzANmCJveZltw3wmW3Ad/a+UQ75SbBtwFdGzMWQDfDIRsg1+mY4RQCfiaG+0UP/2XQBPBLE8c008I+mDwB68nZoogmAaAIgmgCIJgCiCYBoAiCaAIgmAKL9Ak4GGSSo34cHAAAAAElFTkSuQmCC" alt="Logotipo do Planejamento Financeiro" width="28" height="28"><span>Planejamento Financeiro</span></span><button id="pfSairBarraTopo" type="button" onclick="sairAplicativo()" title="Sair e bloquear o aplicativo" aria-label="Sair do aplicativo"
                         class="ml-2 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm align-middle">
                         <i class="fa-solid fa-right-from-bracket"></i><span>Sair</span>
                     </button></div>
@@ -8611,8 +8903,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const featured=group('Ação principal');button(featured,'Novo lançamento','plus',()=>openModal(),true);
  const defs=[['Lançamentos',[['abrirCalendarioFinanceiro','Calendário','calendar']]],['Cadastros',[['abrirGerenciarCadastros','Gerenciar cadastros','folder'],['adicionarNovaRubricaPrompt','Nova rubrica','plus'],['adicionarNovoSubItemPrompt','Novo subitem','plus']]],['Análises',[['abrirRelatorioMensalMobile','Relatório mensal','chart'],['openGraficosModal','Gráficos evolutivos','chart']]],['Ferramentas',[['abrirCalculadora','Calculadora','tool']]]];
  const groups={};for(const [label,defsList]of defs){const g=group(label);groups[label]=g;for(const [name,label,key]of defsList)proxy(g,source(name),label,key);}
- button(groups['Análises'],'Fluxo de caixa','chart',()=>{const b=el('clean-flow-toggle');if(b?.getAttribute('aria-expanded')==='false')b.click();b?.scrollIntoView({block:'center',behavior:'smooth'});});
+ button(groups['Análises'],'Fluxo de caixa','chart',()=>window.abrirFluxoCaixa());
  const originals=[...document.querySelectorAll('#pf493Actions button,#pfMobileMaisPanel .pf-mobile-mais-grid button')];for(const term of ['Histórico','Lixeira','Exportar PDF']){const n=originals.find(n=>n.textContent.includes(term));proxy(groups[term==='Histórico'?'Lançamentos':'Ferramentas'],n,term,term==='Histórico'?'calendar':'folder');}
+ button(groups['Ferramentas'],'Backup dos meus dados','folder',()=>{window.pfdAssert();fazerBackup();});
+ button(groups['Ferramentas'],'Sincronizar com a Nuvem','folder',()=>{window.pfdAssert();sincronizarAgoraNuvem();});
+ button(groups['Ferramentas'],'Resolver conflito da nuvem','folder',()=>{window.pfdAssert();resolverConflitoNuvem();});
  proxy(groups['Ferramentas'],el('btnInstalarDesktop'),'Instalar aplicativo','tool');
  }
  if(category==='seguranca'){const g=group('Proteção e acesso');document.querySelectorAll('#pf493Actions .pf-seguranca-dropdown button').forEach(n=>proxy(g,n,null,'shield'));}
@@ -8837,7 +9132,7 @@ function install(){
  const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
  const late=r=>r.tipo==='Despesa'&&!paid(r)&&r.vencimento&&r.vencimento<today();
  const originalGet=window.getFilteredTransactions;
- window.getFilteredTransactions=function(...args){const rows=originalGet.apply(this,args);return rows.filter(r=>(!query||norm([r.descricao,r.categoria,r.subItem,r.observacao].join(' ')).includes(norm(query)))&&(!statusFilter||(statusFilter==='vencido'?late(r):statusFilter==='pago'?paid(r):!paid(r))));};
+ window.getFilteredTransactions=function(...args){const rows=originalGet.apply(this,args);return rows.filter(r=>(!query||norm([r.descricao,r.categoria,r.subItem,r.observacao].join(' ')).includes(norm(query)))&&(args[0]?.ignorarAtrasados||!statusFilter||(statusFilter==='vencido'?late(r):statusFilter==='pago'?paid(r):!paid(r))));};
  const panel=document.querySelector('.pf-filtros-painel');el('filter-body').append(panel);panel.classList.remove('clean-basic');panel.hidden=false;
  const status=document.createElement('label');status.className='pm-status-filter';status.textContent='Status';const select=document.createElement('select');select.id='pm-status';select.innerHTML='<option value="">Todos os status</option><option value="pago">Pago / recebido</option><option value="pendente">Em aberto</option><option value="vencido">Vencido</option>';status.append(select);el('filter-body').prepend(status);
  select.onchange=()=>{statusFilter=select.value;countDraft();};
@@ -8877,7 +9172,7 @@ function install(){
  el('recover').onclick=()=>{el('toast').hidden=true;if(!deletedRecord||document.body.classList.contains('auth-pendente'))return;const bin=obterLixeira(),index=bin.findIndex(x=>String(x.item.id)===String(deletedRecord.id)&&JSON.stringify(x.item)===deletedRecord.fingerprint);deletedRecord=null;clearTimeout(undoTimer);if(index>=0){recuperarDaLixeira(index);fecharSegurancaBanco();}};el('more-rows').onclick=()=>{limit+=30;render();};
  el('assistant').onclick=()=>original('pfIaLaunch').click();el('new').onclick=()=>openModal();el('home').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});el('entries').onclick=()=>el('q').scrollIntoView({behavior:'smooth',block:'center'});el('charts').onclick=()=>openGraficosModal();el('more').onclick=()=>original('pfMenuCompacto').click();el('menu').onclick=()=>original('pfMenuCompacto').click();el('theme').onclick=()=>original('pf-theme-toggle').click();
  function themeLabel(){el('theme').textContent=document.body.classList.contains('dark-mode')?'☀ Claro':'◐ Escuro';}new MutationObserver(themeLabel).observe(document.body,{attributes:true,attributeFilter:['class']});themeLabel();
- async function cloud(){const run=++cloudRun;try{const session=await obterSessaoNuvem();if(run!==cloudRun)return;sessionConnected=Boolean(session?.access_token&&session?.user?.id&&(!session.expires_at||Number(session.expires_at)>Date.now()/1000));const metadata=session?.user?.user_metadata||{},name=String(metadata.nome||metadata.full_name||metadata.name||'').trim();if(name!==cloudUserName){cloudUserName=name;render();}}catch{sessionConnected=false;}const raw=(original('statusNuvemBadge')?.textContent||'').trim();el('cloud').classList.toggle('online',sessionConnected);el('cloud').textContent=/sincronizando/i.test(raw)?'↻ Sincronizando':sessionConnected?'● Conectada':'○ Desconectada';el('cloud').title=original('statusNuvemBadge')?.title||'Conexão e sincronização com a nuvem';}
+ async function cloud(){const run=++cloudRun;try{const session=await obterSessaoNuvem();if(run!==cloudRun)return;sessionConnected=Boolean(session?.access_token&&session?.user?.id&&(!session.expires_at||Number(session.expires_at)>Date.now()/1000));const metadata=session?.user?.user_metadata||{},name=String(metadata.nome||metadata.full_name||metadata.name||'').trim();if(name!==cloudUserName){cloudUserName=name;render();}}catch{sessionConnected=false;}const raw=(original('statusNuvemBadge')?.textContent||'').trim();const synced=sessionConnected&&raw==='Online';el('cloud').classList.toggle('online',synced);el('cloud').textContent=/sincronizando/i.test(raw)?'↻ Sincronizando':/falha|erro|pendente/i.test(raw)?'● Falha na sincronização':synced?'● Sincronizada':'○ Sincronização pendente';el('cloud').title=original('statusNuvemBadge')?.title||'Conexão e sincronização com a nuvem';}
  el('cloud').onclick=()=>abrirConfiguracaoNuvem();if(original('statusNuvemBadge'))new MutationObserver(cloud).observe(original('statusNuvemBadge'),{childList:true,characterData:true,subtree:true});cloud();
  for(const id of ['pf495GreetingTitle','pf495PerfilBadge'])if(original(id))new MutationObserver(render).observe(original(id),{childList:true,characterData:true,subtree:true});
  const originalRender=window.renderTable;window.renderTable=function(...args){const result=originalRender.apply(this,args);render();return result;};render();
@@ -8911,8 +9206,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const featured=group('Ação principal');button(featured,'Novo lançamento','plus',()=>openModal(),true);
  const defs=[['Lançamentos',[['abrirCalendarioFinanceiro','Calendário','calendar']]],['Cadastros',[['abrirGerenciarCadastros','Gerenciar cadastros','folder'],['adicionarNovaRubricaPrompt','Nova rubrica','plus'],['adicionarNovoSubItemPrompt','Novo subitem','plus']]],['Análises',[['abrirRelatorioMensalMobile','Relatório mensal','chart'],['openGraficosModal','Gráficos evolutivos','chart']]],['Ferramentas',[['abrirCalculadora','Calculadora','tool']]]];
  const groups={};for(const [label,defsList]of defs){const g=group(label);groups[label]=g;for(const [name,label,key]of defsList)proxy(g,source(name),label,key);}
- button(groups['Análises'],'Fluxo de caixa','chart',()=>{const b=el('clean-flow-toggle');if(b?.getAttribute('aria-expanded')==='false')b.click();b?.scrollIntoView({block:'center',behavior:'smooth'});});
+ button(groups['Análises'],'Fluxo de caixa','chart',()=>window.abrirFluxoCaixa());
  const originals=[...document.querySelectorAll('#pf493Actions button,#pfMobileMaisPanel .pf-mobile-mais-grid button')];for(const term of ['Histórico','Lixeira','Exportar PDF']){const n=originals.find(n=>n.textContent.includes(term));proxy(groups[term==='Histórico'?'Lançamentos':'Ferramentas'],n,term,term==='Histórico'?'calendar':'folder');}
+ button(groups['Ferramentas'],'Backup dos meus dados','folder',()=>{window.pfdAssert();fazerBackup();});
+ button(groups['Ferramentas'],'Sincronizar com a Nuvem','folder',()=>{window.pfdAssert();sincronizarAgoraNuvem();});
+ button(groups['Ferramentas'],'Resolver conflito da nuvem','folder',()=>{window.pfdAssert();resolverConflitoNuvem();});
  proxy(groups['Ferramentas'],el('btnInstalarDesktop'),'Instalar aplicativo','tool');
  }
  if(category==='seguranca'){const g=group('Proteção e acesso');document.querySelectorAll('#pf493Actions .pf-seguranca-dropdown button').forEach(n=>proxy(g,n,null,'shield'));}
@@ -8944,7 +9242,7 @@ async function renew(session){
    assertOwner(fresh,owner,started);
    const current=await auth.getSession();assertOwner(current.data?.session,owner,started);
    if(typeof salvarSessaoNuvemManual==='function')salvarSessaoNuvemManual(fresh);
-   indicator('Online');return fresh;
+   return fresh;
   }catch(error){indicator('Sessão expirada');if(/mudou/.test(error.message||''))throw error;throw Error('Não foi possível renovar a sessão da nuvem. Entre novamente na sua conta; os dados locais foram preservados.');}
  })();
  pendingRefresh={owner,promise:operation};try{return await operation;}finally{if(pendingRefresh?.promise===operation)pendingRefresh=null;}
@@ -8997,5 +9295,280 @@ body.pf-mobile-layout .total{font-size:12px!important;line-height:1.45;align-ite
 body.pf-mobile-layout #pm-filter-body label{font-size:14px!important}body.pf-mobile-layout #pm-filter-body input,body.pf-mobile-layout #pm-filter-body select{font-size:17px!important}body.pf-mobile-layout #pfMenuLateral .clean-menu-action{font-size:15px!important}body.pf-mobile-layout #pfMenuLateral .clean-menu-group h3{font-size:12px!important}body.pf-mobile-layout #clean-menu-profile strong{font-size:14px!important}body.pf-mobile-layout #clean-menu-profile small{font-size:12px!important}
 @media(max-width:350px){body.pf-mobile-layout header.bar>b{font-size:14px!important}body.pf-mobile-layout header.bar>.cloud-state,body.pf-mobile-layout header.bar>.pill-btn,body.pf-mobile-layout header.bar>#pm-theme{font-size:12px!important}body.pf-mobile-layout .kpi b{font-size:17px!important}body.pf-mobile-layout .balance strong{font-size:28px!important}body.pf-mobile-layout .row{gap:8px}body.pf-mobile-layout .row b{font-size:16px!important}}
 </style>
+<style id="pf-cashflow-css">
+#painelDetalhesGerencial {min-width:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#painelDetalhesGerencial>div {min-width:0;max-width:100%}
+#clean-flow-details {min-width:0;max-width:100%;scroll-margin-top:90px}
+#fc-toolbar {grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 0}
+#fc-toolbar p,#fc-toolbar small {flex-basis:100%;margin:0;overflow-wrap:anywhere}
+#fc-toolbar button,#fc-toolbar select {border:1px solid #94a3b8;border-radius:7px;padding:9px;background:#fff;color:#1e293b;font-size:13px}
+#fc-toolbar button {background:#4338ca;color:#fff;cursor:pointer}
+#painelDetalhesGerencial .overflow-auto {max-height:min(55vh,420px);overscroll-behavior:contain}
+#painelDetalhesGerencial table {min-width:520px}
+#painelDetalhesGerencial tfoot {font-weight:bold;background:#f1f5f9}
+#painelDetalhesGerencial tfoot td,#painelDetalhesGerencial tfoot th {padding:8px}
+html body #painelDetalhesGerencial .fc-negative {color:#be123c!important}
+html body #painelDetalhesGerencial .fc-positive {color:#047857!important}
+body.dark-mode #fc-toolbar button,body.dark-mode #fc-toolbar select {background:#334155;color:#f8fafc}
+body.dark-mode #painelDetalhesGerencial tfoot {background:#263449}
+html body.dark-mode #painelDetalhesGerencial .fc-negative {color:#fda4af!important}
+html body.dark-mode #painelDetalhesGerencial .fc-positive {color:#6ee7b7!important}
+@media(max-width:1100px){#painelDetalhesGerencial {grid-template-columns:minmax(0,1fr)!important}}
+</style>
+<script id="pf-cashflow-report">
+/* Relatório de fluxo: sem dependências externas; valores calculados em centavos. */
+(function(){
+'use strict';
+const projectLogo=window.PFReportTheme?.logo||'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEFElEQVR4nO3d0XHaQBSGUcikBGqgMpflylyDeyAPMROHsRMk7WpX9z/nObGJuJ/uEjP4fLvdTpDqx+gHACMJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoP0c/gP+5vrx7r8bBvb1ezqMfw3fOs70XyMDXN1MQUwRg6HONjmFYAIaeRyNiGPIi2PDzlRFzsesGMPg8a69tsNsGMPwssde8dN8ABp+tem6DrhvA8NNCzznqFoDhp6Ve89QlAMNPDz3mqnkAhp+eWs9X0wAMP3toOWfNAjD87KnVvHk7NNGaBODuzwgt5m5zAIafkbbOnyMQ0TYF4O7PDLbM4eoADD8zWTuPjkBEEwDRVgXg+MOM1sylDUA0ARBtcQCOP8xs6XzaAEQTANEEQLRFATj/cwRL5tQGIJoAiCYAogmAaAIg2vS/Immrt9fL6IfQxPXlfdGfb/nvXvq9j6TsBnh7vcQO/9q/851K1/JRyQCqPlmjVbyupY5AFZ+g2dyvcZVjUckNAM8qE4C7/76qXO8SAVR5Mo6mwnUvEQCsdfgAKtyFjuzo1//wAcAWAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKKV+lSImYz8ICueZwN0MPqDrHieAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCI5mNRPvgYk0w2wMnHmCQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEE8Bp3W97+dffmf3r8YdfkfSh9cDM/vX4zQYgmgCIJgCiCYBoAiCaAIgmAKIJgGiHD+D68j76IUQ7+vU/fACwRYkAjn4XOqoK171EAKdTjSfjSKpc7zIBwBql3g16vyt552Q/Ve78dyU3QLUnaRYVr2upDfCZbdBOxcG/KxvAXeUnj+1KHoHgWQIgmgCIJgCiCYBoAiDaogDeXi/nXg8EWlkypzYA0QRANAEQbXEAXgcws6XzaQMQTQBEWxWAYxAzWjOXNgDRBEC01QE4BjGTtfO4aQOIgBlsmUNHIKJtDsAWYKSt89dkA4iAEVrMnSMQ0ZoFYAuwp1bz1nQDiIA9tJyz5kcgEdBT6/nq8hpABPTQY666vQgWAS31mqeu/wskAlroOUfn2+3W62v/5fryvs83oow9bqC7/RzANmCJveZltw3wmW3Ad/a+UQ75SbBtwFdGzMWQDfDIRsg1+mY4RQCfiaG+0UP/2XQBPBLE8c008I+mDwB68nZoogmAaAIgmgCIJgCiCYBoAiCaAIgmAKL9Ak4GGSSo34cHAAAAAElFTkSuQmCC';
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=v=>(v/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const date=s=>new Date(s+'T12:00:00');
+const label=s=>s?String(s).split('-').reverse().join('/'):'—';
+const add=(s,n)=>{const d=date(s);d.setDate(d.getDate()+n);return iso(d);};
+const cents=t=>Math.round((Number(t.valor)||0)*100);
+const incoming=t=>t.tipo==='Receita';
+const signed=t=>incoming(t)?cents(t):-cents(t);
+const settled=t=>!!t.dataPg||t.status==='Pago'||t.status==='Recebido';
+const supported=t=>['Receita','Despesa','Investimentos'].includes(t.tipo);
+const sum=(rows,fn)=>rows.reduce((a,t)=>a+fn(t),0);
+function calculate(base,rows,start,end,today,group='dia'){
+ base=base.filter(supported);rows=rows.filter(supported);
+ const opening=start?sum(base.filter(t=>t.vencimento&&t.vencimento<start),signed):0;
+ const buckets=new Map();const days=new Map();
+ if(start&&end&&start<=end){const stop=date(end).getTime();for(const d=date(start);d.getTime()<=stop;d.setDate(d.getDate()+1))days.set(iso(d),0);}
+ for(const t of rows){if(t.vencimento)days.set(t.vencimento,(days.get(t.vencimento)||0)+signed(t));}
+ for(const day of days.keys()){let key=day;if(group==='mes')key=day.slice(0,7)+'-01';if(group==='semana')key=add(day,-((date(day).getDay()+6)%7));if(!buckets.has(key))buckets.set(key,{date:key,r:0,d:0});}
+ for(const t of rows){if(!t.vencimento)continue;let key=t.vencimento;
+  if(group==='mes')key=key.slice(0,7)+'-01';
+  if(group==='semana'){const d=date(key);key=add(key,-((d.getDay()+6)%7));}
+  const b=buckets.get(key)||{date:key,r:0,d:0};b[incoming(t)?'r':'d']+=cents(t);buckets.set(key,b);
+ }
+ let balance=opening;
+ const daily=[...buckets.values()].sort((a,b)=>a.date.localeCompare(b.date)).map(b=>({...b,net:b.r-b.d,balance:balance+=b.r-b.d}));
+ const revenue=sum(rows.filter(incoming),cents),expense=sum(rows.filter(t=>!incoming(t)),cents);
+ const details=new Map();
+ for(const t of rows){const k=JSON.stringify([t.tipo,t.categoria||'Sem rúbrica',t.subItem||'Sem sub-item']);const b=details.get(k)||{type:t.tipo,category:t.categoria||'Sem rúbrica',sub:t.subItem||'Sem sub-item',planned:0,actual:0};b.planned+=cents(t);if(settled(t))b.actual+=cents(t);details.set(k,b);}
+ const paid=rows.filter(settled),overdue=rows.filter(t=>!settled(t)&&t.vencimento&&t.vencimento<today);
+ // A janela futura mantém os filtros de conteúdo, mas não o período ou o atalho de atrasados.
+ const horizon=add(today,29),future=base.filter(t=>!settled(t)&&t.vencimento>=today&&t.vencimento<=horizon).sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
+ const current=sum(base.filter(t=>settled(t)&&(t.dataPg||t.vencimento)&&(t.dataPg||t.vencimento)<=today),signed);
+ let projected=current;const projection=[];
+ for(let i=0;i<30;i++){const day=add(today,i);projected+=sum(future.filter(t=>t.vencimento===day),signed);projection.push({date:day,balance:projected});}
+ const largest=rows.filter(t=>!incoming(t)).sort((a,b)=>cents(b)-cents(a))[0];
+ let dayBalance=opening,critical=null;
+ for(const day of [...days.keys()].sort()){dayBalance+=days.get(day);if(!critical||dayBalance<critical.balance)critical={date:day,balance:dayBalance};}
+ const categories=new Map();for(const t of rows.filter(t=>!incoming(t)))categories.set(t.categoria||'Sem rúbrica',(categories.get(t.categoria||'Sem rúbrica')||0)+cents(t));
+ const allOverdue=base.filter(t=>!settled(t)&&t.vencimento&&t.vencimento<today);
+ return {start,end,today,group,rows,opening,daily,revenue,expense,closing:opening+revenue-expense,details:[...details.values()],paid,overdue,allOverdue,future,current,projection,largest,critical,categories:[...categories.entries()].sort((a,b)=>b[1]-a[1]),missing:rows.filter(t=>!t.vencimento).length,invalid:!!(start&&end&&start>end)};
+}
+function filters(){const names={filtroTipo:'Tipo',filtroRubrica:'Rúbrica',filtroSubItem:'Sub-item',filtroBuscaRubrica:'Busca de rúbrica',filtroBuscaSubItem:'Busca de sub-item',filtroDescricao:'Descrição'};const active=Object.keys(names).flatMap(id=>{const e=document.getElementById(id),v=(e?.tagName==='SELECT'?e.selectedOptions?.[0]?.text:e?.value)?.trim();return v&&!['Todos','Todas'].includes(v)?[names[id]+': '+v]:[];});if(typeof filtroRapidoEspecial!=='undefined'&&filtroRapidoEspecial==='atrasados')active.push('Atalho: atrasados');return active.length?active.join(' · '):'Sem filtros';}
+function snapshot(){return calculate(getFilteredTransactions({ignorarPeriodo:true,ignorarAtrasados:true}),getFilteredTransactions(),document.getElementById('filtroDataInicio').value,document.getElementById('filtroDataFim').value,iso(new Date()),document.getElementById('fc-group')?.value||'dia');}
+function amount(v){return '<span class="'+(v<0?'fc-negative':'fc-positive')+'">'+(v>0?'+':'')+money(v)+'</span>';}
+function table(headers,rows,foot=''){const numeric=h=>/^(Receitas|Saídas|Despesas|Saldo|Acumulado|Valor|Previsto|Realizado|%|Dias)/.test(h);const cls=i=>numeric(headers[i])?' class="fc-number"':/^(Data|Vencimento|Fechamento)/.test(headers[i])?' class="fc-date"':'';return '<div class="fc-scroll"><table><thead><tr>'+headers.map((h,i)=>'<th'+cls(i)+'>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+(rows.length?rows.map(r=>'<tr'+(r.critical?' class="fc-critical"':'')+'>'+r.map((c,i)=>'<td'+cls(i)+'>'+c+'</td>').join('')+'</tr>').join(''):'<tr><td colspan="'+headers.length+'">Nenhum lançamento.</td></tr>')+'</tbody>'+foot+'</table></div>';}
+function dailyTable(m,split=false){const headers=['Data','Receitas','Saídas¹','Saldo do grupo','Acumulado'],initial=['Saldo inicial','—','—','—',amount(m.opening)],rows=[initial,...m.daily.map(b=>{const row=[label(b.date),amount(b.r),amount(-b.d),amount(b.net),amount(b.balance)];row.critical=m.group==='dia'&&b.date===m.critical?.date;return row;})],foot='<tfoot><tr><th>Total</th><td class="fc-number">'+amount(m.revenue)+'</td><td class="fc-number">'+amount(-m.expense)+'</td><td class="fc-number">'+amount(m.revenue-m.expense)+'</td><td class="fc-number">'+amount(m.closing)+'</td></tr></tfoot>';if(split&&m.daily.length>16&&m.daily.length<=62){const half=Math.ceil(rows.length/2);return '<div class="fc-flow-columns">'+table(headers,rows.slice(0,half))+table(headers,rows.slice(half),foot)+'</div>';}return table(headers,rows,foot);}
+function effectiveStatus(t,today){return settled(t)?incoming(t)?'Recebido':'Pago':t.vencimento&&t.vencimento<today?'Atrasado':incoming(t)?'A receber':'A vencer';}
+function transactionTable(rows,today,late=false){return table(['Vencimento','Tipo','Descrição','Valor','Status',...(late?['Dias de atraso']:[])],rows.map(t=>[label(t.vencimento),esc(t.tipo),esc(t.descricao),amount(signed(t)),effectiveStatus(t,today),...(late?[Math.round((date(today)-date(t.vencimento))/86400000)]:[])]));}
+function lineChart(points,title){
+ if(!points.length)return '<p class="fc-note">Sem dados para o gráfico.</p>';
+ const low=Math.min(0,...points.map(x=>x.balance)),high=Math.max(1,...points.map(x=>x.balance)),span=high-low||1;
+ const x=i=>112+i*816/Math.max(1,points.length-1),y=v=>170-(v-low)/span*128;
+ const ticks=[low,(low+high)/2,high];
+ const selected=[...new Set([0,Math.floor((points.length-1)/4),Math.floor((points.length-1)/2),Math.floor((points.length-1)*3/4),points.length-1])];
+ return '<svg viewBox="0 0 1000 220" role="img" aria-label="'+esc(title)+'"><title>'+esc(title)+'</title>'+ticks.map(v=>'<line x1="112" x2="928" y1="'+y(v)+'" y2="'+y(v)+'" stroke="#d7e0eb"/><text x="102" y="'+(y(v)+4)+'" text-anchor="end">'+esc(money(Math.round(v)))+'</text>').join('')+'<line x1="112" x2="928" y1="'+y(0)+'" y2="'+y(0)+'" stroke="#94a3b8"/><polyline points="'+points.map((p,i)=>x(i)+','+y(p.balance)).join(' ')+'" stroke="#203c64" stroke-width="3" fill="none"/>'+points.map((p,i)=>'<circle cx="'+x(i)+'" cy="'+y(p.balance)+'" r="3" fill="'+(p.balance<0?'#bd2b20':'#203c64')+'"><title>'+esc(label(p.date)+': '+money(p.balance))+'</title></circle>').join('')+selected.map(i=>'<text x="'+x(i)+'" y="198" text-anchor="middle">'+esc(label(points[i].date))+'</text>').join('')+'</svg>';
+}
+function revenueChart(m){
+ const buckets=new Map();for(const b of m.daily){const key=add(b.date,-((date(b.date).getDay()+6)%7));const v=buckets.get(key)||{date:key,r:0,d:0};v.r+=b.r;v.d+=b.d;buckets.set(key,v);}
+ const a=[...buckets.values()],top=Math.max(1,...a.flatMap(b=>[b.r,b.d])),w=550/Math.max(1,a.length);
+ if(!a.length)return '<p>Sem dados.</p>';
+ return '<svg viewBox="0 0 700 250" role="img" aria-label="Receitas e saídas por semana"><title>Receitas e saídas por semana</title><line x1="85" x2="665" y1="190" y2="190" stroke="#94a3b8"/><text x="12" y="30">'+esc(money(top))+'</text><text x="12" y="192">R$ 0</text>'+a.map((b,i)=>{const x=100+i*w,rh=b.r/top*130,dh=b.d/top*130;return '<rect x="'+x+'" y="'+(190-rh)+'" width="'+w*.33+'" height="'+rh+'" fill="#047857"/><rect x="'+(x+w*.38)+'" y="'+(190-dh)+'" width="'+w*.33+'" height="'+dh+'" fill="#bd2b20"/><text x="'+(x+w*.165)+'" y="'+(183-rh)+'" text-anchor="middle" class="fc-bar-label">'+esc(money(b.r))+'</text><text x="'+(x+w*.545)+'" y="'+(183-dh)+'" text-anchor="middle" class="fc-bar-label">'+esc(money(b.d))+'</text><text x="'+(x+w*.36)+'" y="218" text-anchor="middle">'+esc(label(b.date).slice(0,5))+'</text>';}).join('')+'</svg>';
+}
+function categoryChart(m){const max=Math.max(1,...m.categories.map(x=>x[1]));return m.categories.length?m.categories.map(([name,v])=>'<div class="fc-category"><div><b>'+esc(name)+'</b><span>'+money(v)+' · '+(m.expense?v/m.expense*100:0).toFixed(1)+'%</span></div><div class="fc-track"><div style="width:'+v/max*100+'%"></div></div></div>').join(''):'<p class="fc-note">Nenhuma saída no período.</p>';}
+function flowLine(m){return lineChart([{date:m.start||m.daily[0]?.date,balance:m.opening},...m.daily],'Evolução do saldo acumulado');}
+function charts(m){return '<article class="fc-chart"><h3>Receitas × saídas por semana</h3><p class="fc-note">Verde: receitas · Vermelho: saídas · Valores em reais</p>'+revenueChart(m)+'</article><article class="fc-chart"><h3>Saídas por rúbrica</h3><p class="fc-note">Valor e participação sobre o total de saídas</p>'+categoryChart(m)+'</article>';}
+const css=`
+*{box-sizing:border-box}body{font:13px/1.5 ${window.PFReportTheme?.font||'system-ui'};color:#243247;background:#edf1f7;margin:0;padding:28px}
+main{max-width:1160px;margin:auto;background:#fff;padding:32px 38px;border-radius:12px}header{border-bottom:2px solid #263f65;padding-bottom:14px;margin-bottom:16px}header p{margin:5px 0}
+.fc-brand{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:#536782}h1{font-size:27px;line-height:1.2;margin:7px 0 12px;letter-spacing:-.5px}h2{font-size:19px;margin:24px 0 12px}h3{font-size:14px;margin:15px 0 7px}.fc-meta,.fc-note{font-size:11px;color:#526176}.fc-meta b{color:#263f65}.fc-note{margin:7px 0}.fc-tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.fc-tag{font-size:10px;border:1px solid #d7e1ee;background:#f1f5fa;padding:3px 7px;border-radius:4px}
+.fc-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}.fc-card{padding:12px 14px;border:1px solid #d9e2ef;border-top:3px solid #52658d;border-radius:6px;background:#f8faff;min-width:0;font-size:11px;break-inside:avoid}.fc-card strong{display:block;font-size:21px;margin-top:5px;line-height:1.2;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.fc-card small{display:block;margin-top:4px;color:#526176}
+.fc-scroll{max-width:100%;overflow:auto}table{width:100%;border-collapse:collapse;font-size:11px}th,td{padding:6px 9px;text-align:left;border-bottom:1px solid #e1e7ef;vertical-align:top;overflow-wrap:break-word}th{background:#edf2f8;color:#334b68;font-size:10px;font-weight:700}tbody tr:nth-child(even){background:#f8fafc}.fc-number{text-align:right;font-variant-numeric:tabular-nums}td.fc-number,td.fc-date{white-space:nowrap}tfoot{display:table-row-group;font-weight:bold;background:#edf2f8}.fc-critical td{background:#fff1dc!important;border-bottom-color:#e9c88f}.fc-negative{color:#bd2b20!important}.fc-positive{color:#047857!important}.fc-alert{padding:9px 12px;border-left:3px solid #bd2b20;background:#fff1f2;font-size:11px;break-inside:avoid}.fc-clear{padding:8px 12px;background:#edf9f2;color:#166534;font-size:11px}
+.fc-actions{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}button{padding:10px 14px;cursor:pointer;border:1px solid #cbd5e1;background:white;border-radius:7px;color:#1e293b}.fc-chart{break-inside:avoid;min-width:0}.fc-chart svg{display:block;width:100%;height:220px}.fc-chart svg text{font:12px system-ui;fill:#475569}.fc-chart svg .fc-bar-label{font-size:10px}.fc-chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}.fc-category{margin:17px 0;break-inside:avoid}.fc-category>div:first-child{display:flex;justify-content:space-between;gap:12px;font-size:11px}.fc-category span{white-space:nowrap;font-variant-numeric:tabular-nums}.fc-track{height:12px;background:#edf1f7;border-radius:4px;margin-top:6px}.fc-track>div{height:100%;background:#6366f1;border-radius:4px}.fc-section{min-width:0}.fc-status-totals{display:flex;flex-wrap:wrap;gap:12px;background:#f1f5fa;padding:7px 10px;font-size:11px;margin:7px 0 10px}.fc-method{border:1px solid #d7e1ee;background:#f8fafc;padding:10px 14px;margin-top:18px;break-inside:avoid}.fc-method h3{margin:0 0 5px}.fc-method p{margin:4px 0}.fc-footer{margin-top:18px;border-top:1px solid #dce4ef;padding-top:8px;color:#64748b;font-size:10px}
+@media screen and (max-width:700px){body{padding:8px}main{padding:18px}h1{font-size:23px}.fc-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.fc-chart-grid{grid-template-columns:1fr}table{min-width:600px}}
+@media print{@page{size:A4 landscape;margin:12mm}body{font-size:8pt;background:white;padding:0}main{padding:0;max-width:none;border-radius:0}header{padding-bottom:6px;margin-bottom:8px}h1{font-size:20pt;margin:4px 0 6px}header p{margin:2px 0}.fc-brand{font-size:8pt}.fc-meta,.fc-note{font-size:7.5pt;line-height:1.35}.fc-tags{margin:5px 0}.fc-tag{font-size:7pt;padding:2px 5px}.fc-cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:9px 0}.fc-card{padding:7px 10px;font-size:7.5pt}.fc-card strong{font-size:13pt;margin-top:3px}.fc-card small{font-size:7pt;margin-top:2px}.fc-actions{display:none}.fc-scroll{overflow:visible}table{min-width:0!important;font-size:8pt}th{font-size:7.5pt}th,td{padding:3px 6px;line-height:1.3}thead{display:table-header-group}tfoot{display:table-row-group}tr,.fc-card,.fc-chart{break-inside:avoid}h2,h3{break-after:avoid}h2{font-size:13pt;margin:10px 0 7px}h3{font-size:10pt;margin:9px 0 6px}.fc-print-page{break-before:page}.fc-print-page>h2:first-child{margin-top:0}.fc-chart svg{height:220px}.fc-chart-grid{grid-template-columns:1fr 1fr;gap:20px}.fc-category{margin:15px 0}.fc-category>div:first-child{font-size:8pt}.fc-alert,.fc-clear,.fc-status-totals{font-size:8pt;padding:6px 9px}.fc-method{margin-top:10px;padding:8px 10px}.fc-method h3{font-size:9pt}.fc-footer{font-size:7pt;margin-top:12px}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+.fc-report-header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}.fc-report-identity{display:flex;align-items:center;gap:13px;min-width:0}.fc-logo{display:block;width:48px;height:48px;object-fit:contain;flex:0 0 48px}.fc-report-header h1{margin:0 0 4px;color:#203c64}.fc-report-header .fc-brand{text-transform:none;letter-spacing:0;font-weight:400}.fc-report-header .fc-header-meta{text-align:right;flex-shrink:0}.fc-tags{margin:8px 0 12px}.fc-tag{background:#e8eef7;color:#203c64;font-weight:600;border:0;border-radius:10px;padding:1px 8px}
+.fc-cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.fc-card{background:white;border:1px solid #cad5e6;border-left:4px solid #203c64;border-radius:0;padding:9px 11px}.fc-card strong{font-size:19px}.fc-card small{font-size:10px}th{background:#203c64;color:white}h2,h3{color:#203c64}.fc-flow-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.fc-alert{background:#fceceb;border:1px solid #eaa09a;color:#9f231b}.fc-track>div{background:#bd2b20}.fc-category>div:first-child{font-weight:400}.fc-category b{font-weight:400}
+@media screen and (max-width:850px){.fc-flow-columns{grid-template-columns:1fr}.fc-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.fc-report-header{display:block}.fc-report-header .fc-header-meta{text-align:left}}
+@media print{@page{size:A4 landscape;margin:12mm 12mm 15mm;@bottom-left{content:"Planejamento Financeiro | Relatório de Fluxo de Caixa";font:7pt sans-serif;color:#64748b}@bottom-right{content:"Página " counter(page) " de " counter(pages);font:7pt sans-serif;color:#64748b}}.fc-cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.fc-card{padding:7px 9px}.fc-card strong{font-size:13pt}.fc-card small{font-size:7pt}.fc-report-header .fc-header-meta{font-size:8pt}.fc-tags{margin:5px 0 8px}.fc-flow-columns{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.fc-flow-columns table{font-size:7.7pt}.fc-flow-columns th{font-size:7pt}.fc-flow-columns td,.fc-flow-columns th{padding:4px 5px}.fc-chart svg{height:220px}}
+`;
+function splitTotals(rows,paid=false){return '<div class="fc-status-totals"><span>'+rows.length+' lançamento(s)</span><span>'+(paid?'Recebido':'A receber')+': <b>'+amount(sum(rows.filter(incoming),cents))+'</b></span><span>'+(paid?'Pago':'A pagar')+': <b>'+amount(-sum(rows.filter(t=>!incoming(t)),cents))+'</b></span>'+(paid?'<span>Líquido: <b>'+amount(sum(rows,signed))+'</b></span>':'')+'</div>';}
+function reportBody(m,meta){
+ const cards=[['Total de receitas',amount(m.revenue),''],['Total de saídas¹',amount(-m.expense),''],['Saldo do período',amount(m.revenue-m.expense),''],['Saldo inicial previsto',money(m.opening),''],['Saldo acumulado final',amount(m.closing),''],['Maior saída',m.largest?money(cents(m.largest)):'—',esc(m.largest?.descricao||'Sem lançamento')],['Dia mais crítico',m.critical?label(m.critical.date):'—',m.critical?'Menor acumulado: '+amount(m.critical.balance):'Sem movimentação']];
+ const weekly=m.projection.filter((x,i)=>[6,13,20,27,29].includes(i)),negative=m.projection.find(x=>x.balance<0),period=m.start||m.end?label(m.start)+' a '+label(m.end):'Todos os lançamentos';
+ const historicalNegative=m.daily.find(x=>x.balance<0);
+ const tags=meta.filters==='Sem filtros'?'<span class="fc-note">Sem filtros</span>':String(meta.filters).split(' · ').map(v=>'<span class="fc-tag">'+esc(v)+'</span>').join('');
+ return '<header class="fc-report-header"><div class="fc-report-identity"><img class="fc-logo" src="'+projectLogo+'" alt="Logotipo do Planejamento Financeiro" width="48" height="48"><div><h1>Relatório de Fluxo de Caixa</h1><p class="fc-brand">Planejamento Financeiro</p></div></div><div class="fc-header-meta"><p class="fc-meta">Período: '+period+'</p><p class="fc-meta">Agrupamento: '+esc({dia:'Diário',semana:'Semanal',mes:'Mensal'}[m.group]||m.group)+'</p><p class="fc-meta">Emitido em '+esc(meta.issued)+'</p></div></header><div class="fc-tags"><span class="fc-note">Filtros ativos:</span>'+tags+'</div>'+
+ '<nav class="fc-actions"><button id="fc-print">Imprimir / salvar PDF</button><button id="fc-csv">Exportar CSV</button><button id="fc-xlsx">Exportar Excel (.xlsx)</button><button id="fc-email">Preparar e-mail</button></nav><p class="fc-note fc-actions">Impressão: A4 paisagem. Em Mais definições, desmarque Cabeçalhos e rodapés para retirar a URL e o título do navegador.</p>'+
+ (m.invalid?'<p class="fc-alert">Período inválido: revise as datas selecionadas.</p>':'')+
+ '<div class="fc-cards">'+cards.map(([k,v,n])=>'<article class="fc-card">'+esc(k)+'<strong>'+v+'</strong>'+(n?'<small>'+n+'</small>':'')+'</article>').join('')+'</div>'+
+ (negative?'<p class="fc-alert"><b>Atenção:</b> o saldo projetado fica negativo em '+label(negative.date)+' ('+money(negative.balance)+').</p>':historicalNegative?'<p class="fc-alert">Saldo acumulado negativo a partir de '+label(historicalNegative.date)+' ('+money(historicalNegative.balance)+').</p>':'<p class="fc-clear">Sem saldo acumulado ou projetado negativo.</p>')+'<div class="fc-chart"><h3>Evolução do saldo acumulado</h3>'+flowLine(m)+'</div>'+
+ '<section class="fc-section fc-print-page"><h2>Fluxo de caixa por data</h2><p class="fc-note">Saldo inicial: '+money(m.opening)+'. Dias sem movimentação estão incluídos. ¹ Saídas incluem despesas e investimentos. A linha em destaque indica o dia mais crítico.</p>'+dailyTable(m,true)+(m.missing?'<p class="fc-alert">'+m.missing+' lançamento(s) sem vencimento entram nos totais, mas não no fluxo por data.</p>':'')+'</section>'+
+ '<section class="fc-section fc-print-page"><h2>03 · Receitas, saídas e distribuição dos gastos</h2>'+charts(m)+'<p class="fc-note">Maior saída do período: '+(m.largest?money(cents(m.largest))+' · '+esc(m.largest.descricao||'Sem descrição'):'Nenhuma')+'. Valores semanais limitados ao período selecionado. As datas indicam o início da semana.</p></section>'+
+ '<section class="fc-section fc-print-page"><h2>04 · Detalhamento e situação dos lançamentos</h2><h3>Por rúbrica e sub-item</h3>'+table(['Tipo','Rúbrica','Sub-item','Previsto','Realizado','% do tipo'],m.details.map(x=>[esc(x.type),esc(x.category),esc(x.sub),money(x.planned),money(x.actual),((x.planned/(sum(m.rows.filter(t=>t.tipo===x.type),cents)||1))*100).toFixed(1)+'%']))+
+ '<h3>Pagos / recebidos no período</h3>'+splitTotals(m.paid,true)+transactionTable(m.paid,m.today)+'<h3>Atrasados no período</h3>'+splitTotals(m.overdue)+transactionTable(m.overdue,m.today,true)+'</section>'+
+ '<section class="fc-section fc-print-page"><h2>05 · Previsão dos próximos 30 dias</h2><p class="fc-meta"><b>Janela:</b> '+label(m.today)+' a '+label(add(m.today,29))+' · <b>Base realizada cadastrada:</b> '+money(m.current)+'</p>'+
+ (negative?'<p class="fc-alert">ATENÇÃO · Saldo projetado negativo em '+label(negative.date)+' ('+money(negative.balance)+').</p>':'<p class="fc-clear">Sem saldo projetado negativo nesta janela.</p>')+
+ '<div class="fc-chart-grid"><article><h3>Fechamentos semanais</h3>'+table(['Fechamento da semana / janela','Saldo projetado'],weekly.map(x=>[label(x.date),amount(x.balance)]))+'</article><article class="fc-chart"><h3>Evolução do saldo projetado</h3>'+lineChart(m.projection,'Saldo projetado nos próximos 30 dias')+'</article></div>'+
+ '<h3>Contas a pagar e a receber na janela</h3>'+splitTotals(m.future)+transactionTable(m.future,m.today)+
+ '<div class="fc-method"><h3>Como ler este relatório</h3><p class="fc-note">Fluxo previsto por vencimento. O saldo inicial soma os lançamentos anteriores cadastrados nos mesmos filtros; não é um saldo bancário conciliado. Sem data inicial, parte de zero. Realizado: lançamentos pagos/recebidos ou com data de pagamento, selecionados por vencimento. Saídas incluem despesas e investimentos.</p><p class="fc-note">A previsão mantém os filtros de conteúdo, independentemente do mês selecionado. Parte das movimentações realizadas cadastradas até hoje e acrescenta os compromissos em aberto dos próximos 30 dias. Atrasados não são reagendados: em todos os períodos, a pagar '+money(sum(m.allOverdue.filter(t=>!incoming(t)),cents))+' e a receber '+money(sum(m.allOverdue.filter(incoming),cents))+'.</p><p class="fc-note">Semanas começam na segunda-feira. Valores positivos têm sinal + e negativos, sinal -. As projeções não incluem movimentações não cadastradas.</p></div></section>';
+}
+
+function exportRows(m,meta){
+ const out=[['Relatório de Fluxo de Caixa'],['Período',m.start,m.end],['Filtros',meta.filters],['Emissão',meta.issued],['Saldo inicial previsto',m.opening/100],['Receitas',m.revenue/100],['Saídas',m.expense/100],['Saldo final',m.closing/100],[],['Data','Receitas','Despesas / investimentos','Saldo','Acumulado']];
+ m.daily.forEach(b=>out.push([b.date,b.r/100,b.d/100,b.net/100,b.balance/100]));out.push(['Total',m.revenue/100,m.expense/100,(m.revenue-m.expense)/100,m.closing/100],[],['Tipo','Rúbrica','Sub-item','Previsto','Realizado']);m.details.forEach(x=>out.push([x.type,x.category,x.sub,x.planned/100,x.actual/100]));
+ for(const [name,rows]of [['Pagos / recebidos',m.paid],['Atrasados',m.overdue],['Previsão 30 dias',m.future]]){out.push([],[name],['Vencimento','Tipo','Rúbrica','Sub-item','Descrição','Valor','Status','Dias de atraso']);rows.forEach(t=>out.push([t.vencimento,t.tipo,t.categoria,t.subItem,t.descricao,cents(t)/100,effectiveStatus(t,m.today),!settled(t)&&t.vencimento<m.today?Math.round((date(m.today)-date(t.vencimento))/86400000):0]));}
+ out.push([],['Projeção diária','Saldo']);m.projection.forEach(x=>out.push([x.date,x.balance/100]));return out;
+}
+const safeCell=v=>typeof v==='string'&&/^[\s]*[=+\-@]/.test(v)?"'"+v:v;
+function csv(rows){return '\ufeff'+rows.map(r=>r.map(v=>'"'+String(typeof v==='number'?String(v).replace('.',','):safeCell(v??'')).replace(/"/g,'""')+'"').join(';')).join('\r\n');}
+function download(rows,type,doc=document){
+ const excel=type==='xlsx';let data;
+ if(excel){const x=window.XLSX;if(!x){alert('A biblioteca de Excel ainda não carregou. Tente novamente com conexão ou exporte em CSV.');return;}const book=x.utils.book_new();const sheet=x.utils.aoa_to_sheet(rows);sheet['!cols']=[{wch:28},{wch:28},{wch:28},{wch:28},{wch:45},{wch:18},{wch:20},{wch:18}];x.utils.book_append_sheet(book,sheet,'Fluxo de caixa');data=x.write(book,{bookType:'xlsx',type:'array'});}else data=csv(rows);
+ const url=URL.createObjectURL(new Blob([data],{type:excel?'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'text/csv;charset=utf-8'})),a=doc.createElement('a');a.href=url;a.download='fluxo-de-caixa.'+type;doc.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+function allowed(){const mobile=document.body.classList.contains('pf-mobile-layout');return !document.body.classList.contains('auth-pendente')&&!(mobile?document.getElementById('dashboardMobileV40')?.classList.contains('pf-resumo-oculto'):document.getElementById('painelGerencial')?.classList.contains('pf-painel-oculto'));}
+function openReport(){
+ if(!allowed()){alert('Desbloqueie o painel gerencial para gerar o relatório.');return;}
+ const m=snapshot();if(m.invalid){alert('Revise o período: a data inicial é posterior à final.');return;}
+ const popup=window.open('','_blank');if(!popup){alert('Permita a abertura de uma nova aba para visualizar o relatório.');return;}
+ const meta={filters:filters(),issued:new Date().toLocaleString('pt-BR')},rows=exportRows(m,meta);
+ popup.document.open();popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório de Fluxo de Caixa</title><style>'+css+'</style></head><body><main>'+reportBody(m,meta)+'</main></body></html>');popup.document.close();
+ popup.document.getElementById('fc-print').onclick=()=>popup.print();
+ popup.document.getElementById('fc-csv').onclick=()=>download(rows,'csv',popup.document);
+ popup.document.getElementById('fc-xlsx').onclick=()=>download(rows,'xlsx',popup.document);
+ popup.document.getElementById('fc-email').onclick=()=>{popup.location.href='mailto:?subject='+encodeURIComponent('Relatório de Fluxo de Caixa')+'&body='+encodeURIComponent('Relatório de Fluxo de Caixa\nPeríodo: '+label(m.start)+' a '+label(m.end)+'\n'+meta.filters+'\nReceitas: '+money(m.revenue)+'\nSaídas: '+money(m.expense)+'\nSaldo final previsto: '+money(m.closing)+'\n\nSalve o PDF ou exporte a planilha e anexe ao e-mail antes de enviar.');};
+}
+function refresh(){
+ const target=document.getElementById('tabelaFluxoCaixa');if(!target||!document.getElementById('fc-toolbar'))return;
+ const m=snapshot();const tbl=target.closest('table');tbl.querySelector('tfoot')?.remove();target.innerHTML=m.daily.map(b=>'<tr><td class="p-2">'+label(b.date)+'</td><td class="p-2 text-right">'+amount(b.r)+'</td><td class="p-2 text-right fc-negative">'+money(b.d)+'</td><td class="p-2 text-right">'+amount(b.net)+'</td><td class="p-2 text-right">'+amount(b.balance)+'</td></tr>').join('')||'<tr><td colspan="5" class="p-4">Sem movimentações.</td></tr>';
+ tbl.insertAdjacentHTML('beforeend','<tfoot><tr><th>Total</th><td>'+money(m.revenue)+'</td><td>'+money(m.expense)+'</td><td>'+amount(m.revenue-m.expense)+'</td><td>'+amount(m.closing)+'</td></tr></tfoot>');
+ document.getElementById('fc-opening').textContent='Saldo inicial previsto: '+money(m.opening)+' · Saldo final previsto: '+money(m.closing)+'. Calculado com os lançamentos anteriores cadastrados.';
+ document.getElementById('tabelaPrevisao30').innerHTML=m.future.map(t=>'<tr><td class="p-2">'+label(t.vencimento)+'</td><td class="p-2">'+esc(t.descricao)+'</td><td class="p-2">'+money(cents(t))+'</td><td class="p-2">'+esc(t.status)+'</td></tr>').join('')||'<tr><td colspan="4" class="p-4">Sem contas em aberto nos próximos 30 dias para os filtros de conteúdo.</td></tr>';
+}
+function navigate(){
+ if(!allowed()){alert('Use Mostrar resumo e desbloqueie o painel para consultar o fluxo de caixa.');return;}
+ if(document.body.classList.contains('pf-mobile-layout')){openReport();return;}
+ const b=document.getElementById('clean-flow-toggle');if(b?.getAttribute('aria-expanded')==='false')b.click();
+ const flow=document.getElementById('clean-flow-details')||document.getElementById('painelDetalhesGerencial');refresh();
+ requestAnimationFrame(()=>{const header=document.getElementById('pfMenuTopo'),offset=(header?.getBoundingClientRect().bottom||0)+16;window.scrollTo({top:Math.max(0,window.scrollY+flow.getBoundingClientRect().top-offset),behavior:'smooth'});flow.setAttribute('tabindex','-1');flow.focus({preventScroll:true});});
+}
+function init(){
+ const flow=document.getElementById('painelDetalhesGerencial');if(!flow||document.getElementById('fc-toolbar'))return;
+ const toolbar=document.createElement('div');toolbar.id='fc-toolbar';toolbar.innerHTML='<strong>Fluxo de caixa</strong><label>Agrupar por <select id="fc-group"><option value="dia">Dia</option><option value="semana">Semana</option><option value="mes">Mês</option></select></label><button type="button" id="fc-report">Gerar relatório de fluxo de caixa</button><p id="fc-opening"></p><small>Previsão: hoje e os próximos 29 dias, com os filtros de conteúdo e independentemente do mês selecionado.</small>';flow.prepend(toolbar);document.getElementById('fc-group').onchange=refresh;document.getElementById('fc-report').onclick=openReport;
+ const original=window.atualizarPainelGerencial;window.atualizarPainelGerencial=function(...args){const result=original.apply(this,args);refresh();return result;};refresh();
+}
+window.abrirFluxoCaixa=navigate;window.abrirRelatorioFluxoCaixa=openReport;
+window.PFCashFlow={calculate,csv,exportRows,reportBody,css};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+</script>
+<style id="pf-project-brand-css">
+html body #pfMenuTopo .pf-menu-marca{display:inline-flex!important;align-items:center!important;gap:8px!important}
+html body #pfMenuTopo .pf-project-logo{display:block;width:28px!important;height:28px!important;flex:0 0 28px;object-fit:contain;border-radius:7px}
+html body #pfSaasSidebar .pf-brand-icon{background:transparent}
+html body #pfSaasSidebar .pf-project-logo{display:block;width:38px!important;height:38px!important;object-fit:contain;border-radius:10px}
+</style>
+<style id="pf-rodape-mercado-ajustado">
+/* Contraste adicional somente no tema Dia. */
+body:not(.dark-mode) #pfIndicadores {
+  background:#dbeafe!important;
+  color:#12345a!important;
+  border-top:2px solid #2563eb!important;
+  box-shadow:0 -2px 10px #1e40af18;
+  font-size:13px!important;
+  font-weight:650;
+}
+body:not(.dark-mode) #pfIndicadores a {color:#12345a!important;font-weight:700;}
+body:not(.dark-mode) #pfIndicadores button,
+body:not(.dark-mode) #pfMostrarIndicadores {
+  color:#12345a!important;
+  background:#eff6ff!important;
+  border:1px solid #93b4e8!important;
+  font-weight:650;
+}
+/* O rodapé fica acima dos totais e da navegação no celular. */
+body.pf-mobile-layout #pfIndicadores:not([hidden]) {
+  display:flex!important;
+  bottom:var(--pf-market-bottom,104px)!important;
+  height:44px!important;
+  gap:4px;
+  padding:0 6px;
+  font-size:12px!important;
+}
+body.pf-mobile-layout #pfMostrarIndicadores:not([hidden]) {
+  display:block!important;
+  bottom:var(--pf-market-bottom,104px)!important;
+  height:44px!important;
+}
+body.pf-mobile-layout #pfIndicadores button {
+  min-height:36px;
+  padding:4px 6px;
+  font-size:11px;
+}
+body.pf-mobile-layout #pfIndicadores a {font-size:10px;}
+body.pf-mobile-layout #pfIndTrack span {padding-right:32px;}
+body.pf-mobile-layout #pfMobileShell {
+  padding-bottom:calc(var(--pf-market-bottom,104px) + var(--pf-market-space,44px) + 24px)!important;
+}
+body.pf-mobile-layout #pfMobileShell .ai {
+  bottom:calc(var(--pf-market-bottom,104px) + var(--pf-market-space,44px) + 16px)!important;
+}
+body.pf-mobile-layout.auth-pendente #pfIndicadores,
+body.pf-mobile-layout.auth-pendente #pfMostrarIndicadores,
+body.pf-mobile-layout.pf-edicao-lancamento #pfIndicadores,
+body.pf-mobile-layout.pf-edicao-lancamento #pfMostrarIndicadores,
+body.pf-mobile-layout:has(dialog[open]) #pfIndicadores,
+body.pf-mobile-layout:has(dialog[open]) #pfMostrarIndicadores {
+  display:none!important;
+}
+@media print {
+  body.pf-mobile-layout #pfIndicadores:not([hidden]),
+  body.pf-mobile-layout #pfMostrarIndicadores:not([hidden]) {display:none!important;}
+}
+
+</style>
+<script id="pf-rodape-mercado-layout">
+(() => {
+ 'use strict';
+ const bar=document.getElementById('pfIndicadores');
+ const restore=document.getElementById('pfMostrarIndicadores');
+ if(!bar||!restore)return;
+ const root=document.documentElement;
+ function layoutMarket(){
+  if(!document.body.classList.contains('pf-mobile-layout'))return;
+  const total=document.querySelector('#pfMobileShell .total');
+  const nav=document.querySelector('#pfMobileShell .nav');
+  const control=[total,nav].find(el=>el&&getComputedStyle(el).display!=='none'&&el.getBoundingClientRect().height>0);
+  const bottom=control?Math.max(0,Math.ceil(innerHeight-control.getBoundingClientRect().top)):104;
+  root.style.setProperty('--pf-market-bottom',bottom+'px');
+  root.style.setProperty('--pf-market-space',(!bar.hidden||!restore.hidden)?'44px':'0px');
+ }
+ const viewport=document.getElementById('pfIndViewport');
+ if(viewport)viewport.setAttribute('aria-label','Indicadores econômicos. Use Pausar para interromper o movimento e ler os valores e as datas de referência.');
+ window.addEventListener('resize',layoutMarket);
+ window.addEventListener('orientationchange',layoutMarket);
+ window.visualViewport?.addEventListener('resize',layoutMarket);
+ if(window.ResizeObserver){
+  const resize=new ResizeObserver(layoutMarket);
+  for(const el of document.querySelectorAll('#pfMobileShell .total,#pfMobileShell .nav'))resize.observe(el);
+ }
+ const observer=new MutationObserver(layoutMarket);
+ observer.observe(document.body,{attributes:true,attributeFilter:['class']});
+ observer.observe(bar,{attributes:true,attributeFilter:['hidden']});
+ observer.observe(restore,{attributes:true,attributeFilter:['hidden']});
+ layoutMarket();
+})();
+
+</script>
 </body>
 </html>

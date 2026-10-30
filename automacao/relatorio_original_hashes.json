@@ -1,0 +1,17 @@
+{
+  "painel_executivo": {
+    "start": "        function atualizarPainelExecutivoGraficos(",
+    "end": "        let pfOrdemDespesas",
+    "sha256": "c9396bd09577e39125c3cddf728cc160a7ecea038b51d3f32e1b0d6055d524fc"
+  },
+  "analises_avancadas": {
+    "start": "        function renderizarPainelAvancadoGraficos(",
+    "end": "        function filtrarRubricaGrafico(",
+    "sha256": "bb1c3dec463d0a9d987c303339d21cb6e401ee5de3d9b99b180e8feb8e6fe8b6"
+  },
+  "filtros_e_graficos": {
+    "start": "        function atualizarGraficos() {",
+    "end": "        let calendarioV45Data = new Date();",
+    "sha256": "805240528eb30bf205a33abe49ee83e1f69f15beaced00589a7eb10573d76902"
+  }
+}
