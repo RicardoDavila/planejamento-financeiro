@@ -5,7 +5,8 @@
         }
         function pfDadosFinanceirosIguais(a,b) {
             const campos=['transacoes','rubricas_ocultas','subitens_ocultos','rubricas_extras','subitens_extras','lixeira','data_abertura_projeto'];
-            const selecionar=p=>Object.fromEntries(campos.map(k=>[k,k==='transacoes'?[...(p?.[k]||[])].sort((x,y)=>String(x.id).localeCompare(String(y.id))):p?.[k]??(k==='data_abertura_projeto'?'':[])]));
+            const compararLinha=t=>{const c={...t};if(c.tipo==='Despesa'&&!c.dataPg&&['Pendente','A Vencer','Vencido'].includes(c.status)){delete c.status;delete c.idStatus;}return c;};
+            const selecionar=p=>Object.fromEntries(campos.map(k=>[k,k==='transacoes'?[...(p?.[k]||[])].map(compararLinha).sort((x,y)=>String(x.id).localeCompare(String(y.id))):p?.[k]??(k==='data_abertura_projeto'?'':[])]));
             return JSON.stringify(pfCanonicoSync(selecionar(a)))===JSON.stringify(pfCanonicoSync(selecionar(b)));
         }
         async function pfConfirmarCopiasIguais(remote) {

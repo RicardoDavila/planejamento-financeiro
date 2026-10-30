@@ -2488,6 +2488,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                         <button onclick="criarContaNuvem()" class="bg-slate-700 hover:bg-slate-800 text-white rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-user-plus mr-1"></i> Criar conta</button>
                     </div>
                     <button onclick="sincronizarAgoraNuvem()" class="w-full border border-emerald-600 text-emerald-700 hover:bg-emerald-50 rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-arrows-rotate mr-1"></i> Sincronizar agora</button>
+                    <button type="button" onclick="receberDadosNuvemComBackup()" class="w-full border border-blue-700 text-blue-800 rounded-lg py-2.5 text-sm font-semibold">Receber dados do PC/nuvem (com backup)</button>
                     <button onclick="testarConexaoNuvem()" class="w-full border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg py-2 text-xs font-semibold"><i class="fa-solid fa-stethoscope mr-1"></i> Testar conexão da nuvem</button>
                     <button onclick="sairNuvem()" class="w-full text-xs text-red-600 hover:text-red-800 font-semibold">Desconectar este dispositivo da nuvem</button>
                     <p class="text-[11px] text-slate-500 leading-relaxed">A senha de acesso do aplicativo continua independente. A conta acima é usada somente para identificar seu banco na nuvem e permitir que computador e celular compartilhem os mesmos dados.</p>
@@ -4329,6 +4330,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         }
         function pfMesmaVersao(a,b){return !!a&&!!b&&pfInstanteNuvem(a)===pfInstanteNuvem(b);}
         function pfTemAlteracoesLocais(){
+            const confirmed=pfLerBaseFinanceiraConfirmada();if(confirmed)return !pfDadosFinanceirosIguais(coletarPacoteNuvem(),confirmed.financeiro);
             const token=pfdLocal.getItem('pf_alteracao_token');
             if(token)return token!==pfdLocal.getItem('pf_alteracao_confirmada');
             const local=pfdLocal.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL),base=pfdLocal.getItem(CHAVE_ULTIMA_SINCRONIZACAO);
@@ -4337,6 +4339,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         async function salvarPacoteNuvem(){
             window.pfdAssert();pfEnviosPendentes++;
             const operation=async()=>{
+                if(pfRecebendoDadosNuvem)throw Error('Recebimento da nuvem em andamento. Aguarde a conclusão.');
                 window.pfdAssert();const session=await obterSessaoNuvem();
                 if(!session)throw new Error('Entre novamente na conta.');
                 const remote=await carregarPacoteNuvem();window.pfdAssert();
@@ -4353,7 +4356,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 const rows=await response.json();window.pfdAssert();
                 if(!Array.isArray(rows)||rows.length!==1||!rows[0].updated_at)throw new Error('O banco remoto mudou durante o envio. Nenhuma confirmação foi registrada. Seus dados locais foram preservados.');
                 pfdLocal.setItem(CHAVE_ULTIMA_SINCRONIZACAO,rows[0].updated_at);
-                pfdLocal.setItem('pf_alteracao_confirmada',token);
+                pfdLocal.setItem('pf_alteracao_confirmada',token);pfSalvarBaseFinanceiraConfirmada(payload,session.user.id,rows[0].updated_at);
                 atualizarStatusNuvem('Dados enviados para a nuvem com sucesso.',true);return true;
             };
             const run=()=>navigator.locks?.request?navigator.locks.request('pfd-envio-'+window.pfdAssert(),{mode:'exclusive'},operation):operation();
@@ -4367,7 +4370,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         }
         function pfDadosFinanceirosIguais(a,b) {
             const campos=['transacoes','rubricas_ocultas','subitens_ocultos','rubricas_extras','subitens_extras','lixeira','data_abertura_projeto'];
-            const selecionar=p=>Object.fromEntries(campos.map(k=>[k,k==='transacoes'?[...(p?.[k]||[])].sort((x,y)=>String(x.id).localeCompare(String(y.id))):p?.[k]??(k==='data_abertura_projeto'?'':[])]));
+            const compararLinha=t=>{const c={...t};if(c.tipo==='Despesa'&&!c.dataPg&&['Pendente','A Vencer','Vencido'].includes(c.status)){delete c.status;delete c.idStatus;}return c;};
+            const selecionar=p=>Object.fromEntries(campos.map(k=>[k,k==='transacoes'?[...(p?.[k]||[])].map(compararLinha).sort((x,y)=>String(x.id).localeCompare(String(y.id))):p?.[k]??(k==='data_abertura_projeto'?'':[])]));
             return JSON.stringify(pfCanonicoSync(selecionar(a)))===JSON.stringify(pfCanonicoSync(selecionar(b)));
         }
         async function pfConfirmarCopiasIguais(remote) {
@@ -4409,7 +4413,81 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         window.addEventListener('online',pfVerificarNuvemAoRetornar);
         window.addEventListener('focus',pfVerificarNuvemAoRetornar);
 
+
+        // A cópia confirmada permite distinguir alterações financeiras de status calculados.
+        let pfRecebendoDadosNuvem=false;
+        function pfIdContaSync(){
+            try{return String(window.parent?.pfdUser?.id||(typeof obterSessaoNuvemManual==='function'?obterSessaoNuvemManual()?.user?.id:'')||'');}catch(_){return '';}
+        }
+        function pfSalvarBaseFinanceiraConfirmada(payload,userId,version){
+            if(!userId||!version||String(userId)!==pfIdContaSync())return false;
+            const fields=['transacoes','rubricas_ocultas','subitens_ocultos','rubricas_extras','subitens_extras','lixeira','data_abertura_projeto'];
+            const financeiro=Object.fromEntries(fields.map(k=>[k,payload?.[k]??(k==='data_abertura_projeto'?'':[])]));
+            try{pfdLocal.setItem('pf_base_financeira_confirmada_'+userId,JSON.stringify({user_id:String(userId),version,financeiro}));return true;}catch(error){console.warn('Não foi possível guardar a referência de sincronização; mantendo a proteção por versão.',error);return false;}
+        }
+        function pfLerBaseFinanceiraConfirmada(){
+            try{
+                const owner=pfIdContaSync();if(!owner)return null;
+                const base=JSON.parse(pfdLocal.getItem('pf_base_financeira_confirmada_'+owner)||'null');
+                const known=pfdLocal.getItem(CHAVE_ULTIMA_SINCRONIZACAO)||'';
+                if(!base||base.user_id!==owner||!base.financeiro||!known)return null;
+                if(base.version!==known&&!(typeof pfMesmaVersao==='function'&&pfMesmaVersao(base.version,known)))return null;
+                return base;
+            }catch(_){return null;}
+        }
+        function pfDetalheFalhaLoginNuvem(error){
+            if(error?.code==='invalid_credentials'||/invalid login credentials/i.test(error?.message||''))return 'E-mail ou senha da conta de sincronização não conferem. Use a mesma conta da nuvem do computador. A senha de abertura do aplicativo é independente. Seus dados locais foram mantidos.';
+            return resumirErroSupabase(error);
+        }
+        function pfComparacaoRecebimento(p){const c={...p};delete c.atualizado_localmente_em;return JSON.stringify(pfCanonicoSync(c));}
+        async function receberDadosNuvemComBackup(){
+            if(pfRecebendoDadosNuvem)return false;
+            pfRecebendoDadosNuvem=true;
+            let localAntes=null,antes=null,aplicando=false,concluido=false;
+            const metadata=[CHAVE_ULTIMA_SINCRONIZACAO,CHAVE_ULTIMA_ALTERACAO_LOCAL,'pf_alteracao_token','pf_alteracao_confirmada'];
+            try{
+                clearTimeout(sincronizacaoNuvemTimer);await pfFilaEnvio;
+                const session=await obterSessaoNuvem();
+                if(!session?.access_token||!session.user?.id)throw Error('Entre na conta de sincronização com o mesmo e-mail e senha usados no computador.');
+                const owner=String(session.user.id),remote=await carregarPacoteNuvem();
+                if(String((await obterSessaoNuvem())?.user?.id||'')!==owner)throw Error('A conta mudou. Abra novamente a sincronização.');
+                if(!Array.isArray(remote?.payload?.transacoes)||!remote.updated_at)throw Error('A nuvem não devolveu um banco válido. Nenhum dado foi substituído.');
+                if(typeof validarBackup==='function')validarBackup(remote.payload);
+                localAntes=coletarPacoteNuvem();
+                if(!window.confirm('Receber neste dispositivo os dados atuais da sua conta na nuvem?\n\nNeste dispositivo: '+localAntes.transacoes.length+' lançamento(s).\nNa nuvem: '+remote.payload.transacoes.length+' lançamento(s).\n\nPrimeiro será salvo um backup das DUAS cópias. Depois da sua confirmação, somente os dados deste dispositivo serão substituídos.'))return false;
+                const backup={sistema:'Planejamento Financeiro',finalidade:'Backup antes de receber dados da nuvem',user_id:owner,data_backup:new Date().toISOString(),local:localAntes,nuvem:remote};
+                // Se a cópia de segurança não puder ser gravada, interrompe antes da troca.
+                pfdLocal.setItem('pf_backup_antes_receber_nuvem_'+owner,JSON.stringify(backup));
+                const url=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json;charset=utf-8'}));
+                const link=document.createElement('a');link.href=url;link.download='backup_celular_e_nuvem_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+                if(!window.confirm('Confira se o arquivo backup_celular_e_nuvem foi baixado.\n\nCom o backup salvo, confirme para receber os dados da nuvem neste dispositivo. Se o download não terminou, cancele.'))return false;
+                await pfFilaEnvio;
+                const current=await carregarPacoteNuvem(),active=await obterSessaoNuvem();
+                if(String(active?.user?.id||'')!==owner)throw Error('A conta mudou durante a comparação. Nenhum dado foi substituído.');
+                if(!pfMesmaVersao(current?.updated_at,remote.updated_at))throw Error('A nuvem mudou durante a comparação. Compare novamente para receber a cópia mais recente.');
+                if(pfComparacaoRecebimento(current?.payload)!==pfComparacaoRecebimento(remote.payload))throw Error('O conteúdo da nuvem mudou durante a comparação. Nenhum dado foi substituído.');
+                if(pfComparacaoRecebimento(localAntes)!==pfComparacaoRecebimento(coletarPacoteNuvem()))throw Error('Os dados locais mudaram durante a comparação. Nenhum dado foi substituído.');
+                antes=Object.fromEntries(metadata.map(k=>[k,pfdLocal.getItem(k)]));
+                aplicando=true;aplicarPacoteNuvem(current.payload);
+                pfdLocal.setItem(CHAVE_ULTIMA_SINCRONIZACAO,current.updated_at);
+                pfdLocal.setItem(CHAVE_ULTIMA_ALTERACAO_LOCAL,current.updated_at);
+                pfdLocal.setItem('pf_alteracao_confirmada',pfdLocal.getItem('pf_alteracao_token')||'');
+                pfSalvarBaseFinanceiraConfirmada(current.payload,owner,current.updated_at);
+                concluido=true;aplicando=false;
+                popularSelectsDinamicos();renderTable();atualizarPainelGerencial();atualizarInfoBanco();verificarContasVencendoHoje();
+                atualizarStatusNuvem('Dados da nuvem recebidos neste dispositivo. A cópia anterior foi preservada no backup.',true);
+                alert('Dados recebidos com sucesso. A nuvem permaneceu intacta e a cópia anterior deste dispositivo está no backup.');return true;
+            }catch(error){
+                if(aplicando&&localAntes){
+                    try{aplicarPacoteNuvem(localAntes);for(const [k,v]of Object.entries(antes||{})){if(v===null)pfdLocal.removeItem(k);else pfdLocal.setItem(k,v);}}
+                    catch(rollbackError){console.error('Falha ao restaurar a cópia local; preserve o backup baixado.',rollbackError);}
+                }
+                atualizarStatusNuvem((concluido?'Dados recebidos; falha ao atualizar a tela: ':'Falha ao receber os dados: ')+error.message);
+                alert((concluido?'Os dados foram recebidos, mas a tela precisa ser atualizada. ':'Não foi possível concluir o recebimento. Preserve o backup e os dados deste dispositivo. ')+error.message);return false;
+            }finally{pfRecebendoDadosNuvem=false;}
+        }
         async function pfSincronizarConta(){
+            if(pfRecebendoDadosNuvem)throw Error('Recebimento da nuvem em andamento. Aguarde a conclusão.');
             await pfFilaEnvio;window.pfdAssert();
             const remote=await carregarPacoteNuvem();window.pfdAssert();
             if(!remote?.payload){await salvarPacoteNuvem();return 'enviado';}
@@ -4418,6 +4496,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             pfdLocal.setItem(CHAVE_ULTIMA_SINCRONIZACAO,remote.updated_at);
             pfdLocal.setItem(CHAVE_ULTIMA_ALTERACAO_LOCAL,remote.updated_at);
             pfdLocal.setItem('pf_alteracao_confirmada',pfdLocal.getItem('pf_alteracao_token')||'');
+            pfSalvarBaseFinanceiraConfirmada(remote.payload,pfIdContaSync(),remote.updated_at);
             atualizarStatusNuvem('Banco da sua conta carregado neste dispositivo.',true);return 'carregado';
         }
         async function sincronizarNuvemAoAbrir(){
@@ -4494,7 +4573,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             sincronizacaoNuvemTimer = setTimeout(async () => {
                 try {
                     const session = await obterSessaoNuvem();
-                    if (session) await salvarPacoteNuvem();
+                    if (session) await pfSincronizarConta();
                 } catch (e) {
                     console.error('Erro ao salvar na nuvem:', e);
                     atualizarStatusNuvem('Falha na sincronização. Alteração salva neste dispositivo; sincronização pendente. '+e.message);
@@ -4525,11 +4604,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 const session = await obterSessaoNuvem();
                 const armazenamento = (() => { try { return !!window.pfdLocal; } catch(e) { return false; } })();
                 if (!session) {
-                    atualizarStatusNuvem('Diagnóstico: este PC ainda não possui uma sessão Supabase gravada. Armazenamento: ' + (armazenamento ? 'OK' : 'bloqueado') + '.');
+                    atualizarStatusNuvem('Diagnóstico: este dispositivo ainda não possui uma sessão Supabase gravada. Armazenamento: ' + (armazenamento ? 'OK' : 'bloqueado') + '.');
                     return;
                 }
                 const remoto = await carregarPacoteNuvem();
-                atualizarStatusNuvem(remoto?.payload ? 'Diagnóstico OK: conta, sessão e tabela acessíveis neste PC.' : 'Diagnóstico OK: conta e sessão acessíveis; ainda não há banco salvo para este usuário.', true);
+                atualizarStatusNuvem(remoto?.payload ? 'Diagnóstico OK: conta, sessão e tabela acessíveis neste dispositivo.' : 'Diagnóstico OK: conta e sessão acessíveis; ainda não há banco salvo para este usuário.', true);
             } catch (e) {
                 const detalhe = resumirErroSupabase(e);
                 atualizarStatusNuvem('Diagnóstico: ' + detalhe, false);
@@ -7686,7 +7765,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.33';
+ const CURRENT_VERSION='V4.12.34';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';

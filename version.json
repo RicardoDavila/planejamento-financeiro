@@ -1,11 +1,11 @@
 {
-  "version": "V4.12.33",
-  "name": "V4.12.33",
+  "version": "V4.12.34",
+  "name": "V4.12.34",
   "channel": "pessoal",
   "notes": [
-    "Corrige o enquadramento do fluxo de caixa ao abrir pelo menu e adiciona relatório completo com saldo inicial, agrupamentos, projeção e exportações.",
-    "Padroniza cores, fontes e logotipo dos relatórios gerencial/mensal, gráficos evolutivos e fluxo de caixa.",
-    "Mostra valores nas barras dos gráficos e mantém os painéis, filtros, indicadores e cálculos originais.",
-    "Uniformiza o ícone azul do aplicativo no cabeçalho, na navegação e nos relatórios."
+    "Corrige a tentativa de login para preservar a sessão anterior quando a senha informada é recusada.",
+    "Adiciona recebimento dos dados do PC/nuvem no celular com backup das duas cópias, confirmação e proteção contra mudanças durante a operação.",
+    "Evita conflitos falsos por atualizações automáticas de status e mantém a proteção contra alterações financeiras simultâneas.",
+    "Preserva os relatórios, o logotipo e todos os painéis aprovados."
   ]
 }
