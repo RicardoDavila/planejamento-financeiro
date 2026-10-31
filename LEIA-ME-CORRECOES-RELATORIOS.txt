@@ -12,3 +12,5 @@ Validação: testes automatizados de geração do relatório, fluxo de caixa e p
 Ajuste adicional: Saídas por rúbrica em duas colunas balanceadas na tela e na impressão, com uma coluna em telas pequenas. Testado com 24 rúbricas, preservação da ordem e caso sem dados.
 
 Melhoria da Análise do mês: título inclui receitas e despesas. Primeira linha: Evolução das Receitas e Evolução das Despesas, com totais por vencimento dos últimos seis meses até o fim do período selecionado. Segunda linha: Receitas por Rubrica e Despesas por Rubricas, respeitando os lançamentos filtrados. Receitas em verde e despesas em vermelho. A proteção do painel limpa os quatro gráficos quando bloqueado. Testes: node automacao/test_analise_mensal.cjs. Inclui todas as correções anteriores.
+
+Correção da publicação: referência SHA-256 do layout desktop atualizada para a melhoria autorizada da análise mensal. Teste de quatro gráficos incluído na descoberta automática do GitHub Actions. Validação: 40 testes passaram e geração do site concluída.
