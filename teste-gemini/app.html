@@ -8605,11 +8605,26 @@ html body #pfPainelAcoes button[onclick="openModal()"]{display:none!important}#t
 body.dark-mode #clean-flow-details,body.dark-mode #clean-flow-toggle,body.dark-mode #previewAdvancedToggle{background:#1c293b;color:#dce4f0;border-color:#344158}
 
 }</style>
+<style id="pf-month-analysis-series">
+#clean-month-analysis .analysis-grid>section{min-width:0}
+#clean-month-analysis .analysis-revenue .analysis-fill{background:#047857}
+#clean-month-analysis .analysis-expense .analysis-fill{background:#bd2b20}
+body.dark-mode #clean-month-analysis .analysis-revenue .analysis-fill{background:#6ee7b7}
+body.dark-mode #clean-month-analysis .analysis-expense .analysis-fill{background:#fca5a5}
+</style>
 <script id="pf-desktop-clean-layout">(function(){
 'use strict';
 const desktop=matchMedia('(min-width:901px) and (pointer:fine)');
 if(!desktop.matches)return;
 const $=id=>document.getElementById(id);
+// Totais mensais por vencimento; a distribuição por rubrica respeita os filtros ativos.
+function monthAnalysisData(rows,allRows,chosen){
+ const date=new Date(Number(chosen.slice(0,4)),Number(chosen.slice(5,7))-1,1);
+ const categories=type=>{const sums=new Map();for(const row of rows){if(row.tipo!==type)continue;const name=String(row.categoria||'Sem rubrica');sums.set(name,(sums.get(name)||0)+Number(row.valor||0));}return [...sums].sort((a,b)=>b[1]-a[1]);};
+ const months=Array.from({length:6},(_,i)=>{const d=new Date(date.getFullYear(),date.getMonth()-5+i,1);return {key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),label:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'})};});
+ const history=type=>months.map(month=>[month.label,allRows.filter(row=>row.tipo===type&&String(row.vencimento).startsWith(month.key)).reduce((sum,row)=>sum+Number(row.valor||0),0)]);
+ return {revenueCategories:categories('Receita'),expenseCategories:categories('Despesa'),revenueHistory:history('Receita'),expenseHistory:history('Despesa')};
+}
 function install(){
  if(!$('appConteudo')||$('reference-header'))return;
  const greeting=$('pf495Greeting'),header=document.createElement('div');header.id='reference-header';greeting.before(header);header.append(greeting);
@@ -8625,21 +8640,23 @@ function install(){
  const heading=[...document.querySelectorAll('#appConteudo h1')].find(x=>x.id!=='pf495GreetingTitle'&&x.textContent.includes('Planejamento Financeiro'));if(heading?.textContent.includes('Planejamento Financeiro')){const holder=heading.parentElement;if(!holder.contains(panel)&&!holder.contains(greeting))holder.classList.add('production-redundant-title');}
  const metadata=$('infoBancoSeguranca');if(metadata){metadata.classList.add('production-bank-meta');$('appConteudo').append(metadata);}
  const table=$('tabelaLancamentosWrapper'),totals=document.createElement('div');totals.id='clean-analysis-totals';table.after(totals);
- const analysis=document.createElement('section');analysis.id='clean-month-analysis';analysis.innerHTML='<button type="button" id="clean-analysis-toggle" aria-expanded="false" aria-controls="clean-analysis-content">▸ Análise do mês · despesas por rubrica e evolução</button><div class="analysis-grid" id="clean-analysis-content" hidden><section><h3>Despesas por rubrica</h3><p>Despesas previstas nos lançamentos filtrados.</p><div id="clean-category-bars" class="analysis-bars"></div></section><section><h3>Evolução das despesas</h3><p>Seis meses até o fim do período selecionado. Meses sem registros aparecem zerados.</p><div id="clean-history-bars" class="analysis-bars"></div></section></div>';table.parentElement.after(analysis);
- $('clean-analysis-toggle').onclick=()=>{const content=$('clean-analysis-content');content.hidden=!content.hidden;$('clean-analysis-toggle').setAttribute('aria-expanded',String(!content.hidden));$('clean-analysis-toggle').textContent=(content.hidden?'▸':'▾')+' Análise do mês · despesas por rubrica e evolução';};
+ const analysis=document.createElement('section');analysis.id='clean-month-analysis';analysis.innerHTML='<button type="button" id="clean-analysis-toggle" aria-expanded="false" aria-controls="clean-analysis-content">▸ Análise do mês de receitas e despesas por rubrica e evolução</button><div class="analysis-grid" id="clean-analysis-content" hidden><section class="analysis-revenue"><h3>Evolução das Receitas</h3><p>Total de receitas de cada mês. Seis meses até o fim do período selecionado, incluindo meses sem registros.</p><div id="clean-revenue-history-bars" class="analysis-bars"></div></section><section class="analysis-expense"><h3>Evolução das Despesas</h3><p>Total de despesas de cada mês. Seis meses até o fim do período selecionado, incluindo meses sem registros.</p><div id="clean-history-bars" class="analysis-bars"></div></section><section class="analysis-revenue"><h3>Receitas por Rubrica</h3><p>Receitas previstas nos lançamentos filtrados.</p><div id="clean-revenue-category-bars" class="analysis-bars"></div></section><section class="analysis-expense"><h3>Despesas por Rubricas</h3><p>Despesas previstas nos lançamentos filtrados.</p><div id="clean-category-bars" class="analysis-bars"></div></section></div>';table.parentElement.after(analysis);
+ $('clean-analysis-toggle').onclick=()=>{const content=$('clean-analysis-content');content.hidden=!content.hidden;$('clean-analysis-toggle').setAttribute('aria-expanded',String(!content.hidden));$('clean-analysis-toggle').textContent=(content.hidden?'▸':'▾')+' Análise do mês de receitas e despesas por rubrica e evolução';};
  const fmt=n=>formatarMoeda(n),escape=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function redraw(){
   const unlocked=!panel.classList.contains('pf-painel-oculto')&&!document.body.classList.contains('auth-pendente');
   $('clean-analysis-toggle').disabled=!unlocked;
-  if(!unlocked){$('clean-analysis-content').hidden=true;$('clean-analysis-toggle').setAttribute('aria-expanded','false');$('clean-analysis-toggle').textContent='▸ Análise do mês · desbloqueie o painel para consultar';totals.textContent='Totais protegidos · desbloqueie o painel gerencial';$('clean-category-bars').replaceChildren();$('clean-history-bars').replaceChildren();return;}
-  $('clean-analysis-toggle').textContent=($('clean-analysis-content').hidden?'▸':'▾')+' Análise do mês · despesas por rubrica e evolução';
+  if(!unlocked){$('clean-analysis-content').hidden=true;$('clean-analysis-toggle').setAttribute('aria-expanded','false');$('clean-analysis-toggle').textContent='▸ Análise do mês · desbloqueie o painel para consultar';totals.textContent='Totais protegidos · desbloqueie o painel gerencial';['clean-category-bars','clean-history-bars','clean-revenue-category-bars','clean-revenue-history-bars'].forEach(id=>$(id).replaceChildren());return;}
+  $('clean-analysis-toggle').textContent=($('clean-analysis-content').hidden?'▸':'▾')+' Análise do mês de receitas e despesas por rubrica e evolução';
   const rows=getFilteredTransactions(),sum=type=>rows.filter(r=>r.tipo===type).reduce((a,r)=>a+Number(r.valor||0),0);
   totals.replaceChildren();const count=document.createElement('span'),values=document.createElement('span');count.textContent=rows.length+' lançamento(s) exibido(s)';values.textContent='Receitas: '+fmt(sum('Receita'))+' · Despesas: '+fmt(sum('Despesa'))+' · Investimentos: '+fmt(sum('Investimentos'));totals.append(count,values);
-  const categories=new Map();rows.filter(r=>r.tipo==='Despesa').forEach(r=>categories.set(r.categoria,(categories.get(r.categoria)||0)+Number(r.valor||0)));
-  const bars=entries=>{const max=Math.max(1,...entries.map(x=>x[1]));return entries.map(([name,value])=>'<div class="analysis-row"><span>'+escape(name)+'</span><div class="analysis-track"><div class="analysis-fill" style="width:'+value/max*100+'%"></div></div><span class="analysis-amount">'+escape(fmt(value))+'</span></div>').join('');};
-  $('clean-category-bars').innerHTML=bars([...categories].sort((a,b)=>b[1]-a[1]))||'<p>Sem despesas para os filtros selecionados.</p>';
-  const chosen=$('filtroDataFim').value||new Date().toISOString().slice(0,10),date=new Date(Number(chosen.slice(0,4)),Number(chosen.slice(5,7))-1,1);
-  const history=Array.from({length:6},(_,i)=>{const d=new Date(date.getFullYear(),date.getMonth()-5+i,1),month=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');return [d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}),transacoes.filter(r=>r.tipo==='Despesa'&&String(r.vencimento).startsWith(month)).reduce((a,r)=>a+Number(r.valor||0),0)];});$('clean-history-bars').innerHTML=bars(history);
+  const bars=entries=>{const max=Math.max(1,...entries.map(x=>x[1]));return entries.map(([name,value])=>'<div class="analysis-row"><span>'+escape(name)+'</span><div class="analysis-track"><div class="analysis-fill" style="width:'+Math.max(0,value/max*100)+'%"></div></div><span class="analysis-amount">'+escape(fmt(value))+'</span></div>').join('');};
+  const chosen=$('filtroDataFim').value||new Date().toISOString().slice(0,10);
+  const data=monthAnalysisData(rows,transacoes,chosen);
+  $('clean-revenue-category-bars').innerHTML=bars(data.revenueCategories)||'<p>Sem receitas para os filtros selecionados.</p>';
+  $('clean-category-bars').innerHTML=bars(data.expenseCategories)||'<p>Sem despesas para os filtros selecionados.</p>';
+  $('clean-revenue-history-bars').innerHTML=bars(data.revenueHistory);
+  $('clean-history-bars').innerHTML=bars(data.expenseHistory);
  }
  function labelMonth(){const start=$('filtroDataInicio').value,end=$('filtroDataFim').value;if(start&&end&&start.slice(0,7)===end.slice(0,7)){$('clean-month').textContent=new Date(Number(start.slice(0,4)),Number(start.slice(5,7))-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});}else $('clean-month').textContent=start||end?'Período personalizado':'Todos os períodos';}
  function changeMonth(delta){const chosen=$('filtroDataInicio').value||new Date().toISOString().slice(0,10),d=new Date(Number(chosen.slice(0,4)),Number(chosen.slice(5,7))-1+delta,1);const iso=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');$('filtroDataInicio').value=iso(d);$('filtroDataFim').value=iso(new Date(d.getFullYear(),d.getMonth()+1,0));$('filtroDataFim').dispatchEvent(new Event('change',{bubbles:true}));}
