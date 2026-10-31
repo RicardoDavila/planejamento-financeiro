@@ -1,3 +1,4 @@
+(async()=>{
 const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),path=require('path');
 const root=path.resolve(__dirname,'..');
 for(const file of ['index.html','distribuicao/app.html','teste-gemini/app.html']){
@@ -37,11 +38,11 @@ for(const file of ['index.html','distribuicao/app.html','teste-gemini/app.html']
  // Exercita abertura, controles do relatório e o deslocamento sob o cabeçalho fixo.
  const controls={},downloads=[],messages=[];let reportHtml='',printed=false,scrolled;
  const doc={open(){},close(){},write:s=>reportHtml=s,getElementById:id=>controls[id]??(controls[id]={}),body:{append(){}},createElement:()=>({click(){downloads.push(this.download);},remove(){}})};
- const pop={document:doc,print(){printed=true;},location:{}};
+ let loadReport,reportBlob,reportUrl;const pop={document:doc,print(){printed=true;},addEventListener:(type,fn)=>{assert.equal(type,'load');loadReport=fn;},location:{replace:url=>{reportUrl=url;}}};
  let expanded=false;
  const nodes={painelGerencial:{classList:{contains:()=>false}},filtroDataInicio:{value:'2026-10-01'},filtroDataFim:{value:'2026-10-31'},'clean-flow-toggle':{getAttribute:()=>String(expanded),click:()=>expanded=true},'clean-flow-details':{getBoundingClientRect:()=>({top:500}),setAttribute(){},focus:o=>assert(o.preventScroll)},pfMenuTopo:{getBoundingClientRect:()=>({bottom:58})}};
- ctx.document={getElementById:id=>nodes[id]||null,body:{classList:{contains:()=>false}}};ctx.getFilteredTransactions=o=>o?.ignorarPeriodo?base:selected;ctx.alert=s=>messages.push(s);ctx.setTimeout=()=>{};ctx.URL={createObjectURL:()=> 'blob:test',revokeObjectURL(){}};ctx.requestAnimationFrame=f=>f();ctx.window.open=()=>pop;ctx.window.scrollY=800;ctx.window.scrollTo=o=>scrolled=o;
- ctx.window.abrirRelatorioFluxoCaixa();assert(reportHtml.includes('Relatório de Fluxo de Caixa'));controls['fc-print'].onclick();assert(printed);controls['fc-csv'].onclick();assert.equal(downloads[0],'fluxo-de-caixa.csv');
+ ctx.document={getElementById:id=>nodes[id]||null,body:{classList:{contains:()=>false}}};ctx.getFilteredTransactions=o=>o?.ignorarPeriodo?base:selected;ctx.alert=s=>messages.push(s);ctx.setTimeout=()=>{};ctx.URL={createObjectURL:blob=>{reportBlob=blob;return 'blob:test';},revokeObjectURL(){}};ctx.requestAnimationFrame=f=>f();ctx.window.open=()=>pop;ctx.window.scrollY=800;ctx.window.scrollTo=o=>scrolled=o;
+ ctx.window.abrirRelatorioFluxoCaixa();assert.equal(reportUrl,'blob:test');reportHtml=await reportBlob.text();const reportContext={window:pop,document:doc,URL:ctx.URL,Blob,alert:ctx.alert,setTimeout:ctx.setTimeout};pop.opener=ctx.window;vm.runInNewContext(reportHtml.match(/<script>([\s\S]*?)<\/script>/)[1],reportContext);assert(reportHtml.includes('Relatório de Fluxo de Caixa'));controls['fc-print'].onclick();assert(printed);controls['fc-csv'].onclick();assert.equal(downloads[0],'fluxo-de-caixa.csv');
  controls['fc-xlsx'].onclick();assert(messages.at(-1).includes('biblioteca de Excel'));
  ctx.window.XLSX={utils:{book_new:()=>({}),aoa_to_sheet:r=>{assert.equal(typeof r[4][1],'number');return {};},book_append_sheet(){}},write:(b,o)=>{assert.equal(o.bookType,'xlsx');return new Uint8Array([80,75]);}};
  controls['fc-xlsx'].onclick();assert.equal(downloads.at(-1),'fluxo-de-caixa.xlsx');controls['fc-email'].onclick();assert(pop.location.href.startsWith('mailto:'));
@@ -49,3 +50,5 @@ for(const file of ['index.html','distribuicao/app.html','teste-gemini/app.html']
  ctx.window.abrirFluxoCaixa();assert(expanded);assert.equal(scrolled.top,1226);
  console.log('PASS:',file,'saldo inicial, centavos, investimentos, agrupamentos, filtros, status, projeção, datas e exportação segura');
 }
+
+})().catch(e=>{console.error(e);process.exitCode=1;});

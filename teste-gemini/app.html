@@ -1965,6 +1965,12 @@ const valueLabels={
  id:'pfReportValueLabels',
  beforeInit(chart){if(chart.options.plugins?.legend&&chart.options.plugins.legend.display!==false)chart.options.plugins.legend.position='bottom';},
  beforeUpdate(chart){
+  const dark=document.body?.classList.contains('dark-mode')&&!(typeof matchMedia==='function'&&matchMedia('print').matches);
+  const ink=dark?'#dbe5f3':palette.muted;
+  chart.options.color=ink;
+  for(const scale of Object.values(chart.options.scales||{})){if(scale.ticks)scale.ticks.color=ink;if(scale.title)scale.title.color=ink;if(scale.grid)scale.grid.color=dark?'#475569':'#e2e8f0';}
+  if(chart.options.plugins?.legend?.labels)chart.options.plugins.legend.labels.color=ink;
+  if(chart.options.plugins?.title)chart.options.plugins.title.color=ink;
   const type=chart.config.type,sets=chart.data.datasets||[];
   for(const [i,d]of sets.entries()){
    const kind=d.type||type;
@@ -7364,6 +7370,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   function applyTheme(mode){
     const dark = mode === 'dark';
     document.body.classList.toggle('dark-mode', dark);
+    if(typeof Chart!=='undefined')for(const chart of Object.values(Chart.instances||{}))chart.update('none');
     const b=document.getElementById('pf-theme-toggle');
     if(b){
       b.textContent=dark?'☀️':'🌙';
@@ -9196,6 +9203,9 @@ main{max-width:1160px;margin:auto;background:#fff;padding:32px 38px;border-radiu
 .fc-category-chart h3,.fc-category-chart>.fc-note{break-after:avoid}
 @media screen and (max-width:700px){.fc-category-columns{column-count:1}}
 @media print{.fc-category-columns{column-count:2;column-gap:20px}.fc-category-columns .fc-category{padding:7px 0;break-inside:avoid}.fc-category-chart{break-inside:auto}}
+
+@media screen{html{width:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%;color-scheme:light}body{width:100%;min-width:0}main{width:100%;min-width:0}.fc-scroll{width:100%;min-width:0;overflow-x:auto}.fc-report-identity>div{min-width:0}h1{overflow-wrap:anywhere}}
+@media screen and (max-width:700px){body{padding:8px}main{padding:16px 12px}.fc-report-identity{gap:9px}.fc-logo{width:36px;height:36px;flex-basis:36px}.fc-report-header h1{font-size:22px}.fc-category>div:first-child{flex-wrap:wrap;gap:3px}.fc-actions button{flex:1 1 140px}.fc-chart-grid>*{min-width:0}}
 `;
 function splitTotals(rows,paid=false){return '<div class="fc-status-totals"><span>'+rows.length+' lançamento(s)</span><span>'+(paid?'Recebido':'A receber')+': <b>'+amount(sum(rows.filter(incoming),cents))+'</b></span><span>'+(paid?'Pago':'A pagar')+': <b>'+amount(-sum(rows.filter(t=>!incoming(t)),cents))+'</b></span>'+(paid?'<span>Líquido: <b>'+amount(sum(rows,signed))+'</b></span>':'')+'</div>';}
 function reportBody(m,meta){
@@ -9238,11 +9248,13 @@ function openReport(){
  const m=snapshot();if(m.invalid){alert('Revise o período: a data inicial é posterior à final.');return;}
  const popup=window.open('','_blank');if(!popup){alert('Permita a abertura de uma nova aba para visualizar o relatório.');return;}
  const meta={filters:filters(),issued:new Date().toLocaleString('pt-BR')},rows=exportRows(m,meta);
- popup.document.open();popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório de Fluxo de Caixa</title><style>'+css+'</style></head><body><main>'+reportBody(m,meta)+'</main></body></html>');popup.document.close();
- popup.document.getElementById('fc-print').onclick=()=>popup.print();
- popup.document.getElementById('fc-csv').onclick=()=>download(rows,'csv',popup.document);
- popup.document.getElementById('fc-xlsx').onclick=()=>download(rows,'xlsx',popup.document);
- popup.document.getElementById('fc-email').onclick=()=>{popup.location.href='mailto:?subject='+encodeURIComponent('Relatório de Fluxo de Caixa')+'&body='+encodeURIComponent('Relatório de Fluxo de Caixa\nPeríodo: '+label(m.start)+' a '+label(m.end)+'\n'+meta.filters+'\nReceitas: '+money(m.revenue)+'\nSaídas: '+money(m.expense)+'\nSaldo final previsto: '+money(m.closing)+'\n\nSalve o PDF ou exporte a planilha e anexe ao e-mail antes de enviar.');};
+ const email='mailto:?subject='+encodeURIComponent('Relatório de Fluxo de Caixa')+'&body='+encodeURIComponent('Relatório de Fluxo de Caixa\nPeríodo: '+label(m.start)+' a '+label(m.end)+'\n'+meta.filters+'\nReceitas: '+money(m.revenue)+'\nSaídas: '+money(m.expense)+'\nSaldo final previsto: '+money(m.closing)+'\n\nSalve o PDF ou exporte a planilha e anexe ao e-mail antes de enviar.');
+ const payload=JSON.stringify({rows,email}).replace(/</g,'\\u003c');
+ const actions='const safeCell='+safeCell.toString()+';'+csv.toString()+download.toString().replace('const x=window.XLSX;','const x=window.XLSX||window.opener?.XLSX;')+';const data='+payload+';document.getElementById("fc-print").onclick=()=>window.print();document.getElementById("fc-csv").onclick=()=>download(data.rows,"csv");document.getElementById("fc-xlsx").onclick=()=>download(data.rows,"xlsx");document.getElementById("fc-email").onclick=()=>{window.location.href=data.email;};';
+ const html='<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório de Fluxo de Caixa</title><style>'+css+'</style></head><body><main>'+reportBody(m,meta)+'</main><script>'+actions+'<'+'/script></body></html>';
+ const reportUrl=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));
+ try{popup.location.replace(reportUrl);}catch(error){URL.revokeObjectURL(reportUrl);popup.close();alert('Não foi possível abrir o relatório. Tente novamente.');return;}
+ setTimeout(()=>URL.revokeObjectURL(reportUrl),60000);
 }
 function refresh(){
  const target=document.getElementById('tabelaFluxoCaixa');if(!target||!document.getElementById('fc-toolbar'))return;
@@ -9274,6 +9286,26 @@ html body #pfMenuTopo .pf-menu-marca{display:inline-flex!important;align-items:c
 html body #pfMenuTopo .pf-project-logo{display:block;width:28px!important;height:28px!important;flex:0 0 28px;object-fit:contain;border-radius:7px}
 html body #pfSaasSidebar .pf-brand-icon{background:transparent}
 html body #pfSaasSidebar .pf-project-logo{display:block;width:38px!important;height:38px!important;object-fit:contain;border-radius:10px}
+</style>
+
+<style id="pf-dark-controls-fix">
+/* Os controles com fundo próprio precisam de texto e fundo no mesmo tema. */
+@media screen{
+html body.dark-mode #modalCalculadora .calc-btn{background:#263449!important;color:#f8fafc!important;border-color:#64748b!important}
+html body.dark-mode #modalCalculadora .calc-func{background:#334155!important;color:#fff!important}
+html body.dark-mode #modalCalculadora .calc-op{background:#1e3a5f!important;color:#bfdbfe!important}
+html body.dark-mode #modalCalculadora .calc-percent{background:#493719!important;color:#fde68a!important}
+html body.dark-mode #modalCalculadora .calc-equals{background:#4338ca!important;color:#fff!important}
+html body.dark-mode #modalCalculadora .calc-btn *{color:inherit!important}
+html body.dark-mode #modalGraficos .pf-chip,html body.dark-mode #modalGraficos .graficos-controles button{background:#334155!important;color:#f8fafc!important;border-color:#64748b!important}
+html body.dark-mode #modalGraficos .pf-chip *,html body.dark-mode #modalGraficos .graficos-controles button *{color:inherit!important}
+html body.dark-mode #modalGraficos .pf-chart-card{background:#172033!important;color:#f8fafc!important;border-color:#475569!important}
+html body.dark-mode #modalGraficos .pf-bar-row,html body.dark-mode #modalGraficos .pf-table,html body.dark-mode #modalGraficos .pf-table th{color:#e2e8f0!important}
+html body.dark-mode #modalGraficos .pf-bar-track{background:#334155!important}
+html body.dark-mode #modalGraficos .pf-click:hover{background:#263449!important}
+html body.dark-mode #modalGraficos .text-emerald-800{color:#6ee7b7!important}
+html body.dark-mode #modalGraficos .text-rose-800{color:#fda4af!important}
+}
 </style>
 </body>
 </html>

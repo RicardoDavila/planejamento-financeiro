@@ -1,0 +1,8 @@
+Correções para celular — base: ZIP enviado às 15h39 de 31/10/2026.
+
+- Calculadora: cores de fundo e texto coordenadas no tema escuro, incluindo operadores, porcentagem e ícones.
+- Gráficos: controles, filtros, legendas, textos dos eixos e quadros com contraste no tema escuro. Trocar o tema redesenha os gráficos abertos.
+- Fluxo de Caixa: navegação para documento HTML completo para inicialização do viewport no Chrome Android; largura responsiva e tabelas com rolagem interna. Ações de impressão, CSV, Excel e e-mail preservadas.
+
+Enviar todos os arquivos ao repositório, incluindo automacao. Mantidas as melhorias anteriores.
+Validação automatizada: contraste das cores dos controles, temas dos gráficos, ações do relatório, sintaxe, cálculos e testes de publicação. A aparência final precisa ser conferida no aparelho após a atualização.
