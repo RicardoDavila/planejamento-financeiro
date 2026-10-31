@@ -1,1 +1,1 @@
-Mapa de calor: contraste dos dias e valores corrigido no modo escuro. No celular, tamanho das letras e altura das linhas aumentados. Mantidas as correções anteriores. Conferir a aparência no aparelho após atualizar.
+Mapa de calor: dias e valores legíveis no modo escuro. Barras de intensidade restauradas no celular, em linha própria abaixo do dia e do valor. Mantidas as duas colunas e as correções anteriores.

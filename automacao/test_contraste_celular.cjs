@@ -6,6 +6,9 @@ for(const file of ['index.html','distribuicao/app.html','teste-gemini/app.html']
  for(const rule of css.matchAll(/\{background:(#[0-9a-f]{6})!important;color:(#[0-9a-f]{6})!important/g)){
   const a=luminance(rule[1]),b=luminance(rule[2]);assert((Math.max(a,b)+.05)/(Math.min(a,b)+.05)>=4.5,'Contraste insuficiente: '+rule[0]);
  }
+ // No celular, a barra ocupa uma linha própria sem ocultar dia e valor.
+ assert(css.includes('#modalGraficos #pfHeatmap .pf-heat-bar{display:block;grid-column:1 / -1;'));
+ assert(!css.includes('#modalGraficos #pfHeatmap .pf-heat-bar{display:none}'));
  const doc={readyState:'loading',addEventListener(){},body:{classList:{contains:()=>true}}},ctx={window:{addEventListener(){}},document:doc,matchMedia:()=>({matches:false})};vm.createContext(ctx);
  vm.runInContext(html.match(/<script id="pf-report-theme">([\s\S]*?)<\/script>/)[1],ctx);
  const chart={config:{type:'line'},data:{datasets:[]},options:{scales:{x:{ticks:{},title:{},grid:{}}},plugins:{legend:{labels:{}},title:{}}}};
