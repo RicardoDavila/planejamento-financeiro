@@ -1,0 +1,10 @@
+Correções dos relatórios — 31/10/2026
+
+1. Tipografia de impressão padronizada com base no Fluxo de Caixa, incluindo rótulos e valores dos gráficos.
+2. Valores das barras semanais inclinados em 60 graus, com espaço superior reservado. Períodos longos divididos em blocos de até seis semanas.
+3. Comparativo financeiro e Despesas por Descrição reorganizados: cada campo apresenta seu conteúdo em duas colunas, com quebras entre registros e descrições completas. As tabelas gerenciais também aproveitam duas colunas na impressão.
+
+Arquivos alterados: index.html, distribuicao/app.html e teste-gemini/app.html.
+Extraia o ZIP e substitua os arquivos da aplicação pela versão corrigida. Gere os relatórios novamente pelo sistema. Os PDFs enviados como referência não foram alterados.
+
+Validação: testes automatizados de geração do relatório, fluxo de caixa e preservação dos cálculos passaram nas versões correspondentes. A renderização visual final em navegador não pôde ser concluída: a execução do navegador de teste foi bloqueada pelo ambiente. A redução exata de páginas depende dos dados e filtros selecionados.
