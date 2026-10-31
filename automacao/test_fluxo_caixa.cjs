@@ -19,6 +19,14 @@ for(const file of ['index.html','distribuicao/app.html','teste-gemini/app.html']
  assert(api.calculate([],[],'2026-11-01','2026-10-01','2026-10-30').invalid);
  const unsafe=api.calculate([], [tx('2026-10-01',5,'Despesa',{descricao:'<img src=x onerror=alert(1)>',categoria:'=SUM(A1)'})],'2026-10-01','2026-10-31','2026-10-30');
  const body=api.reportBody(unsafe,{filters:'<script>evil</script>',issued:'teste'});assert.equal((body.match(/<img\b/g)||[]).length,1);assert(!body.includes('<img src=x'));assert(body.includes('src="data:image/png;base64,'+fs.readFileSync(path.join(root,'icon-192.png')).toString('base64')+'"'));assert(body.includes('alt="Logotipo do Planejamento Financeiro"'));assert(!body.includes('<script>'));assert(body.includes('&lt;img'));assert(body.includes('fc-print'));
+ // Rúbricas em duas colunas: preserva todos os registros, valores e ordem.
+ const manyCategories={...unsafe,expense:30000,categories:Array.from({length:24},(_,i)=>['Rúbrica <'+i+'>',2400-i])};
+ const categoryBody=api.reportBody(manyCategories,{filters:'Sem filtros',issued:'teste'});
+ assert(categoryBody.includes('class="fc-chart fc-category-chart"'));
+ assert(categoryBody.includes('class="fc-category-columns"'));
+ assert.equal((categoryBody.match(/class="fc-category"/g)||[]).length,24);
+ assert(categoryBody.indexOf('Rúbrica &lt;0&gt;')<categoryBody.indexOf('Rúbrica &lt;23&gt;'));
+ assert(!api.reportBody({...unsafe,categories:[]},{filters:'Sem filtros',issued:'teste'}).includes('class="fc-category-columns"'));
  const csv=api.csv(api.exportRows(unsafe,{filters:'filtros',issued:'teste'}));assert(csv.startsWith('\ufeff'));assert(csv.includes("'=SUM(A1)"));assert.equal(api.csv([[-12.5]]),'\ufeff"-12,5"');assert(api.csv([['a;"b\nc']]).includes('"a;""b\nc"'));
  // Testa a função real de filtragem, inclusive leitura histórica sem alterar os controles.
  const start=html.indexOf('        function getFilteredTransactions('),end=html.indexOf('        function atualizarCampoInline',start);
