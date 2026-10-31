@@ -9756,5 +9756,19 @@ html body.dark-mode #modalGraficos .text-emerald-800{color:#6ee7b7!important}
 html body.dark-mode #modalGraficos .text-rose-800{color:#fda4af!important}
 }
 </style>
+
+<style id="pf-heatmap-contrast-fix">
+@media screen{
+html body.dark-mode #modalGraficos #pfHeatmap .pf-heat-cell{background:#263449!important;color:#f8fafc!important;border-color:#64748b!important}
+html body.dark-mode #modalGraficos #pfHeatmap .pf-heat-day,html body.dark-mode #modalGraficos #pfHeatmap .pf-heat-value{color:#f8fafc!important;opacity:1!important}
+html body.dark-mode #modalGraficos #pfHeatmap .pf-heat-bar{background:#475569!important}
+}
+@media screen and (max-width:900px),screen and (pointer:coarse){
+#modalGraficos #pfHeatmap .pf-heat-cell{height:auto;min-height:30px;grid-template-columns:22px minmax(0,1fr);gap:4px;padding:5px;font-size:12px;line-height:1.3}
+#modalGraficos #pfHeatmap .pf-heat-value{font-size:10px;white-space:normal;overflow-wrap:anywhere}
+#modalGraficos #pfHeatmap .pf-heat-bar{display:none}
+#modalGraficos #pfHeatmap .pf-heat-column{grid-template-rows:none;grid-auto-rows:minmax(30px,auto);gap:4px}
+}
+</style>
 </body>
 </html>
