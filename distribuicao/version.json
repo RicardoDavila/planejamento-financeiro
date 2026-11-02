@@ -1,9 +1,9 @@
 {
-  "version": "V4.12.35",
-  "name": "V4.12.35",
+  "version": "V4.12.36",
+  "name": "V4.12.36",
   "channel": "distribuicao",
   "notes": [
-    "Adiciona ícones aos cartões, tipos de lançamento, situações e menus no PC e no celular, mantendo os nomes originais.",
-    "Inclui ícones nos relatórios sem depender de fontes externas; preserva cálculos, acesso, dados e sincronização."
+    "Completa os ícones nos cartões e títulos de Gráficos e Evoluções, incluindo a impressão.",
+    "Corrige os ícones dos relatórios Gerencial e de Fluxo de Caixa, mantendo nomes, cálculos e dados."
   ]
 }

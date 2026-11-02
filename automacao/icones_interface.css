@@ -1,6 +1,8 @@
 /* Ícones decorativos: rótulos, valores, ordem e áreas de toque preservados. */
 svg.pf-fin-icon{display:inline-block;width:1.05em;height:1.05em;margin-inline-end:.38em;vertical-align:-.16em;flex-shrink:0;overflow:visible;pointer-events:none}
 #painelResumoGerencial p>svg.pf-fin-icon,.dashboard-v40-card .lbl>svg.pf-fin-icon{width:16px;height:16px;vertical-align:-3px}
+#painelExecutivoGraficos svg.pf-fin-icon,.pagina .rotulo svg.pf-fin-icon,.fc-card>svg.pf-fin-icon{width:16px;height:16px;vertical-align:-3px}
+#modalGraficos svg.pf-fin-icon,.pagina svg.pf-fin-icon,.fc-card>svg.pf-fin-icon{color:currentColor}
 svg.pf-fin-icon[data-pf-kind="income"],svg.pf-fin-icon[data-pf-kind="received"]{color:#047857}
 svg.pf-fin-icon[data-pf-kind="expense"]{color:#be123c}
 svg.pf-fin-icon[data-pf-kind="overdue"]{color:#b91c1c}

@@ -22,9 +22,11 @@
   moon:'M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10Z',
   filter:'M3 5h18l-7 8v6l-4 2v-8L3 5Z',
   report:'M6 3h9l4 4v14H5V3h1m8 0v5h5M8 12h8m-8 4h8',
-  categories:'m12 3 10 5-10 5L2 8l10-5Zm-10 9 10 5 10-5M2 16l10 5 10-5'
+  categories:'m12 3 10 5-10 5L2 8l10-5Zm-10 9 10 5 10-5M2 16l10 5 10-5',
+  percent:'M5 19 19 5M9 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0m12 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',
+  gauge:'M3 18a10 10 0 1 1 18 0M12 13l5-5M5 18h14'
  };
- const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/^[✓!◷]\s*/,'').trim().toLowerCase().replace(/\s+/g,' ');
+ const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/^[✓!◷▮▤▣⚖]\s*/,'').replace(/[¹²³]/g,'').trim().toLowerCase().replace(/\s+/g,' ');
  const names={
   'receita':'income','receitas':'income','receitas previstas':'forecast','prev de receita':'forecast',
   'receitas recebidas':'received','rec recebidas':'received','recebido':'received','recebidas':'received',
@@ -38,6 +40,18 @@
   'dashboard':'home','inicio':'home','lancamentos':'entries','receitas e despesas':'entries',
   'cadastros e rubricas':'categories','relatorios':'report','graficos':'chart','graficos evolutivos':'chart'
  };
+ Object.assign(names,{
+  'despesas previstas':'expense','total de receitas':'income','total de receitas previstas':'forecast',
+  'total de despesas':'expense','total de saidas':'expense','saidas':'expense','maior saida':'expense',
+  'saldo do periodo':'balance','saldo inicial previsto':'balance','saldo acumulado final':'balance',
+  'total da despesa no periodo':'expense','dia mais critico':'overdue','taxa de poupanca prevista':'percent','comprometimento':'gauge',
+  'cascata financeira':'chart','ranking de rubricas — despesas':'expense','vencidos por faixa de atraso':'overdue',
+  'mapa de calor — despesas por dia do mes':'forecast','ultimos 12 meses — receitas, despesas e saldo':'chart',
+  'lancamentos do recorte (detalhamento)':'entries','evolucao temporal':'chart','distribuicao por rubrica':'categories',
+  'evolucao das receitas':'income','evolucao das despesas':'expense','receitas por rubrica':'income','despesas por rubricas':'expense',
+  'evolucao do saldo acumulado':'chart','evolucao do saldo projetado':'chart','fechamentos semanais':'forecast',
+  'comparativo financeiro':'chart','resumo executivo':'report'
+ });
  function svg(kind,doc=document){
   const el=doc.createElementNS('http://www.w3.org/2000/svg','svg');
   for(const [k,v]of Object.entries({viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'1.8','stroke-linecap':'round','stroke-linejoin':'round','aria-hidden':'true',focusable:'false',class:'pf-fin-icon','data-pf-kind':kind}))el.setAttribute(k,v);
@@ -56,8 +70,22 @@
   for(const child of node.childNodes){if(child.nodeType!==3)continue;const next=child.data.replace(pattern,'');if(next!==child.data)child.data=next;break;}
  }
  function enhance(doc=document){
-  const labels='#painelResumoGerencial>div>p:first-child,.dashboard-v40-card .lbl,#pfMobileShell .kpi small,#pfMobileShell .balance small,.pagina .kpi .rotulo,.pagina .kpi small,.pagina .kpi label';
-  doc.querySelectorAll(labels).forEach(node=>add(node,names[normalize(node.textContent)]));
+  const labels='#painelResumoGerencial>div>p:first-child,.dashboard-v40-card .lbl,#pfMobileShell .kpi small,#pfMobileShell .balance small,.pagina .kpi .rotulo,.pagina .kpi small,.pagina .kpi label,#comparacaoTotaisGraficos span.text-xs';
+  doc.querySelectorAll(labels).forEach(node=>{
+   const kind=names[normalize(node.textContent)];if(!kind)return;
+   stripGlyph(node,/^\s*[▮▤▣⚖]\s*/);add(node,kind);
+  });
+  for(const [id,kind]of Object.entries({kpiGrafReceitas:'forecast',kpiGrafRecebidas:'received',kpiGrafDespesas:'expense',kpiGrafSaldo:'balance',kpiGrafVencidas:'overdue',kpiGrafPoupanca:'percent',kpiGrafComprometimento:'gauge'})){
+   const value=doc.getElementById(id);if(value)add(value.previousElementSibling,kind);
+  }
+  doc.querySelectorAll('#modalGraficos h4,#clean-month-analysis h3,.pagina .grafico-titulo,.pagina .bloco-titulo,.pagina .resumo h2,.fc-chart h3,.fc-chart-grid h3').forEach(node=>{
+   const kind=names[normalize(node.textContent)];if(!kind)return;
+   stripGlyph(node,/^\s*[▮▤▣⚖]\s*/);add(node,kind);
+  });
+  doc.querySelectorAll('.fc-card').forEach(node=>{
+   const title=[...node.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('');
+   add(node,names[normalize(title)]);
+  });
   // Original desktop and alternate mobile cards; icons are added beside titles,
   // never inside the value nodes replaced by the financial rendering functions.
   for(const [id,kind]of Object.entries({cardPrevReceita:'forecast',cardRecRecebidas:'received',cardDespesas:'expense',cardPendente:'due',cardInvestimento:'investment',cardSaldo:'balance'})){
@@ -86,7 +114,15 @@
   const theme=doc.getElementById('pm-theme');
   if(theme){stripGlyph(theme,/^[☀◐]\s*/);add(theme,normalize(theme.textContent)==='claro'?'sun':'moon');}
  }
- window.PFFinancialIcons=Object.freeze({enhance,svg,kind:label=>names[normalize(label)]||null});
+ function decorate(html){
+  const report=new DOMParser().parseFromString(html,'text/html');
+  enhance(report);
+  if(!report.getElementById('pf-financial-icons-style')){
+   const style=document.getElementById('pf-financial-icons-style');if(style)report.head.append(style.cloneNode(true));
+  }
+  return '<!doctype html>\n'+report.documentElement.outerHTML;
+ }
+ window.PFFinancialIcons=Object.freeze({enhance,svg,decorate,kind:label=>names[normalize(label)]||null});
  function install(){
   enhance();
   let scheduled=false;
@@ -97,14 +133,11 @@
    if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;enhance();});
   });
   observer.observe(document.body,{childList:true,subtree:true,characterData:true});
+  window.addEventListener('beforeprint',()=>enhance());
   const theme=window.PFReportTheme;
   if(theme?.decorate){
    window.PFReportTheme=Object.freeze({...theme,decorate(...args){
-    const html=theme.decorate.apply(theme,args);
-    const report=new DOMParser().parseFromString(html,'text/html');
-    enhance(report);
-    const style=document.getElementById('pf-financial-icons-style');if(style)report.head.append(style.cloneNode(true));
-    return '<!doctype html>\n'+report.documentElement.outerHTML;
+    return decorate(theme.decorate.apply(theme,args));
    }});
   }
  }

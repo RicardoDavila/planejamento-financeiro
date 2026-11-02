@@ -7,6 +7,9 @@ def aplicar(html):
     js=(ROOT/'automacao/icones_interface.js').read_text(encoding='utf-8')
     html=re.sub(r'<style id="pf-financial-icons-style">[\s\S]*?</style>\s*','',html)
     html=re.sub(r'<script id="pf-financial-icons">[\s\S]*?</script>\s*','',html)
+    old="const reportUrl=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));"
+    new="const reportUrl=URL.createObjectURL(new Blob([window.PFFinancialIcons?window.PFFinancialIcons.decorate(html):html],{type:'text/html;charset=utf-8'}));"
+    html=html.replace(old,new)
     position=html.lower().rfind('</body>')
     if position<0: raise ValueError('Não foi encontrado o fechamento da página')
     return html[:position]+'<style id="pf-financial-icons-style">\n'+css+'\n</style>\n<script id="pf-financial-icons">\n'+js+'\n</script>\n'+html[position:]
