@@ -1,4 +1,6 @@
-# Ícones e contraste — V4.12.37
+# Ícones, contraste e logotipo — V4.12.38
+
+A V4.12.38 substitui a carteira genérica do cabeçalho das janelas de Ajuda, Manuais, Versão e Sobre pelo PNG oficial do projeto, incorporado ao HTML. Não depende de rede nem modifica os ícones funcionais de PDF, links ou fechamento. Os textos e os comportamentos dessas janelas permanecem iguais.
 
 A V4.12.37 uniformiza as cores dos títulos e ícones do resumo inicial no tema escuro com as famílias mais claras de Gráficos e Evoluções. A cor do valor de Investimentos também foi clareada. A correção está em `automacao/tema_escuro_resumo.css`, incorporada pelo mesmo comando de manutenção. Não modifica o tema claro nem a impressão.
 
@@ -14,7 +16,7 @@ Os cálculos, dados, login, isolamento das contas e sincronização foram preser
 
 Extraia o ZIP e atualize os arquivos do projeto no seu repositório, mantendo a estrutura das pastas. Não envie apenas o ZIP como um arquivo dentro do site. Mantenha suas configurações de GitHub Pages e os demais arquivos de configuração existentes no repositório.
 
-Os arquivos de versão e os caches do PWA foram atualizados para V4.12.37. Depois da publicação, os usuários devem usar o fluxo de atualização já existente no aplicativo. Nenhuma publicação remota foi executada durante esta entrega.
+Os arquivos de versão e os caches do PWA foram atualizados para V4.12.38. Depois da publicação, os usuários devem usar o fluxo de atualização já existente no aplicativo. Nenhuma publicação remota foi executada durante esta entrega.
 
 Esta revisão completa os cartões e os títulos de Gráficos e Evoluções, a impressão do painel e os relatórios Gerencial e de Fluxo de Caixa. Reconhece os símbolos antigos no início dos rótulos e os substitui pelo SVG correspondente, sem modificar as palavras. O Fluxo de Caixa passa pela camada de ícones antes de abrir a nova aba.
 

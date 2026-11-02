@@ -1,6 +1,7 @@
 """Atualiza somente a camada visual de ícones; mantém os rótulos originais."""
 from pathlib import Path
 import re
+import base64
 ROOT=Path(__file__).resolve().parents[1]
 def aplicar(html):
     css=(ROOT/'automacao/icones_interface.css').read_text(encoding='utf-8')
@@ -11,6 +12,9 @@ def aplicar(html):
     old="const reportUrl=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));"
     new="const reportUrl=URL.createObjectURL(new Blob([window.PFFinancialIcons?window.PFFinancialIcons.decorate(html):html],{type:'text/html;charset=utf-8'}));"
     html=html.replace(old,new)
+    logo='data:image/png;base64,'+base64.b64encode((ROOT/'icon-192.png').read_bytes()).decode('ascii')
+    html=html.replace('<div class="pf-help-modal-icon"><i class="fa-solid fa-wallet"></i></div>',
+                      '<div class="pf-help-modal-icon"><img class="pf-help-project-logo" src="'+logo+'" alt="Logotipo do Planejamento Financeiro" width="52" height="52"></div>')
     position=html.lower().rfind('</body>')
     if position<0: raise ValueError('Não foi encontrado o fechamento da página')
     return html[:position]+'<style id="pf-financial-icons-style">\n'+css+'\n</style>\n<script id="pf-financial-icons">\n'+js+'\n</script>\n'+html[position:]

@@ -2305,7 +2305,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <div id="pfHelpModal" class="pf-help-modal" aria-hidden="true">
  <div class="pf-help-modal-card" role="dialog" aria-modal="true" aria-labelledby="pfHelpModalTitle">
   <button type="button" class="pf-help-close" onclick="pfCloseHelpModal()" aria-label="Fechar">×</button>
-  <div class="pf-help-modal-icon"><i class="fa-solid fa-wallet"></i></div>
+  <div class="pf-help-modal-icon"><img class="pf-help-project-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEFElEQVR4nO3d0XHaQBSGUcikBGqgMpflylyDeyAPMROHsRMk7WpX9z/nObGJuJ/uEjP4fLvdTpDqx+gHACMJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoP0c/gP+5vrx7r8bBvb1ezqMfw3fOs70XyMDXN1MQUwRg6HONjmFYAIaeRyNiGPIi2PDzlRFzsesGMPg8a69tsNsGMPwssde8dN8ABp+tem6DrhvA8NNCzznqFoDhp6Ve89QlAMNPDz3mqnkAhp+eWs9X0wAMP3toOWfNAjD87KnVvHk7NNGaBODuzwgt5m5zAIafkbbOnyMQ0TYF4O7PDLbM4eoADD8zWTuPjkBEEwDRVgXg+MOM1sylDUA0ARBtcQCOP8xs6XzaAEQTANEEQLRFATj/cwRL5tQGIJoAiCYAogmAaAIg2vS/Immrt9fL6IfQxPXlfdGfb/nvXvq9j6TsBnh7vcQO/9q/851K1/JRyQCqPlmjVbyupY5AFZ+g2dyvcZVjUckNAM8qE4C7/76qXO8SAVR5Mo6mwnUvEQCsdfgAKtyFjuzo1//wAcAWAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKKV+lSImYz8ICueZwN0MPqDrHieAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCI5mNRPvgYk0w2wMnHmCQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEE8Bp3W97+dffmf3r8YdfkfSh9cDM/vX4zQYgmgCIJgCiCYBoAiCaAIgmAKIJgGiHD+D68j76IUQ7+vU/fACwRYkAjn4XOqoK171EAKdTjSfjSKpc7zIBwBql3g16vyt552Q/Ve78dyU3QLUnaRYVr2upDfCZbdBOxcG/KxvAXeUnj+1KHoHgWQIgmgCIJgCiCYBoAiDaogDeXi/nXg8EWlkypzYA0QRANAEQbXEAXgcws6XzaQMQTQBEWxWAYxAzWjOXNgDRBEC01QE4BjGTtfO4aQOIgBlsmUNHIKJtDsAWYKSt89dkA4iAEVrMnSMQ0ZoFYAuwp1bz1nQDiIA9tJyz5kcgEdBT6/nq8hpABPTQY666vQgWAS31mqeu/wskAlroOUfn2+3W62v/5fryvs83oow9bqC7/RzANmCJveZltw3wmW3Ad/a+UQ75SbBtwFdGzMWQDfDIRsg1+mY4RQCfiaG+0UP/2XQBPBLE8c008I+mDwB68nZoogmAaAIgmgCIJgCiCYBoAiCaAIgmAKL9Ak4GGSSo34cHAAAAAElFTkSuQmCC" alt="Logotipo do Planejamento Financeiro" width="52" height="52"></div>
   <h2 id="pfHelpModalTitle">Planejamento Financeiro</h2><div id="pfHelpModalBody"></div>
   <button type="button" class="pf-help-primary" onclick="pfCloseHelpModal()">Fechar</button>
  </div>
@@ -7785,7 +7785,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.37';
+ const CURRENT_VERSION='V4.12.38';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -9738,6 +9738,7 @@ html body.dark-mode #modalGraficos #pfHeatmap .pf-heat-bar{background:#475569!im
 </style>
 <style id="pf-financial-icons-style">
 /* Ícones decorativos: rótulos, valores, ordem e áreas de toque preservados. */
+.pf-help-modal-icon>img.pf-help-project-logo{display:block;width:52px;height:52px;object-fit:contain;border-radius:12px}
 svg.pf-fin-icon{display:inline-block;width:1.05em;height:1.05em;margin-inline-end:.38em;vertical-align:-.16em;flex-shrink:0;overflow:visible;pointer-events:none}
 #painelResumoGerencial p>svg.pf-fin-icon,.dashboard-v40-card .lbl>svg.pf-fin-icon{width:16px;height:16px;vertical-align:-3px}
 #painelExecutivoGraficos svg.pf-fin-icon,.pagina .rotulo svg.pf-fin-icon,.fc-card>svg.pf-fin-icon{width:16px;height:16px;vertical-align:-3px}
