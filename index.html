@@ -6445,6 +6445,10 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
 
             // Aplica os mesmos filtros individuais usados pelos gráficos.
             const passaFiltrosIndividuais = (t) => {
+/* PFQF bridge:start */
+                if(typeof window!=='undefined'&&window.PFQuickCards&&!window.PFQuickCards.apply([t]).length)return false;
+/* PFQF bridge:end */
+
                 if (rubricaFiltro && rubricaFiltro !== 'Todas' && (t.categoria || 'Outros') !== rubricaFiltro) return false;
                 if (subItemFiltro && subItemFiltro !== 'Todos' && (t.subItem || '') !== subItemFiltro) return false;
                 if (descFiltro && !(t.descricao || '').toLowerCase().includes(descFiltro)) return false;
@@ -6894,6 +6898,10 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             const tipoFiltro = document.getElementById('graficoTipo')?.value || 'Todos';
             atualizarVisibilidadeTipoGrafico();
             const filtradas = transacoes.filter(t => {
+/* PFQF bridge:start */
+                if(typeof window!=='undefined'&&window.PFQuickCards&&!window.PFQuickCards.apply([t]).length)return false;
+/* PFQF bridge:end */
+
                 const matchTipo = tipoFiltro === 'Todos' || t.tipo === tipoFiltro;
                 const matchRubrica = (rubricaFiltro === 'Todas' || t.categoria === rubricaFiltro);
                 const matchSubItem = (subItemFiltro === 'Todos' || t.subItem === subItemFiltro);
@@ -7944,7 +7952,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.40';
+ const CURRENT_VERSION='V4.12.41';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -9090,6 +9098,10 @@ if(!desktop.matches)return;
 const $=id=>document.getElementById(id);
 // Totais mensais por vencimento; a distribuição por rubrica respeita os filtros ativos.
 function monthAnalysisData(rows,allRows,chosen){
+/* PFQF bridge:start */
+ if(typeof window!=='undefined'&&window.PFQuickCards)allRows=window.PFQuickCards.apply(allRows);
+/* PFQF bridge:end */
+
  const date=new Date(Number(chosen.slice(0,4)),Number(chosen.slice(5,7))-1,1);
  const categories=type=>{const sums=new Map();for(const row of rows){if(row.tipo!==type)continue;const name=String(row.categoria||'Sem rubrica');sums.set(name,(sums.get(name)||0)+Number(row.valor||0));}return [...sums].sort((a,b)=>b[1]-a[1]);};
  const months=Array.from({length:6},(_,i)=>{const d=new Date(date.getFullYear(),date.getMonth()-5+i,1);return {key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),label:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'})};});
@@ -10251,7 +10263,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
   function rootModels(){
    const monthly=contexts.monthly;
    if(monthly){
-    const rows=D.rows(monthly.rows),all=D.rows(monthly.allRows),ref=String(monthly.chosen||new Date().toISOString()).slice(0,7).split('-').map(Number),months=Array.from({length:6},(_,i)=>D.month(ref[0],ref[1]-6+i));
+    const rows=D.rows(monthly.rows),all=D.rows(window.PFQuickCards?window.PFQuickCards.apply(monthly.allRows):monthly.allRows),ref=String(monthly.chosen||new Date().toISOString()).slice(0,7).split('-').map(Number),months=Array.from({length:6},(_,i)=>D.month(ref[0],ref[1]-6+i));
     for(const [id,type,key,color]of [['clean-revenue-history-bars','Receita','revenueHistory','#047857'],['clean-history-bars','Despesa','expenseHistory','#bd2b20']]){
      domBars(id,type==='Receita'?'Evolução das Receitas':'Evolução das Despesas',all,{selector:'.analysis-row',color,resolve:(label,i)=>all.filter(r=>r.tipo===type&&r.vencimento.startsWith(months[i]?.key||'invalid'))});
     }
@@ -10399,6 +10411,92 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
   return '<!doctype html>\n'+report.documentElement.outerHTML;
  };
  window.PFChartExplorer=api;
+})();
+
+</script>
+<style id="pf-quick-cards-style">
+[data-pf-quick-card]{cursor:pointer;position:relative}
+[data-pf-quick-card]:hover{outline:2px solid #64748b;outline-offset:2px}
+[data-pf-quick-card]:focus-visible{outline:3px solid #2563eb;outline-offset:3px}
+[data-pf-quick-card][aria-pressed=true]{outline:3px solid #2563eb;outline-offset:2px}
+.pf-quick-cards-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px;margin:10px 0 16px;border:1px solid #93c5fd;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:13px}
+.pf-quick-cards-notice[hidden]{display:none!important}
+.pf-quick-cards-notice button{padding:9px 14px;border:1px solid #1d4ed8;border-radius:8px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer;min-height:44px}
+body.dark-mode .pf-quick-cards-notice{background:#172b46;color:#dbeafe;border-color:#60a5fa}
+body.dark-mode [data-pf-quick-card][aria-pressed=true]{outline-color:#93c5fd}
+@media print{.pf-quick-cards-notice button{display:none}[data-pf-quick-card]{outline:none!important}.pf-quick-cards-notice{color:#111;background:white;border-color:#777}}
+
+</style>
+<script id="pf-quick-cards">
+(() => {
+ 'use strict';
+ function matches(row,key){
+  switch(key){
+   case 'receitas':return row.tipo==='Receita';
+   case 'recebido':return row.tipo==='Receita'&&row.status!=='Não Recebido';
+   case 'despesas':return row.tipo==='Despesa';
+   case 'vencer':return row.status==='A Vencer';
+   case 'vencido':return row.status==='Vencido';
+   case 'investimentos':return row.tipo==='Investimentos'||row.categoria==='INVESTIMENTOS';
+   case 'saldo':return ['Receita','Despesa','Investimentos'].includes(row.tipo)||row.categoria==='INVESTIMENTOS';
+   default:return true;
+  }
+ }
+ let active='',selected='',saved=null,originalGet;
+ const labels={receitas:'Receitas',recebido:'Recebido',despesas:'Despesas',vencer:'A vencer',vencido:'Vencido',saldo:'Saldo previsto',investimentos:'Investimentos',situacao:'Situação'};
+ const ids=['filtroTipo','filtroRubrica','filtroSubItem','filtroBuscaRubrica','filtroBuscaSubItem','filtroDescricao','filtroDataInicio','filtroDataFim'];
+ const $=id=>document.getElementById(id);
+ const api={matches,apply:rows=>active?rows.filter(r=>matches(r,active)):rows, get active(){return active;}};
+ window.PFQuickCards=api;
+ function allowed(){return !document.body.classList.contains('auth-pendente')&&(typeof protecaoAutenticada==='undefined'||protecaoAutenticada!==false);}
+ function snapshot(){return {values:Object.fromEntries(ids.map(id=>[id,$(id)?.value])),special:typeof filtroRapidoEspecial!=='undefined'?filtroRapidoEspecial:'',user:typeof filtrosPainelAtivadosPeloUsuario!=='undefined'?filtrosPainelAtivadosPeloUsuario:false};}
+ function restore(){
+  if(saved){for(const [id,value]of Object.entries(saved.values))if($(id)&&value!==undefined)$(id).value=value;
+   if(typeof filtroRapidoEspecial!=='undefined')filtroRapidoEspecial=saved.special;
+   if(typeof filtrosPainelAtivadosPeloUsuario!=='undefined')filtrosPainelAtivadosPeloUsuario=saved.user;
+  }
+  active='';selected='';saved=null;
+ }
+ function refresh(){window.renderTable?.();const modal=$('modalGraficos');if(modal&&!modal.classList.contains('hidden')&&getComputedStyle(modal).display!=='none')window.atualizarGraficos?.();sync();}
+ function choose(key){
+  if(!allowed())return;
+  if(selected===key){restore();refresh();return;}
+  if(!saved)saved=snapshot();
+  selected=key;active=key;
+  if(key==='situacao'){
+   const rows=originalGet();
+   const total=status=>rows.filter(r=>r.status===status).reduce((sum,r)=>sum+(Number(r.valor)||0),0);
+   active=total('Vencido')>0?'vencido':total('A Vencer')>0?'vencer':'saldo';
+  }
+  refresh();
+ }
+ function sync(){
+  document.querySelectorAll('[data-pf-quick-card]').forEach(card=>card.setAttribute('aria-pressed',String(selected===card.dataset.pfQuickCard)));
+  document.querySelectorAll('.pf-quick-cards-notice').forEach(box=>{
+   box.hidden=!active||!allowed();const text=box.querySelector('span');
+   const message='Filtro rápido: '+(labels[selected]||'')+(selected==='situacao'?' — '+(active==='saldo'?'todos os lançamentos':labels[active]):'')+'. Aplicado ao período e aos demais filtros atuais.';
+   if(text.textContent!==message)text.textContent=message;
+  });
+ }
+ function mount(){
+  originalGet=window.getFilteredTransactions;if(typeof originalGet!=='function')return;
+  window.getFilteredTransactions=function(...args){const rows=originalGet.apply(this,args);return api.apply(rows);};
+  const cards={pgReceitas:'receitas',pgRecebido:'recebido',pgDespesas:'despesas',pgAVencer:'vencer',pgVencido:'vencido',pgSaldo:'saldo',pgInvestimentos:'investimentos',pgSituacao:'situacao',d40Receitas:'receitas',d40Recebido:'recebido',d40Despesas:'despesas',d40Vencer:'vencer',d40Vencido:'vencido',d40Saldo:'saldo'};
+  for(const [id,key]of Object.entries(cards)){
+   const card=$(id)?.parentElement;if(!card)continue;
+   card.dataset.pfQuickCard=key;card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-pressed','false');card.title='Filtrar por '+labels[key]+'. Clique novamente para limpar o filtro.';
+   card.addEventListener('click',()=>choose(key));card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(key);}});
+  }
+  for(const id of ['painelResumoGerencial','pfResumoMobileValores']){
+   const grid=$(id);if(!grid)continue;const box=document.createElement('div');box.className='pf-quick-cards-notice';box.hidden=true;box.setAttribute('role','status');
+   const text=document.createElement('span'),button=document.createElement('button');button.type='button';button.textContent='Limpar filtro';button.addEventListener('click',()=>{restore();refresh();});box.append(text,button);grid.before(box);
+  }
+  const clear=window.limparFiltros;if(typeof clear==='function')window.limparFiltros=function(...args){active='';selected='';saved=null;const result=clear.apply(this,args);sync();return result;};
+  const render=window.renderTable;if(typeof render==='function')window.renderTable=function(...args){const result=render.apply(this,args);sync();return result;};
+  new MutationObserver(()=>{if(!allowed()&&active){restore();sync();window.PFChartExplorer?.refresh?.();}}).observe(document.body,{attributes:true,attributeFilter:['class']});
+  sync();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
 
 </script>
