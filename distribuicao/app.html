@@ -7785,7 +7785,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.38';
+ const CURRENT_VERSION='V4.12.39';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -8947,7 +8947,26 @@ function monthAnalysisData(rows,allRows,chosen){
  const categories=type=>{const sums=new Map();for(const row of rows){if(row.tipo!==type)continue;const name=String(row.categoria||'Sem rubrica');sums.set(name,(sums.get(name)||0)+Number(row.valor||0));}return [...sums].sort((a,b)=>b[1]-a[1]);};
  const months=Array.from({length:6},(_,i)=>{const d=new Date(date.getFullYear(),date.getMonth()-5+i,1);return {key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),label:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'})};});
  const history=type=>months.map(month=>[month.label,allRows.filter(row=>row.tipo===type&&String(row.vencimento).startsWith(month.key)).reduce((sum,row)=>sum+Number(row.valor||0),0)]);
- return {revenueCategories:categories('Receita'),expenseCategories:categories('Despesa'),revenueHistory:history('Receita'),expenseHistory:history('Despesa')};
+ const descriptions=type=>{
+  const groups=new Map();
+  for(const row of rows){
+   if(row.tipo!==type)continue;
+   const category=String(row.categoria||'Sem rubrica'),description=String(row.descricao||'').trim()||'Sem descrição';
+   if(!groups.has(category))groups.set(category,new Map());
+   const items=groups.get(category);
+   items.set(description,(items.get(description)||0)+Number(row.valor||0));
+  }
+  return groups;
+ };
+ return {revenueCategories:categories('Receita'),expenseCategories:categories('Despesa'),revenueHistory:history('Receita'),expenseHistory:history('Despesa'),revenueDescriptions:descriptions('Receita'),expenseDescriptions:descriptions('Despesa')};
+}
+function categoryBreakdownBars(entries,descriptions,format,escape,expanded=new Set()){
+ const max=Math.max(1,...entries.map(x=>x[1]));
+ const row=(name,value,summary=false)=>'<'+(summary?'summary':'div')+' class="analysis-row '+(summary?'analysis-rubric-summary':'analysis-description-row')+'"><span>'+escape(name)+'</span><span class="analysis-track"><span class="analysis-fill" style="width:'+Math.max(0,value/max*100)+'%"></span></span><span class="analysis-amount">'+escape(format(value))+'</span></'+(summary?'summary':'div')+'>';
+ return entries.map(([category,total])=>{
+  const items=[...(descriptions.get(category)||[])].sort((a,b)=>b[1]-a[1]);
+  return '<details class="analysis-rubric" data-rubric="'+escape(category)+'"'+(expanded.has(category)?' open':'')+'>'+row(category,total,true)+'<div class="analysis-description-bars">'+items.map(([name,value])=>row(name,value)).join('')+'</div></details>';
+ }).join('');
 }
 function install(){
  if(!$('appConteudo')||$('reference-header'))return;
@@ -8964,21 +8983,28 @@ function install(){
  const heading=[...document.querySelectorAll('#appConteudo h1')].find(x=>x.id!=='pf495GreetingTitle'&&x.textContent.includes('Planejamento Financeiro'));if(heading?.textContent.includes('Planejamento Financeiro')){const holder=heading.parentElement;if(!holder.contains(panel)&&!holder.contains(greeting))holder.classList.add('production-redundant-title');}
  const metadata=$('infoBancoSeguranca');if(metadata){metadata.classList.add('production-bank-meta');$('appConteudo').append(metadata);}
  const table=$('tabelaLancamentosWrapper'),totals=document.createElement('div');totals.id='clean-analysis-totals';table.after(totals);
- const analysis=document.createElement('section');analysis.id='clean-month-analysis';analysis.innerHTML='<button type="button" id="clean-analysis-toggle" aria-expanded="false" aria-controls="clean-analysis-content">▸ Análise do mês de receitas e despesas por rubrica e evolução</button><div class="analysis-grid" id="clean-analysis-content" hidden><section class="analysis-revenue"><h3>Evolução das Receitas</h3><p>Total de receitas de cada mês. Seis meses até o fim do período selecionado, incluindo meses sem registros.</p><div id="clean-revenue-history-bars" class="analysis-bars"></div></section><section class="analysis-expense"><h3>Evolução das Despesas</h3><p>Total de despesas de cada mês. Seis meses até o fim do período selecionado, incluindo meses sem registros.</p><div id="clean-history-bars" class="analysis-bars"></div></section><section class="analysis-revenue"><h3>Receitas por Rubrica</h3><p>Receitas previstas nos lançamentos filtrados.</p><div id="clean-revenue-category-bars" class="analysis-bars"></div></section><section class="analysis-expense"><h3>Despesas por Rubricas</h3><p>Despesas previstas nos lançamentos filtrados.</p><div id="clean-category-bars" class="analysis-bars"></div></section></div>';table.parentElement.after(analysis);
+ const analysis=document.createElement('section');analysis.id='clean-month-analysis';analysis.innerHTML='<button type="button" id="clean-analysis-toggle" aria-expanded="false" aria-controls="clean-analysis-content">▸ Análise do mês de receitas e despesas por rubrica e evolução</button><div class="analysis-grid" id="clean-analysis-content" hidden><section class="analysis-revenue"><h3>Evolução das Receitas</h3><p>Total de receitas de cada mês. Seis meses até o fim do período selecionado, incluindo meses sem registros.</p><div id="clean-revenue-history-bars" class="analysis-bars"></div></section><section class="analysis-expense"><h3>Evolução das Despesas</h3><p>Total de despesas de cada mês. Seis meses até o fim do período selecionado, incluindo meses sem registros.</p><div id="clean-history-bars" class="analysis-bars"></div></section><section class="analysis-revenue"><h3>Receitas por Rubrica (clique na barra para abrir lançamentos)</h3><p>Receitas previstas nos lançamentos filtrados.</p><div id="clean-revenue-category-bars" class="analysis-bars"></div></section><section class="analysis-expense"><h3>Despesas por Rubricas (clique na barra para abrir lançamentos)</h3><p>Despesas previstas nos lançamentos filtrados.</p><div id="clean-category-bars" class="analysis-bars"></div></section></div>';table.parentElement.after(analysis);
+ const expandedRevenue=new Set(),expandedExpense=new Set();
+ analysis.addEventListener('toggle',event=>{
+  const detail=event.target;if(!detail.matches?.('details.analysis-rubric')||!detail.isConnected)return;
+  const expanded=detail.closest('#clean-revenue-category-bars')?expandedRevenue:expandedExpense;
+  if(detail.open)expanded.add(detail.dataset.rubric);else expanded.delete(detail.dataset.rubric);
+ },true);
+
  $('clean-analysis-toggle').onclick=()=>{const content=$('clean-analysis-content');content.hidden=!content.hidden;$('clean-analysis-toggle').setAttribute('aria-expanded',String(!content.hidden));$('clean-analysis-toggle').textContent=(content.hidden?'▸':'▾')+' Análise do mês de receitas e despesas por rubrica e evolução';};
  const fmt=n=>formatarMoeda(n),escape=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function redraw(){
   const unlocked=!panel.classList.contains('pf-painel-oculto')&&!document.body.classList.contains('auth-pendente');
   $('clean-analysis-toggle').disabled=!unlocked;
-  if(!unlocked){$('clean-analysis-content').hidden=true;$('clean-analysis-toggle').setAttribute('aria-expanded','false');$('clean-analysis-toggle').textContent='▸ Análise do mês · desbloqueie o painel para consultar';totals.textContent='Totais protegidos · desbloqueie o painel gerencial';['clean-category-bars','clean-history-bars','clean-revenue-category-bars','clean-revenue-history-bars'].forEach(id=>$(id).replaceChildren());return;}
+  if(!unlocked){expandedRevenue.clear();expandedExpense.clear();$('clean-analysis-content').hidden=true;$('clean-analysis-toggle').setAttribute('aria-expanded','false');$('clean-analysis-toggle').textContent='▸ Análise do mês · desbloqueie o painel para consultar';totals.textContent='Totais protegidos · desbloqueie o painel gerencial';['clean-category-bars','clean-history-bars','clean-revenue-category-bars','clean-revenue-history-bars'].forEach(id=>$(id).replaceChildren());return;}
   $('clean-analysis-toggle').textContent=($('clean-analysis-content').hidden?'▸':'▾')+' Análise do mês de receitas e despesas por rubrica e evolução';
   const rows=getFilteredTransactions(),sum=type=>rows.filter(r=>r.tipo===type).reduce((a,r)=>a+Number(r.valor||0),0);
   totals.replaceChildren();const count=document.createElement('span'),values=document.createElement('span');count.textContent=rows.length+' lançamento(s) exibido(s)';values.textContent='Receitas: '+fmt(sum('Receita'))+' · Despesas: '+fmt(sum('Despesa'))+' · Investimentos: '+fmt(sum('Investimentos'));totals.append(count,values);
   const bars=entries=>{const max=Math.max(1,...entries.map(x=>x[1]));return entries.map(([name,value])=>'<div class="analysis-row"><span>'+escape(name)+'</span><div class="analysis-track"><div class="analysis-fill" style="width:'+Math.max(0,value/max*100)+'%"></div></div><span class="analysis-amount">'+escape(fmt(value))+'</span></div>').join('');};
   const chosen=$('filtroDataFim').value||new Date().toISOString().slice(0,10);
   const data=monthAnalysisData(rows,transacoes,chosen);
-  $('clean-revenue-category-bars').innerHTML=bars(data.revenueCategories)||'<p>Sem receitas para os filtros selecionados.</p>';
-  $('clean-category-bars').innerHTML=bars(data.expenseCategories)||'<p>Sem despesas para os filtros selecionados.</p>';
+  $('clean-revenue-category-bars').innerHTML=categoryBreakdownBars(data.revenueCategories,data.revenueDescriptions,fmt,escape,expandedRevenue)||'<p>Sem receitas para os filtros selecionados.</p>';
+  $('clean-category-bars').innerHTML=categoryBreakdownBars(data.expenseCategories,data.expenseDescriptions,fmt,escape,expandedExpense)||'<p>Sem despesas para os filtros selecionados.</p>';
   $('clean-revenue-history-bars').innerHTML=bars(data.revenueHistory);
   $('clean-history-bars').innerHTML=bars(data.expenseHistory);
  }
@@ -9739,6 +9765,18 @@ html body.dark-mode #modalGraficos #pfHeatmap .pf-heat-bar{background:#475569!im
 <style id="pf-financial-icons-style">
 /* Ícones decorativos: rótulos, valores, ordem e áreas de toque preservados. */
 .pf-help-modal-icon>img.pf-help-project-logo{display:block;width:52px;height:52px;object-fit:contain;border-radius:12px}
+#clean-month-analysis .analysis-rubric>summary{cursor:pointer;list-style:none;border-radius:5px;padding:5px 0}
+#clean-month-analysis .analysis-rubric>summary::-webkit-details-marker{display:none}
+#clean-month-analysis .analysis-rubric>summary::marker{content:''}
+#clean-month-analysis .analysis-rubric>summary>span:first-child{font-weight:700;overflow-wrap:anywhere;min-width:0}
+#clean-month-analysis .analysis-rubric>summary>span:first-child::before{content:'▸';display:inline-block;width:12px}
+#clean-month-analysis .analysis-rubric[open]>summary>span:first-child::before{content:'▾'}
+#clean-month-analysis .analysis-rubric>summary:focus-visible{outline:2px solid #6366f1;outline-offset:4px}
+#clean-month-analysis .analysis-rubric .analysis-track,#clean-month-analysis .analysis-rubric .analysis-fill{display:block}
+#clean-month-analysis .analysis-description-bars{display:grid;gap:9px;margin:10px 0 4px 12px;padding-left:10px;border-left:2px solid #cbd5e1}
+#clean-month-analysis .analysis-description-row>span:first-child{overflow-wrap:anywhere;min-width:0}
+body.dark-mode #clean-month-analysis .analysis-description-bars{border-left-color:#475569}
+@media(max-width:760px){#clean-month-analysis .analysis-description-bars{margin-left:4px;padding-left:6px}}
 svg.pf-fin-icon{display:inline-block;width:1.05em;height:1.05em;margin-inline-end:.38em;vertical-align:-.16em;flex-shrink:0;overflow:visible;pointer-events:none}
 #painelResumoGerencial p>svg.pf-fin-icon,.dashboard-v40-card .lbl>svg.pf-fin-icon{width:16px;height:16px;vertical-align:-3px}
 #painelExecutivoGraficos svg.pf-fin-icon,.pagina .rotulo svg.pf-fin-icon,.fc-card>svg.pf-fin-icon{width:16px;height:16px;vertical-align:-3px}
@@ -9842,6 +9880,8 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
   'cadastros e rubricas':'categories','relatorios':'report','graficos':'chart','graficos evolutivos':'chart'
  };
  Object.assign(names,{
+  'receitas por rubrica (clique na barra para abrir lancamentos)':'income',
+  'despesas por rubricas (clique na barra para abrir lancamentos)':'expense',
   'despesas previstas':'expense','total de receitas':'income','total de receitas previstas':'forecast',
   'total de despesas':'expense','total de saidas':'expense','saidas':'expense','maior saida':'expense',
   'saldo do periodo':'balance','saldo inicial previsto':'balance','saldo acumulado final':'balance',
@@ -9849,7 +9889,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
   'cascata financeira':'chart','ranking de rubricas — despesas':'expense','vencidos por faixa de atraso':'overdue',
   'mapa de calor — despesas por dia do mes':'forecast','ultimos 12 meses — receitas, despesas e saldo':'chart',
   'lancamentos do recorte (detalhamento)':'entries','evolucao temporal':'chart','distribuicao por rubrica':'categories',
-  'evolucao das receitas':'income','evolucao das despesas':'expense','receitas por rubrica':'income','despesas por rubricas':'expense',
+  'evolucao das receitas':'income','evolucao das despesas':'expense','receitas por rubrica':'income','receitas por rubrica e descricoes':'income','despesas por rubricas':'expense',
   'evolucao do saldo acumulado':'chart','evolucao do saldo projetado':'chart','fechamentos semanais':'forecast',
   'comparativo financeiro':'chart','resumo executivo':'report'
  });

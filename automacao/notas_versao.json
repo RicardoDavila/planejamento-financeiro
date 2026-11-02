@@ -1,10 +1,10 @@
 {
   "pessoal": [
-    "Substitui a carteira genérica pelo logotipo oficial nas janelas de Ajuda, Manuais, Versão e Sobre o projeto.",
-    "Preserva os nomes, funções, dados, temas e as correções anteriores."
+    "Adiciona abertura e recolhimento por clique nas barras de Receitas por Rubrica e Despesas por Rubricas, mostrando as descrições correspondentes abaixo.",
+    "Inclui a orientação nos títulos; preserva filtros, totais, evolução mensal, temas, acesso e sincronização."
   ],
   "distribuicao": [
-    "Substitui a carteira genérica pelo logotipo oficial nas janelas de Ajuda, Manuais, Versão e Sobre o projeto.",
-    "Preserva os nomes, funções, dados, temas e as correções anteriores."
+    "Adiciona abertura e recolhimento por clique nas barras de Receitas por Rubrica e Despesas por Rubricas, mostrando as descrições correspondentes abaixo.",
+    "Inclui a orientação nos títulos; preserva filtros, totais, evolução mensal, temas, acesso e sincronização."
   ]
 }

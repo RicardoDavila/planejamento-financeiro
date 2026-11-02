@@ -41,6 +41,8 @@
   'cadastros e rubricas':'categories','relatorios':'report','graficos':'chart','graficos evolutivos':'chart'
  };
  Object.assign(names,{
+  'receitas por rubrica (clique na barra para abrir lancamentos)':'income',
+  'despesas por rubricas (clique na barra para abrir lancamentos)':'expense',
   'despesas previstas':'expense','total de receitas':'income','total de receitas previstas':'forecast',
   'total de despesas':'expense','total de saidas':'expense','saidas':'expense','maior saida':'expense',
   'saldo do periodo':'balance','saldo inicial previsto':'balance','saldo acumulado final':'balance',
@@ -48,7 +50,7 @@
   'cascata financeira':'chart','ranking de rubricas — despesas':'expense','vencidos por faixa de atraso':'overdue',
   'mapa de calor — despesas por dia do mes':'forecast','ultimos 12 meses — receitas, despesas e saldo':'chart',
   'lancamentos do recorte (detalhamento)':'entries','evolucao temporal':'chart','distribuicao por rubrica':'categories',
-  'evolucao das receitas':'income','evolucao das despesas':'expense','receitas por rubrica':'income','despesas por rubricas':'expense',
+  'evolucao das receitas':'income','evolucao das despesas':'expense','receitas por rubrica':'income','receitas por rubrica e descricoes':'income','despesas por rubricas':'expense',
   'evolucao do saldo acumulado':'chart','evolucao do saldo projetado':'chart','fechamentos semanais':'forecast',
   'comparativo financeiro':'chart','resumo executivo':'report'
  });

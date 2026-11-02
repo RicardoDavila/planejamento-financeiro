@@ -1,4 +1,10 @@
-# Ícones, contraste e logotipo — V4.12.38
+# Ícones, contraste e rubricas expansíveis — V4.12.39
+
+A V4.12.39 acrescenta expansão por clique apenas aos quadros de Receitas por Rubrica e Despesas por Rubricas da análise mensal. Os títulos incluem “(clique na barra para abrir lançamentos)”. Cada rubrica começa recolhida; ao clicar ou usar Enter/Espaço, exibe as barras das descrições logo abaixo. Outro clique recolhe os detalhes.
+
+Descrições iguais são somadas dentro da mesma rubrica e do mesmo tipo. As barras seguem os filtros ativos. O total da rubrica permanece na barra principal e não é somado novamente aos indicadores. A expansão é mantida em memória durante as atualizações da lista e limpa ao bloquear o painel. A evolução mensal e os demais gráficos permanecem como estavam.
+
+Foram acrescentados testes de agrupamento, filtros, separação entre receitas/despesas, expansão, dados vazios e segurança dos textos. O hash de referência do bloco de layout desktop foi atualizado para esta alteração autorizada; os outros hashes foram preservados.
 
 A V4.12.38 substitui a carteira genérica do cabeçalho das janelas de Ajuda, Manuais, Versão e Sobre pelo PNG oficial do projeto, incorporado ao HTML. Não depende de rede nem modifica os ícones funcionais de PDF, links ou fechamento. Os textos e os comportamentos dessas janelas permanecem iguais.
 
@@ -16,7 +22,7 @@ Os cálculos, dados, login, isolamento das contas e sincronização foram preser
 
 Extraia o ZIP e atualize os arquivos do projeto no seu repositório, mantendo a estrutura das pastas. Não envie apenas o ZIP como um arquivo dentro do site. Mantenha suas configurações de GitHub Pages e os demais arquivos de configuração existentes no repositório.
 
-Os arquivos de versão e os caches do PWA foram atualizados para V4.12.38. Depois da publicação, os usuários devem usar o fluxo de atualização já existente no aplicativo. Nenhuma publicação remota foi executada durante esta entrega.
+Os arquivos de versão e os caches do PWA foram atualizados para V4.12.39. Depois da publicação, os usuários devem usar o fluxo de atualização já existente no aplicativo. Nenhuma publicação remota foi executada durante esta entrega.
 
 Esta revisão completa os cartões e os títulos de Gráficos e Evoluções, a impressão do painel e os relatórios Gerencial e de Fluxo de Caixa. Reconhece os símbolos antigos no início dos rótulos e os substitui pelo SVG correspondente, sem modificar as palavras. O Fluxo de Caixa passa pela camada de ícones antes de abrir a nova aba.
 
