@@ -1,7 +1,13 @@
 (() => {
  'use strict';
  function matches(row,key){
+  const norm=value=>String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const paid=()=>Boolean(row.dataPg)||['pago','recebido','paga','recebida','liquidado','feito'].includes(norm(row.status));
+  const late=()=>{const d=new Date(),today=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return row.tipo==='Despesa'&&!paid()&&row.vencimento&&row.vencimento<today;};
   switch(key){
+   case 'recebidoMobile':return row.tipo==='Receita'&&paid();
+   case 'vencidoMobile':return Boolean(late());
+   case 'vencerMobile':return row.tipo==='Despesa'&&!paid()&&!late();
    case 'receitas':return row.tipo==='Receita';
    case 'recebido':return row.tipo==='Receita'&&row.status!=='Não Recebido';
    case 'despesas':return row.tipo==='Despesa';
@@ -14,6 +20,7 @@
  }
  let active='',selected='',saved=null,originalGet;
  const labels={receitas:'Receitas',recebido:'Recebido',despesas:'Despesas',vencer:'A vencer',vencido:'Vencido',saldo:'Saldo previsto',investimentos:'Investimentos',situacao:'Situação'};
+ Object.assign(labels,{recebidoMobile:'Recebido',vencidoMobile:'Vencidas',vencerMobile:'A vencer'});
  const ids=['filtroTipo','filtroRubrica','filtroSubItem','filtroBuscaRubrica','filtroBuscaSubItem','filtroDescricao','filtroDataInicio','filtroDataFim'];
  const $=id=>document.getElementById(id);
  const api={matches,apply:rows=>active?rows.filter(r=>matches(r,active)):rows, get active(){return active;}};
@@ -51,14 +58,14 @@
  function mount(){
   originalGet=window.getFilteredTransactions;if(typeof originalGet!=='function')return;
   window.getFilteredTransactions=function(...args){const rows=originalGet.apply(this,args);return api.apply(rows);};
-  const cards={pgReceitas:'receitas',pgRecebido:'recebido',pgDespesas:'despesas',pgAVencer:'vencer',pgVencido:'vencido',pgSaldo:'saldo',pgInvestimentos:'investimentos',pgSituacao:'situacao',d40Receitas:'receitas',d40Recebido:'recebido',d40Despesas:'despesas',d40Vencer:'vencer',d40Vencido:'vencido',d40Saldo:'saldo'};
+  const cards={pgReceitas:'receitas',pgRecebido:'recebido',pgDespesas:'despesas',pgAVencer:'vencer',pgVencido:'vencido',pgSaldo:'saldo',pgInvestimentos:'investimentos',pgSituacao:'situacao',d40Receitas:'receitas',d40Recebido:'recebido',d40Despesas:'despesas',d40Vencer:'vencer',d40Vencido:'vencido',d40Saldo:'saldo','pm-kRec':'receitas','pm-kReceived':'recebidoMobile','pm-kDes':'despesas','pm-kVen':'vencerMobile','pm-kOverdue':'vencidoMobile','pm-kInv':'investimentos','pm-kSaldo':'saldo'};
   for(const [id,key]of Object.entries(cards)){
    const card=$(id)?.parentElement;if(!card)continue;
    card.dataset.pfQuickCard=key;card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-pressed','false');card.title='Filtrar por '+labels[key]+'. Clique novamente para limpar o filtro.';
    card.addEventListener('click',()=>choose(key));card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(key);}});
   }
-  for(const id of ['painelResumoGerencial','pfResumoMobileValores']){
-   const grid=$(id);if(!grid)continue;const box=document.createElement('div');box.className='pf-quick-cards-notice';box.hidden=true;box.setAttribute('role','status');
+  for(const grid of [$('painelResumoGerencial'),$('pfResumoMobileValores'),$('pm-kRec')?.parentElement?.parentElement]){
+   if(!grid)continue;const box=document.createElement('div');box.className='pf-quick-cards-notice';box.hidden=true;box.setAttribute('role','status');
    const text=document.createElement('span'),button=document.createElement('button');button.type='button';button.textContent='Limpar filtro';button.addEventListener('click',()=>{restore();refresh();});box.append(text,button);grid.before(box);
   }
   const clear=window.limparFiltros;if(typeof clear==='function')window.limparFiltros=function(...args){active='';selected='';saved=null;const result=clear.apply(this,args);sync();return result;};

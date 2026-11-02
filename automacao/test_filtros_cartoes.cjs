@@ -1,11 +1,13 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),path=require('path');
 const js=fs.readFileSync(path.join(__dirname,'filtros_cartoes.js'),'utf8');
 class Node{constructor(){this.value='';this.dataset={};this.attributes={};this.children=[];this.listeners={};this.classList={contains:()=>false};this.textContent='';}setAttribute(k,v){this.attributes[k]=v;}addEventListener(k,f){this.listeners[k]=f;}append(...xs){this.children.push(...xs);}before(x){notices.push(x);}querySelector(){return this.children[0];}}
-const notices=[],nodes={},cardIds=['pgReceitas','pgRecebido','pgDespesas','pgAVencer','pgVencido','pgSaldo','pgInvestimentos','pgSituacao'];
+const notices=[],nodes={},cardIds=['pgReceitas','pgRecebido','pgDespesas','pgAVencer','pgVencido','pgSaldo','pgInvestimentos','pgSituacao','pm-kRec','pm-kReceived','pm-kDes','pm-kVen','pm-kOverdue','pm-kInv','pm-kSaldo'];
 const cardNodes=cardIds.map(id=>{const node=new Node();node.parentElement=new Node();nodes[id]=node;return node.parentElement;});
 for(const id of ['painelResumoGerencial','filtroTipo','filtroRubrica','filtroSubItem','filtroBuscaRubrica','filtroBuscaSubItem','filtroDescricao','filtroDataInicio','filtroDataFim'])nodes[id]=new Node();
 nodes.filtroTipo.value='Todos';nodes.filtroRubrica.value='Todas';nodes.filtroSubItem.value='Todos';nodes.filtroDataInicio.value='2026-11-01';nodes.filtroDataFim.value='2026-11-30';
 const rows=[{id:1,tipo:'Receita',status:'Recebido',valor:100},{id:2,tipo:'Receita',status:'Não Recebido',valor:50},{id:3,tipo:'Despesa',status:'Pago',valor:20},{id:4,tipo:'Despesa',status:'Vencido',valor:30},{id:5,tipo:'Despesa',status:'A Vencer',valor:40},{id:6,tipo:'Investimentos',status:'Feito',valor:10},{id:7,tipo:'Despesa',categoria:'INVESTIMENTOS',status:'A Vencer',valor:5}];
+const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);rows[3].vencimento=yesterday.getFullYear()+'-'+String(yesterday.getMonth()+1).padStart(2,'0')+'-'+String(yesterday.getDate()).padStart(2,'0');
+nodes['pm-kRec'].parentElement.parentElement=new Node();
 const before=JSON.stringify(rows);let rendered=[],clears=0,observer;
 const c={window:null,protecaoAutenticada:true,filtroRapidoEspecial:'',filtrosPainelAtivadosPeloUsuario:false,getComputedStyle:()=>({display:'none'}),MutationObserver:class{constructor(f){observer=f;}observe(){}},document:{readyState:'complete',body:{classList:{contains:()=>false}},getElementById:id=>nodes[id],querySelectorAll:s=>s==='[data-pf-quick-card]'?cardNodes:s==='.pf-quick-cards-notice'?notices:[],createElement:()=>new Node()}};
 c.window=c;c.getFilteredTransactions=()=>rows.filter(r=>nodes.filtroTipo.value==='Todos'||r.tipo===nodes.filtroTipo.value);c.renderTable=()=>rendered=c.getFilteredTransactions();c.limparFiltros=()=>{clears++;nodes.filtroTipo.value='Todos';c.renderTable();};
@@ -13,11 +15,17 @@ vm.createContext(c);vm.runInContext(js,c);
 const click=id=>nodes[id].parentElement.listeners.click();
 for(const [id,expected]of [['pgReceitas',[1,2]],['pgRecebido',[1]],['pgDespesas',[3,4,5,7]],['pgAVencer',[5,7]],['pgVencido',[4]],['pgSaldo',[1,2,3,4,5,6,7]],['pgInvestimentos',[6,7]],['pgSituacao',[4]]]){click(id);assert.deepEqual(rendered.map(r=>r.id),expected,id);assert.equal(nodes[id].parentElement.attributes['aria-pressed'],'true');}
 assert.equal(notices[0].children[1].textContent,'Limpar filtro');nodes.filtroDataFim.value='2027-01-01';notices[0].children[1].listeners.click();assert.equal(c.PFQuickCards.active,'');assert.equal(nodes.filtroDataFim.value,'2026-11-30');assert.equal(rendered.length,rows.length);
+assert.equal(notices.length,2,'Aviso também deve existir junto aos cartões visíveis do celular');
+for(const [id,expected]of [['pm-kRec',[1,2]],['pm-kReceived',[1]],['pm-kDes',[3,4,5,7]],['pm-kVen',[5,7]],['pm-kOverdue',[4]],['pm-kInv',[6,7]],['pm-kSaldo',[1,2,3,4,5,6,7]]]){click(id);assert.deepEqual(rendered.map(r=>r.id),expected,id);assert.equal(nodes[id].parentElement.attributes['aria-pressed'],'true');assert.equal(notices[1].hidden,false);}
+notices[1].children[1].listeners.click();assert.equal(c.PFQuickCards.active,'');assert.equal(rendered.length,rows.length);
+assert(c.PFQuickCards.matches({tipo:'Receita',status:'Pendente',dataPg:'2026-01-01'},'recebidoMobile'));
+assert(!c.PFQuickCards.matches({tipo:'Receita',status:'Pendente'},'recebidoMobile'));
+assert(!c.PFQuickCards.matches({tipo:'Despesa',status:'Vencido',vencimento:rows[3].vencimento,dataPg:'2026-01-01'},'vencidoMobile'));
 click('pgReceitas');click('pgReceitas');assert.equal(c.PFQuickCards.active,'');
 nodes.filtroTipo.value='Despesa';click('pgVencido');assert.equal(rendered.length,1);c.limparFiltros();assert.equal(clears,1);assert.equal(c.PFQuickCards.active,'');
 nodes.pgInvestimentos.parentElement.listeners.keydown({key:'Enter',preventDefault(){}});assert.deepEqual(rendered.map(r=>r.id),[6,7]);c.protecaoAutenticada=false;observer();assert.equal(c.PFQuickCards.active,'');assert.equal(notices[0].hidden,true);click('pgReceitas');assert.equal(c.PFQuickCards.active,'');assert.equal(JSON.stringify(rows),before);
 for(const name of ['index.html','distribuicao/app.html','teste-gemini/app.html']){
- const html=fs.readFileSync(path.join(__dirname,'..',name),'utf8');assert.equal((html.match(/id="pf-quick-cards"/g)||[]).length,1);assert.equal((html.match(/PFQF bridge:start/g)||[]).length,3);
+ const html=fs.readFileSync(path.join(__dirname,'..',name),'utf8');assert.equal((html.match(/id="pf-quick-cards"/g)||[]).length,1,name+': módulo dos cartões ausente ou duplicado; envie o HTML atualizado');assert.equal((html.match(/PFQF bridge:start/g)||[]).length,3,name+': integração dos filtros incompleta');
  const start=html.indexOf('function monthAnalysisData('),end=html.indexOf('function categoryBreakdownBars(',start);const code=html.slice(start,end);const ctx={window:{PFQuickCards:{apply:rs=>rs.filter(r=>r.status==='Vencido')}}};vm.createContext(ctx);vm.runInContext(code+';globalThis.calc=monthAnalysisData;',ctx);
  const dated=rows.map(r=>({...r,categoria:r.categoria||'A',descricao:'Teste',vencimento:'2026-11-01'}));const result=ctx.calc(dated.filter(r=>r.status==='Vencido'),dated,'2026-11-30');assert.equal(result.revenueHistory.at(-1)[1],0);assert.equal(result.expenseHistory.at(-1)[1],30);
  // Exercise the real standard filter with the card wrapper, including period constraints.

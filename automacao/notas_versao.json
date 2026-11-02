@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Transforma os cartões do Painel Gerencial em filtros rápidos para lançamentos, análises, fluxo de caixa e relatórios.",
-    "Destaca o cartão selecionado e inclui o botão Limpar filtro para restaurar o recorte anterior; novo clique no cartão também remove o filtro.",
-    "Preserva o período e demais filtros existentes; inclui acesso pelo teclado e apresentação nos temas claro e escuro."
+    "Corrige os filtros rápidos dos cartões visíveis na tela própria do celular, incluindo Saldo, Receitas, Recebido, Despesas, A vencer, Vencidas e Investimentos.",
+    "Inclui Limpar filtro na tela do celular e preserva as regras de pagamento e vencimento usadas pelos indicadores móveis.",
+    "Mantém a funcionalidade do PC e melhora a mensagem de verificação quando um HTML atualizado não foi enviado ao repositório."
   ],
   "distribuicao": [
-    "Transforma os cartões do Painel Gerencial em filtros rápidos para lançamentos, análises, fluxo de caixa e relatórios.",
-    "Destaca o cartão selecionado e inclui o botão Limpar filtro para restaurar o recorte anterior; novo clique no cartão também remove o filtro.",
-    "Preserva o período e demais filtros existentes; inclui acesso pelo teclado e apresentação nos temas claro e escuro."
+    "Corrige os filtros rápidos dos cartões visíveis na tela própria do celular, incluindo Saldo, Receitas, Recebido, Despesas, A vencer, Vencidas e Investimentos.",
+    "Inclui Limpar filtro na tela do celular e preserva as regras de pagamento e vencimento usadas pelos indicadores móveis.",
+    "Mantém a funcionalidade do PC e melhora a mensagem de verificação quando um HTML atualizado não foi enviado ao repositório."
   ]
 }
