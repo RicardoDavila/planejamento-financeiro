@@ -1,10 +1,12 @@
 {
   "pessoal": [
-    "Define os formatos iniciais dos quatro gráficos da análise da página principal: receitas em Áreas, evolução das despesas em Pizza, receitas por rubrica no Padrão Original e despesas por rubricas em Colunas.",
-    "Mantém a troca manual durante o uso e restaura esses formatos ao recarregar ou reabrir a página."
+    "Ativa filtros rápidos nos sete cartões do Painel Executivo de Gráficos e Evoluções, com Limpar filtro próprio.",
+    "Separa os filtros rápidos dos gráficos e da página principal, evitando abrir o ranking restrito por uma seleção anterior como EMPRESA.",
+    "Mostra a composição de Prev de Receita agrupada por Descrição e abre os lançamentos da descrição selecionada, preservando os totais e os demais gráficos."
   ],
   "distribuicao": [
-    "Define os formatos iniciais dos quatro gráficos da análise da página principal: receitas em Áreas, evolução das despesas em Pizza, receitas por rubrica no Padrão Original e despesas por rubricas em Colunas.",
-    "Mantém a troca manual durante o uso e restaura esses formatos ao recarregar ou reabrir a página."
+    "Ativa filtros rápidos nos sete cartões do Painel Executivo de Gráficos e Evoluções, com Limpar filtro próprio.",
+    "Separa os filtros rápidos dos gráficos e da página principal, evitando abrir o ranking restrito por uma seleção anterior como EMPRESA.",
+    "Mostra a composição de Prev de Receita agrupada por Descrição e abre os lançamentos da descrição selecionada, preservando os totais e os demais gráficos."
   ]
 }

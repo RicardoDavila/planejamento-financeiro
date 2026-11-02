@@ -8,9 +8,13 @@ def apply(html):
  def bridge(code):return '\n/* PFQF bridge:start */\n'+code+'\n/* PFQF bridge:end */\n'
  marker='const passaFiltrosIndividuais = (t) => {'
  assert marker in html
- html=html.replace(marker,marker+bridge("                if(typeof window!=='undefined'&&window.PFQuickCards&&!window.PFQuickCards.apply([t]).length)return false;"),1)
+ html=html.replace(marker,marker+bridge("                if(typeof window!=='undefined'&&window.PFQuickCards&&!window.PFQuickCards.apply([t],'charts').length)return false;"),1)
  start=html.index('function atualizarGraficos()');pos=html.index('const filtradas = transacoes.filter(t => {',start)+len('const filtradas = transacoes.filter(t => {')
- html=html[:pos]+bridge("                if(typeof window!=='undefined'&&window.PFQuickCards&&!window.PFQuickCards.apply([t]).length)return false;")+html[pos:]
+ html=html[:pos]+bridge("                if(typeof window!=='undefined'&&window.PFQuickCards&&!window.PFQuickCards.apply([t],'charts').length)return false;")+html[pos:]
+ start=html.index('function compararTotalReceitasDespesas()')
+ needle='const filtradas = (Array.isArray(transacoes) ? transacoes : []).filter(t => {'
+ pos=html.index(needle,start)+len(needle)
+ html=html[:pos]+bridge("                if(typeof window!=='undefined'&&window.PFQuickCards&&!window.PFQuickCards.apply([t],'charts').length)return false;")+html[pos:]
  marker='function monthAnalysisData(rows,allRows,chosen){';assert marker in html
  html=html.replace(marker,marker+bridge(" if(typeof window!=='undefined'&&window.PFQuickCards)allRows=window.PFQuickCards.apply(allRows);"),1)
  css=(ROOT/'automacao/filtros_cartoes.css').read_text(encoding='utf8');js=(ROOT/'automacao/filtros_cartoes.js').read_text(encoding='utf8')

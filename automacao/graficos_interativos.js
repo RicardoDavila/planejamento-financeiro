@@ -64,8 +64,8 @@
    const scroll=element('div',undefined,'pfce-scroll'),table=element('table'),head=element('thead'),hr=element('tr');for(const h of ['Vencimento','Tipo','Rubrica','Descrição','Status','Valor'])hr.append(element('th',h));head.append(hr);table.append(head);const body=element('tbody');
    for(const r of records){const tr=element('tr');for(const v of [dateLabel(r.vencimento),r.tipo,r.categoria||'Sem rubrica',r.descricao.trim()||'Sem descrição',r.status,money(r.valor)])tr.append(element('td',v));body.append(tr);}table.append(body);scroll.append(table);state.detail.append(scroll);
    if(!passive&&!payload&&window.PFQuickCards){
-    const field=overrideRows&&records.every(r=>r.descricao===point.label)?'descricao':/rubrica/.test(D.norm(state.model.title))?'categoria':/descri/.test(D.norm(state.model.title))?'descricao':null;
-    if(field){const values=[...new Set(records.map(r=>String(r[field]??'')))];if(values.length===1)document.dispatchEvent(new CustomEvent('pf-item-focus',{detail:{field,value:values[0]}}));}
+    const field=state.model.groupBy|| (overrideRows&&records.every(r=>r.descricao===point.label)?'descricao':/rubrica/.test(D.norm(state.model.title))?'categoria':/descri/.test(D.norm(state.model.title))?'descricao':null);
+    if(field){const values=[...new Set(records.map(r=>String(r[field]??'')))];if(values.length===1)document.dispatchEvent(new CustomEvent('pf-item-focus',{detail:{field,value:values[0],scope:state.source.closest('#modalGraficos')?'charts':'page'}}));}
    }
   }
   function activate(node,state,p,rows){
@@ -129,7 +129,7 @@
    if(!state.source.isConnected){state.tools.remove();state.alt.remove();state.message.remove();state.detail.remove();state.points.remove();states.delete(state.source);return;}
    if(protectedState(state)){restore(state);state.tools.hidden=true;state.detail.hidden=true;state.points.hidden=true;state.model=null;state.selection=null;state.version='';return;}
    state.tools.hidden=false;
-   const version=JSON.stringify([m.title,m.labels,m.series,m.additive,m.additiveSeries,m.records||[],document.body.classList.contains('dark-mode')]);
+   const version=JSON.stringify([m.title,m.labels,m.series,m.additive,m.additiveSeries,m.groupBy,m.records||[],document.body.classList.contains('dark-mode')]);
    state.model=m;
    if(state.version===version)return;
    state.version=version;
@@ -233,11 +233,17 @@
        else rows=D.typeRows(rows,label);
        return rows;
       }
+      if(chart.$pfGroupBy==='descricao')return records.filter(r=>r.tipo==='Receita'&&(r.descricao.trim()||'Sem descrição')===label);
       if(/^\d{2}\/\d{2}\/\d{4}$/.test(label))return rows.filter(r=>r.vencimento===label.split('/').reverse().join('-'));
       if(records.some(r=>(r.categoria||'Outros')===label))return rows.filter(r=>(r.categoria||'Outros')===label);
       return D.typeRows(rows,label);
      };
-     const m=D.model(title,labels,series,resolve,!/saldo|balanço/i.test(title+' '+series.map(s=>s.label).join(' ')));m.records=records;
+     const m=D.model(title,labels,series,resolve,!/saldo|balanço/i.test(title+' '+series.map(s=>s.label).join(' ')));m.records=records;m.groupBy=chart.$pfGroupBy||null;
+     if(id==='chartRubricas'){
+      let note=document.getElementById('pf-revenue-description-note');const heading=document.getElementById('tituloGraficoRubricas');
+      if(!note&&heading){note=element('p','Receitas agrupadas por descrição, conforme os filtros selecionados.','pfce-message');note.id='pf-revenue-description-note';heading.after(note);}
+      if(note)note.hidden=chart.$pfGroupBy!=='descricao';
+     }
      if(series.some(s=>/saldo/i.test(s.label)))m.additiveSeries=series.map(s=>!/saldo|balanço/i.test(s.label));
      mount(canvas,m,{displayNode:canvas.parentElement,chart:()=>Chart.getChart(canvas)});
     }

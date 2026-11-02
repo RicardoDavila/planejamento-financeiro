@@ -38,6 +38,23 @@ def aplicar(html):
     if "capture('comparison'," not in html[start:end]:
         region=html[start:end];last=region.rfind('        }')
         html=html[:start]+region[:last]+bridge(comparison.rstrip())+region[last:]+html[end:]
+    # Only the forecast-revenue distribution changes grouping; totals stay intact.
+    start=html.index('        function atualizarGraficos() {')
+    end=html.index('        let calendarioV45Data =',start)
+    region=html[start:end]
+    needle="            const ctxRubricas = document.getElementById('chartRubricas').getContext('2d');"
+    grouping="""            if(abaAtivaGrafico==='prevReceita'&&!comparativoReceitasDespesasAtivo){
+                const descriptions=new Map();
+                filtradas.filter(t=>t.tipo==='Receita').forEach(t=>{const key=String(t.descricao||'').trim()||'Sem descrição';descriptions.set(key,(descriptions.get(key)||0)+(Number(t.valor)||0));});
+                Object.keys(rubricasMap).forEach(key=>delete rubricasMap[key]);
+                descriptions.forEach((value,key)=>Object.defineProperty(rubricasMap,key,{value,enumerable:true,configurable:true,writable:true}));
+            }"""
+    assert needle in region
+    region=region.replace(needle,bridge(grouping)+needle,1)
+    last=region.rfind('        }')
+    metadata="""            if(chartRubricasInstance)chartRubricasInstance.$pfGroupBy=abaAtivaGrafico==='prevReceita'&&!comparativoReceitasDespesasAtivo?'descricao':null;"""
+    region=region[:last]+bridge(metadata)+region[last:]
+    html=html[:start]+region+html[end:]
     needle='relatorioHtml = window.PFReportTheme.decorate(relatorioHtml);'
     addition="\n            if(window.PFChartExplorer)relatorioHtml=window.PFChartExplorer.decorate(relatorioHtml,{kind:'managerial',rows:lista,months:[...mesesComparativo].map(([key,m])=>({...m,key})),series:seriesMensais,descriptions:descricoesGrafico});"
     if "kind:'managerial',rows:lista" not in html:
