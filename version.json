@@ -1,11 +1,9 @@
 {
-  "version": "V4.12.34",
-  "name": "V4.12.34",
+  "version": "V4.12.35",
+  "name": "V4.12.35",
   "channel": "pessoal",
   "notes": [
-    "Corrige a tentativa de login para preservar a sessão anterior quando a senha informada é recusada.",
-    "Adiciona recebimento dos dados do PC/nuvem no celular com backup das duas cópias, confirmação e proteção contra mudanças durante a operação.",
-    "Evita conflitos falsos por atualizações automáticas de status e mantém a proteção contra alterações financeiras simultâneas.",
-    "Preserva os relatórios, o logotipo e todos os painéis aprovados."
+    "Adiciona ícones aos cartões, tipos de lançamento, situações e menus no PC e no celular, mantendo os nomes originais.",
+    "Inclui ícones nos relatórios sem depender de fontes externas; preserva cálculos, acesso, dados e sincronização."
   ]
 }

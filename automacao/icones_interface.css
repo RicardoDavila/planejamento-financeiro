@@ -1,0 +1,23 @@
+/* Ícones decorativos: rótulos, valores, ordem e áreas de toque preservados. */
+svg.pf-fin-icon{display:inline-block;width:1.05em;height:1.05em;margin-inline-end:.38em;vertical-align:-.16em;flex-shrink:0;overflow:visible;pointer-events:none}
+#painelResumoGerencial p>svg.pf-fin-icon,.dashboard-v40-card .lbl>svg.pf-fin-icon{width:16px;height:16px;vertical-align:-3px}
+svg.pf-fin-icon[data-pf-kind="income"],svg.pf-fin-icon[data-pf-kind="received"]{color:#047857}
+svg.pf-fin-icon[data-pf-kind="expense"]{color:#be123c}
+svg.pf-fin-icon[data-pf-kind="overdue"]{color:#b91c1c}
+svg.pf-fin-icon[data-pf-kind="due"]{color:#92400e}
+svg.pf-fin-icon[data-pf-kind="investment"]{color:#6d28d9}
+svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
+.dark-mode svg.pf-fin-icon[data-pf-kind="income"],.dark-mode svg.pf-fin-icon[data-pf-kind="received"]{color:#6ee7b7}
+.dark-mode svg.pf-fin-icon[data-pf-kind="expense"],.dark-mode svg.pf-fin-icon[data-pf-kind="overdue"]{color:#fda4af}
+.dark-mode svg.pf-fin-icon[data-pf-kind="due"]{color:#fcd34d}
+.dark-mode svg.pf-fin-icon[data-pf-kind="investment"]{color:#c4b5fd}
+.dark-mode svg.pf-fin-icon[data-pf-kind="balance"]{color:#93c5fd}
+/* Cartões/badges claros mantêm as cores escuras, inclusive no tema escuro. */
+.dark-mode #painelResumoGerencial svg.pf-fin-icon,.dark-mode .dashboard-v40-card svg.pf-fin-icon,.dark-mode .badge-mobile svg.pf-fin-icon,.dark-mode td span svg.pf-fin-icon[data-pf-kind],.dark-mode #pfMobileShell .balance small>svg.pf-fin-icon{color:currentColor}
+#pfMobileShell .nav svg.pf-fin-icon{display:block;width:22px;height:22px;margin:0 auto 3px}
+#pfMobileShell .nav .plus svg.pf-fin-icon{width:26px;height:26px;margin:0}
+#pfMobileShell .bar svg.pf-fin-icon{width:16px;height:16px}
+#pfMobileShell .row b>svg.pf-fin-icon{width:16px;height:16px}
+#pfMobileShell .badge svg.pf-fin-icon{width:13px;height:13px}
+.pf-nav svg.pf-fin-icon{width:18px;height:18px}
+@media print{svg.pf-fin-icon{color:currentColor!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
