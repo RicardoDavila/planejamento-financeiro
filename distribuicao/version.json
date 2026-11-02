@@ -1,9 +1,10 @@
 {
-  "version": "V4.12.39",
-  "name": "V4.12.39",
+  "version": "V4.12.40",
+  "name": "V4.12.40",
   "channel": "distribuicao",
   "notes": [
-    "Adiciona abertura e recolhimento por clique nas barras de Receitas por Rubrica e Despesas por Rubricas, mostrando as descrições correspondentes abaixo.",
-    "Inclui a orientação nos títulos; preserva filtros, totais, evolução mensal, temas, acesso e sincronização."
+    "Adiciona seleção de linhas, áreas, colunas, barras, pizza, rosca e dispersão aos gráficos, mantendo o formato original como padrão.",
+    "Permite abrir descrições e lançamentos por clique nos gráficos da tela e dos relatórios Gerencial e de Fluxo de Caixa.",
+    "Inclui controles acessíveis, adaptação ao celular e validação de formatos compatíveis com os dados."
   ]
 }

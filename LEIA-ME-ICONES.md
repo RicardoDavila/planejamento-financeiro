@@ -1,4 +1,17 @@
-# Ícones, contraste e rubricas expansíveis — V4.12.39
+# Gráficos selecionáveis e lançamentos — V4.12.40
+
+
+Esta versão amplia os controles para os 11 gráficos das telas financeiras, os dois gráficos do relatório Gerencial e os quatro do relatório de Fluxo de Caixa. Cada gráfico começa em **Padrão (original)**. O seletor oferece Linhas, Áreas, Colunas, Barras horizontais, Pizza, Rosca e Dispersão.
+
+Clique em barras, pontos ou fatias para abrir as descrições e os lançamentos correspondentes abaixo do gráfico. Outro clique recolhe. A opção “Ver pontos e lançamentos” permite acessar os mesmos dados pelo teclado. Nas rubricas da análise mensal, a expansão original permanece no formato padrão.
+
+Dispersão permite escolher as séries dos eixos X e Y e exige duas séries numéricas comparáveis. Pizza e rosca exibem percentuais de uma série positiva e aditiva; saldos acumulados, valores negativos ou totais zerados recebem uma explicação e mantêm o gráfico original. Mais de oito fatias são agrupadas em “Outros”, preservando os lançamentos do grupo. Indicadores derivados exibem os registros que participam do cálculo, sem duplicá-los nos totais.
+
+As escolhas permanecem apenas na memória da página. Os relatórios recebem os dados do recorte no momento da abertura e mantêm o formato escolhido na impressão. A nova camada não adiciona dependências externas. Login, isolamento, cálculos e sincronização permanecem preservados.
+
+Para manter os módulos incorporados, execute `python automacao/aplicar_icones.py` e depois `python automacao/aplicar_graficos.py`. Fontes: `automacao/graficos_interativos.js` e `.css`. A segunda aplicação é idempotente.
+
+Validação desta entrega: 43 testes aprovados; verificação no navegador com dados fictícios, incluindo relatórios, celular, bloqueio de acesso e preservação dos dados dos gráficos originais. As notas abaixo registram as revisões anteriores.
 
 A V4.12.39 acrescenta expansão por clique apenas aos quadros de Receitas por Rubrica e Despesas por Rubricas da análise mensal. Os títulos incluem “(clique na barra para abrir lançamentos)”. Cada rubrica começa recolhida; ao clicar ou usar Enter/Espaço, exibe as barras das descrições logo abaixo. Outro clique recolhe os detalhes.
 
@@ -22,7 +35,7 @@ Os cálculos, dados, login, isolamento das contas e sincronização foram preser
 
 Extraia o ZIP e atualize os arquivos do projeto no seu repositório, mantendo a estrutura das pastas. Não envie apenas o ZIP como um arquivo dentro do site. Mantenha suas configurações de GitHub Pages e os demais arquivos de configuração existentes no repositório.
 
-Os arquivos de versão e os caches do PWA foram atualizados para V4.12.39. Depois da publicação, os usuários devem usar o fluxo de atualização já existente no aplicativo. Nenhuma publicação remota foi executada durante esta entrega.
+Os arquivos de versão e os caches do PWA foram atualizados para V4.12.40. Depois da publicação, os usuários devem usar o fluxo de atualização já existente no aplicativo. Nenhuma publicação remota foi executada durante esta entrega.
 
 Esta revisão completa os cartões e os títulos de Gráficos e Evoluções, a impressão do painel e os relatórios Gerencial e de Fluxo de Caixa. Reconhece os símbolos antigos no início dos rótulos e os substitui pelo SVG correspondente, sem modificar as palavras. O Fluxo de Caixa passa pela camada de ícones antes de abrir a nova aba.
 
