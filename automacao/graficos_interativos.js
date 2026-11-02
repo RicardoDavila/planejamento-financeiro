@@ -53,6 +53,7 @@
    if(protectedState(state))return;
    if(state.selection===point.key){state.selection=null;state.detail.hidden=true;return;}
    state.selection=point.key;state.selectionIdentity=JSON.stringify([point.label,point.series]);state.detail.replaceChildren();state.detail.hidden=false;
+   state.descriptionSelection=overrideRows&&point.key.startsWith('description:')?{point:{...point},category:overrideRows[0]?.categoria}:null;
    const close=element('button','Recolher detalhes','pfce-close');close.type='button';close.onclick=()=>{state.selection=null;state.detail.hidden=true;};state.detail.append(close);
    state.detail.append(element('h5',point.label+' · '+point.series+' · '+money(point.value)));
    const records=overrideRows||pointRows(state,point),groups=D.grouped(records),bars=element('div',undefined,'pfce-bars'),max=Math.max(1,...groups.map(g=>Math.abs(g.value)));
@@ -137,7 +138,12 @@
    for(const [select,text]of [[state.seriesSelect,'Série'],[state.xSelect,'Eixo X'],[state.ySelect,'Eixo Y']]){const value=select.value;select.replaceChildren(...m.series.map((s,i)=>{const o=element('option',s.label);o.value=String(i);return o;}));select.value=value!==''&&Number(value)<m.series.length?value:'0';select.setAttribute('aria-label',m.title+' — '+text);}
    if(state.ySelect.value===state.xSelect.value&&m.series.length>1)state.ySelect.value='1';
    draw(state);
-   if(state.selection){const p=D.points(m).find(p=>JSON.stringify([p.label,p.series])===state.selectionIdentity);state.selection=null;if(p)detail(state,p,undefined,true);else state.detail.hidden=true;}
+   if(state.selection){
+    const p=D.points(m).find(p=>JSON.stringify([p.label,p.series])===state.selectionIdentity),description=state.descriptionSelection;state.selection=null;
+    if(p)detail(state,p,undefined,true);
+    else if(description){const rows=D.rows(m.records).filter(r=>r.tipo===description.point.series&&r.categoria===description.category&&(r.descricao.trim()||'Sem descrição')===description.point.label);if(rows.length)detail(state,{...description.point,value:D.sum(rows)},rows,true);else state.detail.hidden=true;}
+    else state.detail.hidden=true;
+   }
   }
   function mount(source,m,options={}){
    if(!source)return;let state=states.get(source);

@@ -57,7 +57,15 @@
  function activate(event){
   const node=event.target.closest('[data-pf-dynamic-field]');if(!node)return;
   if(event.target.closest('input,select,textarea,a,[contenteditable=true]'))return;
-  if(node.matches('summary')){if(event.type==='click')requestAnimationFrame(()=>{api()?.field(node.dataset.pfDynamicField,node.dataset.pfDynamicValue);schedule();});return;}
+  if(node.matches('summary')){
+   if(event.type!=='click')return;
+   event.preventDefault();event.stopImmediatePropagation();
+   const branch=node.parentElement;branch.open=!branch.open;
+   // Save the tree state before the quick filter replaces the rendered bars.
+   // Native toggle events are queued, so relying on their timing loses expansion.
+   branch.dispatchEvent(new Event('toggle'));
+   api()?.field(node.dataset.pfDynamicField,node.dataset.pfDynamicValue);schedule();return;
+  }
   event.preventDefault();event.stopImmediatePropagation();api()?.field(node.dataset.pfDynamicField,node.dataset.pfDynamicValue);schedule();
  }
  let pending=false;

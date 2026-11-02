@@ -7952,7 +7952,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.43';
+ const CURRENT_VERSION='V4.12.44';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -10052,6 +10052,108 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
 })();
 
 </script>
+<style id="pf-quick-cards-style">
+[data-pf-quick-card]{cursor:pointer;position:relative}
+[data-pf-quick-card]:hover{outline:2px solid #64748b;outline-offset:2px}
+[data-pf-quick-card]:focus-visible{outline:3px solid #2563eb;outline-offset:3px}
+[data-pf-quick-card][aria-pressed=true]{outline:3px solid #2563eb;outline-offset:2px}
+.pf-quick-cards-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px;margin:10px 0 16px;border:1px solid #93c5fd;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:13px}
+.pf-quick-cards-notice[hidden]{display:none!important}
+.pf-quick-cards-notice button{padding:9px 14px;border:1px solid #1d4ed8;border-radius:8px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer;min-height:44px}
+body.dark-mode .pf-quick-cards-notice{background:#172b46;color:#dbeafe;border-color:#60a5fa}
+body.dark-mode [data-pf-quick-card][aria-pressed=true]{outline-color:#93c5fd}
+#pfMobileShell .pf-quick-cards-notice button{background:#1d4ed8;color:#fff;font-size:13px;font-weight:700;min-height:44px}
+#pfMobileShell .pf-quick-cards-notice{font-size:12px;gap:8px}
+#pfMobileShell [data-pf-quick-card]:focus-visible{outline-offset:1px}
+@media print{.pf-quick-cards-notice button{display:none}[data-pf-quick-card]{outline:none!important}.pf-quick-cards-notice{color:#111;background:white;border-color:#777}}
+
+</style>
+<script id="pf-quick-cards">
+(() => {
+ 'use strict';
+ function matches(row,key){
+  const norm=value=>String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const paid=()=>Boolean(row.dataPg)||['pago','recebido','paga','recebida','liquidado','feito'].includes(norm(row.status));
+  const late=()=>{const d=new Date(),today=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return row.tipo==='Despesa'&&!paid()&&row.vencimento&&row.vencimento<today;};
+  switch(key){
+   case 'recebidoMobile':return row.tipo==='Receita'&&paid();
+   case 'vencidoMobile':return Boolean(late());
+   case 'vencerMobile':return row.tipo==='Despesa'&&!paid()&&!late();
+   case 'receitas':return row.tipo==='Receita';
+   case 'recebido':return row.tipo==='Receita'&&row.status!=='Não Recebido';
+   case 'despesas':return row.tipo==='Despesa';
+   case 'vencer':return row.status==='A Vencer';
+   case 'vencido':return row.status==='Vencido';
+   case 'investimentos':return row.tipo==='Investimentos'||row.categoria==='INVESTIMENTOS';
+   case 'saldo':return ['Receita','Despesa','Investimentos'].includes(row.tipo)||row.categoria==='INVESTIMENTOS';
+   default:return true;
+  }
+ }
+ let active='',selected='',saved=null,originalGet,focus=null;
+ const labels={receitas:'Receitas',recebido:'Recebido',despesas:'Despesas',vencer:'A vencer',vencido:'Vencido',saldo:'Saldo previsto',investimentos:'Investimentos',situacao:'Situação'};
+ Object.assign(labels,{recebidoMobile:'Recebido',vencidoMobile:'Vencidas',vencerMobile:'A vencer'});
+ const ids=['filtroTipo','filtroRubrica','filtroSubItem','filtroBuscaRubrica','filtroBuscaSubItem','filtroDescricao','filtroDataInicio','filtroDataFim'];
+ const $=id=>document.getElementById(id);
+ const fields={categoria:'Rubrica',subItem:'Subitem',descricao:'Descrição'};
+ const api={matches,apply:rows=>focus?rows.filter(r=>String(r[focus.field]??'')===focus.value):active?rows.filter(r=>matches(r,active)):rows, get active(){return focus?'item':active;},get focus(){return focus?{...focus}:null;},select:choose,clear(){restore();refresh();},field(field,value){
+  if(!allowed()||!Object.hasOwn(fields,field)||value==null)return;
+  const next={field,value:String(value),label:fields[field]+': '+(String(value)||'(vazio)')};
+  if(focus?.field===field&&focus.value===next.value){restore();refresh();return;}
+  if(!saved)saved=snapshot();active='';selected='';focus=next;refresh();
+ }};
+ window.PFQuickCards=api;
+ function allowed(){return !document.body.classList.contains('auth-pendente')&&(typeof protecaoAutenticada==='undefined'||protecaoAutenticada!==false);}
+ function snapshot(){return {values:Object.fromEntries(ids.map(id=>[id,$(id)?.value])),special:typeof filtroRapidoEspecial!=='undefined'?filtroRapidoEspecial:'',user:typeof filtrosPainelAtivadosPeloUsuario!=='undefined'?filtrosPainelAtivadosPeloUsuario:false};}
+ function restore(){
+  if(saved){for(const [id,value]of Object.entries(saved.values))if($(id)&&value!==undefined)$(id).value=value;
+   if(typeof filtroRapidoEspecial!=='undefined')filtroRapidoEspecial=saved.special;
+   if(typeof filtrosPainelAtivadosPeloUsuario!=='undefined')filtrosPainelAtivadosPeloUsuario=saved.user;
+  }
+  active='';selected='';saved=null;focus=null;
+ }
+ function refresh(){window.renderTable?.();const modal=$('modalGraficos');if(modal&&!modal.classList.contains('hidden')&&getComputedStyle(modal).display!=='none')window.atualizarGraficos?.();sync();}
+ function choose(key){
+  if(!allowed())return;
+  if(selected===key){restore();refresh();return;}
+  if(!saved)saved=snapshot();
+  selected=key;active=key;focus=null;
+  if(key==='situacao'){
+   const rows=originalGet();
+   const total=status=>rows.filter(r=>r.status===status).reduce((sum,r)=>sum+(Number(r.valor)||0),0);
+   active=total('Vencido')>0?'vencido':total('A Vencer')>0?'vencer':'saldo';
+  }
+  refresh();
+ }
+ function sync(){
+  document.querySelectorAll('[data-pf-quick-card]').forEach(card=>card.setAttribute('aria-pressed',String(selected===card.dataset.pfQuickCard)));
+  document.querySelectorAll('.pf-quick-cards-notice').forEach(box=>{
+   box.hidden=(!active&&!focus)||!allowed();const text=box.querySelector('span');
+   const message='Filtro rápido: '+(focus?.label||labels[selected]||'')+(selected==='situacao'?' — '+(active==='saldo'?'todos os lançamentos':labels[active]):'')+'. Aplicado ao período e aos demais filtros atuais.';
+   if(text.textContent!==message)text.textContent=message;
+  });
+ }
+ function mount(){
+  originalGet=window.getFilteredTransactions;if(typeof originalGet!=='function')return;
+  window.getFilteredTransactions=function(...args){const rows=originalGet.apply(this,args);return api.apply(rows);};
+  const cards={pgReceitas:'receitas',pgRecebido:'recebido',pgDespesas:'despesas',pgAVencer:'vencer',pgVencido:'vencido',pgSaldo:'saldo',pgInvestimentos:'investimentos',pgSituacao:'situacao',d40Receitas:'receitas',d40Recebido:'recebido',d40Despesas:'despesas',d40Vencer:'vencer',d40Vencido:'vencido',d40Saldo:'saldo','pm-kRec':'receitas','pm-kReceived':'recebidoMobile','pm-kDes':'despesas','pm-kVen':'vencerMobile','pm-kOverdue':'vencidoMobile','pm-kInv':'investimentos','pm-kSaldo':'saldo'};
+  for(const [id,key]of Object.entries(cards)){
+   const card=$(id)?.parentElement;if(!card)continue;
+   card.dataset.pfQuickCard=key;card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-pressed','false');card.title='Filtrar por '+labels[key]+'. Clique novamente para limpar o filtro.';
+   card.addEventListener('click',()=>choose(key));card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(key);}});
+  }
+  for(const grid of [$('painelResumoGerencial'),$('pfResumoMobileValores'),$('pm-kRec')?.parentElement?.parentElement]){
+   if(!grid)continue;const box=document.createElement('div');box.className='pf-quick-cards-notice';box.hidden=true;box.setAttribute('role','status');
+   const text=document.createElement('span'),button=document.createElement('button');button.type='button';button.textContent='Limpar filtro';button.addEventListener('click',()=>{restore();refresh();});box.append(text,button);grid.before(box);
+  }
+  const clear=window.limparFiltros;if(typeof clear==='function')window.limparFiltros=function(...args){active='';selected='';saved=null;focus=null;const result=clear.apply(this,args);sync();return result;};
+  const render=window.renderTable;if(typeof render==='function')window.renderTable=function(...args){const result=render.apply(this,args);sync();return result;};
+  new MutationObserver(()=>{if(!allowed()&&(active||focus)){restore();sync();window.PFChartExplorer?.refresh?.();}}).observe(document.body,{attributes:true,attributeFilter:['class']});
+  sync();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+
+</script>
 <style id="pf-chart-explorer-style">
 .pfce-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0;font:12px/1.5 system-ui;color:#334155}
 .pfce-tools label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -10144,6 +10246,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
    if(protectedState(state))return;
    if(state.selection===point.key){state.selection=null;state.detail.hidden=true;return;}
    state.selection=point.key;state.selectionIdentity=JSON.stringify([point.label,point.series]);state.detail.replaceChildren();state.detail.hidden=false;
+   state.descriptionSelection=overrideRows&&point.key.startsWith('description:')?{point:{...point},category:overrideRows[0]?.categoria}:null;
    const close=element('button','Recolher detalhes','pfce-close');close.type='button';close.onclick=()=>{state.selection=null;state.detail.hidden=true;};state.detail.append(close);
    state.detail.append(element('h5',point.label+' · '+point.series+' · '+money(point.value)));
    const records=overrideRows||pointRows(state,point),groups=D.grouped(records),bars=element('div',undefined,'pfce-bars'),max=Math.max(1,...groups.map(g=>Math.abs(g.value)));
@@ -10228,7 +10331,12 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
    for(const [select,text]of [[state.seriesSelect,'Série'],[state.xSelect,'Eixo X'],[state.ySelect,'Eixo Y']]){const value=select.value;select.replaceChildren(...m.series.map((s,i)=>{const o=element('option',s.label);o.value=String(i);return o;}));select.value=value!==''&&Number(value)<m.series.length?value:'0';select.setAttribute('aria-label',m.title+' — '+text);}
    if(state.ySelect.value===state.xSelect.value&&m.series.length>1)state.ySelect.value='1';
    draw(state);
-   if(state.selection){const p=D.points(m).find(p=>JSON.stringify([p.label,p.series])===state.selectionIdentity);state.selection=null;if(p)detail(state,p,undefined,true);else state.detail.hidden=true;}
+   if(state.selection){
+    const p=D.points(m).find(p=>JSON.stringify([p.label,p.series])===state.selectionIdentity),description=state.descriptionSelection;state.selection=null;
+    if(p)detail(state,p,undefined,true);
+    else if(description){const rows=D.rows(m.records).filter(r=>r.tipo===description.point.series&&r.categoria===description.category&&(r.descricao.trim()||'Sem descrição')===description.point.label);if(rows.length)detail(state,{...description.point,value:D.sum(rows)},rows,true);else state.detail.hidden=true;}
+    else state.detail.hidden=true;
+   }
   }
   function mount(source,m,options={}){
    if(!source)return;let state=states.get(source);
@@ -10418,108 +10526,6 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
 })();
 
 </script>
-<style id="pf-quick-cards-style">
-[data-pf-quick-card]{cursor:pointer;position:relative}
-[data-pf-quick-card]:hover{outline:2px solid #64748b;outline-offset:2px}
-[data-pf-quick-card]:focus-visible{outline:3px solid #2563eb;outline-offset:3px}
-[data-pf-quick-card][aria-pressed=true]{outline:3px solid #2563eb;outline-offset:2px}
-.pf-quick-cards-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px;margin:10px 0 16px;border:1px solid #93c5fd;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:13px}
-.pf-quick-cards-notice[hidden]{display:none!important}
-.pf-quick-cards-notice button{padding:9px 14px;border:1px solid #1d4ed8;border-radius:8px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer;min-height:44px}
-body.dark-mode .pf-quick-cards-notice{background:#172b46;color:#dbeafe;border-color:#60a5fa}
-body.dark-mode [data-pf-quick-card][aria-pressed=true]{outline-color:#93c5fd}
-#pfMobileShell .pf-quick-cards-notice button{background:#1d4ed8;color:#fff;font-size:13px;font-weight:700;min-height:44px}
-#pfMobileShell .pf-quick-cards-notice{font-size:12px;gap:8px}
-#pfMobileShell [data-pf-quick-card]:focus-visible{outline-offset:1px}
-@media print{.pf-quick-cards-notice button{display:none}[data-pf-quick-card]{outline:none!important}.pf-quick-cards-notice{color:#111;background:white;border-color:#777}}
-
-</style>
-<script id="pf-quick-cards">
-(() => {
- 'use strict';
- function matches(row,key){
-  const norm=value=>String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  const paid=()=>Boolean(row.dataPg)||['pago','recebido','paga','recebida','liquidado','feito'].includes(norm(row.status));
-  const late=()=>{const d=new Date(),today=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return row.tipo==='Despesa'&&!paid()&&row.vencimento&&row.vencimento<today;};
-  switch(key){
-   case 'recebidoMobile':return row.tipo==='Receita'&&paid();
-   case 'vencidoMobile':return Boolean(late());
-   case 'vencerMobile':return row.tipo==='Despesa'&&!paid()&&!late();
-   case 'receitas':return row.tipo==='Receita';
-   case 'recebido':return row.tipo==='Receita'&&row.status!=='Não Recebido';
-   case 'despesas':return row.tipo==='Despesa';
-   case 'vencer':return row.status==='A Vencer';
-   case 'vencido':return row.status==='Vencido';
-   case 'investimentos':return row.tipo==='Investimentos'||row.categoria==='INVESTIMENTOS';
-   case 'saldo':return ['Receita','Despesa','Investimentos'].includes(row.tipo)||row.categoria==='INVESTIMENTOS';
-   default:return true;
-  }
- }
- let active='',selected='',saved=null,originalGet,focus=null;
- const labels={receitas:'Receitas',recebido:'Recebido',despesas:'Despesas',vencer:'A vencer',vencido:'Vencido',saldo:'Saldo previsto',investimentos:'Investimentos',situacao:'Situação'};
- Object.assign(labels,{recebidoMobile:'Recebido',vencidoMobile:'Vencidas',vencerMobile:'A vencer'});
- const ids=['filtroTipo','filtroRubrica','filtroSubItem','filtroBuscaRubrica','filtroBuscaSubItem','filtroDescricao','filtroDataInicio','filtroDataFim'];
- const $=id=>document.getElementById(id);
- const fields={categoria:'Rubrica',subItem:'Subitem',descricao:'Descrição'};
- const api={matches,apply:rows=>focus?rows.filter(r=>String(r[focus.field]??'')===focus.value):active?rows.filter(r=>matches(r,active)):rows, get active(){return focus?'item':active;},get focus(){return focus?{...focus}:null;},select:choose,clear(){restore();refresh();},field(field,value){
-  if(!allowed()||!Object.hasOwn(fields,field)||value==null)return;
-  const next={field,value:String(value),label:fields[field]+': '+(String(value)||'(vazio)')};
-  if(focus?.field===field&&focus.value===next.value){restore();refresh();return;}
-  if(!saved)saved=snapshot();active='';selected='';focus=next;refresh();
- }};
- window.PFQuickCards=api;
- function allowed(){return !document.body.classList.contains('auth-pendente')&&(typeof protecaoAutenticada==='undefined'||protecaoAutenticada!==false);}
- function snapshot(){return {values:Object.fromEntries(ids.map(id=>[id,$(id)?.value])),special:typeof filtroRapidoEspecial!=='undefined'?filtroRapidoEspecial:'',user:typeof filtrosPainelAtivadosPeloUsuario!=='undefined'?filtrosPainelAtivadosPeloUsuario:false};}
- function restore(){
-  if(saved){for(const [id,value]of Object.entries(saved.values))if($(id)&&value!==undefined)$(id).value=value;
-   if(typeof filtroRapidoEspecial!=='undefined')filtroRapidoEspecial=saved.special;
-   if(typeof filtrosPainelAtivadosPeloUsuario!=='undefined')filtrosPainelAtivadosPeloUsuario=saved.user;
-  }
-  active='';selected='';saved=null;focus=null;
- }
- function refresh(){window.renderTable?.();const modal=$('modalGraficos');if(modal&&!modal.classList.contains('hidden')&&getComputedStyle(modal).display!=='none')window.atualizarGraficos?.();sync();}
- function choose(key){
-  if(!allowed())return;
-  if(selected===key){restore();refresh();return;}
-  if(!saved)saved=snapshot();
-  selected=key;active=key;focus=null;
-  if(key==='situacao'){
-   const rows=originalGet();
-   const total=status=>rows.filter(r=>r.status===status).reduce((sum,r)=>sum+(Number(r.valor)||0),0);
-   active=total('Vencido')>0?'vencido':total('A Vencer')>0?'vencer':'saldo';
-  }
-  refresh();
- }
- function sync(){
-  document.querySelectorAll('[data-pf-quick-card]').forEach(card=>card.setAttribute('aria-pressed',String(selected===card.dataset.pfQuickCard)));
-  document.querySelectorAll('.pf-quick-cards-notice').forEach(box=>{
-   box.hidden=(!active&&!focus)||!allowed();const text=box.querySelector('span');
-   const message='Filtro rápido: '+(focus?.label||labels[selected]||'')+(selected==='situacao'?' — '+(active==='saldo'?'todos os lançamentos':labels[active]):'')+'. Aplicado ao período e aos demais filtros atuais.';
-   if(text.textContent!==message)text.textContent=message;
-  });
- }
- function mount(){
-  originalGet=window.getFilteredTransactions;if(typeof originalGet!=='function')return;
-  window.getFilteredTransactions=function(...args){const rows=originalGet.apply(this,args);return api.apply(rows);};
-  const cards={pgReceitas:'receitas',pgRecebido:'recebido',pgDespesas:'despesas',pgAVencer:'vencer',pgVencido:'vencido',pgSaldo:'saldo',pgInvestimentos:'investimentos',pgSituacao:'situacao',d40Receitas:'receitas',d40Recebido:'recebido',d40Despesas:'despesas',d40Vencer:'vencer',d40Vencido:'vencido',d40Saldo:'saldo','pm-kRec':'receitas','pm-kReceived':'recebidoMobile','pm-kDes':'despesas','pm-kVen':'vencerMobile','pm-kOverdue':'vencidoMobile','pm-kInv':'investimentos','pm-kSaldo':'saldo'};
-  for(const [id,key]of Object.entries(cards)){
-   const card=$(id)?.parentElement;if(!card)continue;
-   card.dataset.pfQuickCard=key;card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-pressed','false');card.title='Filtrar por '+labels[key]+'. Clique novamente para limpar o filtro.';
-   card.addEventListener('click',()=>choose(key));card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(key);}});
-  }
-  for(const grid of [$('painelResumoGerencial'),$('pfResumoMobileValores'),$('pm-kRec')?.parentElement?.parentElement]){
-   if(!grid)continue;const box=document.createElement('div');box.className='pf-quick-cards-notice';box.hidden=true;box.setAttribute('role','status');
-   const text=document.createElement('span'),button=document.createElement('button');button.type='button';button.textContent='Limpar filtro';button.addEventListener('click',()=>{restore();refresh();});box.append(text,button);grid.before(box);
-  }
-  const clear=window.limparFiltros;if(typeof clear==='function')window.limparFiltros=function(...args){active='';selected='';saved=null;focus=null;const result=clear.apply(this,args);sync();return result;};
-  const render=window.renderTable;if(typeof render==='function')window.renderTable=function(...args){const result=render.apply(this,args);sync();return result;};
-  new MutationObserver(()=>{if(!allowed()&&(active||focus)){restore();sync();window.PFChartExplorer?.refresh?.();}}).observe(document.body,{attributes:true,attributeFilter:['class']});
-  sync();
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
-})();
-
-</script>
 <style id="pf-dynamic-filters-style">
 .pf-dynamic-item{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px}
 .pf-dynamic-item:hover{background-color:#dbeafe!important;color:#1e3a8a!important}
@@ -10591,7 +10597,15 @@ body.dark-mode #pfMobileShell .pf-dynamic-shortcuts button{background:#263b55;co
  function activate(event){
   const node=event.target.closest('[data-pf-dynamic-field]');if(!node)return;
   if(event.target.closest('input,select,textarea,a,[contenteditable=true]'))return;
-  if(node.matches('summary')){if(event.type==='click')requestAnimationFrame(()=>{api()?.field(node.dataset.pfDynamicField,node.dataset.pfDynamicValue);schedule();});return;}
+  if(node.matches('summary')){
+   if(event.type!=='click')return;
+   event.preventDefault();event.stopImmediatePropagation();
+   const branch=node.parentElement;branch.open=!branch.open;
+   // Save the tree state before the quick filter replaces the rendered bars.
+   // Native toggle events are queued, so relying on their timing loses expansion.
+   branch.dispatchEvent(new Event('toggle'));
+   api()?.field(node.dataset.pfDynamicField,node.dataset.pfDynamicValue);schedule();return;
+  }
   event.preventDefault();event.stopImmediatePropagation();api()?.field(node.dataset.pfDynamicField,node.dataset.pfDynamicValue);schedule();
  }
  let pending=false;

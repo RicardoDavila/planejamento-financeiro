@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Adiciona filtro rápido ao clicar em Rubrica, Subitem ou Descrição nas listas e detalhes do PC, distribuição e celular.",
-    "Integra rubricas e descrições das análises ao mesmo filtro; preserva a expansão dos gráficos e inclui Limpar filtro para restaurar o recorte anterior.",
-    "Mantém os cartões já existentes, cálculos, acesso, sincronização e ações de edição e exclusão."
+    "Corrige a expansão em árvore de Receitas por Rubrica e Despesas por Rubricas junto aos filtros rápidos.",
+    "Registra a abertura e o recolhimento antes de redesenhar as barras, mantendo as descrições visíveis abaixo da rubrica.",
+    "Preserva o detalhamento de uma descrição após atualizar o recorte; mantém os filtros rápidos e Limpar filtro."
   ],
   "distribuicao": [
-    "Adiciona filtro rápido ao clicar em Rubrica, Subitem ou Descrição nas listas e detalhes do PC, distribuição e celular.",
-    "Integra rubricas e descrições das análises ao mesmo filtro; preserva a expansão dos gráficos e inclui Limpar filtro para restaurar o recorte anterior.",
-    "Mantém os cartões já existentes, cálculos, acesso, sincronização e ações de edição e exclusão."
+    "Corrige a expansão em árvore de Receitas por Rubrica e Despesas por Rubricas junto aos filtros rápidos.",
+    "Registra a abertura e o recolhimento antes de redesenhar as barras, mantendo as descrições visíveis abaixo da rubrica.",
+    "Preserva o detalhamento de uma descrição após atualizar o recorte; mantém os filtros rápidos e Limpar filtro."
   ]
 }
