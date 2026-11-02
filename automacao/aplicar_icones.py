@@ -4,6 +4,7 @@ import re
 ROOT=Path(__file__).resolve().parents[1]
 def aplicar(html):
     css=(ROOT/'automacao/icones_interface.css').read_text(encoding='utf-8')
+    css+='\n'+(ROOT/'automacao/tema_escuro_resumo.css').read_text(encoding='utf-8')
     js=(ROOT/'automacao/icones_interface.js').read_text(encoding='utf-8')
     html=re.sub(r'<style id="pf-financial-icons-style">[\s\S]*?</style>\s*','',html)
     html=re.sub(r'<script id="pf-financial-icons">[\s\S]*?</script>\s*','',html)

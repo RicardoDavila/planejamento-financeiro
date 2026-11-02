@@ -9348,6 +9348,39 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
 .pf-nav svg.pf-fin-icon{width:18px;height:18px}
 @media print{svg.pf-fin-icon{color:currentColor!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 
+/* Apenas tela escura: mesmas famílias claras do painel Gráficos e Evoluções. */
+@media screen {
+ html body.dark-mode #painelGerencial #painelResumoGerencial>div>p:first-child {
+  opacity:1!important;
+  font-weight:700!important;
+ }
+ html body.dark-mode #painelGerencial #painelResumoGerencial>div:has(#pgReceitas)>p:first-child {color:#86efac!important}
+ html body.dark-mode #painelGerencial #painelResumoGerencial>div:has(#pgRecebido)>p:first-child {color:#5eead4!important}
+ html body.dark-mode #painelGerencial #painelResumoGerencial>div:has(#pgDespesas)>p:first-child {color:#fda4af!important}
+ html body.dark-mode #painelGerencial #painelResumoGerencial>div:has(#pgAVencer)>p:first-child,
+ html body.dark-mode #painelGerencial #painelResumoGerencial>div:has(#pgVencido)>p:first-child {color:#fcd34d!important}
+ html body.dark-mode #painelGerencial #painelResumoGerencial>div:has(#pgSaldo)>p:first-child {color:#93c5fd!important}
+ html body.dark-mode #painelGerencial #painelResumoGerencial>div:has(#pgInvestimentos)>p:first-child,
+ html body.dark-mode #painelGerencial #painelResumoGerencial>div #pgInvestimentos {color:#d8b4fe!important}
+ html body.dark-mode #painelGerencial #painelResumoGerencial #pgSemaforo>p:first-child {color:#e2e8f0!important}
+ /* O ícone acompanha exatamente a cor do próprio título. */
+ html body.dark-mode #painelGerencial #painelResumoGerencial>div>p:first-child>svg.pf-fin-icon {color:inherit!important}
+ /* A mesma identidade nos resumos de celular, preservando o tamanho existente. */
+ html body.dark-mode #dashboardMobileV40 .receita .lbl,
+ html body.dark-mode #pfMobileShell .kpi:has(#pm-kRec) small {color:#86efac!important;opacity:1!important}
+ html body.dark-mode #dashboardMobileV40 .recebido .lbl,
+ html body.dark-mode #pfMobileShell .kpi:has(#pm-kReceived) small {color:#5eead4!important;opacity:1!important}
+ html body.dark-mode #dashboardMobileV40 .despesa .lbl,
+ html body.dark-mode #pfMobileShell .kpi:has(#pm-kDes) small {color:#fda4af!important;opacity:1!important}
+ html body.dark-mode #dashboardMobileV40 .vencer .lbl,
+ html body.dark-mode #dashboardMobileV40 .vencido .lbl,
+ html body.dark-mode #pfMobileShell .kpi:has(#pm-kVen) small,
+ html body.dark-mode #pfMobileShell .kpi:has(#pm-kOverdue) small {color:#fcd34d!important;opacity:1!important}
+ html body.dark-mode #dashboardMobileV40 .saldo .lbl {color:#93c5fd!important;opacity:1!important}
+ html body.dark-mode #pfMobileShell .kpi:has(#pm-kInv) small {color:#d8b4fe!important;opacity:1!important}
+ html body.dark-mode #pfMobileShell .kpi small>svg.pf-fin-icon {color:inherit!important}
+}
+
 </style>
 <script id="pf-financial-icons">
 /* Camada exclusivamente visual. Não lê nem grava contas, valores ou armazenamento. */

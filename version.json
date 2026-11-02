@@ -1,9 +1,9 @@
 {
-  "version": "V4.12.36",
-  "name": "V4.12.36",
+  "version": "V4.12.37",
+  "name": "V4.12.37",
   "channel": "pessoal",
   "notes": [
-    "Completa os ícones nos cartões e títulos de Gráficos e Evoluções, incluindo a impressão.",
-    "Corrige os ícones dos relatórios Gerencial e de Fluxo de Caixa, mantendo nomes, cálculos e dados."
+    "Uniformiza os títulos e ícones do resumo inicial no tema escuro com a paleta mais legível de Gráficos e Evoluções.",
+    "Melhora o contraste de Investimentos; mantém nomes, cálculos, tema claro e impressão."
   ]
 }
