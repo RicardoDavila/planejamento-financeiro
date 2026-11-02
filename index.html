@@ -7952,7 +7952,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.45';
+ const CURRENT_VERSION='V4.12.46';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -10154,6 +10154,182 @@ body.dark-mode [data-pf-quick-card][aria-pressed=true]{outline-color:#93c5fd}
 })();
 
 </script>
+<style id="pf-dynamic-filters-style">
+.pf-dynamic-item{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px}
+.pf-dynamic-item:hover{background-color:#dbeafe!important;color:#1e3a8a!important}
+.pf-dynamic-item:focus-visible{outline:3px solid #2563eb;outline-offset:-2px}
+.pf-dynamic-shortcuts{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+#pfMobileShell .pf-dynamic-shortcuts button{border:1px solid #94a3b8;border-radius:8px;background:#eff6ff;color:#1e3a8a;min-height:44px;padding:8px 10px;font-size:12px}
+body.dark-mode .pf-dynamic-item:hover{background-color:#263b55!important;color:#f8fafc!important}
+body.dark-mode #pfMobileShell .pf-dynamic-shortcuts button{background:#263b55;color:#f1f5f9}
+@media print{.pf-dynamic-shortcuts{display:none!important}.pf-dynamic-item{text-decoration:none!important;outline:none!important}}
+
+</style>
+<script id="pf-dynamic-filters">
+/* Atalhos financeiros em tabelas, detalhes e gráficos. Não grava transações. */
+(() => {
+ 'use strict';
+ const $=id=>document.getElementById(id),api=()=>window.PFQuickCards;
+ const labels={categoria:'rubrica',subItem:'subitem',descricao:'descrição'};
+ function annotate(node,field,value){
+  if(!node||value==null||!labels[field]||node.matches('input,select,textarea,button,a')||node.querySelector('input,select,textarea,button,a')||node.getAttribute('onclick'))return;
+  const text=String(value);node.dataset.pfDynamicField=field;node.dataset.pfDynamicValue=text;node.title='Filtrar por '+labels[field]+': '+(text||'(vazio)')+'. Clique novamente ou use Limpar filtro para retornar.';
+  node.classList.add('pf-dynamic-item');
+  if(!node.closest('button')){node.setAttribute('role','button');node.tabIndex=0;}
+ }
+ function table(id,fields){
+  const host=$(id);if(!host)return;
+  for(const row of host.querySelectorAll('tr')){
+   if(!row.querySelector('td')||row.querySelector('td[colspan]'))continue;
+   const action=row.querySelector('button[onclick*="editarLancamento"]')?.getAttribute('onclick')||'',idMatch=action.match(/editarLancamento\(([^)]+)\)/),idValue=idMatch?.[1].replace(/['"\s]/g,'');
+   const record=idValue!=null&&typeof transacoes!=='undefined'?transacoes.find(r=>String(r.id)===idValue):null;
+   fields.forEach((field,index)=>{if(!field)return;const cell=row.children[index];if(!cell)return;
+    const value=record?record[field]??'':cell.textContent.trim();if(!record&&value==='—')return;annotate(cell,field,value);
+   });
+  }
+ }
+ function mobile(){
+  if(typeof transacoes==='undefined')return;
+  const records=new Map(transacoes.map(r=>[String(r.id),r]));
+  for(const item of document.querySelectorAll('#pm-list .item[data-id]')){
+   const r=records.get(item.dataset.id);if(!r)continue;
+   annotate(item.querySelector('.row>div:first-child>b'),'descricao',r.descricao??'');
+   const small=item.querySelector('.row>div:first-child>small');
+   if(small&&!small.querySelector('[data-pf-dynamic-field]')){
+    const category=document.createElement('span'),subitem=document.createElement('span');category.textContent=r.categoria||'Sem rubrica';subitem.textContent=r.subItem||'Sem subitem';
+    small.replaceChildren(category,document.createTextNode(' · '),subitem);annotate(category,'categoria',r.categoria||'');annotate(subitem,'subItem',r.subItem||'');
+   }
+   const detail=item.querySelector('.detail');if(!detail||detail.querySelector('.pf-dynamic-shortcuts'))continue;
+   const shortcuts=document.createElement('div');shortcuts.className='pf-dynamic-shortcuts';
+   for(const field of ['categoria','subItem','descricao']){const b=document.createElement('button');b.type='button';b.dataset.pfDynamicField=field;b.dataset.pfDynamicValue=String(r[field]??'');b.textContent='Filtrar '+labels[field];shortcuts.append(b);}
+   detail.append(shortcuts);
+  }
+ }
+ function notices(){
+  for(const host of [$('tabelaLancamentosWrapper'),$('modalGraficos')?.querySelector('.graficos-controles')]){
+   if(!host||host.querySelector(':scope>.pf-dynamic-notice'))continue;
+   const box=document.createElement('div');box.className='pf-quick-cards-notice pf-dynamic-notice';box.hidden=!api()?.active;box.setAttribute('role','status');
+   const text=document.createElement('span'),b=document.createElement('button');b.type='button';b.textContent='Limpar filtro';b.onclick=()=>api()?.clear();box.append(text,b);host.prepend(box);
+  }
+ }
+ function decorate(){
+  if(!api())return;notices();
+  table('tabelaCorpo',[null,null,null,'categoria','subItem','descricao']);
+  table('pfDrilldown',[null,null,'categoria','descricao']);
+  table('tabelaPrevisao30',[null,'descricao']);
+  document.querySelectorAll('.pfce-detail tbody').forEach((body,index)=>{if(!body.id)body.id='pf-dynamic-chart-rows-'+index;table(body.id,[null,null,'categoria','descricao']);});
+  mobile();
+  for(const summary of document.querySelectorAll('#clean-month-analysis details.analysis-rubric>summary')){summary.dataset.pfDynamicField='categoria';summary.dataset.pfDynamicValue=summary.parentElement.dataset.rubric;summary.classList.add('pf-dynamic-item');summary.title='Abrir descrições e filtrar esta rubrica. Use Limpar filtro para retornar.';}
+  for(const box of document.querySelectorAll('.pf-dynamic-notice')){box.hidden=!api().active;const text=box.querySelector('span'),value=api().focus?.label||'cartão selecionado';const next='Filtro rápido: '+value+'.';if(text.textContent!==next)text.textContent=next;}
+ }
+ function activate(event){
+  const node=event.target.closest('[data-pf-dynamic-field]');if(!node)return;
+  if(event.target.closest('input,select,textarea,a,[contenteditable=true]'))return;
+  if(node.matches('summary')){
+   if(event.type!=='click')return;
+   event.preventDefault();event.stopImmediatePropagation();
+   const branch=node.parentElement;branch.open=!branch.open;
+   // Save the tree state before the quick filter replaces the rendered bars.
+   // Native toggle events are queued, so relying on their timing loses expansion.
+   branch.dispatchEvent(new Event('toggle'));
+   api()?.field(node.dataset.pfDynamicField,node.dataset.pfDynamicValue);schedule();return;
+  }
+  event.preventDefault();event.stopImmediatePropagation();api()?.field(node.dataset.pfDynamicField,node.dataset.pfDynamicValue);schedule();
+ }
+ let pending=false;
+ function schedule(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;decorate();});}
+ function install(){
+  decorate();document.addEventListener('click',activate,true);document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-pf-dynamic-field]'))activate(e);},true);
+  document.addEventListener('pf-item-focus',e=>{if(Object.hasOwn(labels,e.detail?.field||'')){api()?.field(e.detail.field,e.detail.value);schedule();}});
+  new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes,...r.removedNodes].some(n=>n.nodeType===1&&!n.matches('.pf-dynamic-shortcuts,.pf-dynamic-notice')&&!n.closest?.('.pf-dynamic-shortcuts,.pf-dynamic-notice'))))schedule();}).observe(document.body,{childList:true,subtree:true});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+
+</script>
+<style id="pf-mobile-large-type">
+/* Somente a apresentação móvel em tela. Mantém as paletas do conteúdo. */
+@media screen and (max-width:900px),screen and (pointer:coarse){
+ body.pf-mobile-layout{font-size:19px!important;line-height:1.5!important;--nav-h:82px}
+ body.pf-mobile-layout #pfMobileShell>header.bar{height:auto!important;grid-auto-rows:minmax(48px,auto)!important;padding-top:max(12px,env(safe-area-inset-top))!important}
+ body.pf-mobile-layout #pfMobileShell header.bar>b{font-size:18px!important;line-height:1.35!important;min-width:0}
+ body.pf-mobile-layout #pfMobileShell header.bar>b span{min-width:0;white-space:normal;overflow-wrap:anywhere}
+ body.pf-mobile-layout #pm-logo{width:30px!important;height:30px!important;flex-shrink:0}
+ body.pf-mobile-layout #pfMobileShell header.bar>.cloud-state,body.pf-mobile-layout #pfMobileShell header.bar>.pill-btn,body.pf-mobile-layout #pfMobileShell header.bar>#pm-theme,body.pf-mobile-layout #pfMobileShell header.bar>.mobile-menu-trigger{font-size:15px!important;line-height:1.35!important;min-height:48px!important;height:auto!important}
+ body.pf-mobile-layout #pfMobileShell header.bar>.pill-btn em{font-size:14px!important;min-width:22px}
+ body.pf-mobile-layout #pm-greeting{font-size:26px!important}
+ body.pf-mobile-layout #pfMobileShell .pm-profile,body.pf-mobile-layout #pfMobileShell .pm-period-label{font-size:16px!important;line-height:1.5}
+ body.pf-mobile-layout #pfMobileShell .balance small,body.pf-mobile-layout #pfMobileShell .balance .eye{font-size:16px!important}
+ body.pf-mobile-layout #pfMobileShell .balance strong{font-size:36px!important}
+ body.pf-mobile-layout #pfMobileShell .balance{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px}
+ body.pf-mobile-layout #pfMobileShell .balance>div{display:contents}
+ body.pf-mobile-layout #pfMobileShell .balance small{grid-column:1;grid-row:1}
+ body.pf-mobile-layout #pfMobileShell .balance .eye{grid-column:2;grid-row:1;align-self:start}
+ body.pf-mobile-layout #pfMobileShell .balance strong{grid-column:1/-1;grid-row:2}
+ body.pf-mobile-layout #pfMobileShell .kpi small{font-size:16px!important}
+ body.pf-mobile-layout #pfMobileShell .kpi b{font-size:22px!important;line-height:1.45!important}
+ body.pf-mobile-layout #pfMobileShell .alert{font-size:16px!important}
+ body.pf-mobile-layout #pfMobileShell .alert .ic{font-size:16px!important;width:26px;height:26px}
+ body.pf-mobile-layout #pfMobileShell .alert .go{font-size:25px!important}
+ body.pf-mobile-layout #pfMobileShell .search input{font-size:19px!important;min-height:50px}
+ body.pf-mobile-layout #pfMobileShell .search .btn,body.pf-mobile-layout #pfMobileShell #pm-periods .chip,body.pf-mobile-layout #pfMobileShell #pm-active button{font-size:16px!important;min-height:46px!important}
+ body.pf-mobile-layout #pfMobileShell .day{font-size:15px!important}
+ body.pf-mobile-layout #pfMobileShell .row b{font-size:19px!important}
+ body.pf-mobile-layout #pfMobileShell .row small,body.pf-mobile-layout #pfMobileShell .detail{font-size:16px!important}
+ body.pf-mobile-layout #pfMobileShell .badge{font-size:15px!important}
+ body.pf-mobile-layout #pfMobileShell .detail .actions button,body.pf-mobile-layout #pfMobileShell .pf-dynamic-shortcuts button,body.pf-mobile-layout #pfMobileShell .pf-quick-cards-notice button{font-size:16px!important;min-height:46px}
+ body.pf-mobile-layout #pfMobileShell .pf-quick-cards-notice{font-size:15px!important}
+ body.pf-mobile-layout #pfMobileShell .sheet h2{font-size:23px!important}
+ body.pf-mobile-layout #pm-filter-body label{font-size:16px!important}
+ body.pf-mobile-layout #pm-filter-body input,body.pf-mobile-layout #pm-filter-body select{font-size:19px!important;min-height:48px}
+ body.pf-mobile-layout #pfMenuLateral .clean-menu-action{font-size:17px!important;min-height:48px}
+ body.pf-mobile-layout #pfMenuLateral .clean-menu-group h3,body.pf-mobile-layout #clean-menu-profile small{font-size:14px!important}
+ body.pf-mobile-layout #clean-menu-profile strong{font-size:17px!important}
+ body.pf-mobile-layout #pfMobileShell .total{font-size:14px!important;line-height:1.45!important}
+ body.pf-mobile-layout #pfMobileShell .total>span:first-child{flex:0 0 118px;white-space:nowrap}
+ body.pf-mobile-layout #pfMobileShell .total>span:last-child{max-width:none;flex:1;min-width:0}
+ body.pf-mobile-layout #pfMobileShell .nav{display:grid!important;grid-template-columns:.9fr 1.35fr .8fr 1fr .8fr;gap:2px;padding-inline:8px;background:#164e63!important;color:#f0fdfa!important;border-top:2px solid #2dd4bf!important;box-shadow:0 -4px 16px #0f172a26}
+ body.pf-mobile-layout.dark-mode #pfMobileShell .nav{background:#123b4a!important;color:#f0fdfa!important;border-top-color:#2dd4bf!important}
+ body.pf-mobile-layout #pfMobileShell .nav button{font-size:30px!important;color:#f0fdfa!important;width:100%;min-width:0;min-height:64px;padding:3px 0}
+ body.pf-mobile-layout #pfMobileShell .nav button small{font-size:14px!important;line-height:1.3!important;white-space:normal;overflow-wrap:anywhere}
+ body.pf-mobile-layout #pfMobileShell .nav .plus{width:58px!important;min-width:0!important;height:58px!important;min-height:58px!important;margin:-12px auto 0!important;color:#fff!important;justify-self:center}
+ body.pf-mobile-layout #pfMobileShell .nav button:focus-visible{outline:3px solid #fef08a!important;outline-offset:-3px}
+ body.pf-mobile-layout #pfMobileShell .nav svg.pf-fin-icon{width:28px!important;height:28px!important;margin-bottom:4px}
+ body.pf-mobile-layout #pfMobileShell .nav .plus svg.pf-fin-icon{width:32px!important;height:32px!important;margin:0}
+ body.pf-mobile-layout #pfMobileShell .bar svg.pf-fin-icon,body.pf-mobile-layout #pfMobileShell .kpi small>svg.pf-fin-icon,body.pf-mobile-layout #pfMobileShell .balance small>svg.pf-fin-icon{width:20px!important;height:20px!important}
+ body.pf-mobile-layout #pfMobileShell .row b>svg.pf-fin-icon{width:20px!important;height:20px!important}
+ body.pf-mobile-layout #pfMobileShell .badge svg.pf-fin-icon{width:17px!important;height:17px!important}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-head h3{font-size:21px!important;line-height:1.35}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-head p{font-size:14px!important}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-head button{font-size:18px!important;min-width:44px;min-height:44px}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-head button[onclick*="calendarioV45Mes"]{font-size:28px!important}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-week{font-size:13px!important}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-grid{gap:3px;padding:7px}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-day{min-height:80px;padding:4px;min-width:0}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-num{font-size:19px!important;line-height:1.3}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-total{font-size:12px!important;line-height:1.3;white-space:nowrap;overflow-wrap:normal;overflow:hidden;text-overflow:ellipsis}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-dot{width:9px;height:9px}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-detail p,body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-item small{font-size:16px!important;line-height:1.45}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-item strong{font-size:18px!important}
+ body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-item .valor{font-size:19px!important}
+ body.pf-mobile-layout #modalCalculadora>div{max-height:calc(100dvh - 24px);overflow:auto}
+ body.pf-mobile-layout #modalCalculadora h3{font-size:23px!important}
+ body.pf-mobile-layout #modalCalculadora p{font-size:16px!important}
+ body.pf-mobile-layout #calcDisplay{font-size:36px!important;min-height:76px}
+ body.pf-mobile-layout #modalCalculadora .calc-btn{font-size:27px!important;min-height:60px;line-height:1.2}
+ body.pf-mobile-layout #modalCalculadora .calc-btn i,body.pf-mobile-layout #modalCalculadora button[aria-label="Fechar calculadora"]{font-size:25px!important}
+ body.pf-mobile-layout #modalCalculadora button[aria-label="Fechar calculadora"]{min-width:44px;min-height:44px}
+ body.pf-mobile-layout #calculadoraTeclado+div{font-size:15px!important;line-height:1.5}
+ body.pf-mobile-layout input[type=date]{font-size:19px!important;min-height:48px}
+}
+@media screen and (max-width:350px){
+ body.pf-mobile-layout #pfMobileShell .nav button small{font-size:13px!important}
+ body.pf-mobile-layout #pfMobileShell .kpi b{font-size:20px!important}
+ body.pf-mobile-layout #pfMobileShell header.bar>.cloud-state,body.pf-mobile-layout #pfMobileShell header.bar>.pill-btn,body.pf-mobile-layout #pfMobileShell header.bar>#pm-theme{font-size:14px!important}
+ body.pf-mobile-layout #pfMobileShell .balance strong{font-size:32px!important}
+}
+
+</style>
 <style id="pf-chart-explorer-style">
 .pfce-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0;font:12px/1.5 system-ui;color:#334155}
 .pfce-tools label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -10348,7 +10524,9 @@ body.dark-mode [data-pf-quick-card][aria-pressed=true]{outline-color:#93c5fd}
     for(const [value,label]of [['default','Padrão (original)'],['line','Linhas'],['area','Áreas'],['column','Colunas'],['bar','Barras horizontais'],['pie','Pizza (circular)'],['doughnut','Rosca'],['scatter','Dispersão']]){const o=element('option',label);o.value=value;select.append(o);}typeLabel.append(select);tools.append(typeLabel);
     const makeSeries=(text)=>{const label=element('label',text),s=element('select');s.setAttribute('aria-label',m.title+' — '+text);label.append(s);label.hidden=true;tools.append(label);return [label,s];};
     const [seriesLabel,seriesSelect]=makeSeries('Série'),[xLabel,xSelect]=makeSeries('Eixo X'),[yLabel,ySelect]=makeSeries('Eixo Y'),listButton=element('button','Ver pontos e lançamentos');listButton.type='button';tools.append(listButton);
-    state={source,displayNode:anchor,tools,alt,message,detail:panel,points:pointList,mode:'default',seriesLabel,seriesSelect,xLabel,xSelect,yLabel,ySelect,select,selection:null,id:++serial};states.set(source,state);
+    const initialMode=(!payload&&({'clean-revenue-history-bars':'area','clean-history-bars':'pie','clean-revenue-category-bars':'default','clean-category-bars':'column'})[source.id])||'default';
+    select.value=initialMode;
+    state={source,displayNode:anchor,tools,alt,message,detail:panel,points:pointList,mode:initialMode,seriesLabel,seriesSelect,xLabel,xSelect,yLabel,ySelect,select,selection:null,id:++serial};states.set(source,state);
     select.onchange=()=>{state.mode=select.value;state.selection=null;panel.hidden=true;pointList.hidden=true;draw(state);if(state.mode==='default'&&options.chart)options.chart()?.resize();};
     for(const s of [seriesSelect,xSelect,ySelect])s.onchange=()=>{state.selection=null;panel.hidden=true;draw(state);};
     listButton.onclick=()=>{if(protectedState(state)||!state.model)return;pointList.hidden=!pointList.hidden;pointList.replaceChildren();if(pointList.hidden)return;for(const p of D.points(state.model)){const b=element('button',p.label+' · '+p.series+' · '+money(p.value));b.type='button';b.onclick=()=>detail(state,p);pointList.append(b);}};
@@ -10526,181 +10704,5 @@ body.dark-mode [data-pf-quick-card][aria-pressed=true]{outline-color:#93c5fd}
 })();
 
 </script>
-<style id="pf-dynamic-filters-style">
-.pf-dynamic-item{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px}
-.pf-dynamic-item:hover{background-color:#dbeafe!important;color:#1e3a8a!important}
-.pf-dynamic-item:focus-visible{outline:3px solid #2563eb;outline-offset:-2px}
-.pf-dynamic-shortcuts{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
-#pfMobileShell .pf-dynamic-shortcuts button{border:1px solid #94a3b8;border-radius:8px;background:#eff6ff;color:#1e3a8a;min-height:44px;padding:8px 10px;font-size:12px}
-body.dark-mode .pf-dynamic-item:hover{background-color:#263b55!important;color:#f8fafc!important}
-body.dark-mode #pfMobileShell .pf-dynamic-shortcuts button{background:#263b55;color:#f1f5f9}
-@media print{.pf-dynamic-shortcuts{display:none!important}.pf-dynamic-item{text-decoration:none!important;outline:none!important}}
-
-</style>
-<script id="pf-dynamic-filters">
-/* Atalhos financeiros em tabelas, detalhes e gráficos. Não grava transações. */
-(() => {
- 'use strict';
- const $=id=>document.getElementById(id),api=()=>window.PFQuickCards;
- const labels={categoria:'rubrica',subItem:'subitem',descricao:'descrição'};
- function annotate(node,field,value){
-  if(!node||value==null||!labels[field]||node.matches('input,select,textarea,button,a')||node.querySelector('input,select,textarea,button,a')||node.getAttribute('onclick'))return;
-  const text=String(value);node.dataset.pfDynamicField=field;node.dataset.pfDynamicValue=text;node.title='Filtrar por '+labels[field]+': '+(text||'(vazio)')+'. Clique novamente ou use Limpar filtro para retornar.';
-  node.classList.add('pf-dynamic-item');
-  if(!node.closest('button')){node.setAttribute('role','button');node.tabIndex=0;}
- }
- function table(id,fields){
-  const host=$(id);if(!host)return;
-  for(const row of host.querySelectorAll('tr')){
-   if(!row.querySelector('td')||row.querySelector('td[colspan]'))continue;
-   const action=row.querySelector('button[onclick*="editarLancamento"]')?.getAttribute('onclick')||'',idMatch=action.match(/editarLancamento\(([^)]+)\)/),idValue=idMatch?.[1].replace(/['"\s]/g,'');
-   const record=idValue!=null&&typeof transacoes!=='undefined'?transacoes.find(r=>String(r.id)===idValue):null;
-   fields.forEach((field,index)=>{if(!field)return;const cell=row.children[index];if(!cell)return;
-    const value=record?record[field]??'':cell.textContent.trim();if(!record&&value==='—')return;annotate(cell,field,value);
-   });
-  }
- }
- function mobile(){
-  if(typeof transacoes==='undefined')return;
-  const records=new Map(transacoes.map(r=>[String(r.id),r]));
-  for(const item of document.querySelectorAll('#pm-list .item[data-id]')){
-   const r=records.get(item.dataset.id);if(!r)continue;
-   annotate(item.querySelector('.row>div:first-child>b'),'descricao',r.descricao??'');
-   const small=item.querySelector('.row>div:first-child>small');
-   if(small&&!small.querySelector('[data-pf-dynamic-field]')){
-    const category=document.createElement('span'),subitem=document.createElement('span');category.textContent=r.categoria||'Sem rubrica';subitem.textContent=r.subItem||'Sem subitem';
-    small.replaceChildren(category,document.createTextNode(' · '),subitem);annotate(category,'categoria',r.categoria||'');annotate(subitem,'subItem',r.subItem||'');
-   }
-   const detail=item.querySelector('.detail');if(!detail||detail.querySelector('.pf-dynamic-shortcuts'))continue;
-   const shortcuts=document.createElement('div');shortcuts.className='pf-dynamic-shortcuts';
-   for(const field of ['categoria','subItem','descricao']){const b=document.createElement('button');b.type='button';b.dataset.pfDynamicField=field;b.dataset.pfDynamicValue=String(r[field]??'');b.textContent='Filtrar '+labels[field];shortcuts.append(b);}
-   detail.append(shortcuts);
-  }
- }
- function notices(){
-  for(const host of [$('tabelaLancamentosWrapper'),$('modalGraficos')?.querySelector('.graficos-controles')]){
-   if(!host||host.querySelector(':scope>.pf-dynamic-notice'))continue;
-   const box=document.createElement('div');box.className='pf-quick-cards-notice pf-dynamic-notice';box.hidden=!api()?.active;box.setAttribute('role','status');
-   const text=document.createElement('span'),b=document.createElement('button');b.type='button';b.textContent='Limpar filtro';b.onclick=()=>api()?.clear();box.append(text,b);host.prepend(box);
-  }
- }
- function decorate(){
-  if(!api())return;notices();
-  table('tabelaCorpo',[null,null,null,'categoria','subItem','descricao']);
-  table('pfDrilldown',[null,null,'categoria','descricao']);
-  table('tabelaPrevisao30',[null,'descricao']);
-  document.querySelectorAll('.pfce-detail tbody').forEach((body,index)=>{if(!body.id)body.id='pf-dynamic-chart-rows-'+index;table(body.id,[null,null,'categoria','descricao']);});
-  mobile();
-  for(const summary of document.querySelectorAll('#clean-month-analysis details.analysis-rubric>summary')){summary.dataset.pfDynamicField='categoria';summary.dataset.pfDynamicValue=summary.parentElement.dataset.rubric;summary.classList.add('pf-dynamic-item');summary.title='Abrir descrições e filtrar esta rubrica. Use Limpar filtro para retornar.';}
-  for(const box of document.querySelectorAll('.pf-dynamic-notice')){box.hidden=!api().active;const text=box.querySelector('span'),value=api().focus?.label||'cartão selecionado';const next='Filtro rápido: '+value+'.';if(text.textContent!==next)text.textContent=next;}
- }
- function activate(event){
-  const node=event.target.closest('[data-pf-dynamic-field]');if(!node)return;
-  if(event.target.closest('input,select,textarea,a,[contenteditable=true]'))return;
-  if(node.matches('summary')){
-   if(event.type!=='click')return;
-   event.preventDefault();event.stopImmediatePropagation();
-   const branch=node.parentElement;branch.open=!branch.open;
-   // Save the tree state before the quick filter replaces the rendered bars.
-   // Native toggle events are queued, so relying on their timing loses expansion.
-   branch.dispatchEvent(new Event('toggle'));
-   api()?.field(node.dataset.pfDynamicField,node.dataset.pfDynamicValue);schedule();return;
-  }
-  event.preventDefault();event.stopImmediatePropagation();api()?.field(node.dataset.pfDynamicField,node.dataset.pfDynamicValue);schedule();
- }
- let pending=false;
- function schedule(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;decorate();});}
- function install(){
-  decorate();document.addEventListener('click',activate,true);document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-pf-dynamic-field]'))activate(e);},true);
-  document.addEventListener('pf-item-focus',e=>{if(Object.hasOwn(labels,e.detail?.field||'')){api()?.field(e.detail.field,e.detail.value);schedule();}});
-  new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes,...r.removedNodes].some(n=>n.nodeType===1&&!n.matches('.pf-dynamic-shortcuts,.pf-dynamic-notice')&&!n.closest?.('.pf-dynamic-shortcuts,.pf-dynamic-notice'))))schedule();}).observe(document.body,{childList:true,subtree:true});
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
-})();
-
-</script>
-<style id="pf-mobile-large-type">
-/* Somente a apresentação móvel em tela. Mantém as paletas do conteúdo. */
-@media screen and (max-width:900px),screen and (pointer:coarse){
- body.pf-mobile-layout{font-size:19px!important;line-height:1.5!important;--nav-h:82px}
- body.pf-mobile-layout #pfMobileShell>header.bar{height:auto!important;grid-auto-rows:minmax(48px,auto)!important;padding-top:max(12px,env(safe-area-inset-top))!important}
- body.pf-mobile-layout #pfMobileShell header.bar>b{font-size:18px!important;line-height:1.35!important;min-width:0}
- body.pf-mobile-layout #pfMobileShell header.bar>b span{min-width:0;white-space:normal;overflow-wrap:anywhere}
- body.pf-mobile-layout #pm-logo{width:30px!important;height:30px!important;flex-shrink:0}
- body.pf-mobile-layout #pfMobileShell header.bar>.cloud-state,body.pf-mobile-layout #pfMobileShell header.bar>.pill-btn,body.pf-mobile-layout #pfMobileShell header.bar>#pm-theme,body.pf-mobile-layout #pfMobileShell header.bar>.mobile-menu-trigger{font-size:15px!important;line-height:1.35!important;min-height:48px!important;height:auto!important}
- body.pf-mobile-layout #pfMobileShell header.bar>.pill-btn em{font-size:14px!important;min-width:22px}
- body.pf-mobile-layout #pm-greeting{font-size:26px!important}
- body.pf-mobile-layout #pfMobileShell .pm-profile,body.pf-mobile-layout #pfMobileShell .pm-period-label{font-size:16px!important;line-height:1.5}
- body.pf-mobile-layout #pfMobileShell .balance small,body.pf-mobile-layout #pfMobileShell .balance .eye{font-size:16px!important}
- body.pf-mobile-layout #pfMobileShell .balance strong{font-size:36px!important}
- body.pf-mobile-layout #pfMobileShell .balance{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px}
- body.pf-mobile-layout #pfMobileShell .balance>div{display:contents}
- body.pf-mobile-layout #pfMobileShell .balance small{grid-column:1;grid-row:1}
- body.pf-mobile-layout #pfMobileShell .balance .eye{grid-column:2;grid-row:1;align-self:start}
- body.pf-mobile-layout #pfMobileShell .balance strong{grid-column:1/-1;grid-row:2}
- body.pf-mobile-layout #pfMobileShell .kpi small{font-size:16px!important}
- body.pf-mobile-layout #pfMobileShell .kpi b{font-size:22px!important;line-height:1.45!important}
- body.pf-mobile-layout #pfMobileShell .alert{font-size:16px!important}
- body.pf-mobile-layout #pfMobileShell .alert .ic{font-size:16px!important;width:26px;height:26px}
- body.pf-mobile-layout #pfMobileShell .alert .go{font-size:25px!important}
- body.pf-mobile-layout #pfMobileShell .search input{font-size:19px!important;min-height:50px}
- body.pf-mobile-layout #pfMobileShell .search .btn,body.pf-mobile-layout #pfMobileShell #pm-periods .chip,body.pf-mobile-layout #pfMobileShell #pm-active button{font-size:16px!important;min-height:46px!important}
- body.pf-mobile-layout #pfMobileShell .day{font-size:15px!important}
- body.pf-mobile-layout #pfMobileShell .row b{font-size:19px!important}
- body.pf-mobile-layout #pfMobileShell .row small,body.pf-mobile-layout #pfMobileShell .detail{font-size:16px!important}
- body.pf-mobile-layout #pfMobileShell .badge{font-size:15px!important}
- body.pf-mobile-layout #pfMobileShell .detail .actions button,body.pf-mobile-layout #pfMobileShell .pf-dynamic-shortcuts button,body.pf-mobile-layout #pfMobileShell .pf-quick-cards-notice button{font-size:16px!important;min-height:46px}
- body.pf-mobile-layout #pfMobileShell .pf-quick-cards-notice{font-size:15px!important}
- body.pf-mobile-layout #pfMobileShell .sheet h2{font-size:23px!important}
- body.pf-mobile-layout #pm-filter-body label{font-size:16px!important}
- body.pf-mobile-layout #pm-filter-body input,body.pf-mobile-layout #pm-filter-body select{font-size:19px!important;min-height:48px}
- body.pf-mobile-layout #pfMenuLateral .clean-menu-action{font-size:17px!important;min-height:48px}
- body.pf-mobile-layout #pfMenuLateral .clean-menu-group h3,body.pf-mobile-layout #clean-menu-profile small{font-size:14px!important}
- body.pf-mobile-layout #clean-menu-profile strong{font-size:17px!important}
- body.pf-mobile-layout #pfMobileShell .total{font-size:14px!important;line-height:1.45!important}
- body.pf-mobile-layout #pfMobileShell .total>span:first-child{flex:0 0 118px;white-space:nowrap}
- body.pf-mobile-layout #pfMobileShell .total>span:last-child{max-width:none;flex:1;min-width:0}
- body.pf-mobile-layout #pfMobileShell .nav{display:grid!important;grid-template-columns:.9fr 1.35fr .8fr 1fr .8fr;gap:2px;padding-inline:8px;background:#164e63!important;color:#f0fdfa!important;border-top:2px solid #2dd4bf!important;box-shadow:0 -4px 16px #0f172a26}
- body.pf-mobile-layout.dark-mode #pfMobileShell .nav{background:#123b4a!important;color:#f0fdfa!important;border-top-color:#2dd4bf!important}
- body.pf-mobile-layout #pfMobileShell .nav button{font-size:30px!important;color:#f0fdfa!important;width:100%;min-width:0;min-height:64px;padding:3px 0}
- body.pf-mobile-layout #pfMobileShell .nav button small{font-size:14px!important;line-height:1.3!important;white-space:normal;overflow-wrap:anywhere}
- body.pf-mobile-layout #pfMobileShell .nav .plus{width:58px!important;min-width:0!important;height:58px!important;min-height:58px!important;margin:-12px auto 0!important;color:#fff!important;justify-self:center}
- body.pf-mobile-layout #pfMobileShell .nav button:focus-visible{outline:3px solid #fef08a!important;outline-offset:-3px}
- body.pf-mobile-layout #pfMobileShell .nav svg.pf-fin-icon{width:28px!important;height:28px!important;margin-bottom:4px}
- body.pf-mobile-layout #pfMobileShell .nav .plus svg.pf-fin-icon{width:32px!important;height:32px!important;margin:0}
- body.pf-mobile-layout #pfMobileShell .bar svg.pf-fin-icon,body.pf-mobile-layout #pfMobileShell .kpi small>svg.pf-fin-icon,body.pf-mobile-layout #pfMobileShell .balance small>svg.pf-fin-icon{width:20px!important;height:20px!important}
- body.pf-mobile-layout #pfMobileShell .row b>svg.pf-fin-icon{width:20px!important;height:20px!important}
- body.pf-mobile-layout #pfMobileShell .badge svg.pf-fin-icon{width:17px!important;height:17px!important}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-head h3{font-size:21px!important;line-height:1.35}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-head p{font-size:14px!important}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-head button{font-size:18px!important;min-width:44px;min-height:44px}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-head button[onclick*="calendarioV45Mes"]{font-size:28px!important}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-week{font-size:13px!important}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-grid{gap:3px;padding:7px}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-day{min-height:80px;padding:4px;min-width:0}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-num{font-size:19px!important;line-height:1.3}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-total{font-size:12px!important;line-height:1.3;white-space:nowrap;overflow-wrap:normal;overflow:hidden;text-overflow:ellipsis}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-dot{width:9px;height:9px}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-detail p,body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-item small{font-size:16px!important;line-height:1.45}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-item strong{font-size:18px!important}
- body.pf-mobile-layout #modalCalendarioFinanceiro .cal45-item .valor{font-size:19px!important}
- body.pf-mobile-layout #modalCalculadora>div{max-height:calc(100dvh - 24px);overflow:auto}
- body.pf-mobile-layout #modalCalculadora h3{font-size:23px!important}
- body.pf-mobile-layout #modalCalculadora p{font-size:16px!important}
- body.pf-mobile-layout #calcDisplay{font-size:36px!important;min-height:76px}
- body.pf-mobile-layout #modalCalculadora .calc-btn{font-size:27px!important;min-height:60px;line-height:1.2}
- body.pf-mobile-layout #modalCalculadora .calc-btn i,body.pf-mobile-layout #modalCalculadora button[aria-label="Fechar calculadora"]{font-size:25px!important}
- body.pf-mobile-layout #modalCalculadora button[aria-label="Fechar calculadora"]{min-width:44px;min-height:44px}
- body.pf-mobile-layout #calculadoraTeclado+div{font-size:15px!important;line-height:1.5}
- body.pf-mobile-layout input[type=date]{font-size:19px!important;min-height:48px}
-}
-@media screen and (max-width:350px){
- body.pf-mobile-layout #pfMobileShell .nav button small{font-size:13px!important}
- body.pf-mobile-layout #pfMobileShell .kpi b{font-size:20px!important}
- body.pf-mobile-layout #pfMobileShell header.bar>.cloud-state,body.pf-mobile-layout #pfMobileShell header.bar>.pill-btn,body.pf-mobile-layout #pfMobileShell header.bar>#pm-theme{font-size:14px!important}
- body.pf-mobile-layout #pfMobileShell .balance strong{font-size:32px!important}
-}
-
-</style>
 </body>
 </html>

@@ -1,10 +1,9 @@
 {
-  "version": "V4.12.45",
-  "name": "V4.12.45",
+  "version": "V4.12.46",
+  "name": "V4.12.46",
   "channel": "pessoal",
   "notes": [
-    "Aumenta fontes, símbolos e ícones da tela do celular, incluindo barras superior e inferior, cartões, listas e filtros.",
-    "Destaca a barra inferior em azul-petróleo com textos claros, preservando o tema escuro do restante do aplicativo.",
-    "Amplia a legibilidade do Calendário Financeiro e da Calculadora, mantendo suas funções."
+    "Define os formatos iniciais dos quatro gráficos da análise da página principal: receitas em Áreas, evolução das despesas em Pizza, receitas por rubrica no Padrão Original e despesas por rubricas em Colunas.",
+    "Mantém a troca manual durante o uso e restaura esses formatos ao recarregar ou reabrir a página."
   ]
 }

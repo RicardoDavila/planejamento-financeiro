@@ -155,7 +155,9 @@
     for(const [value,label]of [['default','Padrão (original)'],['line','Linhas'],['area','Áreas'],['column','Colunas'],['bar','Barras horizontais'],['pie','Pizza (circular)'],['doughnut','Rosca'],['scatter','Dispersão']]){const o=element('option',label);o.value=value;select.append(o);}typeLabel.append(select);tools.append(typeLabel);
     const makeSeries=(text)=>{const label=element('label',text),s=element('select');s.setAttribute('aria-label',m.title+' — '+text);label.append(s);label.hidden=true;tools.append(label);return [label,s];};
     const [seriesLabel,seriesSelect]=makeSeries('Série'),[xLabel,xSelect]=makeSeries('Eixo X'),[yLabel,ySelect]=makeSeries('Eixo Y'),listButton=element('button','Ver pontos e lançamentos');listButton.type='button';tools.append(listButton);
-    state={source,displayNode:anchor,tools,alt,message,detail:panel,points:pointList,mode:'default',seriesLabel,seriesSelect,xLabel,xSelect,yLabel,ySelect,select,selection:null,id:++serial};states.set(source,state);
+    const initialMode=(!payload&&({'clean-revenue-history-bars':'area','clean-history-bars':'pie','clean-revenue-category-bars':'default','clean-category-bars':'column'})[source.id])||'default';
+    select.value=initialMode;
+    state={source,displayNode:anchor,tools,alt,message,detail:panel,points:pointList,mode:initialMode,seriesLabel,seriesSelect,xLabel,xSelect,yLabel,ySelect,select,selection:null,id:++serial};states.set(source,state);
     select.onchange=()=>{state.mode=select.value;state.selection=null;panel.hidden=true;pointList.hidden=true;draw(state);if(state.mode==='default'&&options.chart)options.chart()?.resize();};
     for(const s of [seriesSelect,xSelect,ySelect])s.onchange=()=>{state.selection=null;panel.hidden=true;draw(state);};
     listButton.onclick=()=>{if(protectedState(state)||!state.model)return;pointList.hidden=!pointList.hidden;pointList.replaceChildren();if(pointList.hidden)return;for(const p of D.points(state.model)){const b=element('button',p.label+' · '+p.series+' · '+money(p.value));b.type='button';b.onclick=()=>detail(state,p);pointList.append(b);}};
