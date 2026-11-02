@@ -21,11 +21,18 @@ notices[1].children[1].listeners.click();assert.equal(c.PFQuickCards.active,'');
 assert(c.PFQuickCards.matches({tipo:'Receita',status:'Pendente',dataPg:'2026-01-01'},'recebidoMobile'));
 assert(!c.PFQuickCards.matches({tipo:'Receita',status:'Pendente'},'recebidoMobile'));
 assert(!c.PFQuickCards.matches({tipo:'Despesa',status:'Vencido',vencimento:rows[3].vencimento,dataPg:'2026-01-01'},'vencidoMobile'));
+for(const [field,value,expected]of [['categoria','INVESTIMENTOS',[7]],['subItem','',[1,2,3,4,5,6,7]],['descricao','<img onerror=teste>',[]]]){
+ c.PFQuickCards.field(field,value);assert.deepEqual(rendered.map(r=>r.id),expected,'Filtro dinâmico: '+field);assert.equal(c.PFQuickCards.active,'item');
+}
+c.PFQuickCards.field('categoria','INVESTIMENTOS');c.PFQuickCards.field('categoria','INVESTIMENTOS');assert.equal(c.PFQuickCards.active,'');
+for(const field of ['senha','tipo','status','valor','vencimento','dataPg','observacao']){c.PFQuickCards.field(field,'não usar');assert.equal(c.PFQuickCards.active,'');}
+c.PFQuickCards.field('categoria','INVESTIMENTOS');click('pgReceitas');assert.deepEqual(rendered.map(r=>r.id),[1,2]);assert.equal(c.PFQuickCards.focus,null);c.PFQuickCards.clear();assert.equal(rendered.length,7);
 click('pgReceitas');click('pgReceitas');assert.equal(c.PFQuickCards.active,'');
 nodes.filtroTipo.value='Despesa';click('pgVencido');assert.equal(rendered.length,1);c.limparFiltros();assert.equal(clears,1);assert.equal(c.PFQuickCards.active,'');
 nodes.pgInvestimentos.parentElement.listeners.keydown({key:'Enter',preventDefault(){}});assert.deepEqual(rendered.map(r=>r.id),[6,7]);c.protecaoAutenticada=false;observer();assert.equal(c.PFQuickCards.active,'');assert.equal(notices[0].hidden,true);click('pgReceitas');assert.equal(c.PFQuickCards.active,'');assert.equal(JSON.stringify(rows),before);
 for(const name of ['index.html','distribuicao/app.html','teste-gemini/app.html']){
  const html=fs.readFileSync(path.join(__dirname,'..',name),'utf8');assert.equal((html.match(/id="pf-quick-cards"/g)||[]).length,1,name+': módulo dos cartões ausente ou duplicado; envie o HTML atualizado');assert.equal((html.match(/PFQF bridge:start/g)||[]).length,3,name+': integração dos filtros incompleta');
+ assert.equal((html.match(/id="pf-dynamic-filters"/g)||[]).length,1,name+': módulo dinâmico ausente');assert(html.includes("new CustomEvent('pf-item-focus'"));assert(html.includes('detail(state,p,undefined,true)'));
  const start=html.indexOf('function monthAnalysisData('),end=html.indexOf('function categoryBreakdownBars(',start);const code=html.slice(start,end);const ctx={window:{PFQuickCards:{apply:rs=>rs.filter(r=>r.status==='Vencido')}}};vm.createContext(ctx);vm.runInContext(code+';globalThis.calc=monthAnalysisData;',ctx);
  const dated=rows.map(r=>({...r,categoria:r.categoria||'A',descricao:'Teste',vencimento:'2026-11-01'}));const result=ctx.calc(dated.filter(r=>r.status==='Vencido'),dated,'2026-11-30');assert.equal(result.revenueHistory.at(-1)[1],0);assert.equal(result.expenseHistory.at(-1)[1],30);
  // Exercise the real standard filter with the card wrapper, including period constraints.

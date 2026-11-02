@@ -1,0 +1,8 @@
+.pf-dynamic-item{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px}
+.pf-dynamic-item:hover{background-color:#dbeafe!important;color:#1e3a8a!important}
+.pf-dynamic-item:focus-visible{outline:3px solid #2563eb;outline-offset:-2px}
+.pf-dynamic-shortcuts{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+#pfMobileShell .pf-dynamic-shortcuts button{border:1px solid #94a3b8;border-radius:8px;background:#eff6ff;color:#1e3a8a;min-height:44px;padding:8px 10px;font-size:12px}
+body.dark-mode .pf-dynamic-item:hover{background-color:#263b55!important;color:#f8fafc!important}
+body.dark-mode #pfMobileShell .pf-dynamic-shortcuts button{background:#263b55;color:#f1f5f9}
+@media print{.pf-dynamic-shortcuts{display:none!important}.pf-dynamic-item{text-decoration:none!important;outline:none!important}}

@@ -49,7 +49,7 @@
    return !!state.source.closest('#clean-month-analysis')&&!!document.getElementById('painelGerencial')?.classList.contains('pf-painel-oculto');
   }
   function pointRows(state,p){return D.rows(state.model.resolve?.(p.j,p.i)||[]);}
-  function detail(state,point,overrideRows){
+  function detail(state,point,overrideRows,passive=false){
    if(protectedState(state))return;
    if(state.selection===point.key){state.selection=null;state.detail.hidden=true;return;}
    state.selection=point.key;state.selectionIdentity=JSON.stringify([point.label,point.series]);state.detail.replaceChildren();state.detail.hidden=false;
@@ -62,6 +62,10 @@
    state.detail.append(element('p',records.length+' lançamento(s) vinculados. Valores das descrições agrupados dentro de cada tipo e rubrica.'));
    const scroll=element('div',undefined,'pfce-scroll'),table=element('table'),head=element('thead'),hr=element('tr');for(const h of ['Vencimento','Tipo','Rubrica','Descrição','Status','Valor'])hr.append(element('th',h));head.append(hr);table.append(head);const body=element('tbody');
    for(const r of records){const tr=element('tr');for(const v of [dateLabel(r.vencimento),r.tipo,r.categoria||'Sem rubrica',r.descricao.trim()||'Sem descrição',r.status,money(r.valor)])tr.append(element('td',v));body.append(tr);}table.append(body);scroll.append(table);state.detail.append(scroll);
+   if(!passive&&!payload&&window.PFQuickCards){
+    const field=overrideRows&&records.every(r=>r.descricao===point.label)?'descricao':/rubrica/.test(D.norm(state.model.title))?'categoria':/descri/.test(D.norm(state.model.title))?'descricao':null;
+    if(field){const values=[...new Set(records.map(r=>String(r[field]??'')))];if(values.length===1)document.dispatchEvent(new CustomEvent('pf-item-focus',{detail:{field,value:values[0]}}));}
+   }
   }
   function activate(node,state,p,rows){
    node.classList.add('pfce-point');node.setAttribute('role','button');node.setAttribute('tabindex','0');node.setAttribute('aria-label',p.label+' · '+p.series+' · '+money(p.value)+' — abrir lançamentos');
@@ -133,7 +137,7 @@
    for(const [select,text]of [[state.seriesSelect,'Série'],[state.xSelect,'Eixo X'],[state.ySelect,'Eixo Y']]){const value=select.value;select.replaceChildren(...m.series.map((s,i)=>{const o=element('option',s.label);o.value=String(i);return o;}));select.value=value!==''&&Number(value)<m.series.length?value:'0';select.setAttribute('aria-label',m.title+' — '+text);}
    if(state.ySelect.value===state.xSelect.value&&m.series.length>1)state.ySelect.value='1';
    draw(state);
-   if(state.selection){const p=D.points(m).find(p=>JSON.stringify([p.label,p.series])===state.selectionIdentity);state.selection=null;if(p)detail(state,p);else state.detail.hidden=true;}
+   if(state.selection){const p=D.points(m).find(p=>JSON.stringify([p.label,p.series])===state.selectionIdentity);state.selection=null;if(p)detail(state,p,undefined,true);else state.detail.hidden=true;}
   }
   function mount(source,m,options={}){
    if(!source)return;let state=states.get(source);

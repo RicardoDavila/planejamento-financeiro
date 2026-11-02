@@ -1,10 +1,10 @@
 {
-  "version": "V4.12.42",
-  "name": "V4.12.42",
+  "version": "V4.12.43",
+  "name": "V4.12.43",
   "channel": "pessoal",
   "notes": [
-    "Corrige os filtros rápidos dos cartões visíveis na tela própria do celular, incluindo Saldo, Receitas, Recebido, Despesas, A vencer, Vencidas e Investimentos.",
-    "Inclui Limpar filtro na tela do celular e preserva as regras de pagamento e vencimento usadas pelos indicadores móveis.",
-    "Mantém a funcionalidade do PC e melhora a mensagem de verificação quando um HTML atualizado não foi enviado ao repositório."
+    "Adiciona filtro rápido ao clicar em Rubrica, Subitem ou Descrição nas listas e detalhes do PC, distribuição e celular.",
+    "Integra rubricas e descrições das análises ao mesmo filtro; preserva a expansão dos gráficos e inclui Limpar filtro para restaurar o recorte anterior.",
+    "Mantém os cartões já existentes, cálculos, acesso, sincronização e ações de edição e exclusão."
   ]
 }
