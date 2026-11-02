@@ -1,0 +1,10 @@
+[data-pf-quick-card]{cursor:pointer;position:relative}
+[data-pf-quick-card]:hover{outline:2px solid #64748b;outline-offset:2px}
+[data-pf-quick-card]:focus-visible{outline:3px solid #2563eb;outline-offset:3px}
+[data-pf-quick-card][aria-pressed=true]{outline:3px solid #2563eb;outline-offset:2px}
+.pf-quick-cards-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px;margin:10px 0 16px;border:1px solid #93c5fd;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:13px}
+.pf-quick-cards-notice[hidden]{display:none!important}
+.pf-quick-cards-notice button{padding:9px 14px;border:1px solid #1d4ed8;border-radius:8px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer;min-height:44px}
+body.dark-mode .pf-quick-cards-notice{background:#172b46;color:#dbeafe;border-color:#60a5fa}
+body.dark-mode [data-pf-quick-card][aria-pressed=true]{outline-color:#93c5fd}
+@media print{.pf-quick-cards-notice button{display:none}[data-pf-quick-card]{outline:none!important}.pf-quick-cards-notice{color:#111;background:white;border-color:#777}}

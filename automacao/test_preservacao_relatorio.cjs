@@ -2,7 +2,7 @@ const fs=require('fs'),path=require('path'),vm=require('vm'),crypto=require('cry
 const root=path.resolve(__dirname,'..'),pins=JSON.parse(fs.readFileSync(path.join(__dirname,'relatorio_original_hashes.json'),'utf8'));
 for(const rel of ['index.html','distribuicao/app.html','teste-gemini/app.html']){
  const html=fs.readFileSync(path.join(root,rel),'utf8').replace(/\r\n/g,'\n');const blocks={};
- for(const [name,pin]of Object.entries(pins)){const a=html.indexOf(pin.start),b=html.indexOf(pin.end,a);assert(a>=0&&b>a);blocks[name]=html.slice(a,b).trim();const original=blocks[name].replace(/\n\/\* PFCE bridge:start \*\/\n[\s\S]*?\n\/\* PFCE bridge:end \*\/\n/g,'');assert.equal(crypto.createHash('sha256').update(original).digest('hex'),pin.sha256,rel+': cálculo original alterado em '+name);}
+ for(const [name,pin]of Object.entries(pins)){const a=html.indexOf(pin.start),b=html.indexOf(pin.end,a);assert(a>=0&&b>a);blocks[name]=html.slice(a,b).trim();const original=blocks[name].replace(/\n\/\* (PFCE|PFQF) bridge:start \*\/\n[\s\S]*?\n\/\* \1 bridge:end \*\/\n/g,'');assert.equal(crypto.createHash('sha256').update(original).digest('hex'),pin.sha256,rel+': cálculo original alterado em '+name);}
  const ids=['painelExecutivoGraficos','kpiGrafReceitas','kpiGrafRecebidas','kpiGrafDespesas','kpiGrafSaldo','kpiGrafVencidas','kpiGrafPoupanca','kpiGrafComprometimento','pfWaterfall','pfRanking','pfAtrasos','pfHeatmap','pfDozeMeses','pfDrilldown','chartEvolucao','chartRubricas','comparacaoTotaisGraficos'];
  ids.forEach(id=>assert(html.includes('id="'+id+'"'),id));
  const nodes={};function node(id){return nodes[id]??(nodes[id]={value:({graficoTipo:'Todos',graficoDataFim:'2026-10-31',graficoDataInicio:'2026-10-01'}[id]||''),innerHTML:'',textContent:'',className:''});}

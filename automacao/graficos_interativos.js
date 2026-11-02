@@ -172,7 +172,7 @@
   function rootModels(){
    const monthly=contexts.monthly;
    if(monthly){
-    const rows=D.rows(monthly.rows),all=D.rows(monthly.allRows),ref=String(monthly.chosen||new Date().toISOString()).slice(0,7).split('-').map(Number),months=Array.from({length:6},(_,i)=>D.month(ref[0],ref[1]-6+i));
+    const rows=D.rows(monthly.rows),all=D.rows(window.PFQuickCards?window.PFQuickCards.apply(monthly.allRows):monthly.allRows),ref=String(monthly.chosen||new Date().toISOString()).slice(0,7).split('-').map(Number),months=Array.from({length:6},(_,i)=>D.month(ref[0],ref[1]-6+i));
     for(const [id,type,key,color]of [['clean-revenue-history-bars','Receita','revenueHistory','#047857'],['clean-history-bars','Despesa','expenseHistory','#bd2b20']]){
      domBars(id,type==='Receita'?'Evolução das Receitas':'Evolução das Despesas',all,{selector:'.analysis-row',color,resolve:(label,i)=>all.filter(r=>r.tipo===type&&r.vencimento.startsWith(months[i]?.key||'invalid'))});
     }
