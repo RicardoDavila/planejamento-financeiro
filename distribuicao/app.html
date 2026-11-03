@@ -2872,7 +2872,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     <div class="flex flex-wrap items-center gap-2 mt-3"><button type="button" class="pf-chip" onclick="salvarVisaoGrafico()">Salvar visão</button><select id="graficoVisoesSalvas" class="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs" onchange="carregarVisaoGrafico()"><option value="">Visões salvas…</option></select><button type="button" class="pf-chip" onclick="excluirVisaoGrafico()" title="Excluir a visão selecionada">Excluir visão</button><button type="button" class="pf-chip" onclick="exportarDadosGraficosCSV()">Exportar CSV</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('despesas')">Maiores despesas</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('menoresDespesas')">Menores despesas</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('vencidas')">Atrasados</button><button type="button" class="pf-chip" onclick="consultarProntaGrafico('naorecebidas')">Receitas não recebidas</button></div>
   </div>
   <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-4">
-    <button onclick="atualizarGraficos()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700"><i class="fa-solid fa-chart-line"></i>Gerar gráfico</button>
+    <button onclick="gerarGraficoAnalise()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700"><i class="fa-solid fa-chart-line"></i>Gerar gráfico</button>
     <button onclick="gerarComparativoReceitasDespesas()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"><i class="fa-solid fa-chart-column"></i>Comparar receitas x despesas</button>
     <button onclick="compararRubricaMesAnteriorAtual()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"><i class="fa-solid fa-chart-line"></i>Comparativo Mês Anterior X Mês Atual</button>
     <button onclick="limparFiltrosGraficos()" class="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-slate-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-700"><i class="fa-solid fa-filter-circle-xmark"></i>Limpar filtros</button>
@@ -5986,6 +5986,20 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             atualizarGraficos();
         }
 
+        // A ação explícita sai das comparações e apresenta o resultado no celular e no PC.
+        function mostrarResultadoGrafico() {
+            document.getElementById('tituloGraficoEvolucao')?.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+
+        function gerarGraficoAnalise() {
+            if (!validarPeriodoGraficos(document.getElementById('graficoDataInicio').value, document.getElementById('graficoDataFim').value) || !validarValoresGraficos()) return;
+            comparativoReceitasDespesasAtivo = false;
+            comparacaoRubricaMesAtiva = false;
+            if (['comparativo', 'totalReceitasDespesas'].includes(abaAtivaGrafico)) abaAtivaGrafico = 'prevReceita';
+            mudarAbaGrafico(abaAtivaGrafico);
+            mostrarResultadoGrafico();
+        }
+
         function limparFiltrosGraficos() {
             const inicio = document.getElementById('graficoDataInicio');
             const fim = document.getElementById('graficoDataFim');
@@ -5995,8 +6009,10 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             const tipo = document.getElementById('graficoTipo');
             if (tipo) tipo.value = 'Todos';
             atualizarVisibilidadeTipoGrafico();
-            if (inicio) inicio.value = '';
-            if (fim) fim.value = '';
+            const hoje = new Date();
+            const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            if (inicio) inicio.value = iso(new Date(hoje.getFullYear(), hoje.getMonth(), 1));
+            if (fim) fim.value = iso(new Date(hoje.getFullYear(), hoje.getMonth()+1, 0));
             if (rubrica) rubrica.value = 'Todas';
             if (subItem) subItem.value = 'Todos';
             if (descricao) descricao.value = '';
@@ -6269,9 +6285,12 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
         // Compara, no primeiro gráfico, os valores diários da rubrica selecionada
         // no mês anterior e no mês atual. O segundo gráfico permanece como gerado pelos filtros.
         function compararRubricaMesAnteriorAtual() {
+            if (!validarPeriodoGraficos(document.getElementById('graficoDataInicio').value, document.getElementById('graficoDataFim').value) || !validarValoresGraficos()) return;
+            atualizarVisibilidadeTipoGrafico();
+            const tipoFiltro = document.getElementById('graficoTipo')?.value || 'Todos';
             const rubricaFiltro = document.getElementById('graficoRubrica').value;
             const subItemFiltro = document.getElementById('graficoSubItem').value;
-            const descFiltro = (document.getElementById('graficoDescricao').value || '').toLowerCase();
+            const descFiltro = (document.getElementById('graficoDescricao').value || '').trim().toLowerCase();
 
             // O comparativo mensal é contextual:
             // 1) Se houver Rubrica/Sub-Item/Descrição filtrados, mantém o comportamento
@@ -6292,7 +6311,9 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             // Ao entrar nesta comparação, não manter o comparativo geral anterior.
             comparativoReceitasDespesasAtivo = false;
 
-            const hoje = new Date();
+            // O mês de referência segue o fim do período, depois o início, depois hoje.
+            const referencia = document.getElementById('graficoDataFim').value || document.getElementById('graficoDataInicio').value;
+            const hoje = referencia ? new Date(referencia + 'T12:00:00') : new Date();
             const inicioMesAtual = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
             const inicioMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
             const diasMesAtual = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
@@ -6315,6 +6336,13 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
                 if(typeof window!=='undefined'&&window.PFQuickCards&&!window.PFQuickCards.apply([t],'charts').length)return false;
 /* PFQF bridge:end */
 
+                if (tipoFiltro !== 'Todos' && t.tipo !== tipoFiltro) return false;
+                const status = document.getElementById('graficoStatusAvancado')?.value || 'Todos';
+                const min = document.getElementById('graficoValorMin')?.value;
+                const max = document.getElementById('graficoValorMax')?.value;
+                if (status !== 'Todos' && t.status !== status) return false;
+                if (min !== '' && min != null && (Number(t.valor)||0) < Number(min)) return false;
+                if (max !== '' && max != null && (Number(t.valor)||0) > Number(max)) return false;
                 if (rubricaFiltro && rubricaFiltro !== 'Todas' && (t.categoria || 'Outros') !== rubricaFiltro) return false;
                 if (subItemFiltro && subItemFiltro !== 'Todos' && (t.subItem || '') !== subItemFiltro) return false;
                 if (descFiltro && !(t.descricao || '').toLowerCase().includes(descFiltro)) return false;
@@ -6335,7 +6363,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
                 if (!ehMesAnterior && !ehMesAtual) return;
 
                 const ehReceita = t.tipo === 'Receita';
-                const ehRecebida = ehReceita && t.status !== 'Não Recebido';
+                const ehRecebida = ehReceita && !['Não Recebido','A Vencer','Pendente','Vencido'].includes(t.status);
                 const ehDespesa = t.tipo === 'Despesa';
 
                 // Valores do contexto selecionado.
@@ -6546,7 +6574,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
                     },
                     scales: {
                         x: { stacked: false, ticks: { maxRotation: 0, minRotation: 0 } },
-                        y: { beginAtZero: false, ticks: { callback: value => formatarMoeda(value) } }
+                        y: { beginAtZero: true, ticks: { callback: value => formatarMoeda(value) } }
                     }
                 }
             });
@@ -6615,11 +6643,12 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             }
 
             comparacaoRubricaMesAtiva = true;
+            mostrarResultadoGrafico();
 
 /* PFCE bridge:start */
             if(typeof window!=='undefined'&&window.PFChartExplorer){
                 const detailRows=transacoes.filter(t=>passaFiltrosIndividuais(t)&&(
-                    contexto==='filtro'||contexto==='comparativo'&&['Receita','Despesa'].includes(t.tipo)||contexto==='prevReceita'&&t.tipo==='Receita'||contexto==='recRecebidas'&&t.tipo==='Receita'&&t.status!=='Não Recebido'||contexto==='totalDespesas'&&t.tipo==='Despesa'));
+                    contexto==='filtro'||contexto==='comparativo'&&['Receita','Despesa'].includes(t.tipo)||contexto==='prevReceita'&&t.tipo==='Receita'||contexto==='recRecebidas'&&t.tipo==='Receita'&&!['Não Recebido','A Vencer','Pendente','Vencido'].includes(t.status)||contexto==='totalDespesas'&&t.tipo==='Despesa'));
                 const months=[inicioMesAnterior,inicioMesAtual].map(d=>({key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),name:nomesMeses[d.getMonth()]}));
                 window.PFChartExplorer.capture('comparison',{rows:detailRows,months,chart:chartEvolucaoInstance});
                 window.PFChartExplorer.capture('comparisonBars',{rows:detailRows,months,chart:chartRubricasInstance});
