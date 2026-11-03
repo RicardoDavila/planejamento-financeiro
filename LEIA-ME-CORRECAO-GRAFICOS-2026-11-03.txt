@@ -1,0 +1,15 @@
+CORREÇÃO DOS GRÁFICOS — 03/11/2026
+
+1. Gerar gráfico: encerra os modos de comparação anteriores, atualiza os gráficos e rola até o resultado. Períodos e limites de valor inválidos impedem a ação.
+2. Limpar filtros: remove os critérios e restaura o primeiro e o último dia do mês vigente no dispositivo.
+3. Comparativo mensal: usa o mês da data final selecionada (ou a inicial; sem datas, o mês vigente) e o mês anterior completo. Mantém rubrica, sub-item, descrição, tipo, status, limites de valor e filtros dos cartões. A aba ativa determina o indicador; com filtro individual, compara o recorte individual. As barras partem de zero para não exagerar diferenças pequenas.
+
+Aplicação: index.html pessoal, distribuicao/app.html e teste-gemini/app.html. O celular utiliza os mesmos arquivos e funções responsivas. Os caches dos service workers foram renovados.
+
+USO
+Extraia o ZIP em uma nova pasta. Use o projeto completo ou publique os arquivos corrigidos pelos mesmos meios usados atualmente. A tela de acesso da distribuição continua em distribuicao/index.html; seu painel está em distribuicao/app.html. Não substitua a tela de acesso pelo index pessoal.
+As alterações ainda não foram publicadas no seu site. Após publicar, recarregue a página; no aplicativo instalado, feche e abra novamente para receber a atualização.
+
+VALIDAÇÃO
+Testes automatizados das ações nas três versões: mês vigente, dezembro/janeiro, quantidade de dias, filtros, escala, troca de modo, validação e preservação dos lançamentos. Também passaram os testes existentes de sintaxe, análise mensal, receitas por descrição, gráficos interativos, integração móvel e os 9 testes de geração da distribuição.
+Não foi realizado teste visual em navegador ou em celular físico com seu banco real. Nenhuma alteração foi feita no ZIP original ou nos dados do navegador.

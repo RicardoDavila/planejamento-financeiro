@@ -1,12 +1,14 @@
 {
   "pessoal": [
-    "Ativa filtros rápidos nos sete cartões do Painel Executivo de Gráficos e Evoluções, com Limpar filtro próprio.",
-    "Separa os filtros rápidos dos gráficos e da página principal, evitando abrir o ranking restrito por uma seleção anterior como EMPRESA.",
-    "Mostra a composição de Prev de Receita agrupada por Descrição e abre os lançamentos da descrição selecionada, preservando os totais e os demais gráficos."
+    "Aplica o layout aprovado: painel e lançamentos ampliados, gráficos com rolagem independente e identificação na barra superior.",
+    "Inclui os quatro gráficos ao final do celular e tablet, preservando o layout e a proteção dos valores.",
+    "Adiciona Dois monitores ao lado de tema e avisos, com gráficos sincronizados e opção de reunir as colunas.",
+    "Corrige as ações Gerar gráfico, Limpar filtros para o mês vigente e comparação mensal com os filtros selecionados."
   ],
   "distribuicao": [
-    "Ativa filtros rápidos nos sete cartões do Painel Executivo de Gráficos e Evoluções, com Limpar filtro próprio.",
-    "Separa os filtros rápidos dos gráficos e da página principal, evitando abrir o ranking restrito por uma seleção anterior como EMPRESA.",
-    "Mostra a composição de Prev de Receita agrupada por Descrição e abre os lançamentos da descrição selecionada, preservando os totais e os demais gráficos."
+    "Aplica o layout aprovado: painel e lançamentos ampliados, gráficos com rolagem independente e identificação na barra superior.",
+    "Inclui os quatro gráficos ao final do celular e tablet, preservando o layout e a proteção dos valores.",
+    "Adiciona Dois monitores ao lado de tema e avisos, com gráficos sincronizados e opção de reunir as colunas.",
+    "Corrige as ações Gerar gráfico, Limpar filtros para o mês vigente e comparação mensal com os filtros selecionados."
   ]
 }

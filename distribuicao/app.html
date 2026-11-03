@@ -7854,7 +7854,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.47';
+ const CURRENT_VERSION='V4.12.48';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -9007,8 +9007,8 @@ body.dark-mode #clean-month-analysis .analysis-expense .analysis-fill{background
 </style>
 <script id="pf-desktop-clean-layout">(function(){
 'use strict';
+// Inicialização compartilhada dos gráficos; a composição do celular permanece no módulo aprovado.
 const desktop=matchMedia('(min-width:901px) and (pointer:fine)');
-if(!desktop.matches)return;
 const $=id=>document.getElementById(id);
 // Totais mensais por vencimento; a distribuição por rubrica respeita os filtros ativos.
 function monthAnalysisData(rows,allRows,chosen){
@@ -9067,7 +9067,7 @@ function install(){
  $('clean-analysis-toggle').onclick=()=>{const content=$('clean-analysis-content');content.hidden=!content.hidden;$('clean-analysis-toggle').setAttribute('aria-expanded',String(!content.hidden));$('clean-analysis-toggle').textContent=(content.hidden?'▸':'▾')+' Análise do mês de receitas e despesas por rubrica e evolução';};
  const fmt=n=>formatarMoeda(n),escape=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function redraw(){
-  const unlocked=!panel.classList.contains('pf-painel-oculto')&&!document.body.classList.contains('auth-pendente');
+  const unlocked=!(document.body.classList.contains('pf-mobile-layout') ? $('dashboardMobileV40').classList.contains('pf-resumo-oculto') : panel.classList.contains('pf-painel-oculto'))&&!document.body.classList.contains('auth-pendente');
   $('clean-analysis-toggle').disabled=!unlocked;
   if(!unlocked){expandedRevenue.clear();expandedExpense.clear();$('clean-analysis-content').hidden=true;$('clean-analysis-toggle').setAttribute('aria-expanded','false');$('clean-analysis-toggle').textContent='▸ Análise do mês · desbloqueie o painel para consultar';totals.textContent='Totais protegidos · desbloqueie o painel gerencial';['clean-category-bars','clean-history-bars','clean-revenue-category-bars','clean-revenue-history-bars'].forEach(id=>$(id).replaceChildren());return;}
   $('clean-analysis-toggle').textContent=($('clean-analysis-content').hidden?'▸':'▾')+' Análise do mês de receitas e despesas por rubrica e evolução';
@@ -10232,7 +10232,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
    if(payload)return false;
    if(document.body.classList.contains('auth-pendente'))return true;
    if(typeof protecaoAutenticada!=='undefined'&&!protecaoAutenticada)return true;
-   return !!state.source.closest('#clean-month-analysis')&&!!document.getElementById('painelGerencial')?.classList.contains('pf-painel-oculto');
+   return !!state.source.closest('#clean-month-analysis')&&(document.body.classList.contains('pf-mobile-layout') ? !!document.getElementById('dashboardMobileV40')?.classList.contains('pf-resumo-oculto') : !!document.getElementById('painelGerencial')?.classList.contains('pf-painel-oculto'));
   }
   function pointRows(state,p){return D.rows(state.model.resolve?.(p.j,p.i)||[]);}
   function detail(state,point,overrideRows,passive=false){
@@ -10744,6 +10744,206 @@ body.dark-mode [data-pf-quick-card][aria-pressed=true]{outline-color:#93c5fd}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
 
+</script>
+<style id="pf-layout-aprovado-css">/* Só geometria. Cores, fontes, controles e temas vêm do projeto atual. */
+
+@media(min-width:901px){
+ html body.layout-proposal:not(.auth-pendente){padding-left:0!important}
+ body.layout-proposal #appConteudo{max-width:1920px!important;padding:16px 24px 32px!important;margin:auto!important}
+ body.layout-proposal #layout-workspace{display:grid;grid-template-columns:minmax(0,7fr) minmax(290px,3fr);gap:20px;align-items:start}
+ body.layout-proposal #layout-left,body.layout-proposal #layout-right{min-width:0}
+ body.layout-proposal #painelResumoGerencial{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
+ body.layout-proposal #painelResumoGerencial>div{min-height:104px;min-width:0}
+ body.layout-proposal #painelResumoGerencial>div>p:last-child{overflow-wrap:anywhere}
+ body.layout-proposal #painelGerencial>div:first-child{flex-wrap:wrap!important;gap:10px!important}
+ body.layout-proposal #pfPainelAcoes{flex-wrap:wrap!important}
+ body.layout-proposal #clean-periodbar{gap:12px;min-height:48px;margin-bottom:16px!important}
+ body.layout-proposal #clean-assistant-place{flex-wrap:wrap}
+ body.layout-proposal #tabelaLancamentosWrapper{max-width:100%;overflow-x:auto!important}
+ body.layout-proposal #tabelaLancamentosWrapper table{width:100%!important;min-width:0!important;table-layout:fixed!important}
+ body.layout-proposal #tabelaLancamentosWrapper table th,
+ body.layout-proposal #tabelaLancamentosWrapper table td{min-width:0!important;max-width:none!important;white-space:normal!important;overflow-wrap:anywhere!important;padding:10px 6px!important}
+ body.layout-proposal #tabelaLancamentosWrapper table th:nth-child(1),body.layout-proposal #tabelaLancamentosWrapper table th:nth-child(2){width:8%}
+ body.layout-proposal #tabelaLancamentosWrapper table th:nth-child(3){width:7%}
+ body.layout-proposal #tabelaLancamentosWrapper table th:nth-child(4){width:10%}
+ body.layout-proposal #tabelaLancamentosWrapper table th:nth-child(5){width:9%}
+ body.layout-proposal #tabelaLancamentosWrapper table th:nth-child(6){width:17%}
+ body.layout-proposal #tabelaLancamentosWrapper table th:nth-child(7){width:10%}
+ body.layout-proposal #tabelaLancamentosWrapper table th:nth-child(8){width:9%}
+ body.layout-proposal #tabelaLancamentosWrapper table th:nth-child(9){width:12%}
+ body.layout-proposal #tabelaLancamentosWrapper table th:nth-child(10){width:10%}
+ body.layout-proposal #tabelaLancamentosWrapper table td:nth-child(7){font-variant-numeric:tabular-nums}
+ body.layout-proposal #tabelaLancamentosWrapper table td:last-child button{margin:2px!important}
+ body.layout-proposal #clean-assistant-place #pfIaLaunch{
+  color:#4338ca!important;background:#eef2ff!important;border:1px solid #c7d2fe!important;
+  font-weight:650!important;box-shadow:0 2px 6px #4338ca14!important;
+ }
+ body.layout-proposal #clean-assistant-place #pfIaLaunch:hover{background:#e0e7ff!important;border-color:#a5b4fc!important}
+ body.layout-proposal #clean-assistant-place #pfIaLaunch:focus-visible{outline:2px solid #4338ca;outline-offset:3px}
+ body.layout-proposal.dark-mode #clean-assistant-place #pfIaLaunch{background:#273350!important;border-color:#6b68b0!important;color:#d5caff!important}
+ body.layout-proposal.dark-mode #clean-assistant-place #pfIaLaunch:hover{background:#344163!important}
+ body.layout-proposal #clean-month-analysis{margin:0!important}
+ body.layout-proposal #clean-analysis-toggle{width:100%;text-align:left;padding:12px 16px}
+ body.layout-proposal #clean-analysis-content{grid-template-columns:minmax(0,1fr)!important;gap:22px!important;padding:16px!important}
+ body.layout-proposal #clean-analysis-content[hidden]{display:none!important}
+ body.layout-proposal #clean-analysis-content>section{min-width:0;min-height:285px}
+ body.layout-proposal #clean-analysis-content .analysis-row{grid-template-columns:minmax(62px,.9fr) minmax(24px,1fr) auto!important;gap:8px!important}
+ body.layout-proposal #clean-analysis-content .analysis-amount{white-space:nowrap}
+ body.layout-proposal .pfce-tools{flex-wrap:wrap!important;gap:6px!important}
+ body.layout-proposal .pfce-tools select{min-width:0!important;max-width:100%}
+
+}
+@media(min-width:901px) and (max-width:1199px){
+ body.layout-proposal #layout-workspace{grid-template-columns:minmax(0,1fr)!important}
+}
+/* As regras móveis atingem exclusivamente o novo bloco ao final da página. */
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts{margin-top:24px;margin-bottom:20px}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts #clean-analysis-toggle{width:100%;min-height:48px;text-align:left;padding:14px 16px;font:inherit;white-space:normal}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-grid{grid-template-columns:minmax(0,1fr);gap:24px}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-row{grid-template-columns:minmax(58px,.85fr) minmax(25px,1fr) auto;gap:7px}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .pfce-tools{flex-wrap:wrap}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .pfce-tools select{min-width:0;max-width:100%}
+@media print{
+ #layout-demo-note{display:none!important}
+ #layout-workspace,#layout-left,#layout-right{display:block!important}
+}
+/* PC: a segunda coluna permanece visível e rola sem deslocar a lista de dados. */
+@media(min-width:1200px){
+ body.layout-proposal #layout-right{position:sticky;top:calc(var(--pf-layout-top,58px) + 12px);max-height:calc(100dvh - var(--pf-layout-top,58px) - 24px);overflow-y:auto;overscroll-behavior-y:contain;scrollbar-gutter:stable;padding-right:8px}
+ body.layout-proposal #layout-right:focus-visible{outline:2px solid #4338ca;outline-offset:3px;border-radius:8px}
+}
+/* No celular, o novo bloco está sempre identificado, inclusive com valores ocultos. */
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts #clean-analysis-toggle{display:none!important}
+body.pf-mobile-layout #layout-mobile-chart-header{padding:16px 16px 4px}
+body.pf-mobile-layout #layout-mobile-chart-header h2{font-size:18px;font-weight:650;margin:0 0 8px}
+body.pf-mobile-layout #layout-mobile-chart-header p{margin:0 0 12px}
+body.pf-mobile-layout #layout-mobile-chart-show{font:inherit;min-height:44px;padding:8px 12px;border:1px solid var(--line-2);border-radius:8px;background:var(--blue-soft);color:var(--text);margin-bottom:12px}
+body.pf-mobile-layout #layout-mobile-chart-show[hidden],body.pf-mobile-layout #layout-mobile-chart-placeholder[hidden]{display:none!important}
+body.pf-mobile-layout #layout-mobile-chart-placeholder{padding:12px 16px 20px}
+body.pf-mobile-layout #layout-mobile-chart-placeholder section{padding:12px 0;border-bottom:1px solid var(--line)}
+@media print{body.layout-proposal #layout-right{position:static!important;max-height:none!important;overflow:visible!important}}
+/* Ao separar, a janela principal fica somente com os dados. */
+@media(min-width:901px){
+ body.layout-proposal.layout-charts-detached #layout-workspace{grid-template-columns:minmax(0,1fr)!important}
+ body.layout-proposal.layout-charts-detached #layout-right{display:none!important}
+}
+
+/* Barra nativa: conserva os mesmos nós, ações, cores e fontes. */
+@media(min-width:901px){
+ html body.layout-proposal:not(.pf-mobile-layout):not(.auth-pendente){padding-top:calc(var(--pf-layout-top,58px) + 12px)!important}
+ html body.layout-proposal:not(.pf-mobile-layout) #pfMenuTopo{height:auto!important;min-height:58px!important;flex-wrap:wrap!important}
+ html body.layout-proposal:not(.pf-mobile-layout) #pfMenuLateral{top:var(--pf-layout-top,58px)!important}
+ html body.layout-proposal:not(.pf-mobile-layout) #reference-header{display:none!important}
+ html body.layout-proposal #pfMenuTopo #pf495Greeting{display:block!important;width:auto!important;flex:0 1 auto!important;margin:0 8px 0 0!important;padding:0!important;min-width:0}
+ html body.layout-proposal #pfMenuTopo #pf495Greeting>div:first-child{justify-content:flex-start!important;gap:7px!important}
+ html body.layout-proposal #pfMenuTopo #pf495GreetingTitle{font-size:13px!important;letter-spacing:normal!important;line-height:1.4!important;color:inherit!important}
+ html body.layout-proposal #pfMenuTopo #pf495PerfilBadge{font-size:11px!important}
+ html body.layout-proposal #pfMenuTopo #pfGreetingControls{margin:0!important}
+ html body.layout-proposal #pfMenuTopo #pfGreetingControls button{min-height:36px!important;padding:7px 9px!important;font-size:11px!important}
+ html body.layout-proposal #pfMenuTopo #clean-top-actions{flex-wrap:wrap}
+ html body.layout-proposal #pfMenuTopo #pf-dois-monitores[aria-pressed="true"]{border-color:#a5b4fc!important}
+}
+body.pf-mobile-layout #pf-dois-monitores{display:none!important}
+body.layout-proposal.auth-pendente #pfMenuTopo{display:none!important}
+@media print{#pfMenuTopo{display:none!important}}
+</style>
+<script id="pf-layout-aprovado">/* Layout aprovado: apenas apresentação; autenticação e banco continuam originais. */
+(() => {
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ let popup=null,channel='',last='',button,ready=false,queued=false,firstOpen=false;
+ const mobile=()=>document.body.classList.contains('pf-mobile-layout');
+ function authorized(){
+  try{if(window.pfdAssert)window.pfdAssert();return typeof protecaoAutenticada!=='undefined'&&protecaoAutenticada&&!document.body.classList.contains('auth-pendente');}catch{return false}
+ }
+ function locked(){return !authorized()||(mobile()?$('dashboardMobileV40')?.classList.contains('pf-resumo-oculto'):$('painelGerencial')?.classList.contains('pf-painel-oculto'))}
+ function snapshot(){
+  const hidden=Boolean(locked()),D=window.PFChartExplorer.data;
+  const all=hidden?[]:window.PFQuickCards?window.PFQuickCards.apply(transacoes):transacoes;
+  return {locked:hidden,dark:document.body.classList.contains('dark-mode'),
+   rows:hidden?[]:D.rows(getFilteredTransactions()),allRows:hidden?[]:D.rows(all),
+   chosen:$('filtroDataFim')?.value||new Date().toISOString().slice(0,10),
+   font:getComputedStyle(document.body).fontFamily};
+ }
+ function send(){
+  if(!popup||popup.closed||!ready)return;
+  if(!authorized()){join();return}
+  const state=snapshot(),serialized=JSON.stringify(state);if(serialized===last)return;
+  last=serialized;popup.postMessage({type:'pf-chart-state',channel,state},location.origin==='null'?'*':location.origin);
+ }
+ function join(){
+  if(popup&&!popup.closed)popup.close();popup=null;ready=false;last='';channel='';
+  document.body.classList.remove('layout-charts-detached');
+  if(button){button.textContent='Dois monitores';button.setAttribute('aria-pressed','false');button.title='Abrir os gráficos em uma janela para o segundo monitor'}
+  window.dispatchEvent(new Event('resize'));
+ }
+ function split(){
+  if(popup&&!popup.closed){join();return}
+  if(!authorized())return;
+  channel=crypto.randomUUID();
+  popup=window.open('graficos.html?canal='+encodeURIComponent(channel),'pf-graficos-'+channel,'popup,width=1100,height=850,resizable=yes,scrollbars=yes');
+  if(!popup){channel='';alert('O navegador bloqueou a janela dos gráficos. Permita pop-ups deste aplicativo e tente novamente.');return}
+  document.body.classList.add('layout-charts-detached');button.textContent='Reunir colunas';button.setAttribute('aria-pressed','true');
+  button.title='Reunir dados e gráficos em um único monitor';window.dispatchEvent(new Event('resize'));
+ }
+ function mobileRefresh(){
+  if(!mobile())return;const content=$('clean-analysis-content'),placeholder=$('layout-mobile-chart-placeholder');if(!content||!placeholder)return;
+  const hidden=Boolean(locked());content.hidden=hidden;placeholder.hidden=!hidden;
+  $('layout-mobile-chart-show').hidden=!hidden;
+  $('clean-analysis-toggle').setAttribute('aria-expanded',String(!hidden));
+  $('layout-mobile-chart-status').textContent=hidden?'Os gráficos acompanham a proteção dos valores. Toque em Mostrar para visualizar.':'Receitas e despesas por evolução e rubrica, conforme os filtros selecionados.';
+  if(!hidden)window.PFChartExplorer?.schedule();
+ }
+ function refresh(){
+  if(mobile()){mobileRefresh();if(popup)join()}
+  else {
+   const theme=$('reference-theme'),label=document.body.classList.contains('dark-mode')?'☀ Claro':'◐ Escuro';
+   if(theme&&theme.textContent!==label)theme.textContent=label;
+   if(!firstOpen&&!locked()&&$('clean-analysis-content')?.hidden){firstOpen=true;$('clean-analysis-toggle').click()}
+  }
+  if(!authorized()&&popup)join();else send();
+ }
+ function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;refresh()})}
+ function install(){
+  const analysis=$('clean-month-analysis'),panel=$('painelGerencial');if(!analysis||!panel)return;
+  document.body.classList.add('layout-proposal');
+  if(mobile()){
+   const main=$('pm-app');if(!main)return;main.append(analysis);analysis.classList.add('layout-mobile-charts');
+   const header=document.createElement('div');header.id='layout-mobile-chart-header';
+   const title=document.createElement('h2');title.textContent='Gráficos do período';
+   const status=document.createElement('p');status.id='layout-mobile-chart-status';
+   const show=document.createElement('button');show.id='layout-mobile-chart-show';show.type='button';show.textContent='Mostrar gráficos';show.onclick=()=>$('pm-toggleValues')?.click();
+   header.append(title,status,show);analysis.prepend(header);
+   const placeholder=document.createElement('div');placeholder.id='layout-mobile-chart-placeholder';placeholder.className='analysis-grid';
+   placeholder.innerHTML=['Evolução das Receitas','Evolução das Despesas','Receitas por Rubrica','Despesas por Rubrica'].map(label=>'<section><h3>'+label+'</h3><p>Valores protegidos · R$ ••••</p></section>').join('');
+   $('clean-analysis-content').before(placeholder);
+  }else{
+   const period=$('clean-periodbar'),table=$('tabelaLancamentosWrapper').parentElement;
+   const workspace=document.createElement('div');workspace.id='layout-workspace';
+   const left=document.createElement('div');left.id='layout-left';const right=document.createElement('div');right.id='layout-right';
+   right.tabIndex=0;right.setAttribute('role','region');right.setAttribute('aria-label','Gráficos financeiros com rolagem independente');
+   period.before(workspace);workspace.append(left,right);left.append(period,panel,table);right.append(analysis);
+   const top=$('pfMenuTopo'),greeting=$('pf495Greeting');
+   if(top&&greeting)top.insertBefore(greeting,top.querySelector('.pf-menu-categoria')||$('clean-top-actions'));
+   button=document.createElement('button');button.id='pf-dois-monitores';button.type='button';button.textContent='Dois monitores';button.setAttribute('aria-pressed','false');button.title='Abrir os gráficos em uma janela para o segundo monitor';button.onclick=split;
+   $('clean-top-actions').append(button);
+   const size=()=>document.documentElement.style.setProperty('--pf-layout-top',top.getBoundingClientRect().height+'px');
+   if(window.ResizeObserver)new ResizeObserver(size).observe(top);size();
+  }
+  const render=window.renderTable;window.renderTable=function(...args){const result=render.apply(this,args);schedule();return result};
+  for(const target of [document.body,panel,$('dashboardMobileV40')].filter(Boolean))new MutationObserver(schedule).observe(target,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('message',event=>{
+   if(!popup||event.source!==popup||event.origin!==location.origin||event.data?.channel!==channel)return;
+   if(event.data.type==='pf-chart-ready'){ready=true;last='';send()}
+   if(event.data.type==='pf-chart-join')join();
+  });
+  setInterval(()=>{if(popup?.closed)join();else send()},700);
+  window.addEventListener('pagehide',join);window.addEventListener('beforeunload',join);
+  refresh();
+  matchMedia('(max-width:900px), (pointer:coarse)').addEventListener('change',()=>location.reload());
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
 </script>
 </body>
 </html>

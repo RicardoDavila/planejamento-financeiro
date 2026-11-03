@@ -92,7 +92,7 @@ def build(output, version):
     notes=carregar_notas(ROOT)
     with tempfile.TemporaryDirectory() as temporary:
         staging=pathlib.Path(temporary)/'site'; staging.mkdir()
-        for name in ['index.html','version.json','manifest.webmanifest','service-worker.js','sw.js','icon-192.png','icon-512.png']:
+        for name in ['index.html','graficos.html','version.json','manifest.webmanifest','service-worker.js','sw.js','icon-192.png','icon-512.png']:
             path=ROOT/name
             if path.exists(): shutil.copy2(path,staging/name)
         pessoal=corrigir_rodape(corrigir_atualizacoes(corrigir_sincronizacao(read(ROOT/'index.html'))))
@@ -106,7 +106,7 @@ def build(output, version):
         if (ROOT/'CNAME').exists(): shutil.copy2(ROOT/'CNAME',staging/'CNAME')
         (staging/'.nojekyll').write_text('')
         dist=staging/'distribuicao';dist.mkdir()
-        for name in ['index.html','conta.js','isolamento.js','manifest.webmanifest','service-worker.js','icon-192.png','icon-512.png']:
+        for name in ['index.html','graficos.html','conta.js','isolamento.js','manifest.webmanifest','service-worker.js','icon-192.png','icon-512.png']:
             shutil.copy2(ROOT/'distribuicao'/name,dist/name)
         (dist/'app.html').write_text(app,encoding='utf-8')
         index=re.sub(r'Versão de distribuição V[0-9.]+', 'Versão de distribuição '+version, read(dist/'index.html'))
@@ -116,12 +116,13 @@ def build(output, version):
         (dist/'version.json').write_text(json.dumps({'version':version,'name':version,'channel':'distribuicao','notes':notes['distribuicao']},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         check_scripts(app,dist)
         check_scripts(pessoal,dist)
+        check_scripts(read(staging/'graficos.html'),dist)
         # Publica somente os arquivos estáticos conhecidos da cópia opcional.
         gemini_source=ROOT/'teste-gemini'
         if gemini_source.exists():
             validate_distribution_entry(read(gemini_source/'index.html'))
             gemini_target=staging/'teste-gemini';gemini_target.mkdir()
-            for name in ['index.html','app.html','conta.js','isolamento.js','teste-guard.js','demonstracao.html','preview-celular.html','icon-192.png','icon-512.png']:
+            for name in ['index.html','graficos.html','app.html','conta.js','isolamento.js','teste-guard.js','demonstracao.html','preview-celular.html','icon-192.png','icon-512.png']:
                 shutil.copy2(gemini_source/name,gemini_target/name)
             check_scripts(read(gemini_target/'app.html'),dist)
 

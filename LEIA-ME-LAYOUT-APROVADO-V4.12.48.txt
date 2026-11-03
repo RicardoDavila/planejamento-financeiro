@@ -1,0 +1,33 @@
+LAYOUT APROVADO — V4.12.48
+
+APLICAÇÃO
+Atualização do projeto pessoal (index.html), da distribuição (distribuicao/app.html) e da cópia teste-gemini, preservando as telas de acesso e o isolamento das contas.
+
+PC
+Logotipo original antes do nome do projeto. Identificação e perfil antes do menu principal. Painel e lançamentos ampliados, com textos ajustados às células. Gráficos na segunda coluna, com rolagem independente. Assistente Financeiro com destaque discreto da paleta atual.
+O botão Dois monitores fica no mesmo grupo de Escuro/Claro e Avisos. Abre uma janela de gráficos que pode ser arrastada para o segundo monitor. O botão passa a Reunir colunas; a segunda janela também oferece Reunir colunas. Fechar a janela dos gráficos restaura a tela única.
+
+CELULAR E TABLET
+Layout e controles existentes preservados. Os quatro gráficos são construídos também no celular/tablet e aparecem ao final da página. Quando os valores estão protegidos, Mostrar gráficos aciona a proteção original. Use sua senha atual; não há senha da demonstração nesta versão.
+
+DADOS E ACESSO
+A janela de gráficos não possui banco, sessão, armazenamento ou conexão de rede próprios. Recebe somente os dados necessários dos gráficos, por mensagens vinculadas à janela, origem e canal de abertura. O bloqueio de valores limpa os dados enviados. A troca de conta ou saída encerra a janela adicional.
+
+COMO ATUALIZAR PELO GITHUB
+1. Guarde uma cópia de segurança do repositório atual.
+2. Extraia atualizacao-layout-v4.12.48.zip.
+3. Envie os arquivos e pastas extraídos para a raiz do MESMO repositório, mantendo todos os caminhos. Não envie o ZIP em si.
+4. Inclua as pastas automacao, distribuicao, teste-gemini e .github conforme vierem no pacote. Elas contêm alterações necessárias à geração/publicação e aos testes.
+5. Commit sugerido: Aplica layout aprovado e modo dois monitores
+6. Aguarde a conclusão do fluxo de publicação do GitHub. O gerador já inclui graficos.html nas versões publicadas e os caches foram renovados.
+7. Recarregue o site. No aplicativo instalado, feche e abra novamente após a atualização.
+Não substitua distribuicao/index.html pelo index.html pessoal: a tela de entrada por conta deve ser preservada.
+
+VALIDAÇÃO
+48 testes automatizados passaram. Incluem as correções anteriores dos botões de gráficos, cálculos, filtros, relatórios, fluxo de caixa, autenticação, isolamento de contas, sincronização e os testes novos do layout e das duas janelas.
+A geração completa do site V4.12.48 também foi executada com sucesso.
+A conferência visual final com o banco real após a publicação fica para o uso no navegador. Esta entrega não publica o site automaticamente.
+
+ARQUIVOS
+atualizacao-layout-v4.12.48.zip: somente arquivos novos/alterados, com caminhos relativos à raiz do repositório.
+projeto-completo-v4.12.48.zip: projeto completo atualizado, para cópia de segurança ou nova extração.
