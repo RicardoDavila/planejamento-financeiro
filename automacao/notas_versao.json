@@ -1,14 +1,10 @@
 {
   "pessoal": [
-    "Aplica o layout aprovado: painel e lançamentos ampliados, gráficos com rolagem independente e identificação na barra superior.",
-    "Inclui os quatro gráficos ao final do celular e tablet, preservando o layout e a proteção dos valores.",
-    "Adiciona Dois monitores ao lado de tema e avisos, com gráficos sincronizados e opção de reunir as colunas.",
-    "Corrige as ações Gerar gráfico, Limpar filtros para o mês vigente e comparação mensal com os filtros selecionados."
+    "Corrige o preenchimento dos quatro gráficos ao mostrar os valores no celular e tablet.",
+    "Aplica aos gráficos móveis os estilos de barras, trilhas, rubricas e espaçamento, preservando o PC e o modo de dois monitores."
   ],
   "distribuicao": [
-    "Aplica o layout aprovado: painel e lançamentos ampliados, gráficos com rolagem independente e identificação na barra superior.",
-    "Inclui os quatro gráficos ao final do celular e tablet, preservando o layout e a proteção dos valores.",
-    "Adiciona Dois monitores ao lado de tema e avisos, com gráficos sincronizados e opção de reunir as colunas.",
-    "Corrige as ações Gerar gráfico, Limpar filtros para o mês vigente e comparação mensal com os filtros selecionados."
+    "Corrige o preenchimento dos quatro gráficos ao mostrar os valores no celular e tablet.",
+    "Aplica aos gráficos móveis os estilos de barras, trilhas, rubricas e espaçamento, preservando o PC e o modo de dois monitores."
   ]
 }

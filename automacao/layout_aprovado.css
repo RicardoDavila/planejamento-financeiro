@@ -99,3 +99,24 @@ body.pf-mobile-layout #layout-mobile-chart-placeholder section{padding:12px 0;bo
 body.pf-mobile-layout #pf-dois-monitores{display:none!important}
 body.layout-proposal.auth-pendente #pfMenuTopo{display:none!important}
 @media print{#pfMenuTopo{display:none!important}}
+/* Correção móvel: estes estilos antes existiam somente dentro da mídia de PC. */
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;padding:6px 16px 20px}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts #clean-analysis-content[hidden]{display:none!important}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-grid>section{min-width:0;padding:12px 0}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts h3{font-size:16px;font-weight:650;line-height:1.4;margin:4px 0 8px}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts p{font-size:14px;line-height:1.5;color:var(--muted);margin:4px 0 16px}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-bars{display:grid;gap:14px}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-row{display:grid;grid-template-columns:minmax(58px,.85fr) minmax(25px,1fr) auto;gap:7px;align-items:center;font-size:12px;min-width:0}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-row>span:first-child{overflow-wrap:anywhere;min-width:0}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-track{display:block;height:9px;background:#f1f3f8;border-radius:5px;overflow:hidden}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-fill{display:block;height:100%;border-radius:5px;background:#5146cc}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-amount{text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-revenue .analysis-fill{background:#16734b}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-expense .analysis-fill{background:#bd2b20}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-rubric>summary{cursor:pointer;list-style:none;border-radius:5px;padding:5px 0}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-rubric>summary::-webkit-details-marker{display:none}
+body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-description-bars{display:grid;gap:9px;margin:10px 0 4px 12px;padding-left:10px;border-left:2px solid var(--line-2)}
+body.pf-mobile-layout.dark-mode #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-track{background:#2d3a50}
+body.pf-mobile-layout.dark-mode #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-revenue .analysis-fill{background:#6ee7b7}
+body.pf-mobile-layout.dark-mode #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-expense .analysis-fill{background:#fca5a5}

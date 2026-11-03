@@ -1,0 +1,18 @@
+CORREÇÃO DOS GRÁFICOS NO CELULAR — V4.12.49
+
+Corrige o caso em que apareciam os títulos dos quatro gráficos sem os desenhos.
+Causas corrigidas: o desbloqueio do resumo móvel não acionava a renderização; o CSS estrutural das barras estava restrito ao PC.
+A correção se aplica ao celular e tablet nas versões pessoal, distribuição e teste-gemini. O layout do PC e o modo de dois monitores foram preservados.
+
+COMO ATUALIZAR
+1. Extraia correcao-graficos-celular-v4.12.49.zip.
+2. Envie os arquivos e pastas extraídos para a raiz do mesmo repositório no GitHub, mantendo os caminhos. Não envie o ZIP em si.
+3. Commit sugerido: Corrige renderização dos gráficos no celular
+4. Aguarde a conclusão da publicação e reabra a página no celular. Se estiver instalada como aplicativo, feche e abra novamente após a atualização.
+5. Ao final dos lançamentos, use Mostrar gráficos se os valores estiverem protegidos. A senha continua sendo a sua senha atual.
+
+VALIDAÇÃO
+49 testes automatizados aprovados; geração completa do site V4.12.49 concluída.
+O novo teste executa o código real dos gráficos nas três versões: ocultar, mostrar, preencher as quatro séries, ocultar novamente, recompor os gráficos e limpar ao sair. Também verifica os estilos estruturais para telas móveis.
+A conferência final em celular físico fica para depois de publicar.
+Nenhum dado, senha ou sessão foi alterado. O site não foi publicado por esta entrega.
