@@ -4,6 +4,14 @@
  const $=id=>document.getElementById(id);
  let popup=null,channel='',last='',button,ready=false,queued=false,firstOpen=false;
  const mobile=()=>document.body.classList.contains('pf-mobile-layout');
+ function positionCloudButton(){
+  if(mobile())return;
+  const badge=$('statusNuvemBadge'),cloud=badge?.closest('button'),actions=$('clean-top-actions');
+  if(!cloud||!actions)return;
+  cloud.id='pf-cloud-status';actions.append(cloud);
+  const update=()=>cloud.classList.toggle('pf-cloud-online',badge.textContent.trim()==='Online');
+  new MutationObserver(update).observe(badge,{childList:true,characterData:true,subtree:true});update();
+ }
  function authorized(){
   try{if(window.pfdAssert)window.pfdAssert();return typeof protecaoAutenticada!=='undefined'&&protecaoAutenticada&&!document.body.classList.contains('auth-pendente');}catch{return false}
  }
@@ -78,6 +86,7 @@
    if(top&&greeting)top.insertBefore(greeting,top.querySelector('.pf-menu-categoria')||$('clean-top-actions'));
    button=document.createElement('button');button.id='pf-dois-monitores';button.type='button';button.textContent='Dois monitores';button.setAttribute('aria-pressed','false');button.title='Abrir os gráficos em uma janela para o segundo monitor';button.onclick=split;
    $('clean-top-actions').append(button);
+   positionCloudButton();
    const size=()=>document.documentElement.style.setProperty('--pf-layout-top',top.getBoundingClientRect().height+'px');
    if(window.ResizeObserver)new ResizeObserver(size).observe(top);size();
   }

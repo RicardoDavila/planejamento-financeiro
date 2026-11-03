@@ -7854,7 +7854,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.49';
+ const CURRENT_VERSION='V4.12.59';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -10870,6 +10870,12 @@ body.pf-mobile-layout #pm-app>#clean-month-analysis.layout-mobile-charts .analys
 body.pf-mobile-layout.dark-mode #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-track{background:#2d3a50}
 body.pf-mobile-layout.dark-mode #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-revenue .analysis-fill{background:#6ee7b7}
 body.pf-mobile-layout.dark-mode #pm-app>#clean-month-analysis.layout-mobile-charts .analysis-expense .analysis-fill{background:#fca5a5}
+/* Indicador original de nuvem: apenas no PC, após Dois monitores. */
+@media(min-width:901px){
+ html body.layout-proposal:not(.pf-mobile-layout) #pfMenuTopo #clean-top-actions #pf-cloud-status{min-height:36px!important;padding:7px 11px!important;border-radius:8px!important;font-size:12px!important}
+ html body.layout-proposal:not(.pf-mobile-layout) #pfMenuTopo #clean-top-actions #pf-cloud-status.pf-cloud-online{background:#15803d!important;border-color:#22c55e!important;color:#fff!important}
+ html body.layout-proposal:not(.pf-mobile-layout) #pfMenuTopo #clean-top-actions #pf-cloud-status.pf-cloud-online:hover{background:#166534!important}
+}
 </style>
 <script id="pf-layout-aprovado">/* Layout aprovado: apenas apresentação; autenticação e banco continuam originais. */
 (() => {
@@ -10877,6 +10883,14 @@ body.pf-mobile-layout.dark-mode #pm-app>#clean-month-analysis.layout-mobile-char
  const $=id=>document.getElementById(id);
  let popup=null,channel='',last='',button,ready=false,queued=false,firstOpen=false;
  const mobile=()=>document.body.classList.contains('pf-mobile-layout');
+ function positionCloudButton(){
+  if(mobile())return;
+  const badge=$('statusNuvemBadge'),cloud=badge?.closest('button'),actions=$('clean-top-actions');
+  if(!cloud||!actions)return;
+  cloud.id='pf-cloud-status';actions.append(cloud);
+  const update=()=>cloud.classList.toggle('pf-cloud-online',badge.textContent.trim()==='Online');
+  new MutationObserver(update).observe(badge,{childList:true,characterData:true,subtree:true});update();
+ }
  function authorized(){
   try{if(window.pfdAssert)window.pfdAssert();return typeof protecaoAutenticada!=='undefined'&&protecaoAutenticada&&!document.body.classList.contains('auth-pendente');}catch{return false}
  }
@@ -10951,6 +10965,7 @@ body.pf-mobile-layout.dark-mode #pm-app>#clean-month-analysis.layout-mobile-char
    if(top&&greeting)top.insertBefore(greeting,top.querySelector('.pf-menu-categoria')||$('clean-top-actions'));
    button=document.createElement('button');button.id='pf-dois-monitores';button.type='button';button.textContent='Dois monitores';button.setAttribute('aria-pressed','false');button.title='Abrir os gráficos em uma janela para o segundo monitor';button.onclick=split;
    $('clean-top-actions').append(button);
+   positionCloudButton();
    const size=()=>document.documentElement.style.setProperty('--pf-layout-top',top.getBoundingClientRect().height+'px');
    if(window.ResizeObserver)new ResizeObserver(size).observe(top);size();
   }

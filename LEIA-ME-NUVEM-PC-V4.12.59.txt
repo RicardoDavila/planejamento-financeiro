@@ -1,0 +1,11 @@
+AJUSTE DO INDICADOR DE NUVEM — V4.12.59
+
+Somente no PC: move o botão original da nuvem para depois de Dois monitores, no grupo de tema e avisos. Quando o status original é Online, o botão recebe fundo verde e texto branco. O comportamento de conexão, sincronização e abertura da configuração permanece original.
+Não altera os elementos ou o layout do celular.
+
+Para aplicar: extraia ajuste-nuvem-pc-v4.12.59.zip e envie os arquivos/pastas extraídos para a raiz do mesmo repositório no GitHub, preservando os caminhos. Não envie o ZIP em si. Aguarde a publicação e recarregue o aplicativo.
+Commit sugerido: Destaca e reposiciona nuvem no PC
+
+A versão foi definida acima da V4.12.58 visível na captura enviada.
+Validação: teste específico de posição, preservação do clique, cores de acordo com o status e ausência de alterações móveis; 49 testes da aplicação; geração completa do site V4.12.59.
+Esta entrega não publica automaticamente o site.

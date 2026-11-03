@@ -1,9 +1,9 @@
 {
-  "version": "V4.12.49",
-  "name": "V4.12.49",
+  "version": "V4.12.59",
+  "name": "V4.12.59",
   "channel": "distribuicao",
   "notes": [
-    "Corrige o preenchimento dos quatro gráficos ao mostrar os valores no celular e tablet.",
-    "Aplica aos gráficos móveis os estilos de barras, trilhas, rubricas e espaçamento, preservando o PC e o modo de dois monitores."
+    "No PC, posiciona o indicador de nuvem após Dois monitores e aplica destaque verde quando o status original é Online.",
+    "Preserva o layout do celular e o comportamento original de conexão e sincronização."
   ]
 }
