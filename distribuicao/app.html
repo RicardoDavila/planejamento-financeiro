@@ -4860,14 +4860,18 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         function abrirRelatorioGerencial(exportarPdf = false){
             atualizarPainelGerencial();
 
-            const lista = getFilteredTransactions().map(t => ({
+            const registrosRelatorio = getFilteredTransactions();
+            const dataCorteRelatorio = new Date();
+            const hojeRelatorio = dataCorteRelatorio.getFullYear()+'-'+String(dataCorteRelatorio.getMonth()+1).padStart(2,'0')+'-'+String(dataCorteRelatorio.getDate()).padStart(2,'0');
+            const liquidadoRelatorio = t => !!t.dataPg || ['Pago','Paga','Recebido','Recebida','Liquidado','Liquidada'].includes(t.status);
+            const lista = registrosRelatorio.map(t => ({
                 data: String(t.vencimento || ''),
                 descricao: String(t.descricao || 'Sem descrição'),
                 tipo: String(t.tipo || ''),
                 categoria: String(t.categoria || 'Sem categoria'),
                 subItem: String(t.subItem || ''),
                 valor: Number(t.valor) || 0,
-                status: String(t.status || 'Sem status')
+                status: liquidadoRelatorio(t) ? (t.tipo==='Receita'?'Recebido':'Pago') : t.vencimento && t.vencimento < hojeRelatorio ? 'Vencido' : t.tipo==='Receita'?'Não Recebido':'A Vencer'
             }));
 
             const w = window.open('', '_blank');
@@ -4895,7 +4899,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             // Total de todas as despesas que passaram pelos filtros de tipo, rubrica, subitem e período.
             const totalDespesasPeriodo = despesas.reduce((s,t)=>s+t.valor,0);
             const vencidas = lista.filter(t=>t.status==='Vencido').reduce((s,t)=>s+t.valor,0);
-            const saldoProjetado = receitasPrevistas - despesas.reduce((s,t)=>s+t.valor,0) - investimentos.reduce((s,t)=>s+t.valor,0);
+            const saldoProjetado = receitasPrevistas - despesas.reduce((s,t)=>s+t.valor,0) - investimentos.filter(t=>!despesas.includes(t)).reduce((s,t)=>s+t.valor,0);
 
             // As tabelas de detalhes respeitam os filtros de período e demais filtros já aplicados em getFilteredTransactions().
             const despesasPendentes = despesas.filter(t=>['A Vencer','Pendente','Não Recebido','Vencido'].includes(t.status))
@@ -4909,19 +4913,19 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 ? [['Despesas Pagas',despesasPagas],['Despesas a Vencer',despesasVencer],['Valores Vencidos',vencidas]]
                 : somenteReceitas
                     ? [['Receitas Previstas',receitasPrevistas],['Receitas Recebidas',receitasRecebidas]]
-                    : [['Receitas Previstas',receitasPrevistas],['Despesas Pagas',despesasPagas],['Despesas a Vencer',despesasVencer],['Valores Vencidos',vencidas],['Saldo Projetado',saldoProjetado]];
+                    : [['Receitas Previstas',receitasPrevistas],['Despesas Pagas',despesasPagas],['Despesas a Vencer',despesasVencer],['Valores Vencidos',vencidas],['Resultado Líquido Previsto',saldoProjetado]];
 
             const tabela = (arr, vazio) => arr.length ? arr.map(t=>`<tr>
                 <td>${dataBR(t.data)}</td><td>${esc(t.descricao)}</td><td class="valor">${moedaRel(t.valor)}</td>
                 <td><span class="status ${t.status==='Vencido'?'vermelho':t.status==='A Vencer'||t.status==='Pendente'?'amarelo':t.status==='Não Recebido'?'azul':'verde'}">${esc(t.status)}</span></td>
             </tr>`).join('') : `<tr><td colspan="4" class="vazio">${vazio}</td></tr>`;
 
-            const linhasSituacao = totaisSituacao.map(([nome,valor])=>`<tr class="${nome==='Saldo Projetado'?'linha-saldo':''}"><td>${nome}</td><td class="valor">${moedaRel(valor)}</td></tr>`).join('');
+            const linhasSituacao = totaisSituacao.map(([nome,valor])=>`<tr class="${nome==='Resultado Líquido Previsto'?'linha-saldo':''}"><td>${nome}</td><td class="valor">${moedaRel(valor)}</td></tr>`).join('');
             const resumo = somenteDespesas
                 ? `Considerando ${esc(periodo).replace(/^Período de referência:\s*/i, 'o período de ')}, as despesas pagas identificadas totalizam ${moedaRel(despesasPagas)}, há ${moedaRel(despesasVencer)} em despesas a vencer e ${moedaRel(vencidas)} em valores vencidos. Os indicadores consideram somente os lançamentos de despesas selecionados.`
                 : somenteReceitas
                     ? `Considerando ${esc(periodo).replace(/^Período de referência:\s*/i, 'o período de ')}, as receitas previstas somam ${moedaRel(receitasPrevistas)} e as receitas recebidas totalizam ${moedaRel(receitasRecebidas)}. Os indicadores consideram somente os lançamentos de receitas selecionados.`
-                    : `Considerando ${esc(periodo).replace(/^Período de referência:\s*/i, 'o período de ')}, as receitas previstas somam ${moedaRel(receitasPrevistas)}. As despesas pagas identificadas totalizam ${moedaRel(despesasPagas)} e há ${moedaRel(despesasVencer)} em despesas a vencer. Os valores vencidos identificados somam ${moedaRel(vencidas)}. O saldo projetado é de ${moedaRel(saldoProjetado)}; confirme os recebimentos esperados e os compromissos antes de tomar decisões de caixa.`;
+                    : `Considerando ${esc(periodo).replace(/^Período de referência:\s*/i, 'o período de ')}, as receitas previstas somam ${moedaRel(receitasPrevistas)}. As despesas pagas identificadas totalizam ${moedaRel(despesasPagas)} e há ${moedaRel(despesasVencer)} em despesas a vencer. Os valores vencidos identificados somam ${moedaRel(vencidas)}. O resultado líquido previsto é de ${moedaRel(saldoProjetado)}; esse resultado não inclui o saldo inicial e não representa saldo bancário conciliado. Confirme os recebimentos e compromissos antes de decidir sobre caixa.`;
             const observacaoVencidos = vencidas > 0 ? `Existem ${moedaRel(vencidas)} em lançamentos marcados como vencidos; revise as pendências.` : 'Não há lançamentos marcados como vencidos nos dados considerados.';
             const categoriasTop = Object.entries(categorias).sort((a,b)=>b[1]-a[1]).slice(0,6);
             const jsonCategorias = JSON.stringify(categoriasTop);
@@ -4973,7 +4977,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const maxMensal = Math.max(1, ...mesesDados.flatMap(m=>seriesMensais.map(serie=>m[serie.key]||0)));
             const alturaLinha = 120;
             const alturaGrafico = Math.max(100, 12 + mesesDados.length * alturaLinha);
-            const graficoComparativoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 ${alturaGrafico}" role="img" aria-label="Comparativo financeiro mensal com nomes das séries" style="width:100%;height:auto;display:block;font-family:Arial,sans-serif">
+            const graficoComparativoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 ${alturaGrafico}" role="img" aria-label="Composição financeira do período mensal com nomes das séries" style="width:100%;height:auto;display:block;font-family:Arial,sans-serif">
               <rect width="900" height="${alturaGrafico}" fill="#fff"/>
               ${mesesDados.length ? mesesDados.map((mes,i)=>{
                   const yBase = 12 + i*alturaLinha;
@@ -5003,7 +5007,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             </svg>`;
             const comparativoColunas = '<div class="pf-report-columns">'+mesesDados.map(m=>'<div class="pf-report-item"><h3>'+svgEsc(m.label.toUpperCase())+'</h3>'+seriesMensais.map(serie=>'<div class="pf-report-series"><span>'+svgEsc(serie.label)+'</span><div class="pf-report-bar"><span style="width:'+Math.max(0,100*(m[serie.key]||0)/maxMensal)+'%;background:'+serie.color+'"></span></div><span class="pf-report-value">'+svgEsc(moedaRel(m[serie.key]||0))+'</span></div>').join('')+'</div>').join('')+'</div>';
             const descricoesColunas = '<div class="pf-report-columns">'+descricoesGrafico.map(([nome,valor],i)=>'<div class="pf-report-item"><div class="pf-description-name">'+svgEsc(nome)+'</div><div class="pf-description-bar"><div class="pf-report-bar"><span style="width:'+Math.max(0,100*valor/maxDescricao)+'%;background:'+coresGrafico[i%coresGrafico.length]+'"></span></div><span class="pf-report-value">'+svgEsc(moedaRel(valor))+'</span></div></div>').join('')+'</div>';
-            const filtroInfo = `Rubrica: ${rubrica} • Tipo: ${filtroTipo}`;
+            const filtroInfo = window.PFCashFlow ? window.PFCashFlow.filters() : `Rubrica: ${rubrica} • Tipo: ${filtroTipo}`;
+            const apiFluxo = window.PFCashFlow;
+            const modeloRelatorio = apiFluxo ? apiFluxo.calculate(getFilteredTransactions({ignorarPeriodo:true,ignorarAtrasados:true}), registrosRelatorio, document.getElementById('filtroDataInicio')?.value || '', document.getElementById('filtroDataFim')?.value || '', hojeRelatorio, 'dia') : null;
+            const analiseGerencial = modeloRelatorio ? apiFluxo.managerialAnalysis(modeloRelatorio,{issued:dataEmissao,filters:apiFluxo.filters(),balance:!somenteDespesas&&!somenteReceitas}) : '';
+
 
             let relatorioHtml = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Relatório Gerencial de Planejamento Financeiro</title>
@@ -5087,15 +5095,15 @@ body:not(.dark-mode) .bg-slate-100 label {
             <section class="kpis" style="--pf-kpi-colunas:${somenteReceitas?1:somenteDespesas?3:4}">
               ${somenteDespesas || somenteReceitas ? (somenteReceitas ? `<article class="kpi receita"><div class="rotulo">▮ Receitas previstas</div><div class="valor">${moedaRel(receitasPrevistas)}</div><div class="nota">Receitas cadastradas no período filtrado</div></article>` : ``) : `<article class="kpi receita"><div class="rotulo">▮ Receitas previstas</div><div class="valor">${moedaRel(receitasPrevistas)}</div><div class="nota">Receitas cadastradas no período filtrado</div></article>`}
               ${somenteReceitas ? `` : `<article class="kpi paga"><div class="rotulo">▤ Despesas pagas</div><div class="valor">${moedaRel(despesasPagas)}</div><div class="nota">Lançamentos identificados como pagos</div></article>
-              <article class="kpi vencer"><div class="rotulo">▣ Despesas a vencer</div><div class="valor">${moedaRel(despesasVencer)}</div><div class="nota">Compromissos pendentes identificados</div></article>${somenteDespesas ? `<article class="kpi saldo"><div class="rotulo">▣ Total da despesa no período</div><div class="valor">${moedaRel(totalDespesasPeriodo)}</div><div class="nota">Total das despesas dentro dos filtros selecionados</div></article>` : ` <article class="kpi saldo"><div class="rotulo">⚖ Saldo projetado</div><div class="valor">${moedaRel(saldoProjetado)}</div><div class="nota">Receitas menos despesas e investimentos</div></article>`}`}
+              <article class="kpi vencer"><div class="rotulo">▣ Despesas a vencer</div><div class="valor">${moedaRel(despesasVencer)}</div><div class="nota">Compromissos pendentes identificados</div></article>${somenteDespesas ? `<article class="kpi saldo"><div class="rotulo">▣ Total da despesa no período</div><div class="valor">${moedaRel(totalDespesasPeriodo)}</div><div class="nota">Total das despesas dentro dos filtros selecionados</div></article>` : ` <article class="kpi saldo"><div class="rotulo">⚖ Resultado líquido previsto</div><div class="valor">${moedaRel(saldoProjetado)}</div><div class="nota">Receitas menos despesas e investimentos</div></article>`}`}
             </section>
 
             <section class="resumo"><h2>▤ Resumo executivo</h2><p>${resumo}</p><div class="obs">${esc(observacaoVencidos)}</div></section>
 
             <section class="graficos">
               <div class="grafico">
-                <div class="grafico-titulo">Comparativo financeiro</div>
-                <div class="grafico-sub">${somenteDespesas ? 'Comparação mensal: despesas pagas x a vencer' : somenteReceitas ? 'Comparação mensal: receitas previstas x recebidas' : 'Comparação mensal de receitas e despesas'}</div>
+                <div class="grafico-titulo">Composição financeira do período</div>
+                <div class="grafico-sub">${somenteDespesas ? 'Composição mensal: despesas pagas x a vencer' : somenteReceitas ? 'Composição mensal: receitas previstas x recebidas' : 'Receitas, despesas pagas e a vencer por mês selecionado; sem comparação com orçamento'}</div>
                 <div class="grafico-area" >${comparativoColunas}</div>
               </div>
               <div class="grafico">
@@ -5105,14 +5113,15 @@ body:not(.dark-mode) .bg-slate-100 label {
               </div>
             </section>
 
+            ${analiseGerencial}
             <section class="grid">
               <div class="coluna">
-                <section class="bloco"><div class="bloco-titulo">▤ Despesas a vencer</div><div class="bloco-corpo" style="padding:0"><table class="tabela"><thead><tr><th>Data</th><th>Descrição</th><th class="valor">Valor (R$)</th><th>Status</th></tr></thead><tbody>${tabela(despesasPendentes,'Nenhuma despesa pendente no mês selecionado.')}</tbody></table></div><div class="total vermelho-total"><span>Total de despesas pendentes</span><span>${moedaRel(despesasVencer)}</span></div></section>
+                <section class="bloco"><div class="bloco-titulo">▤ Despesas pendentes (a vencer e vencidas)</div><div class="bloco-corpo" style="padding:0"><table class="tabela"><thead><tr><th>Vencimento</th><th>Descrição</th><th class="valor">Valor (R$)</th><th>Status</th></tr></thead><tbody>${tabela(despesasPendentes,'Nenhuma despesa pendente no mês selecionado.')}</tbody></table></div><div class="total vermelho-total"><span>Total de despesas pendentes</span><span>${moedaRel(despesasPendentes.reduce((s,t)=>s+t.valor,0))}</span></div></section>
                 <section class="bloco"><div class="bloco-titulo">▮ Situação financeira do período</div><div class="bloco-corpo" style="padding:0"><table class="tabela situacao"><thead><tr><th>Indicador</th><th class="valor">Valor (R$)</th></tr></thead><tbody>${linhasSituacao}</tbody></table></div></section>
               </div>
               <div class="coluna">
-                ${somenteDespesas ? `` : `<section class="bloco"><div class="bloco-titulo">▤ Receitas previstas</div><div class="bloco-corpo" style="padding:0"><table class="tabela"><thead><tr><th>Data</th><th>Descrição</th><th class="valor">Valor (R$)</th><th>Status</th></tr></thead><tbody>${tabela(receitasDoMes,'Nenhuma receita prevista no mês selecionado.')}</tbody></table></div><div class="total verde-total"><span>Total de receitas previstas</span><span>${moedaRel(receitasPrevistas)}</span></div></section>`}
-                <section class="bloco"><div class="bloco-titulo">▤ Despesas já pagas</div><div class="bloco-corpo" style="padding:0"><table class="tabela"><thead><tr><th>Data</th><th>Descrição</th><th class="valor">Valor (R$)</th><th>Status</th></tr></thead><tbody>${tabela(despesasPagasMes,'Nenhum registro de despesa paga identificado no mês selecionado.')}</tbody></table></div><div class="total amarelo-total"><span>Total de despesas pagas</span><span>${moedaRel(despesasPagasMes.reduce((s,t)=>s+t.valor,0))}</span></div></section>
+                ${somenteDespesas ? `` : `<section class="bloco"><div class="bloco-titulo">▤ Receitas previstas</div><div class="bloco-corpo" style="padding:0"><table class="tabela"><thead><tr><th>Vencimento</th><th>Descrição</th><th class="valor">Valor (R$)</th><th>Status</th></tr></thead><tbody>${tabela(receitasDoMes,'Nenhuma receita prevista no mês selecionado.')}</tbody></table></div><div class="total verde-total"><span>Total de receitas previstas</span><span>${moedaRel(receitasPrevistas)}</span></div></section>`}
+                <section class="bloco"><div class="bloco-titulo">▤ Despesas já pagas</div><div class="bloco-corpo" style="padding:0"><table class="tabela"><thead><tr><th>Vencimento</th><th>Descrição</th><th class="valor">Valor (R$)</th><th>Status</th></tr></thead><tbody>${tabela(despesasPagasMes,'Nenhum registro de despesa paga identificado no mês selecionado.')}</tbody></table></div><div class="total amarelo-total"><span>Total de despesas pagas</span><span>${moedaRel(despesasPagasMes.reduce((s,t)=>s+t.valor,0))}</span></div></section>
                 <section class="bloco"><div class="bloco-titulo">▤ Observações</div><div class="bloco-corpo"><ul class="observacoes"><li>Relatório gerado com os lançamentos atualmente filtrados no sistema.</li><li>${esc(observacaoVencidos)}</li>${somenteDespesas ? `` : `<li>Receitas marcadas como “Não Recebido” ainda dependem de confirmação.</li>`}<li>Revise os compromissos próximos para apoiar o controle do fluxo de caixa.</li></ul></div></section>
                 <div class="frase">“Disciplina financeira hoje, mais oportunidades amanhã.”</div>
               </div>
@@ -5274,6 +5283,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
 </style>
 </body></html>`;
             // A navegação completa inicializa o viewport do relatório no Chrome móvel.
+            if(apiFluxo) relatorioHtml = relatorioHtml.replace('</head>','<style>'+apiFluxo.managerialCss+'</style></head>');
             relatorioHtml = window.PFReportTheme.decorate(relatorioHtml);
             if(window.PFChartExplorer)relatorioHtml=window.PFChartExplorer.decorate(relatorioHtml,{kind:'managerial',rows:lista,months:[...mesesComparativo].map(([key,m])=>({...m,key})),series:seriesMensais,descriptions:descricoesGrafico});
             const relatorioUrl = URL.createObjectURL(new Blob([relatorioHtml], {type:'text/html;charset=utf-8'}));
@@ -9560,7 +9570,7 @@ const add=(s,n)=>{const d=date(s);d.setDate(d.getDate()+n);return iso(d);};
 const cents=t=>Math.round((Number(t.valor)||0)*100);
 const incoming=t=>t.tipo==='Receita';
 const signed=t=>incoming(t)?cents(t):-cents(t);
-const settled=t=>!!t.dataPg||t.status==='Pago'||t.status==='Recebido';
+const settled=t=>!!t.dataPg||['Pago','Paga','Recebido','Recebida','Liquidado','Liquidada'].includes(t.status);
 const supported=t=>['Receita','Despesa','Investimentos'].includes(t.tipo);
 const sum=(rows,fn)=>rows.reduce((a,t)=>a+fn(t),0);
 function calculate(base,rows,start,end,today,group='dia'){
@@ -9591,7 +9601,11 @@ function calculate(base,rows,start,end,today,group='dia'){
  for(const day of [...days.keys()].sort()){dayBalance+=days.get(day);if(!critical||dayBalance<critical.balance)critical={date:day,balance:dayBalance};}
  const categories=new Map();for(const t of rows.filter(t=>!incoming(t)))categories.set(t.categoria||'Sem rúbrica',(categories.get(t.categoria||'Sem rúbrica')||0)+cents(t));
  const allOverdue=base.filter(t=>!settled(t)&&t.vencimento&&t.vencimento<today);
- return {start,end,today,group,rows,opening,daily,revenue,expense,closing:opening+revenue-expense,details:[...details.values()],paid,overdue,allOverdue,future,current,projection,largest,critical,categories:[...categories.entries()].sort((a,b)=>b[1]-a[1]),missing:rows.filter(t=>!t.vencimento).length,invalid:!!(start&&end&&start>end)};
+ const cutoffRows=base.filter(t=>t.vencimento&&t.vencimento<=today);
+ const cutScheduled=sum(cutoffRows,signed),cutUnreceived=sum(cutoffRows.filter(t=>!settled(t)&&incoming(t)),cents),cutUnpaid=sum(cutoffRows.filter(t=>!settled(t)&&!incoming(t)),cents);
+ const cutTiming=current-(cutScheduled-cutUnreceived+cutUnpaid);
+
+ return {cutScheduled,cutUnreceived,cutUnpaid,cutTiming,start,end,today,group,rows,opening,daily,revenue,expense,closing:opening+revenue-expense,details:[...details.values()],paid,overdue,allOverdue,future,current,projection,largest,critical,categories:[...categories.entries()].sort((a,b)=>b[1]-a[1]),missing:rows.filter(t=>!t.vencimento).length,invalid:!!(start&&end&&start>end)};
 }
 function filters(){const names={filtroTipo:'Tipo',filtroRubrica:'Rúbrica',filtroSubItem:'Sub-item',filtroBuscaRubrica:'Busca de rúbrica',filtroBuscaSubItem:'Busca de sub-item',filtroDescricao:'Descrição'};const active=Object.keys(names).flatMap(id=>{const e=document.getElementById(id),v=(e?.tagName==='SELECT'?e.selectedOptions?.[0]?.text:e?.value)?.trim();return v&&!['Todos','Todas'].includes(v)?[names[id]+': '+v]:[];});if(typeof filtroRapidoEspecial!=='undefined'&&filtroRapidoEspecial==='atrasados')active.push('Atalho: atrasados');return active.length?active.join(' · '):'Sem filtros';}
 function snapshot(){return calculate(getFilteredTransactions({ignorarPeriodo:true,ignorarAtrasados:true}),getFilteredTransactions(),document.getElementById('filtroDataInicio').value,document.getElementById('filtroDataFim').value,iso(new Date()),document.getElementById('fc-group')?.value||'dia');}
@@ -9609,7 +9623,8 @@ function lineChart(points,title){
  return '<svg viewBox="0 0 1000 220" role="img" aria-label="'+esc(title)+'"><title>'+esc(title)+'</title>'+ticks.map(v=>'<line x1="112" x2="928" y1="'+y(v)+'" y2="'+y(v)+'" stroke="#d7e0eb"/><text x="102" y="'+(y(v)+4)+'" text-anchor="end">'+esc(money(Math.round(v)))+'</text>').join('')+'<line x1="112" x2="928" y1="'+y(0)+'" y2="'+y(0)+'" stroke="#94a3b8"/><polyline points="'+points.map((p,i)=>x(i)+','+y(p.balance)).join(' ')+'" stroke="#203c64" stroke-width="3" fill="none"/>'+points.map((p,i)=>'<circle cx="'+x(i)+'" cy="'+y(p.balance)+'" r="3" fill="'+(p.balance<0?'#bd2b20':'#203c64')+'"><title>'+esc(label(p.date)+': '+money(p.balance))+'</title></circle>').join('')+selected.map(i=>'<text x="'+x(i)+'" y="198" text-anchor="middle">'+esc(label(points[i].date))+'</text>').join('')+'</svg>';
 }
 function revenueChart(m){
- const buckets=new Map();for(const b of m.daily){const key=add(b.date,-((date(b.date).getDay()+6)%7));const v=buckets.get(key)||{date:key,r:0,d:0};v.r+=b.r;v.d+=b.d;buckets.set(key,v);}
+ const byDate=new Map();for(const t of m.rows){if(!t.vencimento)continue;const b=byDate.get(t.vencimento)||{date:t.vencimento,r:0,d:0};b[incoming(t)?'r':'d']+=cents(t);byDate.set(t.vencimento,b);}
+ const buckets=new Map();for(const b of [...byDate.values()].sort((a,b)=>a.date.localeCompare(b.date))){const key=add(b.date,-((date(b.date).getDay()+6)%7));const v=buckets.get(key)||{date:key,r:0,d:0};v.r+=b.r;v.d+=b.d;buckets.set(key,v);}
  const a=[...buckets.values()];
  if(a.length>6)return Array.from({length:Math.ceil(a.length/6)},(_,i)=>revenueChart({...m,daily:a.slice(i*6,i*6+6)})).join('');
  const top=Math.max(1,...a.flatMap(b=>[b.r,b.d])),w=550/Math.max(1,a.length);
@@ -9646,19 +9661,52 @@ main{max-width:1160px;margin:auto;background:#fff;padding:32px 38px;border-radiu
 @media screen and (max-width:700px){body{padding:8px}main{padding:16px 12px}.fc-report-identity{gap:9px}.fc-logo{width:36px;height:36px;flex-basis:36px}.fc-report-header h1{font-size:22px}.fc-category>div:first-child{flex-wrap:wrap;gap:3px}.fc-actions button{flex:1 1 140px}.fc-chart-grid>*{min-width:0}}
 `;
 function splitTotals(rows,paid=false){return '<div class="fc-status-totals"><span>'+rows.length+' lançamento(s)</span><span>'+(paid?'Recebido':'A receber')+': <b>'+amount(sum(rows.filter(incoming),cents))+'</b></span><span>'+(paid?'Pago':'A pagar')+': <b>'+amount(-sum(rows.filter(t=>!incoming(t)),cents))+'</b></span>'+(paid?'<span>Líquido: <b>'+amount(sum(rows,signed))+'</b></span>':'')+'</div>';}
+
+function reportInsights(m){
+ const perDay=new Map();for(const t of m.rows){if(!incoming(t)&&t.vencimento)perDay.set(t.vencimento,(perDay.get(t.vencimento)||0)+cents(t));}
+ const largestDay=[...perDay].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+ const min=m.projection.reduce((a,p)=>!a||p.balance<a.balance?p:a,null);
+ const next=m.future.find(incoming),nextRows=next?m.future.filter(t=>incoming(t)&&t.vencimento===next.vencimento):[];
+ const pending=m.rows.filter(t=>!settled(t)),unreceived=sum(pending.filter(incoming),cents);
+ const dup=new Map();for(const t of m.rows){const key=JSON.stringify([t.tipo,t.vencimento,t.descricao,cents(t)]);const a=dup.get(key)||[];a.push(t);dup.set(key,a);}
+ return {largestDay,min,next,nextAmount:sum(nextRows,cents),unreceived,pending,duplicates:[...dup.values()].filter(a=>a.length>1),largestIncome:m.rows.filter(incoming).sort((a,b)=>cents(b)-cents(a))[0]};
+}
+function reconciliation(m){
+ return '<section class="fc-method"><h3>Conciliação das bases na data de corte</h3><p class="fc-note">Corte: '+label(m.today)+'. Mesmos filtros de conteúdo, abrangendo todo o histórico cadastrado; independente do período selecionado. Não é saldo bancário conciliado.</p>'+table(['Componente','Valor'],[
+ ['Acumulado por vencimento até o corte',amount(m.cutScheduled)],
+ ['Retirada das receitas ainda não recebidas até o corte',amount(-m.cutUnreceived)],
+ ['Reversão das saídas ainda não liquidadas até o corte',amount(m.cutUnpaid)],
+ ['Ajuste por datas efetivas e lançamentos liquidados fora da base de vencimentos',amount(m.cutTiming)],
+ ['Base realizada cadastrada usada na projeção',amount(m.current)],
+ ['Entradas em aberto na janela de 30 dias',amount(sum(m.future.filter(incoming),cents))],
+ ['Saídas em aberto na janela de 30 dias',amount(-sum(m.future.filter(t=>!incoming(t)),cents))],
+ ['Saldo final calculado em '+label(add(m.today,29)),amount(m.projection.at(-1)?.balance||0)]
+ ])+'<p class="fc-note">A ponte usa os registros atuais, sem presumir a origem de diferenças por coincidência de valores. O ajuste de datas contempla liquidações com data efetiva diferente do vencimento e registros sem vencimento. Atrasados não são reagendados automaticamente.</p></section>';
+}
+function riskSummary(m){
+ const i=reportInsights(m),days=i.next?Math.round((date(i.next.vencimento)-date(m.today))/86400000):0;
+ return '<section class="fc-method"><h3>Principais alertas e ações sugeridas</h3><p class="fc-note">'+(i.min?'Menor saldo na projeção de 30 dias: <b>'+money(i.min.balance)+'</b>, primeira ocorrência em '+label(i.min.date)+'. Déficit máximo calculado: '+money(Math.max(0,-i.min.balance))+'. ':'')+'A necessidade efetiva de recursos depende do caixa disponível conciliado.</p><p class="fc-note">'+(i.next?'Próxima entrada cadastrada: '+money(i.nextAmount)+' em '+label(i.next.vencimento)+' ('+days+' dia(s) após o corte). Confirmar os recebimentos e revisar os compromissos anteriores a essa entrada.':'Não há entrada em aberto cadastrada na janela de 30 dias.')+'</p><p class="fc-note">Receitas ainda não recebidas no período: '+money(i.unreceived)+' ('+(m.revenue?(i.unreceived/m.revenue*100).toFixed(1):'0.0')+'% das receitas cadastradas). Atrasados em todo o histórico filtrado: a receber '+money(sum(m.allOverdue.filter(incoming),cents))+'; a pagar '+money(sum(m.allOverdue.filter(t=>!incoming(t)),cents))+'.</p>'+i.duplicates.map(a=>'<p class="fc-note">Conferir '+a.length+' registros de '+esc(a[0].descricao||'Sem descrição')+', '+money(cents(a[0]))+' cada, com vencimento em '+label(a[0].vencimento)+'. Isso não comprova duplicidade; nenhum registro foi excluído.</p>').join('')+'<p class="fc-note">Orçamento, conciliação bancária, natureza fixa/variável e recorrência não são inferidos. Cenários alternativos dependem de premissas explícitas.</p></section>';
+}
+function managerialAnalysis(m,meta){
+ const i=reportInsights(m),supportsBalance=meta.balance!==false;
+ const cards=[['Maior entrada individual',i.largestIncome?money(cents(i.largestIncome)):'—',i.largestIncome?.descricao||'Sem receita'],['Maior saída individual',m.largest?money(cents(m.largest)):'—',m.largest?.descricao||'Sem saída'],['Maior saída diária',i.largestDay?money(i.largestDay[1]):'—',i.largestDay?label(i.largestDay[0]):'Sem saída']];
+ return '<section class="pf-manager-analysis"><h2>Indicadores e leitura do período</h2><p class="fc-note">Corte de referência: '+esc(meta.issued)+'. Filtros: '+esc(meta.filters)+'. Origem: lançamentos cadastrados no sistema, selecionados por vencimento. Saldo bancário conciliado: não informado.</p><div class="fc-cards">'+cards.map(([k,v,n])=>'<article class="fc-card">'+esc(k)+'<strong>'+v+'</strong><small>'+esc(n)+'</small></article>').join('')+'</div>'+(supportsBalance?'<h3>Resultado do período e saldo acumulado</h3>'+table(['Componente','Valor'],[['Saldo inicial por vencimento'+(m.start?' antes de '+label(m.start):' (sem data inicial: base zero)'),amount(m.opening)],['Resultado líquido previsto do período',amount(m.revenue-m.expense)],['Saldo final calculado'+(m.end?' em '+label(m.end):''),amount(m.closing)]])+'<p class="fc-note">A abertura soma lançamentos anteriores nos mesmos filtros. O resultado do período não inclui essa abertura. Os saldos não representam disponibilidade bancária conciliada.</p><h3>Trajetória do saldo por vencimento</h3>'+flowLine(m)+(m.critical?'<p class="fc-note">Primeira ocorrência do menor saldo: '+label(m.critical.date)+' ('+money(m.critical.balance)+').</p>':''):'<p class="fc-note">Recorte de um único tipo de movimentação: os valores representam somente os lançamentos selecionados e não o saldo completo de caixa.</p>')+riskSummary(m)+'<h3>Previsto, realizado e em aberto</h3>'+table(['Tipo','Total cadastrado','Realizado','Em aberto'],['Receita','Despesa','Investimentos'].map(type=>{const rows=m.rows.filter(t=>t.tipo===type),all=sum(rows,cents),paid=sum(rows.filter(settled),cents);return [esc(type),money(all),money(paid),money(all-paid)];}))+'<p class="fc-note">Total cadastrado inclui os liquidados. Realizado usa confirmação de pagamento/recebimento ou data de pagamento; a seleção do período continua por vencimento. Em aberto é a parcela não liquidada. Comparação histórica, orçamento e metas não foram estimados.</p></section>';
+}
+
 function reportBody(m,meta){
- const cards=[['Total de receitas',amount(m.revenue),''],['Total de saídas¹',amount(-m.expense),''],['Saldo do período',amount(m.revenue-m.expense),''],['Saldo inicial previsto',money(m.opening),''],['Saldo acumulado final',amount(m.closing),''],['Maior saída',m.largest?money(cents(m.largest)):'—',esc(m.largest?.descricao||'Sem lançamento')],['Dia mais crítico',m.critical?label(m.critical.date):'—',m.critical?'Menor acumulado: '+amount(m.critical.balance):'Sem movimentação']];
+ const cards=[['Total de receitas',amount(m.revenue),''],['Total de saídas¹',amount(-m.expense),''],['Resultado líquido previsto',amount(m.revenue-m.expense),''],['Saldo inicial previsto',money(m.opening),''],['Saldo acumulado final',amount(m.closing),''],['Maior lançamento de saída',m.largest?money(cents(m.largest)):'—',esc(m.largest?.descricao||'Sem lançamento')],['Dia mais crítico',m.critical?label(m.critical.date):'—',m.critical?'Menor acumulado: '+amount(m.critical.balance):'Sem movimentação']];
+ const insights=reportInsights(m);if(insights.largestDay)cards.push(['Maior saída diária',money(insights.largestDay[1]),label(insights.largestDay[0])]);
  const weekly=m.projection.filter((x,i)=>[6,13,20,27,29].includes(i)),negative=m.projection.find(x=>x.balance<0),period=m.start||m.end?label(m.start)+' a '+label(m.end):'Todos os lançamentos';
  const historicalNegative=m.daily.find(x=>x.balance<0);
  const tags=meta.filters==='Sem filtros'?'<span class="fc-note">Sem filtros</span>':String(meta.filters).split(' · ').map(v=>'<span class="fc-tag">'+esc(v)+'</span>').join('');
  return '<header class="fc-report-header"><div class="fc-report-identity"><img class="fc-logo" src="'+projectLogo+'" alt="Logotipo do Planejamento Financeiro" width="48" height="48"><div><h1>Relatório de Fluxo de Caixa</h1><p class="fc-brand">Planejamento Financeiro</p></div></div><div class="fc-header-meta"><p class="fc-meta">Período: '+period+'</p><p class="fc-meta">Agrupamento: '+esc({dia:'Diário',semana:'Semanal',mes:'Mensal'}[m.group]||m.group)+'</p><p class="fc-meta">Emitido em '+esc(meta.issued)+'</p></div></header><div class="fc-tags"><span class="fc-note">Filtros ativos:</span>'+tags+'</div>'+
  '<nav class="fc-actions"><button id="fc-print">Imprimir / salvar PDF</button><button id="fc-csv">Exportar CSV</button><button id="fc-xlsx">Exportar Excel (.xlsx)</button><button id="fc-email">Preparar e-mail</button></nav><p class="fc-note fc-actions">Impressão: A4 paisagem. Em Mais definições, desmarque Cabeçalhos e rodapés para retirar a URL e o título do navegador.</p>'+
  (m.invalid?'<p class="fc-alert">Período inválido: revise as datas selecionadas.</p>':'')+
- '<div class="fc-cards">'+cards.map(([k,v,n])=>'<article class="fc-card">'+esc(k)+'<strong>'+v+'</strong>'+(n?'<small>'+n+'</small>':'')+'</article>').join('')+'</div>'+
+ '<p class="fc-note"><b>Saldos calculados pelos lançamentos; não são saldos bancários conciliados.</b> Total cadastrado inclui os liquidados. Resultado do período não inclui saldo inicial. Corte do realizado: '+esc(meta.issued)+'.</p><div class="fc-cards">'+cards.map(([k,v,n])=>'<article class="fc-card">'+esc(k)+'<strong>'+v+'</strong>'+(n?'<small>'+n+'</small>':'')+'</article>').join('')+'</div>'+
  (negative?'<p class="fc-alert"><b>Atenção:</b> o saldo projetado fica negativo em '+label(negative.date)+' ('+money(negative.balance)+').</p>':historicalNegative?'<p class="fc-alert">Saldo acumulado negativo a partir de '+label(historicalNegative.date)+' ('+money(historicalNegative.balance)+').</p>':'<p class="fc-clear">Sem saldo acumulado ou projetado negativo.</p>')+'<div class="fc-chart"><h3>Evolução do saldo acumulado</h3>'+flowLine(m)+'</div>'+
- '<section class="fc-section fc-print-page"><h2>Fluxo de caixa por data</h2><p class="fc-note">Saldo inicial: '+money(m.opening)+'. Dias sem movimentação estão incluídos. ¹ Saídas incluem despesas e investimentos. A linha em destaque indica o dia mais crítico.</p>'+dailyTable(m,true)+(m.missing?'<p class="fc-alert">'+m.missing+' lançamento(s) sem vencimento entram nos totais, mas não no fluxo por data.</p>':'')+'</section>'+
+ reconciliation(m)+riskSummary(m)+'<section class="fc-section fc-print-page"><h2>Fluxo de caixa por data</h2><p class="fc-note">Saldo inicial: '+money(m.opening)+'. Dias sem movimentação estão incluídos. ¹ Saídas incluem despesas e investimentos. A linha em destaque indica o dia mais crítico.</p>'+dailyTable(m,true)+(m.missing?'<p class="fc-alert">'+m.missing+' lançamento(s) sem vencimento entram nos totais, mas não no fluxo por data.</p>':'')+'</section>'+
  '<section class="fc-section fc-print-page"><h2>03 · Receitas, saídas e distribuição dos gastos</h2>'+charts(m)+'<p class="fc-note">Maior saída do período: '+(m.largest?money(cents(m.largest))+' · '+esc(m.largest.descricao||'Sem descrição'):'Nenhuma')+'. Valores semanais limitados ao período selecionado. As datas indicam o início da semana.</p></section>'+
- '<section class="fc-section fc-print-page"><h2>04 · Detalhamento e situação dos lançamentos</h2><h3>Por rúbrica e sub-item</h3>'+table(['Tipo','Rúbrica','Sub-item','Previsto','Realizado','% do tipo'],m.details.map(x=>[esc(x.type),esc(x.category),esc(x.sub),money(x.planned),money(x.actual),((x.planned/(sum(m.rows.filter(t=>t.tipo===x.type),cents)||1))*100).toFixed(1)+'%']))+
+ '<section class="fc-section fc-print-page"><h2>04 · Detalhamento e situação dos lançamentos</h2><h3>Por rúbrica e sub-item</h3>'+table(['Tipo','Rúbrica','Sub-item','Total cadastrado','Realizado','Em aberto','% do tipo'],m.details.map(x=>[esc(x.type),esc(x.category),esc(x.sub),money(x.planned),money(x.actual),money(x.planned-x.actual),((x.planned/(sum(m.rows.filter(t=>t.tipo===x.type),cents)||1))*100).toFixed(1)+'%']))+
  '<h3>Pagos / recebidos no período</h3>'+splitTotals(m.paid,true)+transactionTable(m.paid,m.today)+'<h3>Atrasados no período</h3>'+splitTotals(m.overdue)+transactionTable(m.overdue,m.today,true)+'</section>'+
  '<section class="fc-section fc-print-page"><h2>05 · Previsão dos próximos 30 dias</h2><p class="fc-meta"><b>Janela:</b> '+label(m.today)+' a '+label(add(m.today,29))+' · <b>Base realizada cadastrada:</b> '+money(m.current)+'</p>'+
  (negative?'<p class="fc-alert">ATENÇÃO · Saldo projetado negativo em '+label(negative.date)+' ('+money(negative.balance)+').</p>':'<p class="fc-clear">Sem saldo projetado negativo nesta janela.</p>')+
@@ -9669,9 +9717,9 @@ function reportBody(m,meta){
 
 function exportRows(m,meta){
  const out=[['Relatório de Fluxo de Caixa'],['Período',m.start,m.end],['Filtros',meta.filters],['Emissão',meta.issued],['Saldo inicial previsto',m.opening/100],['Receitas',m.revenue/100],['Saídas',m.expense/100],['Saldo final',m.closing/100],[],['Data','Receitas','Despesas / investimentos','Saldo','Acumulado']];
- m.daily.forEach(b=>out.push([b.date,b.r/100,b.d/100,b.net/100,b.balance/100]));out.push(['Total',m.revenue/100,m.expense/100,(m.revenue-m.expense)/100,m.closing/100],[],['Tipo','Rúbrica','Sub-item','Previsto','Realizado']);m.details.forEach(x=>out.push([x.type,x.category,x.sub,x.planned/100,x.actual/100]));
+ m.daily.forEach(b=>out.push([b.date,b.r/100,b.d/100,b.net/100,b.balance/100]));out.push(['Total',m.revenue/100,m.expense/100,(m.revenue-m.expense)/100,m.closing/100],[],['Tipo','Rúbrica','Sub-item','Total cadastrado','Realizado','Em aberto']);m.details.forEach(x=>out.push([x.type,x.category,x.sub,x.planned/100,x.actual/100,(x.planned-x.actual)/100]));
  for(const [name,rows]of [['Pagos / recebidos',m.paid],['Atrasados',m.overdue],['Previsão 30 dias',m.future]]){out.push([],[name],['Vencimento','Tipo','Rúbrica','Sub-item','Descrição','Valor','Status','Dias de atraso']);rows.forEach(t=>out.push([t.vencimento,t.tipo,t.categoria,t.subItem,t.descricao,cents(t)/100,effectiveStatus(t,m.today),!settled(t)&&t.vencimento<m.today?Math.round((date(m.today)-date(t.vencimento))/86400000):0]));}
- out.push([],['Projeção diária','Saldo']);m.projection.forEach(x=>out.push([x.date,x.balance/100]));return out;
+ out.push([],['Critério','Saldos de lançamentos; não conciliados com extrato'],['Corte',m.today],['Conciliação das bases','Valor'],['Acumulado por vencimento até o corte',m.cutScheduled/100],['Retirada de receitas não recebidas',-m.cutUnreceived/100],['Reversão de saídas não liquidadas',m.cutUnpaid/100],['Ajuste por datas efetivas',m.cutTiming/100],['Base realizada cadastrada',m.current/100]);out.push([],['Projeção diária','Saldo']);m.projection.forEach(x=>out.push([x.date,x.balance/100]));return out;
 }
 const safeCell=v=>typeof v==='string'&&/^[\s]*[=+\-@]/.test(v)?"'"+v:v;
 function csv(rows){return '\ufeff'+rows.map(r=>r.map(v=>'"'+String(typeof v==='number'?String(v).replace('.',','):safeCell(v??'')).replace(/"/g,'""')+'"').join(';')).join('\r\n');}
@@ -9715,7 +9763,16 @@ function init(){
  const original=window.atualizarPainelGerencial;window.atualizarPainelGerencial=function(...args){const result=original.apply(this,args);refresh();return result;};refresh();
 }
 window.abrirFluxoCaixa=navigate;window.abrirRelatorioFluxoCaixa=openReport;
-window.PFCashFlow={calculate,csv,exportRows,reportBody,css};
+const managerialCss = `
+.pf-manager-analysis{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#243247;margin:18px 0;padding:16px 0;border-top:2px solid #203c64}
+.pf-manager-analysis h2,.pf-manager-analysis h3{color:#203c64;margin:14px 0 8px}.pf-manager-analysis h2{font-size:18px}.pf-manager-analysis h3{font-size:14px}
+.pf-manager-analysis .fc-note{font-size:11px;line-height:1.5;color:#526176;margin:8px 0}.pf-manager-analysis .fc-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.pf-manager-analysis .fc-card{padding:10px;border:1px solid #d7e1ee;border-left:4px solid #203c64;font-size:11px;min-width:0}.pf-manager-analysis .fc-card strong{display:block;font-size:18px;margin:5px 0}.pf-manager-analysis .fc-card small{display:block}
+.pf-manager-analysis table{border-collapse:collapse;width:100%;font-size:11px}.pf-manager-analysis th{background:#203c64;color:white;text-align:left}.pf-manager-analysis td,.pf-manager-analysis th{padding:7px;border-bottom:1px solid #d7e1ee}.pf-manager-analysis tr:nth-child(even){background:#f8fafc}.pf-manager-analysis .fc-number{text-align:right;font-variant-numeric:tabular-nums}.pf-manager-analysis .fc-negative{color:#bd2b20}.pf-manager-analysis .fc-positive{color:#047857}.pf-manager-analysis svg{display:block;width:100%;height:240px}.pf-manager-analysis svg text{font:12px system-ui;fill:#526176}.pf-manager-analysis .fc-method{padding:10px 14px;background:#edf2f8;border:1px solid #d7e1ee;margin:12px 0}
+@media screen and (max-width:650px){.pf-manager-analysis .fc-cards{grid-template-columns:1fr}.pf-manager-analysis .fc-scroll{overflow-x:auto}.pf-manager-analysis table{min-width:400px}}
+@media print{.pagina .graficos,.pagina .grid{display:block!important}.pagina .graficos>.grafico{break-before:auto;break-inside:auto!important;margin-bottom:14px}.pagina .grid>.coluna>.bloco{break-inside:auto!important;overflow:visible}.pagina .grid .situacao{break-inside:avoid!important}.pagina .grid .bloco:has(.situacao){break-inside:avoid!important}.pagina .bloco-titulo,.pagina .grafico-titulo{break-after:avoid}.pagina .tabela thead{display:table-header-group}.pagina .tabela tr,.pagina .total{break-inside:avoid}.pagina .grafico-area{overflow:visible!important}.pf-manager-analysis{break-before:page}.pf-manager-analysis .fc-method{break-inside:avoid}.pf-manager-analysis table{font-size:9pt}.pf-manager-analysis td,.pf-manager-analysis th{padding:5px}.pf-manager-analysis svg{height:230px}.pf-manager-analysis h2,.pf-manager-analysis h3{break-after:avoid}.pf-manager-analysis tr{break-inside:avoid}.pf-manager-analysis .fc-cards{break-inside:avoid}.pagina .graficos>.grafico+ .grafico{break-before:page}.pagina .grid{break-before:page}}
+`;
+window.PFCashFlow={calculate,csv,exportRows,reportBody,css,filters,reportInsights,reconciliation,riskSummary,managerialAnalysis,managerialCss};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 

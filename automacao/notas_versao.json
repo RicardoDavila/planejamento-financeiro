@@ -1,10 +1,14 @@
 {
   "pessoal": [
-    "No PC, posiciona o indicador de nuvem após Dois monitores e aplica destaque verde quando o status original é Online.",
-    "Preserva o layout do celular e o comportamento original de conexão e sincronização."
+    "Relatórios gerencial e de fluxo de caixa distinguem resultado líquido do período, saldo inicial e saldo final calculado, sem apresentar saldos como caixa bancário conciliado.",
+    "Acrescenta conciliação das bases por vencimento e realizado, indicadores de liquidez, próxima entrada, maior lançamento e maior saída diária.",
+    "Mantém gráficos e identidade visual, explicita vencimentos, total cadastrado, realizado e em aberto, melhora a paginação e sinaliza possíveis repetições sem excluir registros.",
+    "Preserva os filtros Semestre e Ano e os dados cadastrados."
   ],
   "distribuicao": [
-    "No PC, posiciona o indicador de nuvem após Dois monitores e aplica destaque verde quando o status original é Online.",
-    "Preserva o layout do celular e o comportamento original de conexão e sincronização."
+    "Relatórios gerencial e de fluxo de caixa distinguem resultado líquido do período, saldo inicial e saldo final calculado, sem apresentar saldos como caixa bancário conciliado.",
+    "Acrescenta conciliação das bases por vencimento e realizado, indicadores de liquidez, próxima entrada, maior lançamento e maior saída diária.",
+    "Mantém gráficos e identidade visual, explicita vencimentos, total cadastrado, realizado e em aberto, melhora a paginação e sinaliza possíveis repetições sem excluir registros.",
+    "Preserva os filtros Semestre e Ano e os dados cadastrados."
   ]
 }
