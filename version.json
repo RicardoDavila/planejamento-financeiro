@@ -1,11 +1,9 @@
 {
-  "version": "V4.12.62",
-  "name": "V4.12.62",
+  "version": "V4.12.63",
+  "name": "V4.12.63",
   "channel": "pessoal",
   "notes": [
-    "No PC, substitui o painel de menus por lista suspensa sem título, busca ou cartões.",
-    "Reserva largura para Observação, reduz sua fonte e impede quebra vertical do cabeçalho.",
-    "Pré-classifica lançamentos sem tipo definido: EMPRESA como PJ e demais rubricas como PF. Preserva escolhas manuais e permite alteração em Novo/Editar.",
-    "Mantém o layout e os módulos do Celular."
+    "Remove do painel do PC os cards Saldo inicial, Saldo final projetado, Menor saldo projetado e Data crítica.",
+    "Mantém os demais cards, fluxo de caixa, relatórios, classificação PF/PJ e modo Celular."
   ]
 }
