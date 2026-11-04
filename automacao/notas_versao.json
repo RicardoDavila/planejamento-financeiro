@@ -1,10 +1,12 @@
 {
   "pessoal": [
-    "Corrige o retorno ao login ao salvar Gráficos e evoluções em PDF na versão pessoal: mudanças de mídia durante a impressão não recarregam mais a página.",
-    "Mantém a proteção de acesso e permite a troca real de layout fora da impressão. Preserva as melhorias dos relatórios e filtros Semestre e Ano."
+    "Atualiza o relatório gráfico: resultado e margem previstos do período, despesas pagas/a vencer e alerta de vencimentos antes das receitas.",
+    "Mantém os gráficos com títulos coerentes, datas brasileiras, histórico fora do recorte marcado N/D e pendências de cadastro separadas.",
+    "Preserva a correção que impede o retorno ao login durante a impressão, os demais relatórios e os filtros Semestre e Ano."
   ],
   "distribuicao": [
-    "Corrige o retorno ao login ao salvar Gráficos e evoluções em PDF na versão pessoal: mudanças de mídia durante a impressão não recarregam mais a página.",
-    "Mantém a proteção de acesso e permite a troca real de layout fora da impressão. Preserva as melhorias dos relatórios e filtros Semestre e Ano."
+    "Atualiza o relatório gráfico: resultado e margem previstos do período, despesas pagas/a vencer e alerta de vencimentos antes das receitas.",
+    "Mantém os gráficos com títulos coerentes, datas brasileiras, histórico fora do recorte marcado N/D e pendências de cadastro separadas.",
+    "Preserva a correção que impede o retorno ao login durante a impressão, os demais relatórios e os filtros Semestre e Ano."
   ]
 }

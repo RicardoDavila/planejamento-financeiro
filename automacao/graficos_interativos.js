@@ -202,7 +202,7 @@
    }
    const modal=contexts.modal;
    if(modal){
-    const arr=D.rows(modal.rows),des=arr.filter(r=>r.tipo==='Despesa');
+    const arr=D.rows(modal.rows).filter(r=>r.vencimento&&r.valor!==0),des=arr.filter(r=>r.tipo==='Despesa');
     domBars('pfWaterfall','Cascata financeira',arr,{additive:false,resolve:label=>D.typeRows(arr,label).filter(r=>r.tipo!=='Investimentos')});
     domBars('pfRanking','Ranking de rubricas — despesas',des,{color:'#bd2b20'});
     const today=new Date();today.setHours(0,0,0,0);
@@ -212,10 +212,12 @@
     domBars('pfHeatmap','Mapa de calor — despesas por dia do mês',des,{selector:'.pf-heat-cell',color:'#bd2b20',label:n=>'Dia '+n.querySelector('.pf-heat-day')?.textContent,value:n=>D.number(n.querySelector('.pf-heat-value')?.textContent),resolve:(label,i)=>des.filter(r=>r.vencimento===month+'-'+String(i+1).padStart(2,'0'))});
     const source=document.getElementById('pfDozeMeses');
     if(source){
-     const d=new Date(ref+'T12:00:00'),months=Array.from({length:12},(_,i)=>D.month(d.getFullYear(),d.getMonth()-11+i)),bars=[...source.querySelectorAll('[title^="Receitas "],[title^="Despesas "]')],types=document.getElementById('graficoTipo')?.value||'Todos';
-     const series=['Receita','Despesa'].filter(type=>types==='Todos'||types===type).map(type=>({label:type,color:type==='Receita'?'#047857':'#bd2b20',values:months.map((_,i)=>D.number(bars[i*2+(type==='Receita'?0:1)]?.title))}));
-     const m=D.model('Últimos 12 meses',months.map(m=>m.label),series,(j,i)=>arr.filter(r=>r.tipo===series[j]?.label&&r.vencimento.startsWith(months[i]?.key)));m.records=arr;
-     mount(source,m,{mark:()=>bindRows(source,'[title^="Receitas "],[title^="Despesas "]'),hit:target=>{const node=target.closest('[title^="Receitas "],[title^="Despesas "]');const index=bars.indexOf(node);return index<0?null:{i:Math.floor(index/2),j:series.findIndex(s=>s.label===(index%2?'Despesa':'Receita'))};}});
+     const d=new Date(ref+'T12:00:00'),from=document.getElementById('graficoDataInicio')?.value||'',to=document.getElementById('graficoDataFim')?.value||'';
+     const months=Array.from({length:12},(_,i)=>D.month(d.getFullYear(),d.getMonth()-11+i)).filter(m=>(!from||m.key>=from.slice(0,7))&&(!to||m.key<=to.slice(0,7))&&arr.some(r=>['Receita','Despesa'].includes(r.tipo)&&r.vencimento.startsWith(m.key)));
+     const bars=[...source.querySelectorAll('[title^="Receitas "],[title^="Despesas "]')],types=document.getElementById('graficoTipo')?.value||'Todos';
+     const series=['Receita','Despesa'].filter(type=>types==='Todos'||types===type).map(type=>({label:type,color:type==='Receita'?'#047857':'#bd2b20',values:months.map(month=>arr.filter(r=>r.tipo===type&&r.vencimento.startsWith(month.key)).reduce((sum,r)=>sum+r.valor,0))}));
+     const m=D.model('Histórico no recorte — meses com lançamentos',months.map(m=>m.label),series,(j,i)=>arr.filter(r=>r.tipo===series[j]?.label&&r.vencimento.startsWith(months[i]?.key)));m.records=arr;
+     mount(source,m,{mark:()=>bindRows(source,'[title^="Receitas "],[title^="Despesas "]'),hit:target=>{const node=target.closest('[title^="Receitas "],[title^="Despesas "]');const key=node?.closest('[data-pf-month]')?.getAttribute('data-pf-month');const i=months.findIndex(m=>m.key===key),index=bars.indexOf(node);return i<0||index<0?null:{i,j:series.findIndex(s=>s.label===(index%2?'Despesa':'Receita'))};}});
     }
    }
    if(typeof Chart!=='undefined'){

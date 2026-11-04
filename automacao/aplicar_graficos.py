@@ -45,7 +45,7 @@ def aplicar(html):
     needle="            const ctxRubricas = document.getElementById('chartRubricas').getContext('2d');"
     grouping="""            if(abaAtivaGrafico==='prevReceita'&&!comparativoReceitasDespesasAtivo){
                 const descriptions=new Map();
-                filtradas.filter(t=>t.tipo==='Receita').forEach(t=>{const key=String(t.descricao||'').trim()||'Sem descrição';descriptions.set(key,(descriptions.get(key)||0)+(Number(t.valor)||0));});
+                filtradas.filter(t=>t.tipo==='Receita'&&t.vencimento&&(Number(t.valor)||0)!==0).forEach(t=>{const key=String(t.descricao||'').trim()||'Sem descrição';descriptions.set(key,(descriptions.get(key)||0)+(Number(t.valor)||0));});
                 Object.keys(rubricasMap).forEach(key=>delete rubricasMap[key]);
                 descriptions.forEach((value,key)=>Object.defineProperty(rubricasMap,key,{value,enumerable:true,configurable:true,writable:true}));
             }"""

@@ -2016,6 +2016,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 
 </script>
+<style id="pf-graph-report-refinement">
+#pfGraphQuality,#pfGraphLiquidity{padding:10px 12px;margin-top:10px;border:1px solid #d7e1ee;background:#edf2f8;color:#243247;font:12px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+#pfGraphLiquidity{border-left:4px solid #bd2b20}#pfGraphPending{margin-top:12px}#pfGraphPending h5{color:#203c64;font-weight:700}.pf-history-nd{border:1px dashed #d7e1ee;background:repeating-linear-gradient(135deg,#fff,#fff 5px,#edf2f8 5px,#edf2f8 6px);padding:12px 3px;color:#526176}
+@media print{body.imprimir-graficos #modalGraficos .grafico-print-bloco+ .grafico-print-bloco{break-before:auto!important;page-break-before:auto!important}body.imprimir-graficos #painelExecutivoGraficos .grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}body.imprimir-graficos #painelExecutivoGraficos{break-inside:avoid!important}body.imprimir-graficos #painelAvancadoGraficos>.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}body.imprimir-graficos #painelAvancadoGraficos .pf-chart-card{break-inside:avoid!important}body.imprimir-graficos #painelAvancadoGraficos .pf-chart-card:has(#pfDrilldown){break-inside:auto!important}body.imprimir-graficos #pfDrilldown{overflow:visible!important;max-height:none!important}body.imprimir-graficos #pfDrilldown tr{break-inside:avoid!important}body.imprimir-graficos #pfDrilldown thead{display:table-header-group}body.imprimir-graficos #pfDozeMeses>.grid{padding:0!important;row-gap:10px!important}body.imprimir-graficos #pfDozeMeses>.grid>div{padding-top:42px!important}body.imprimir-graficos #pfGraphQuality,body.imprimir-graficos #pfGraphLiquidity{font-size:8pt;break-inside:avoid}body.imprimir-graficos #modalGraficos>.grafico-print-bloco{margin-bottom:12px!important}}
+</style>
 </head>
 <aside id="pfSaasSidebar" aria-label="Navegação principal"><div class="pf-brand"><div class="pf-brand-icon"><img class="pf-project-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEFElEQVR4nO3d0XHaQBSGUcikBGqgMpflylyDeyAPMROHsRMk7WpX9z/nObGJuJ/uEjP4fLvdTpDqx+gHACMJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoP0c/gP+5vrx7r8bBvb1ezqMfw3fOs70XyMDXN1MQUwRg6HONjmFYAIaeRyNiGPIi2PDzlRFzsesGMPg8a69tsNsGMPwssde8dN8ABp+tem6DrhvA8NNCzznqFoDhp6Ve89QlAMNPDz3mqnkAhp+eWs9X0wAMP3toOWfNAjD87KnVvHk7NNGaBODuzwgt5m5zAIafkbbOnyMQ0TYF4O7PDLbM4eoADD8zWTuPjkBEEwDRVgXg+MOM1sylDUA0ARBtcQCOP8xs6XzaAEQTANEEQLRFATj/cwRL5tQGIJoAiCYAogmAaAIg2vS/Immrt9fL6IfQxPXlfdGfb/nvXvq9j6TsBnh7vcQO/9q/851K1/JRyQCqPlmjVbyupY5AFZ+g2dyvcZVjUckNAM8qE4C7/76qXO8SAVR5Mo6mwnUvEQCsdfgAKtyFjuzo1//wAcAWAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKKV+lSImYz8ICueZwN0MPqDrHieAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCI5mNRPvgYk0w2wMnHmCQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEE8Bp3W97+dffmf3r8YdfkfSh9cDM/vX4zQYgmgCIJgCiCYBoAiCaAIgmAKIJgGiHD+D68j76IUQ7+vU/fACwRYkAjn4XOqoK171EAKdTjSfjSKpc7zIBwBql3g16vyt552Q/Ve78dyU3QLUnaRYVr2upDfCZbdBOxcG/KxvAXeUnj+1KHoHgWQIgmgCIJgCiCYBoAiDaogDeXi/nXg8EWlkypzYA0QRANAEQbXEAXgcws6XzaQMQTQBEWxWAYxAzWjOXNgDRBEC01QE4BjGTtfO4aQOIgBlsmUNHIKJtDsAWYKSt89dkA4iAEVrMnSMQ0ZoFYAuwp1bz1nQDiIA9tJyz5kcgEdBT6/nq8hpABPTQY666vQgWAS31mqeu/wskAlroOUfn2+3W62v/5fryvs83oow9bqC7/RzANmCJveZltw3wmW3Ad/a+UQ75SbBtwFdGzMWQDfDIRsg1+mY4RQCfiaG+0UP/2XQBPBLE8c008I+mDwB68nZoogmAaAIgmgCIJgCiCYBoAiCaAIgmAKL9Ak4GGSSo34cHAAAAAElFTkSuQmCC" alt="Logotipo do Planejamento Financeiro" width="28" height="28"></div><div><strong>Planejamento<br>Financeiro</strong><small>GESTÃO FINANCEIRA</small></div></div><div class="pf-nav-label">Menu principal</div><nav class="pf-nav"><a class="active" href="#painelGerencial"><i class="fa-solid fa-house"></i>Dashboard</a><a href="#tabelaLancamentosWrapper"><i class="fa-solid fa-arrow-right-arrow-left"></i>Lançamentos</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroTipo')?.focus(),80)"><i class="fa-solid fa-circle-arrow-up"></i>Receitas e despesas</a><a href="#tabelaLancamentosWrapper" onclick="setTimeout(()=>document.getElementById('filtroRubrica')?.focus(),80)"><i class="fa-solid fa-layer-group"></i>Cadastros e rubricas</a><a href="#painelGerencial"><i class="fa-solid fa-chart-column"></i>Relatórios</a></nav>
 <div class="pf-nav-label pf-help-section-label">Ajuda e informações</div>
@@ -2885,21 +2890,23 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             <section id="painelExecutivoGraficos" class="mb-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 grafico-print-bloco" aria-live="polite">
               <div class="mb-3 flex flex-wrap items-center justify-between gap-2"><h4 class="text-sm font-bold text-slate-800">Painel executivo</h4><span id="painelExecutivoPeriodo" class="text-xs text-slate-500">Valores conforme os filtros selecionados</span></div>
               <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-                <div class="rounded-xl border border-emerald-200 bg-white p-3"><div class="text-xs font-semibold text-emerald-700">Receitas previstas</div><div id="kpiGrafReceitas" class="mt-1 text-lg font-bold text-emerald-800">R$ 0,00</div></div>
+                <div class="rounded-xl border border-emerald-200 bg-white p-3"><div class="text-xs font-semibold text-emerald-700">Receitas cadastradas</div><div id="kpiGrafReceitas" class="mt-1 text-lg font-bold text-emerald-800">R$ 0,00</div></div>
                 <div class="rounded-xl border border-teal-200 bg-white p-3"><div class="text-xs font-semibold text-teal-700">Receitas recebidas</div><div id="kpiGrafRecebidas" class="mt-1 text-lg font-bold text-teal-800">R$ 0,00</div></div>
-                <div class="rounded-xl border border-rose-200 bg-white p-3"><div class="text-xs font-semibold text-rose-700">Despesas previstas</div><div id="kpiGrafDespesas" class="mt-1 text-lg font-bold text-rose-800">R$ 0,00</div></div>
-                <div class="rounded-xl border border-indigo-200 bg-white p-3"><div class="text-xs font-semibold text-indigo-700">Saldo previsto</div><div id="kpiGrafSaldo" class="mt-1 text-lg font-bold text-indigo-800">R$ 0,00</div></div>
+                <div class="rounded-xl border border-rose-200 bg-white p-3"><div class="text-xs font-semibold text-rose-700">Despesas cadastradas</div><div id="kpiGrafDespesas" class="mt-1 text-lg font-bold text-rose-800">R$ 0,00</div></div>
+                <div class="rounded-xl border border-indigo-200 bg-white p-3"><div class="text-xs font-semibold text-indigo-700">Resultado previsto do período</div><div id="kpiGrafSaldo" class="mt-1 text-lg font-bold text-indigo-800">R$ 0,00</div></div>
                 <div class="rounded-xl border border-amber-200 bg-white p-3"><div class="text-xs font-semibold text-amber-700">Despesas vencidas</div><div id="kpiGrafVencidas" class="mt-1 text-lg font-bold text-amber-800">R$ 0,00</div></div>
-                <div class="rounded-xl border border-sky-200 bg-white p-3"><div class="text-xs font-semibold text-sky-700">Taxa de poupança prevista</div><div id="kpiGrafPoupanca" class="mt-1 text-lg font-bold text-sky-800">—</div></div>
-                <div class="rounded-xl border border-orange-200 bg-white p-3"><div class="text-xs font-semibold text-orange-700">Comprometimento</div><div id="kpiGrafComprometimento" class="mt-1 text-lg font-bold text-orange-800">—</div></div>
+                <div class="rounded-xl border border-sky-200 bg-white p-3"><div class="text-xs font-semibold text-sky-700">Margem prevista do período</div><div id="kpiGrafPoupanca" class="mt-1 text-lg font-bold text-sky-800">—</div></div>
+                <div class="rounded-xl border border-orange-200 bg-white p-3"><div class="text-xs font-semibold text-orange-700">Comprometimento previsto</div><div id="kpiGrafComprometimento" class="mt-1 text-lg font-bold text-orange-800">—</div></div>
+                <div class="rounded-xl border border-slate-200 bg-white p-3"><div class="text-xs font-semibold text-slate-700">Despesas pagas</div><div id="kpiGrafPagas" class="mt-1 text-lg font-bold text-rose-700">R$ 0,00</div></div>
+                <div class="rounded-xl border border-slate-200 bg-white p-3"><div class="text-xs font-semibold text-slate-700">Despesas a vencer</div><div id="kpiGrafVencer" class="mt-1 text-lg font-bold text-rose-700">R$ 0,00</div></div>
               </div>
-              <p id="painelExecutivoLeitura" class="mt-3 rounded-lg bg-white px-3 py-2 text-xs leading-relaxed text-slate-600">Selecione os filtros e gere a análise para atualizar os indicadores.</p>
+              <p id="painelExecutivoLeitura" class="mt-3 rounded-lg bg-white px-3 py-2 text-xs leading-relaxed text-slate-600">Selecione os filtros e gere a análise para atualizar os indicadores.</p><div id="pfGraphLiquidity"></div><div id="pfGraphQuality"></div>
             </section>
 
             <section id="painelAvancadoGraficos" class="mb-6 space-y-4 grafico-print-bloco">
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div class="pf-chart-card"><h4 class="font-bold text-sm text-slate-800 mb-2">Cascata financeira</h4><div id="pfWaterfall"></div></div>
-                <div class="pf-chart-card"><h4 class="font-bold text-sm text-slate-800 mb-2">Ranking de rubricas — despesas</h4><div id="pfRanking"></div><p class="text-xs text-slate-500 mt-2">Clique em uma rubrica para abrir as descrições e os lançamentos.</p></div>
+                <div class="pf-chart-card"><h4 class="font-bold text-sm text-slate-800 mb-2">Ranking de rubricas — despesas</h4><div id="pfRanking"></div><p class="text-xs text-slate-500 mt-2 no-print">Clique em uma rubrica para abrir as descrições e os lançamentos.</p></div>
                 <div class="pf-chart-card"><h4 class="font-bold text-sm text-slate-800 mb-2">Vencidos por faixa de atraso</h4><div id="pfAtrasos"></div></div>
                 <div class="pf-chart-card"><h4 class="font-bold text-sm text-slate-800 mb-2">Mapa de calor — despesas por dia do mês</h4><div id="pfHeatmap"></div><p class="text-xs text-slate-500 mt-2">Intensidade maior indica maior total de despesas naquele dia.</p></div>
               </div>
@@ -6143,6 +6150,11 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             periodo += ` · Rubrica: ${!rubrica || ['Todos', 'Todas', 'Todas as rubricas'].includes(rubrica) ? 'Todas as rubricas' : rubrica}`;
             const status = (document.getElementById('graficoStatusAvancado')?.value || 'Todos').trim();
             periodo += ` · Status: ${!status || status === 'Todos' ? 'Todos os status' : status}`;
+            const subitem = document.getElementById('graficoSubItem')?.value || 'Todos';
+            const descricao = (document.getElementById('graficoDescricao')?.value || '').trim();
+            const minimo = document.getElementById('graficoValorMin')?.value || '';
+            const maximo = document.getElementById('graficoValorMax')?.value || '';
+            periodo += ' · Sub-item: '+subitem+(descricao?' · Descrição: '+descricao:'')+(minimo?' · Valor mínimo: '+minimo:'')+(maximo?' · Valor máximo: '+maximo:'')+' · Emitido em '+new Date().toLocaleString('pt-BR');
             const el = document.getElementById('printGraficosPeriodo');
             if (el) el.innerText = periodo;
             const titulo = document.getElementById('printGraficosTitulo');
@@ -6680,20 +6692,22 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             const lista = Array.isArray(lancamentos) ? lancamentos : [];
             const valor = t => Number(t && t.valor) || 0;
             const receitas = lista.filter(t => t.tipo === 'Receita').reduce((s,t) => s + valor(t), 0);
-            const recebidas = lista.filter(t => t.tipo === 'Receita' && !['Não Recebido','A Vencer','Pendente','Vencido'].includes(t.status)).reduce((s,t) => s + valor(t), 0);
+            const recebidas = lista.filter(t => t.tipo === 'Receita' && (!!t.dataPg || ['Recebido','Recebida','Pago','Paga','Liquidado','Liquidada'].includes(t.status))).reduce((s,t) => s + valor(t), 0);
             const despesas = lista.filter(t => t.tipo === 'Despesa').reduce((s,t) => s + valor(t), 0);
             const vencidas = lista.filter(t => t.tipo === 'Despesa' && t.status === 'Vencido').reduce((s,t) => s + valor(t), 0);
             const saldo = receitas - despesas;
             const taxa = receitas > 0 ? (saldo / receitas) * 100 : null;
             const moeda = n => typeof formatarMoeda === 'function' ? formatarMoeda(n) : n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
             const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            set('kpiGrafPagas', moeda(lista.filter(t=>t.tipo==='Despesa'&&(!!t.dataPg||['Pago','Paga','Liquidado','Liquidada'].includes(t.status))).reduce((s,t)=>s+valor(t),0)));
+            set('kpiGrafVencer', moeda(lista.filter(t=>t.tipo==='Despesa'&&!t.dataPg&&!['Pago','Paga','Liquidado','Liquidada','Vencido'].includes(t.status)).reduce((s,t)=>s+valor(t),0)));
             set('kpiGrafReceitas', moeda(receitas)); set('kpiGrafRecebidas', moeda(recebidas)); set('kpiGrafDespesas', moeda(despesas));
             set('kpiGrafSaldo', moeda(saldo)); set('kpiGrafVencidas', moeda(vencidas)); set('kpiGrafPoupanca', taxa === null ? 'N/D' : `${taxa.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%`); set('kpiGrafComprometimento', receitas > 0 ? `${(despesas/receitas*100).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%` : 'N/D');
             const saldoEl = document.getElementById('kpiGrafSaldo'); if (saldoEl) saldoEl.className = `mt-1 text-lg font-bold ${saldo >= 0 ? 'text-emerald-700' : 'text-rose-700'}`;
             const periodo = inicio || fim ? `${inicio ? inicio.split('-').reverse().join('/') : 'início aberto'} a ${fim ? fim.split('-').reverse().join('/') : 'fim aberto'}` : 'todo o período';
             set('painelExecutivoPeriodo', `${periodo} · ${lista.length} lançamento(s)`);
             let leitura = lista.length ? `No recorte selecionado, as receitas previstas somam ${moeda(receitas)} e as despesas ${moeda(despesas)}. ` : 'Nenhum lançamento corresponde aos filtros selecionados. ';
-            leitura += saldo === 0 ? `O saldo previsto é zero (${moeda(0)}).` : saldo > 0 ? `O saldo previsto é positivo em ${moeda(saldo)}.` : `O saldo previsto é negativo em ${moeda(Math.abs(saldo))}; as despesas superam as receitas.`;
+            leitura += saldo === 0 ? `O resultado previsto do período é zero (${moeda(0)}).` : saldo > 0 ? `O resultado previsto do período é positivo em ${moeda(saldo)}.` : `O resultado previsto do período é negativo em ${moeda(Math.abs(saldo))}; as despesas superam as receitas.`;
             if (vencidas > 0) leitura += ` Há ${moeda(vencidas)} em despesas marcadas como vencidas.`;
             const tipoSelecionado = document.getElementById('graficoTipo')?.value || 'Todos';
             if (tipoSelecionado === 'Despesa') {
@@ -6701,7 +6715,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             } else if (tipoSelecionado === 'Receita') {
                 leitura = lista.length ? `No recorte selecionado, as receitas previstas somam ${moeda(receitas)} e as receitas recebidas totalizam ${moeda(recebidas)}.` : 'Nenhuma receita corresponde aos filtros selecionados.';
             }
-            set('painelExecutivoLeitura', leitura);
+            set('painelExecutivoLeitura', leitura+' Resultado do período = receitas menos despesas cadastradas; não inclui saldo inicial. Não é saldo bancário conciliado. Margem prevista não representa poupança realizada.');
         }
 
         let pfOrdemDespesas = null;
@@ -6714,8 +6728,8 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
           if(typeof window!=='undefined'&&window.PFChartExplorer)window.PFChartExplorer.capture('modal',{rows:arr});
 /* PFCE bridge:end */
 
-          const sum=a=>a.reduce((s,t)=>s+(Number(t.valor)||0),0),rec=arr.filter(t=>t.tipo==='Receita'),des=arr.filter(t=>t.tipo==='Despesa'),tr=sum(rec),td=sum(des),saldo=tr-td;
-          const wf=document.getElementById('pfWaterfall');if(wf){const rows=[['Receitas',tr,'#16a34a'],['Despesas',-td,'#dc2626'],['Saldo',saldo,'#2563eb']];wf.innerHTML=rows.map(([l,v,c])=>`<div class="pf-bar-row"><span>${l}</span><div class="pf-bar-track"><div class="pf-bar-fill" style="width:${Math.max(2,Math.abs(v)/Math.max(1,tr,td)*100)}%;background:${c}"></div></div><strong>${money(v)}</strong></div>`).join('');}
+          const sum=a=>a.reduce((s,t)=>s+(Number(t.valor)||0),0),rec=arr.filter(t=>t.tipo==='Receita'&&t.vencimento&&(Number(t.valor)||0)!==0),des=arr.filter(t=>t.tipo==='Despesa'&&t.vencimento&&(Number(t.valor)||0)!==0),tr=sum(rec),td=sum(des),saldo=tr-td;
+          const wf=document.getElementById('pfWaterfall');if(wf){const rows=[['Receitas',tr,'#16a34a'],['Despesas',-td,'#dc2626'],['Resultado do período',saldo,'#203c64']];wf.innerHTML=rows.map(([l,v,c])=>`<div class="pf-bar-row"><span>${l}</span><div class="pf-bar-track"><div class="pf-bar-fill" style="width:${Math.max(0,Math.abs(v)/Math.max(1,tr,td)*100)}%;background:${c}"></div></div><strong>${money(v)}</strong></div>`).join('');}
           const ranks={};des.forEach(t=>{const k=t.categoria||'Outros';ranks[k]=(ranks[k]||0)+(Number(t.valor)||0)});const rank=Object.entries(ranks).sort((a,b)=>pfOrdemDespesas==='asc'?a[1]-b[1]:b[1]-a[1]).slice(0,10),maxRank=Math.max(1,...rank.map(x=>x[1]));const re=document.getElementById('pfRanking');if(re)re.innerHTML=rank.length?rank.map(([k,v])=>`<div class="pf-bar-row pf-click" onclick="filtrarRubricaGrafico('${pfEsc(k).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')"><span title="${pfEsc(k)}">${pfEsc(k).slice(0,22)}</span><div class="pf-bar-track"><div class="pf-bar-fill" style="width:${v/maxRank*100}%;background:#dc2626"></div></div><strong>${money(v)} <small>(${td?(v/td*100).toLocaleString('pt-BR',{maximumFractionDigits:1}):'0'}%)</small></strong></div>`).join(''):'<p class="text-xs text-slate-500">Nenhuma despesa no recorte.</p>';
           const venc=des.filter(t=>t.status==='Vencido'),buckets=[['0–7 dias',0],['8–30 dias',0],['Mais de 30 dias',0],['Data não identificada',0]];venc.forEach(t=>{if(!t.vencimento){buckets[3][1]+=Number(t.valor)||0;return;}const d=new Date(t.vencimento+'T00:00:00');const days=Math.max(0,Math.floor((today-d)/86400000));buckets[days<=7?0:days<=30?1:2][1]+=Number(t.valor)||0;});const ae=document.getElementById('pfAtrasos');if(ae)ae.innerHTML=buckets.map(([k,v])=>`<div class="pf-bar-row"><span>${k}</span><div class="pf-bar-track"><div class="pf-bar-fill" style="width:${v/Math.max(1,...buckets.map(x=>x[1]))*100}%;background:#f59e0b"></div></div><strong>${money(v)}</strong></div>`).join('');
           // O mês de referência acompanha o fim do filtro; sem fim, usa o início ou o mês atual.
@@ -6730,8 +6744,23 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
           const tipoPainel = document.getElementById('graficoTipo')?.value || 'Todos';
           const tituloDoze = document.getElementById('pfTituloDozeMeses');
           if (tituloDoze) tituloDoze.textContent = tipoPainel === 'Despesa' ? 'Últimos 12 meses — despesas' : tipoPainel === 'Receita' ? 'Últimos 12 meses — receitas' : 'Últimos 12 meses — receitas, despesas e saldo';
-          const twelve=document.getElementById('pfDozeMeses');if(twelve){const months=[];for(let i=11;i>=0;i--){const d=new Date(mesReferencia.getFullYear(),mesReferencia.getMonth()-i,1);months.push({key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,label:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}),r:0,d:0});}arr.forEach(t=>{const date=t.vencimento||'';const m=months.find(x=>x.key===date.slice(0,7));if(m){if(t.tipo==='Receita')m.r+=Number(t.valor)||0;else if(t.tipo==='Despesa')m.d+=Number(t.valor)||0;}});const mx=Math.max(1,...months.flatMap(m=>[m.r,m.d]));twelve.innerHTML=`<div class="grid grid-cols-6 md:grid-cols-12 gap-2 items-end" style="min-height:130px">${months.map(m=>`<div class="text-center"><div class="flex items-end justify-center gap-1" style="height:95px"><div title="Receitas ${money(m.r)}" style="display:${tipoPainel==='Despesa'?'none':'block'};width:35%;height:${m.r/mx*100}%;min-height:${m.r?3:0}px;background:#16a34a;border-radius:3px 3px 0 0"></div><div title="Despesas ${money(m.d)}" style="display:${tipoPainel==='Receita'?'none':'block'};width:35%;height:${m.d/mx*100}%;min-height:${m.d?3:0}px;background:#dc2626;border-radius:3px 3px 0 0"></div></div><div class="text-[10px] text-slate-500">${m.label}</div><div class="text-[9px] ${m.r-m.d>=0?'text-blue-700':'text-rose-700'}">${tipoPainel === 'Todos' ? ((m.r-m.d>=0?'+':'')+((m.r-m.d)/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+'k') : money(tipoPainel==='Despesa'?m.d:m.r)}</div></div>`).join('')}</div><div class="text-xs text-slate-500 mt-2">${tipoPainel==='Despesa'?'Vermelho: despesas · total de despesas abaixo de cada mês.':tipoPainel==='Receita'?'Verde: receitas · total de receitas abaixo de cada mês.':'Verde: receitas · Vermelho: despesas · saldo em milhares abaixo de cada mês.'} Os meses sem lançamentos no filtro aparecem zerados.</div>`;}
-          const drill=document.getElementById('pfDrilldown');if(drill){const rows=arr.slice().sort((a,b)=>pfOrdemDespesas ? (pfOrdemDespesas==='asc' ? (Number(a.valor)||0)-(Number(b.valor)||0) : (Number(b.valor)||0)-(Number(a.valor)||0)) : (a.vencimento||'').localeCompare(b.vencimento||'')).slice(0,100);drill.innerHTML=rows.length?`<table class="pf-table"><thead><tr><th>Vencimento</th><th>Tipo</th><th>Rubrica</th><th>Descrição</th><th>Status</th><th>Valor</th></tr></thead><tbody>${rows.map(t=>`<tr><td>${pfEsc(t.vencimento||'—')}</td><td>${pfEsc(t.tipo||'—')}</td><td>${pfEsc(t.categoria||'Outros')}</td><td>${pfEsc(t.descricao||'—')}</td><td>${pfEsc(t.status||'—')}</td><td>${money(t.valor)}</td></tr>`).join('')}</tbody></table><p class="text-xs text-slate-500 mt-2">Mostrando até 100 lançamentos do recorte.</p>`:'<p class="text-sm text-slate-500">Nenhum lançamento — use “Limpar filtros” ou ajuste o período.</p>';}
+          const twelve=document.getElementById('pfDozeMeses');if(twelve){
+            const start=document.getElementById('graficoDataInicio')?.value||'',end=document.getElementById('graficoDataFim')?.value||'';
+            const months=[];for(let i=11;i>=0;i--){const d=new Date(mesReferencia.getFullYear(),mesReferencia.getMonth()-i,1),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');months.push({key,label:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}),r:0,d:0,n:0,covered:(!start||key>=start.slice(0,7))&&(!end||key<=end.slice(0,7))});}
+            arr.forEach(t=>{if(!t.vencimento||!['Receita','Despesa'].includes(t.tipo)||(Number(t.valor)||0)===0)return;const m=months.find(x=>x.key===t.vencimento.slice(0,7));if(m){m[t.tipo==='Receita'?'r':'d']+=Number(t.valor)||0;m.n++;}});
+            const mx=Math.max(1,...months.flatMap(m=>[m.r,m.d]));
+            twelve.innerHTML='<div class="grid grid-cols-6 md:grid-cols-12 gap-2 items-end" style="min-height:130px">'+months.map(m=>'<div class="text-center" data-pf-month="'+m.key+'" data-pf-covered="'+m.covered+'">'+(!m.covered?'<div class="pf-history-nd" style="height:95px">N/D</div>':!m.n?'<div style="height:95px;display:grid;place-items:center;font-size:10px">Sem lançamentos</div>':'<div class="flex items-end justify-center gap-1" style="height:95px"><div title="Receitas '+money(m.r)+'" style="display:'+(tipoPainel==='Despesa'?'none':'block')+';width:35%;height:'+m.r/mx*100+'%;background:#047857"></div><div title="Despesas '+money(m.d)+'" style="display:'+(tipoPainel==='Receita'?'none':'block')+';width:35%;height:'+m.d/mx*100+'%;background:#bd2b20"></div></div>')+'<div class="text-[10px]">'+m.label+'</div><div class="text-[9px]">'+(!m.covered?'Fora do recorte':!m.n?'—':tipoPainel==='Todos'?money(m.r-m.d):money(tipoPainel==='Despesa'?m.d:m.r))+'</div></div>').join('')+'</div><p class="text-xs text-slate-500 mt-2">Verde: receitas · Vermelho: despesas. N/D: mês fora do recorte selecionado, não representa movimento zero. Sem lançamentos: nenhum registro no filtro. Totais respeitam o período, inclusive meses parciais.</p>';
+          }
+          const dated=arr.filter(t=>t.vencimento&&(Number(t.valor)||0)!==0),pending=arr.filter(t=>!t.vencimento||(Number(t.valor)||0)===0);
+          const dateBR=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?s.split('-').reverse().join('/'):'—';
+          const renderTable=items=>'<table class="pf-table"><thead><tr><th>Vencimento</th><th>Tipo</th><th>Rubrica</th><th>Descrição</th><th>Status</th><th>Valor</th></tr></thead><tbody>'+items.map(t=>'<tr><td>'+pfEsc(dateBR(t.vencimento))+'</td><td>'+pfEsc(t.tipo||'—')+'</td><td>'+pfEsc(t.categoria||'Outros')+'</td><td>'+pfEsc(t.descricao||'—')+'</td><td>'+pfEsc(t.status||'—')+'</td><td>'+money(t.valor)+'</td></tr>').join('')+'</tbody></table>';
+          const drill=document.getElementById('pfDrilldown');if(drill){const sorted=dated.slice().sort((a,b)=>pfOrdemDespesas?(pfOrdemDespesas==='asc'?(Number(a.valor)||0)-(Number(b.valor)||0):(Number(b.valor)||0)-(Number(a.valor)||0)):(a.vencimento||'').localeCompare(b.vencimento||''));drill.innerHTML=(sorted.length?renderTable(sorted.slice(0,100)):'<p>Nenhum lançamento datado com valor no recorte.</p>')+'<p class="text-xs">Mostrando '+Math.min(sorted.length,100)+' de '+sorted.length+' lançamentos datados. '+(sorted.length>100?'Detalhamento limitado a 100 registros; totais e gráficos usam o recorte completo.':'')+'</p>'+(pending.length?'<div id="pfGraphPending"><h5>Pendências de cadastro ('+pending.length+')</h5>'+renderTable(pending)+'<p class="text-xs">Sem vencimento ou valor zero: excluídos dos gráficos de movimentação, sem excluir o cadastro. Totais cadastrais incluem os valores informados; lançamentos sem data não pertencem a um dia identificado.</p></div>':'');}
+          const settled=t=>!!t.dataPg||['Pago','Paga','Recebido','Recebida','Liquidado','Liquidada'].includes(t.status),todayISO=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+          const unpaid=des.filter(t=>!settled(t)&&t.vencimento>=todayISO),incoming=rec.filter(t=>!settled(t)&&t.vencimento>=todayISO).sort((a,b)=>a.vencimento.localeCompare(b.vencimento)),next=incoming[0];
+          const before=next?unpaid.filter(t=>t.vencimento<next.vencimento):unpaid;
+          const liquidity=document.getElementById('pfGraphLiquidity');if(liquidity)liquidity.innerHTML='<strong>Liquidez: conferir pagamentos antes das entradas</strong><p>'+ (next?'Há '+money(sum(before))+' em despesas pendentes antes da próxima entrada de '+money(sum(incoming.filter(t=>t.vencimento===next.vencimento)))+' em '+dateBR(next.vencimento)+'.':'Não há receita futura em aberto identificada no recorte. Despesas pendentes com vencimento a partir do corte: '+money(sum(unpaid))+'.')+'</p><p>Saldo inicial disponível: não informado. Saldo bancário final e necessidade efetiva de caixa não são calculados sem conciliação. Alerta restrito aos filtros selecionados.</p>';
+          const groups=new Map();arr.forEach(t=>{const k=JSON.stringify([t.tipo,t.vencimento,t.descricao,Number(t.valor)||0]);const v=groups.get(k)||[];v.push(t);groups.set(k,v);});
+          const quality=document.getElementById('pfGraphQuality');if(quality)quality.innerHTML='<strong>Critérios e conferências</strong><p>'+arr.length+' lançamento(s): '+dated.length+' datados com valor e '+pending.length+' pendência(s). Total cadastrado inclui liquidados; a seleção usa vencimento. Investimentos são identificados separadamente e não integram os indicadores de despesas deste painel.</p>'+[...groups.values()].filter(g=>g.length>1).map(g=>'<p>Conferir '+g.length+' registros de '+pfEsc(g[0].descricao||'Sem descrição')+', '+money(g[0].valor)+' cada, em '+dateBR(g[0].vencimento)+'. Não comprova duplicidade; nenhum registro foi removido.</p>').join('');
         }
         function filtrarRubricaGrafico(nome){const s=document.getElementById('graficoRubrica');if(!s)return;let opt=[...s.options].find(o=>o.value===nome);if(!opt){opt=document.createElement('option');opt.value=nome;opt.textContent=nome;s.appendChild(opt);}s.value=nome;atualizarGraficos();}
         function consultarProntaGrafico(tipo) {
@@ -6843,7 +6872,8 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             const rubricasDespesasMap = {};
 
             filtradas.forEach(t => {
-                const dt = t.vencimento || 'Sem Data';
+                if(!t.vencimento || (Number(t.valor)||0)===0)return;
+                const dt = t.vencimento;
                 if (!datasMap[dt]) datasMap[dt] = { prevReceita: 0, recRecebidas: 0, totalDespesas: 0 };
 
                 if (t.tipo === 'Receita') {
@@ -6873,7 +6903,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             if (elTotalReceitas) elTotalReceitas.innerText = formatarMoeda(totalReceitasComparacao);
             if (elTotalDespesas) elTotalDespesas.innerText = formatarMoeda(totalDespesasComparacao);
 
-            const sortedDates = Object.keys(datasMap).sort();
+            const sortedDates = Object.keys(datasMap).filter(d=>abaAtivaGrafico==='prevReceita'?datasMap[d].prevReceita!==0:abaAtivaGrafico==='recRecebidas'?datasMap[d].recRecebidas!==0:abaAtivaGrafico==='totalDespesas'?datasMap[d].totalDespesas!==0:true).sort();
             const formattedDates = sortedDates.map(d => d.split('-').reverse().join('/'));
 
             const prevReceitaData = sortedDates.map(d => datasMap[d].prevReceita);
@@ -6885,16 +6915,16 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             let tituloRubricas = "";
 
             if (abaAtivaGrafico === 'prevReceita') {
-                tituloEvolucao = "Evolução: Prev de Receita";
-                tituloRubricas = "Distribuição por Rubrica (Prev de Receita)";
+                tituloEvolucao = "Receitas previstas por vencimento";
+                tituloRubricas = "Receitas previstas por descrição";
                 datasetsEvolucao.push({ label: 'Prev de Receita (R$)', data: prevReceitaData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0 });
             } else if (abaAtivaGrafico === 'recRecebidas') {
-                tituloEvolucao = "Evolução: Rec Recebidas";
-                tituloRubricas = "Distribuição por Rubrica (Rec Recebidas)";
+                tituloEvolucao = "Receitas recebidas por vencimento";
+                tituloRubricas = "Receitas recebidas por rubrica";
                 datasetsEvolucao.push({ label: 'Rec Recebidas (R$)', data: recRecebidasData, borderColor: '#047857', backgroundColor: 'rgba(4, 120, 87, 0.1)', fill: true, tension: 0 });
             } else if (abaAtivaGrafico === 'totalDespesas') {
-                tituloEvolucao = "Evolução: Total de Despesas";
-                tituloRubricas = "Distribuição por Rubrica (Total de Despesas)";
+                tituloEvolucao = "Despesas cadastradas por vencimento";
+                tituloRubricas = "Despesas cadastradas por rubrica";
                 datasetsEvolucao.push({ label: 'Total de Despesas (R$)', data: totalDespesasData, borderColor: '#f43f5e', backgroundColor: 'rgba(244, 63, 94, 0.1)', fill: true, tension: 0 });
             } else if (abaAtivaGrafico === 'comparativo') {
                 if (comparativoReceitasDespesasAtivo) {
@@ -6934,7 +6964,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
                 // Primeiro gráfico: duas linhas independentes, uma para Prev de Receita e outra para Total de Despesas.
                 // Os valores continuam sendo agregados por data, sem qualquer detalhamento por rubrica.
                 chartEvolucaoInstance = new Chart(ctxEvolucao, {
-                    type: 'line',
+                    type: formattedDates.length===1?'bar':'line',
                     data: {
                         labels: formattedDates.length > 0 ? formattedDates : ['Sem Dados'],
                         datasets: [
@@ -6969,7 +6999,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
                 });
             } else {
                 chartEvolucaoInstance = new Chart(ctxEvolucao, {
-                    type: 'line',
+                    type: formattedDates.length===1?'bar':'line',
                     data: { labels: formattedDates.length > 0 ? formattedDates : ['Sem Dados'], datasets: datasetsEvolucao },
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 12 } } }, scales: { y: { beginAtZero: true, ticks: { callback: (v) => { const n=Number(v)||0; return Math.abs(n)>=1000 ? 'R$ '+(n/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mil' : 'R$ '+n.toLocaleString('pt-BR',{maximumFractionDigits:0}); } } } } }
                 });
@@ -6979,7 +7009,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
 /* PFCE bridge:start */
             if(abaAtivaGrafico==='prevReceita'&&!comparativoReceitasDespesasAtivo){
                 const descriptions=new Map();
-                filtradas.filter(t=>t.tipo==='Receita').forEach(t=>{const key=String(t.descricao||'').trim()||'Sem descrição';descriptions.set(key,(descriptions.get(key)||0)+(Number(t.valor)||0));});
+                filtradas.filter(t=>t.tipo==='Receita'&&t.vencimento&&(Number(t.valor)||0)!==0).forEach(t=>{const key=String(t.descricao||'').trim()||'Sem descrição';descriptions.set(key,(descriptions.get(key)||0)+(Number(t.valor)||0));});
                 Object.keys(rubricasMap).forEach(key=>delete rubricasMap[key]);
                 descriptions.forEach((value,key)=>Object.defineProperty(rubricasMap,key,{value,enumerable:true,configurable:true,writable:true}));
             }
@@ -10253,8 +10283,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
 @media print{.pfce-tools,.pfce-message,.pfce-close,.pfce-points{display:none!important}.pfce-alt{overflow:visible;--pfce-hole:#fff}.pfce-svg{min-width:0;width:100%;color:#1e293b!important}.pfce-detail{max-height:none;background:white!important;color:#1e293b!important;break-inside:auto}.pfce-scroll{max-height:none;overflow:visible}.pfce-detail th,.pfce-detail td{color:#1e293b!important}.pfce-bars{break-inside:auto}}
 
 </style>
-<script id="pf-chart-explorer">
-/* Exploração visual: não escreve em contas, transações, armazenamento ou rede. */
+<script id="pf-chart-explorer">/* Exploração visual: não escreve em contas, transações, armazenamento ou rede. */
 (() => {
  'use strict';
  function chartData(){
@@ -10302,7 +10331,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
    if(payload)return false;
    if(document.body.classList.contains('auth-pendente'))return true;
    if(typeof protecaoAutenticada!=='undefined'&&!protecaoAutenticada)return true;
-   return !!state.source.closest('#clean-month-analysis')&&(document.body.classList.contains('pf-mobile-layout') ? !!document.getElementById('dashboardMobileV40')?.classList.contains('pf-resumo-oculto') : !!document.getElementById('painelGerencial')?.classList.contains('pf-painel-oculto'));
+   return !!state.source.closest('#clean-month-analysis')&&!!document.getElementById('painelGerencial')?.classList.contains('pf-painel-oculto');
   }
   function pointRows(state,p){return D.rows(state.model.resolve?.(p.j,p.i)||[]);}
   function detail(state,point,overrideRows,passive=false){
@@ -10458,7 +10487,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
    }
    const modal=contexts.modal;
    if(modal){
-    const arr=D.rows(modal.rows),des=arr.filter(r=>r.tipo==='Despesa');
+    const arr=D.rows(modal.rows).filter(r=>r.vencimento&&r.valor!==0),des=arr.filter(r=>r.tipo==='Despesa');
     domBars('pfWaterfall','Cascata financeira',arr,{additive:false,resolve:label=>D.typeRows(arr,label).filter(r=>r.tipo!=='Investimentos')});
     domBars('pfRanking','Ranking de rubricas — despesas',des,{color:'#bd2b20'});
     const today=new Date();today.setHours(0,0,0,0);
@@ -10468,10 +10497,12 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
     domBars('pfHeatmap','Mapa de calor — despesas por dia do mês',des,{selector:'.pf-heat-cell',color:'#bd2b20',label:n=>'Dia '+n.querySelector('.pf-heat-day')?.textContent,value:n=>D.number(n.querySelector('.pf-heat-value')?.textContent),resolve:(label,i)=>des.filter(r=>r.vencimento===month+'-'+String(i+1).padStart(2,'0'))});
     const source=document.getElementById('pfDozeMeses');
     if(source){
-     const d=new Date(ref+'T12:00:00'),months=Array.from({length:12},(_,i)=>D.month(d.getFullYear(),d.getMonth()-11+i)),bars=[...source.querySelectorAll('[title^="Receitas "],[title^="Despesas "]')],types=document.getElementById('graficoTipo')?.value||'Todos';
-     const series=['Receita','Despesa'].filter(type=>types==='Todos'||types===type).map(type=>({label:type,color:type==='Receita'?'#047857':'#bd2b20',values:months.map((_,i)=>D.number(bars[i*2+(type==='Receita'?0:1)]?.title))}));
-     const m=D.model('Últimos 12 meses',months.map(m=>m.label),series,(j,i)=>arr.filter(r=>r.tipo===series[j]?.label&&r.vencimento.startsWith(months[i]?.key)));m.records=arr;
-     mount(source,m,{mark:()=>bindRows(source,'[title^="Receitas "],[title^="Despesas "]'),hit:target=>{const node=target.closest('[title^="Receitas "],[title^="Despesas "]');const index=bars.indexOf(node);return index<0?null:{i:Math.floor(index/2),j:series.findIndex(s=>s.label===(index%2?'Despesa':'Receita'))};}});
+     const d=new Date(ref+'T12:00:00'),from=document.getElementById('graficoDataInicio')?.value||'',to=document.getElementById('graficoDataFim')?.value||'';
+     const months=Array.from({length:12},(_,i)=>D.month(d.getFullYear(),d.getMonth()-11+i)).filter(m=>(!from||m.key>=from.slice(0,7))&&(!to||m.key<=to.slice(0,7))&&arr.some(r=>['Receita','Despesa'].includes(r.tipo)&&r.vencimento.startsWith(m.key)));
+     const bars=[...source.querySelectorAll('[title^="Receitas "],[title^="Despesas "]')],types=document.getElementById('graficoTipo')?.value||'Todos';
+     const series=['Receita','Despesa'].filter(type=>types==='Todos'||types===type).map(type=>({label:type,color:type==='Receita'?'#047857':'#bd2b20',values:months.map(month=>arr.filter(r=>r.tipo===type&&r.vencimento.startsWith(month.key)).reduce((sum,r)=>sum+r.valor,0))}));
+     const m=D.model('Histórico no recorte — meses com lançamentos',months.map(m=>m.label),series,(j,i)=>arr.filter(r=>r.tipo===series[j]?.label&&r.vencimento.startsWith(months[i]?.key)));m.records=arr;
+     mount(source,m,{mark:()=>bindRows(source,'[title^="Receitas "],[title^="Despesas "]'),hit:target=>{const node=target.closest('[title^="Receitas "],[title^="Despesas "]');const key=node?.closest('[data-pf-month]')?.getAttribute('data-pf-month');const i=months.findIndex(m=>m.key===key),index=bars.indexOf(node);return i<0||index<0?null:{i,j:series.findIndex(s=>s.label===(index%2?'Despesa':'Receita'))};}});
     }
    }
    if(typeof Chart!=='undefined'){
@@ -10595,7 +10626,6 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
  };
  window.PFChartExplorer=api;
 })();
-
 </script>
 <style id="pf-dynamic-filters-style">
 .pf-dynamic-item{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px}

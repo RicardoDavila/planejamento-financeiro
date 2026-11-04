@@ -14,6 +14,6 @@ for(const rel of ['index.html','distribuicao/app.html','teste-gemini/app.html'])
  for(const [id,value]of Object.entries({kpiGrafReceitas:'26.980,00',kpiGrafRecebidas:'14.050,00',kpiGrafDespesas:'19.529,14',kpiGrafSaldo:'7.450,86',kpiGrafVencidas:'0,00',kpiGrafPoupanca:'27,6%',kpiGrafComprometimento:'72,4%'}))assert(node(id).textContent.includes(value),id);
  assert(node('painelExecutivoPeriodo').textContent.includes('34 lançamento(s)'));
  assert(node('pfWaterfall').innerHTML.includes('26.980,00'));assert(node('pfRanking').innerHTML.includes('%'));assert(node('pfAtrasos').innerHTML.includes('Mais de 30 dias'));assert.equal((node('pfHeatmap').innerHTML.match(/class="pf-heat-cell"/g)||[]).length,31);
- assert.equal((node('pfDozeMeses').innerHTML.match(/title="Receitas /g)||[]).length,12);assert.equal((node('pfDrilldown').innerHTML.match(/<tr>/g)||[]).length,35);assert(node('pfDrilldown').innerHTML.includes('Investimentos'));
- console.log('PASS:',rel,'todos os painéis originais, cálculos idênticos ao ZIP, 34 lançamentos, 31 dias e 12 meses preservados');
+ assert.equal((node('pfDozeMeses').innerHTML.match(/title="Receitas /g)||[]).length,1);assert.equal((node('pfDrilldown').innerHTML.match(/<tr>/g)||[]).length,36);assert(node('pfDrilldown').innerHTML.includes('Investimentos'));
+ console.log('PASS:',rel,'painéis e totais preservados, pendência separada, 31 dias e histórico limitado ao recorte');
 }
