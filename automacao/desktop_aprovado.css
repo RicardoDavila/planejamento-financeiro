@@ -54,3 +54,13 @@ html body.layout-proposal:not(.pf-mobile-layout) #pfMenuLateral{bottom:auto!impo
 @media print{#desktop-selection,#desktop-person-label,#desktop-page-filters{display:none!important}}
 
 [data-desktop-tooltip]{position:relative}[data-desktop-tooltip]:hover::after{content:attr(data-desktop-tooltip);position:absolute;top:100%;left:0;max-width:280px;background:#203c64;color:#fff;font:12px/1.4 system-ui;padding:8px;border-radius:6px;z-index:20;pointer-events:none}
+/* Menu suspenso compacto, com as ações originais e sem o painel de busca/perfil. */
+html body.layout-proposal:not(.pf-mobile-layout) #pfMenuLateral{width:310px!important;bottom:auto!important;height:auto!important;min-height:0!important;max-height:min(72vh,520px)!important;padding:8px!important;border:1px solid #64748b!important;border-radius:10px!important;overflow:auto!important;display:block!important}
+html body.layout-proposal:not(.pf-mobile-layout) #pfMenuLateral[hidden]{display:none!important}
+#pfMenuLateral>header,#pfMenuLateral #clean-menu-search,#pfMenuLateral #clean-menu-profile,#pfMenuLateral .clean-menu-group>h3{display:none!important}
+#pfMenuLateral #pfMenuItens{display:block!important;overflow:visible!important;padding:0!important;flex:none!important;max-height:none!important}
+#pfMenuLateral .clean-menu-group{padding:0!important;margin:0!important;border:0!important;background:transparent!important}
+#pfMenuLateral .clean-menu-action{display:flex!important;width:100%!important;min-height:42px!important;padding:11px 14px!important;margin:0!important;border:0!important;border-radius:6px!important;box-shadow:none!important;background:transparent!important;color:inherit!important;font-size:13px!important;font-weight:600!important;justify-content:flex-start!important;gap:0!important}
+#pfMenuLateral .clean-menu-action[hidden]{display:none!important}#pfMenuLateral .clean-menu-action svg{display:none!important}#pfMenuLateral .clean-menu-action:hover,#pfMenuLateral .clean-menu-action:focus-visible{background:#ffffff16!important;outline:2px solid #94a3b8;outline-offset:-2px}
+#pfMenuCortina{background:transparent!important;backdrop-filter:none!important}
+#tabelaLancamentosWrapper .desktop-select-cell{width:45px;min-width:45px;text-align:center;white-space:nowrap}#tabelaLancamentosWrapper .desktop-row-select{display:inline-block!important;width:16px!important;height:16px!important;min-height:0!important;margin:0!important;vertical-align:middle}#tabelaLancamentosWrapper .desktop-person-cell{min-width:125px}

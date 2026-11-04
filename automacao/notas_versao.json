@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "No PC, separa resultado do período dos saldos inicial, final e mínimo calculados, com alertas de liquidez e progresso de pagamentos.",
-    "Aplica filtros combináveis nos cartões e itens, composição dos gráficos em janela, filtros compactos, seleção múltipla, simulações e recorrência mediante prévia.",
-    "Preserva o modo Celular, as contas e senhas existentes, os relatórios anteriores e a correção de impressão."
+    "No PC, usa menus suspensos compactos, sem o painel de busca e perfil.",
+    "Acrescenta a coluna Tipo de pessoa aos lançamentos, com filtro rápido ao clicar no valor.",
+    "Separa a seleção das datas e impede controles duplicados ou texto on durante as atualizações, preservando o modo Celular."
   ],
   "distribuicao": [
-    "No PC da Distribuição, aplica o painel e os gráficos aprovados, usando somente os dados da conta conectada.",
-    "Mantém filtros rápidos de cartões, rubrica, subitem, descrição e status; inclui composição em janela e operações por seleção.",
-    "Preserva o modo Celular, a autenticação por conta, a sincronização e os relatórios anteriores."
+    "No PC, usa menus suspensos compactos, sem o painel de busca e perfil.",
+    "Acrescenta a coluna Tipo de pessoa aos lançamentos, com filtro rápido ao clicar no valor.",
+    "Separa a seleção das datas e impede controles duplicados ou texto on durante as atualizações, preservando o modo Celular."
   ]
 }
