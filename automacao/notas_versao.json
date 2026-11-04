@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Atualiza o relatório gráfico: resultado e margem previstos do período, despesas pagas/a vencer e alerta de vencimentos antes das receitas.",
-    "Mantém os gráficos com títulos coerentes, datas brasileiras, histórico fora do recorte marcado N/D e pendências de cadastro separadas.",
-    "Preserva a correção que impede o retorno ao login durante a impressão, os demais relatórios e os filtros Semestre e Ano."
+    "No PC, separa resultado do período dos saldos inicial, final e mínimo calculados, com alertas de liquidez e progresso de pagamentos.",
+    "Aplica filtros combináveis nos cartões e itens, composição dos gráficos em janela, filtros compactos, seleção múltipla, simulações e recorrência mediante prévia.",
+    "Preserva o modo Celular, as contas e senhas existentes, os relatórios anteriores e a correção de impressão."
   ],
   "distribuicao": [
-    "Atualiza o relatório gráfico: resultado e margem previstos do período, despesas pagas/a vencer e alerta de vencimentos antes das receitas.",
-    "Mantém os gráficos com títulos coerentes, datas brasileiras, histórico fora do recorte marcado N/D e pendências de cadastro separadas.",
-    "Preserva a correção que impede o retorno ao login durante a impressão, os demais relatórios e os filtros Semestre e Ano."
+    "No PC da Distribuição, aplica o painel e os gráficos aprovados, usando somente os dados da conta conectada.",
+    "Mantém filtros rápidos de cartões, rubrica, subitem, descrição e status; inclui composição em janela e operações por seleção.",
+    "Preserva o modo Celular, a autenticação por conta, a sincronização e os relatórios anteriores."
   ]
 }

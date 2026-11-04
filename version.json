@@ -1,9 +1,10 @@
 {
-  "version": "V4.12.59",
-  "name": "V4.12.59",
+  "version": "V4.12.60",
+  "name": "V4.12.60",
   "channel": "pessoal",
   "notes": [
-    "No PC, posiciona o indicador de nuvem após Dois monitores e aplica destaque verde quando o status original é Online.",
-    "Preserva o layout do celular e o comportamento original de conexão e sincronização."
+    "No PC, separa resultado do período dos saldos inicial, final e mínimo calculados, com alertas de liquidez e progresso de pagamentos.",
+    "Aplica filtros combináveis nos cartões e itens, composição dos gráficos em janela, filtros compactos, seleção múltipla, simulações e recorrência mediante prévia.",
+    "Preserva o modo Celular, as contas e senhas existentes, os relatórios anteriores e a correção de impressão."
   ]
 }
