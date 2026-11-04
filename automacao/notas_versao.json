@@ -1,14 +1,10 @@
 {
   "pessoal": [
-    "Relatórios gerencial e de fluxo de caixa distinguem resultado líquido do período, saldo inicial e saldo final calculado, sem apresentar saldos como caixa bancário conciliado.",
-    "Acrescenta conciliação das bases por vencimento e realizado, indicadores de liquidez, próxima entrada, maior lançamento e maior saída diária.",
-    "Mantém gráficos e identidade visual, explicita vencimentos, total cadastrado, realizado e em aberto, melhora a paginação e sinaliza possíveis repetições sem excluir registros.",
-    "Preserva os filtros Semestre e Ano e os dados cadastrados."
+    "Corrige o retorno ao login ao salvar Gráficos e evoluções em PDF na versão pessoal: mudanças de mídia durante a impressão não recarregam mais a página.",
+    "Mantém a proteção de acesso e permite a troca real de layout fora da impressão. Preserva as melhorias dos relatórios e filtros Semestre e Ano."
   ],
   "distribuicao": [
-    "Relatórios gerencial e de fluxo de caixa distinguem resultado líquido do período, saldo inicial e saldo final calculado, sem apresentar saldos como caixa bancário conciliado.",
-    "Acrescenta conciliação das bases por vencimento e realizado, indicadores de liquidez, próxima entrada, maior lançamento e maior saída diária.",
-    "Mantém gráficos e identidade visual, explicita vencimentos, total cadastrado, realizado e em aberto, melhora a paginação e sinaliza possíveis repetições sem excluir registros.",
-    "Preserva os filtros Semestre e Ano e os dados cadastrados."
+    "Corrige o retorno ao login ao salvar Gráficos e evoluções em PDF na versão pessoal: mudanças de mídia durante a impressão não recarregam mais a página.",
+    "Mantém a proteção de acesso e permite a troca real de layout fora da impressão. Preserva as melhorias dos relatórios e filtros Semestre e Ano."
   ]
 }

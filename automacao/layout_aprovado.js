@@ -100,7 +100,19 @@
   setInterval(()=>{if(popup?.closed)join();else send()},700);
   window.addEventListener('pagehide',join);window.addEventListener('beforeunload',join);
   refresh();
-  matchMedia('(max-width:900px), (pointer:coarse)').addEventListener('change',()=>location.reload());
+  // A mídia de impressão pode mudar largura/pointer sem haver troca real de dispositivo.
+  // Recarregar aqui derruba o acesso local da versão pessoal ao abrir Salvar PDF.
+  const layoutMedia = matchMedia('(max-width:900px), (pointer:coarse)');
+  let transicaoImpressao = false;
+  window.addEventListener('beforeprint',()=>{transicaoImpressao=true;});
+  window.addEventListener('afterprint',()=>{setTimeout(()=>{transicaoImpressao=false;},250);});
+  function verificarTrocaLayout(){
+   if(transicaoImpressao || matchMedia('print').matches || !matchMedia('screen').matches || document.body.classList.contains('imprimir-graficos'))return;
+   // Confere a consulta atual, não um evento antigo enfileirado pela prévia de impressão.
+   if(layoutMedia.matches===mobile())return;
+   location.reload();
+  }
+  layoutMedia.addEventListener('change',verificarTrocaLayout);
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
