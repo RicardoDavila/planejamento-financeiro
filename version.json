@@ -1,10 +1,11 @@
 {
-  "version": "V4.12.61",
-  "name": "V4.12.61",
+  "version": "V4.12.62",
+  "name": "V4.12.62",
   "channel": "pessoal",
   "notes": [
-    "No PC, usa menus suspensos compactos, sem o painel de busca e perfil.",
-    "Acrescenta a coluna Tipo de pessoa aos lançamentos, com filtro rápido ao clicar no valor.",
-    "Separa a seleção das datas e impede controles duplicados ou texto on durante as atualizações, preservando o modo Celular."
+    "No PC, substitui o painel de menus por lista suspensa sem título, busca ou cartões.",
+    "Reserva largura para Observação, reduz sua fonte e impede quebra vertical do cabeçalho.",
+    "Pré-classifica lançamentos sem tipo definido: EMPRESA como PJ e demais rubricas como PF. Preserva escolhas manuais e permite alteração em Novo/Editar.",
+    "Mantém o layout e os módulos do Celular."
   ]
 }
