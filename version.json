@@ -1,10 +1,10 @@
 {
-  "version": "V4.12.69",
-  "name": "V4.12.69",
+  "version": "V4.12.71",
+  "name": "V4.12.71",
   "channel": "pessoal",
   "notes": [
-    "Separa os filtros de Gráficos e Evoluções dos filtros da página inicial, com seletor PF/PJ próprio herdado ao abrir.",
-    "Períodos rápidos e seletores aplicam a análise imediatamente; os gráficos usam a pessoa aplicada na análise.",
-    "Corrige a cor dos rótulos e percentuais da evolução mensal no modo escuro e preserva PF/PJ ao editar lançamentos."
+    "Corrige a sobreposição do botão Fechar sobre Imprimir em Gráficos e Evoluções.",
+    "Agrupa Salvar PDF, Imprimir e Fechar com espaço próprio e quebra de linha em telas menores.",
+    "Mantém a correção do período inicial, filtros independentes e contraste no modo escuro."
   ]
 }
