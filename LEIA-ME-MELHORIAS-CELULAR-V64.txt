@@ -1,0 +1,16 @@
+VERSÃO V4.12.64 — MELHORIAS NO CELULAR
+
+Inclui perfil real do usuário, filtros de período e filtros avançados em cortina, avisos completos, indicadores secundários recolhíveis, resumo e cotações fora da área fixa.
+Mantém tema claro/escuro, integração original com a nuvem e gráficos originais abaixo dos lançamentos. O layout do PC é preservado.
+
+PUBLICAÇÃO
+O ZIP de publicação contém os arquivos do site já gerados. Publique seu conteúdo na mesma hospedagem e no mesmo endereço do aplicativo atual, mantendo as pastas e caminhos.
+O ZIP de código-fonte contém o projeto para atualização no repositório e futuras gerações.
+A publicação remota não foi executada nesta sessão.
+
+Antes da atualização, faça backup pelo próprio aplicativo. Após publicar, atualize a página e aceite a atualização do aplicativo quando oferecida.
+
+VERIFICAÇÃO
+55 testes existentes do projeto aprovados. Gerador oficial concluiu V4.12.64 e validou JavaScript e isolamento da distribuição.
+Não houve validação visual em aparelho físico nem sincronização com uma conta real nesta sessão.
+A prévia demonstrativa é separada do aplicativo original e seus dados não foram incluídos no aplicativo.

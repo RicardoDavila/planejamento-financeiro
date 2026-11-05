@@ -1,10 +1,12 @@
 {
   "pessoal": [
-    "Remove do painel do PC os cards Saldo inicial, Saldo final projetado, Menor saldo projetado e Data crítica.",
-    "Mantém os demais cards, fluxo de caixa, relatórios, classificação PF/PJ e modo Celular."
+    "Melhora somente o celular: perfil do usuário, filtros em cortina e avisos completos sem alterar o período.",
+    "Preserva tema claro/escuro, nuvem e gráficos originais abaixo dos lançamentos.",
+    "Resumo e cotações deixam de cobrir o conteúdo; indicadores secundários ficam recolhíveis."
   ],
   "distribuicao": [
-    "Remove do painel do PC os cards Saldo inicial, Saldo final projetado, Menor saldo projetado e Data crítica.",
-    "Mantém os demais cards, fluxo de caixa, relatórios, classificação PF/PJ e modo Celular."
+    "Melhora somente o celular: perfil do usuário, filtros em cortina e avisos completos sem alterar o período.",
+    "Preserva tema claro/escuro, nuvem e gráficos originais abaixo dos lançamentos.",
+    "Resumo e cotações deixam de cobrir o conteúdo; indicadores secundários ficam recolhíveis."
   ]
 }

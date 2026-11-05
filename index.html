@@ -9576,6 +9576,40 @@ function install(){
  async function cloud(){const run=++cloudRun;try{const session=await obterSessaoNuvem();if(run!==cloudRun)return;sessionConnected=Boolean(session?.access_token&&session?.user?.id&&(!session.expires_at||Number(session.expires_at)>Date.now()/1000));const metadata=session?.user?.user_metadata||{},name=String(metadata.nome||metadata.full_name||metadata.name||'').trim();if(name!==cloudUserName){cloudUserName=name;render();}}catch{sessionConnected=false;}const raw=(original('statusNuvemBadge')?.textContent||'').trim();el('cloud').classList.toggle('online',sessionConnected);el('cloud').textContent=/sincronizando/i.test(raw)?'↻ Sincronizando':sessionConnected?'● Conectada':'○ Desconectada';el('cloud').title=original('statusNuvemBadge')?.title||'Conexão e sincronização com a nuvem';}
  el('cloud').onclick=()=>abrirConfiguracaoNuvem();if(original('statusNuvemBadge'))new MutationObserver(cloud).observe(original('statusNuvemBadge'),{childList:true,characterData:true,subtree:true});cloud();
  for(const id of ['pf495GreetingTitle','pf495PerfilBadge'])if(original(id))new MutationObserver(render).observe(original(id),{childList:true,characterData:true,subtree:true});
+
+ // Melhorias mobile V4.12.64: preserva os serviços e gráficos originais.
+ const periodTrigger=document.createElement('button');periodTrigger.type='button';periodTrigger.className='btn pf-period-trigger';periodTrigger.setAttribute('aria-controls','pm-periods');periodTrigger.setAttribute('aria-expanded','false');
+ const periods=el('periods');periods.before(periodTrigger);periods.hidden=true;
+ function closePeriods(){periods.hidden=true;periodTrigger.setAttribute('aria-expanded','false');}
+ periodTrigger.onclick=()=>{const opening=periods.hidden;periods.hidden=!opening;periodTrigger.setAttribute('aria-expanded',String(opening));};
+ el('periods').onclick=e=>{const b=e.target.closest('[data-period]');if(b){aplicarFiltroRapido(b.dataset.period);limit=30;closePeriods();render();periodTrigger.focus();}};
+ const oldFilters=el('filters'),inlineFilters=document.createElement('section');inlineFilters.id=oldFilters.id;inlineFilters.className='pf-inline-filters';inlineFilters.hidden=true;inlineFilters.setAttribute('aria-label','Filtros de lançamentos');while(oldFilters.firstChild)inlineFilters.append(oldFilters.firstChild);oldFilters.replaceWith(inlineFilters);el('openFilters').closest('.search').after(inlineFilters);
+ el('openFilters').setAttribute('aria-controls','pm-filters');el('openFilters').setAttribute('aria-expanded','false');
+ function closeFilters(){inlineFilters.hidden=true;el('openFilters').setAttribute('aria-expanded','false');}
+ el('openFilters').onclick=()=>{inlineFilters.hidden=!inlineFilters.hidden;el('openFilters').setAttribute('aria-expanded',String(!inlineFilters.hidden));};
+ el('filter-cancel').onclick=closeFilters;el('filter-cancel').setAttribute('aria-label','Recolher filtros');
+ select.onchange=()=>{statusFilter=select.value;limit=30;renderTable();};
+ panel.addEventListener('change',()=>{limit=30;renderTable();});
+ el('apply').onclick=()=>{closeFilters();limit=30;renderTable();};el('clear').onclick=()=>{statusFilter='';select.value='';limparFiltros();renderTable();};
+ const market=document.createElement('details');market.className='pf-market-collapsible';market.innerHTML='<summary>Cotações e referências</summary>';const marketBar=original('pfIndicadores'),marketRestore=original('pfMostrarIndicadores');if(marketBar){market.append(marketBar);if(marketRestore)market.append(marketRestore);shell.append(market);}
+ const noticePanel=document.createElement('section');noticePanel.id='pm-notice-details';noticePanel.className='pf-notice-details';noticePanel.hidden=true;el('alertBanner').after(noticePanel);
+ function refreshMobileNotices(){
+  const allowed=typeof protecaoAutenticada!=='undefined'&&protecaoAutenticada&&!document.body.classList.contains('auth-pendente');
+  if(!allowed){noticePanel.replaceChildren();noticePanel.hidden=true;return;}
+  const sections=[['Vencendo hoje','listaVencimentoHoje'],['Vencidos','listaVencidos']];let count=0;const html=sections.map(([title,id])=>{const source=original(id);const trs=source?[...source.children]:[];count+=trs.length;return '<h3>'+title+' · '+trs.length+'</h3>'+(trs.length?trs.map(tr=>{const cells=[...tr.children];return '<article><b>'+esc(cells[0]?.textContent||'Sem descrição')+'</b><span>Vencimento: '+esc(cells[1]?.textContent||'—')+'</span><strong>'+ (unlocked()?esc(cells[2]?.textContent||''):'R$ ••••')+'</strong><small>'+esc(cells[3]?.textContent||'Em aberto')+'</small></article>';}).join(''):'<p>Nenhum documento.</p>');}).join('');
+  const backup=original('pfAvisoBackup'),hasBackup=backup&&!backup.hidden;
+  noticePanel.innerHTML='<h2>Avisos do dia</h2>'+html+(hasBackup?'<h3>Cópia de segurança</h3><p>'+esc(original('pfAvisoBackupTexto')?.textContent||'Faça um backup dos seus dados.')+'</p><button type="button" class="btn" id="pm-backup-now">Fazer backup agora</button>':'');
+  if(el('backup-now'))el('backup-now').onclick=()=>fazerBackup();
+  el('alertCount').textContent=String(count+(hasBackup?1:0));el('alertText').textContent=count?count+' documento(s) exigem atenção':hasBackup?'Lembrete de backup':'Nenhum aviso no momento';el('alertBanner').hidden=!(count||hasBackup);
+ }
+ function toggleMobileNotices(){noticePanel.hidden=!noticePanel.hidden;el('notices').setAttribute('aria-expanded',String(!noticePanel.hidden));refreshMobileNotices();if(!noticePanel.hidden)noticePanel.scrollIntoView({behavior:'smooth',block:'start'});}
+ el('notices').onclick=toggleMobileNotices;el('alertBanner').onclick=toggleMobileNotices;
+ const noticeSource=original('pfAvisosConteudo');if(noticeSource)new MutationObserver(refreshMobileNotices).observe(noticeSource,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']});
+ const secondary=document.createElement('details');secondary.className='pf-secondary-metrics';secondary.innerHTML='<summary>Mais indicadores</summary><div class="kpis"></div>';const kpis=el('kRec').closest('.kpis');kpis.after(secondary);for(const id of ['kReceived','kOverdue','kInv'])secondary.querySelector('.kpis').append(el(id).closest('.kpi'));
+ const nextCard=el('kVen').closest('.kpi');nextCard.tabIndex=0;nextCard.setAttribute('role','button');nextCard.setAttribute('aria-label','Ver contas a vencer');const nextAction=()=>{statusFilter='pendente';select.value=statusFilter;aplicarFiltroRapido('7dias');renderTable();el('list').scrollIntoView({behavior:'smooth',block:'start'});};nextCard.onclick=nextAction;nextCard.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();nextAction();}};
+ const originalMobileRender=render;render=function(){originalMobileRender();periodTrigger.textContent=el('month').textContent+' ▾';refreshMobileNotices();};
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePeriods();closeFilters();noticePanel.hidden=true;el('notices').setAttribute('aria-expanded','false');}});
+
  const originalRender=window.renderTable;window.renderTable=function(...args){const result=originalRender.apply(this,args);render();return result;};render();
  function layout(){document.documentElement.style.setProperty('--pm-header-height',shell.querySelector('.bar').offsetHeight+'px');}if(window.ResizeObserver)new ResizeObserver(layout).observe(shell.querySelector('.bar'));layout();
 }
@@ -11353,5 +11387,26 @@ window.PFDesktopApproved={version:'V4.12.63',showComposition:(items,label)=>{syn
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
+<style id="pf-mobile-refinements-v64">
+body.pf-mobile-layout #pfMobileShell [hidden]{display:none!important}
+body.pf-mobile-layout #pfMobileShell .pf-period-trigger{width:100%;text-align:left;margin:10px 0;white-space:normal}
+body.pf-mobile-layout #pfMobileShell #pm-periods{border:1px solid var(--line);border-radius:12px;padding:8px!important;background:var(--card)}
+body.pf-mobile-layout #pfMobileShell .pf-inline-filters{background:var(--card);border:1px solid var(--line);padding:12px;border-radius:14px;margin:8px 0 12px}
+body.pf-mobile-layout #pfMobileShell .pf-inline-filters header,body.pf-mobile-layout #pfMobileShell .pf-inline-filters footer{position:static;display:flex;justify-content:space-between;align-items:center;gap:8px}
+body.pf-mobile-layout #pfMobileShell .pf-inline-filters h2{font-size:16px;margin:0}
+body.pf-mobile-layout #pfMobileShell .total{position:static!important;inset:auto!important;width:100%!important;padding:12px 16px;display:flex;flex-wrap:wrap;height:auto!important}
+body.pf-mobile-layout #pfMobileShell .ai{bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 14px)!important}
+body.pf-mobile-layout #pfMobileShell .pf-notice-details{background:var(--card);color:var(--text);padding:14px;border:1px solid var(--line);border-radius:14px;scroll-margin-top:150px}
+body.pf-mobile-layout #pfMobileShell .pf-notice-details h2{font-size:18px}
+body.pf-mobile-layout #pfMobileShell .pf-notice-details h3{font-size:15px;margin:16px 0 8px}
+body.pf-mobile-layout #pfMobileShell .pf-notice-details article{padding:12px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+body.pf-mobile-layout #pfMobileShell .pf-notice-details article>*{display:block;white-space:normal}
+body.pf-mobile-layout #pfMobileShell .pf-notice-details p,body.pf-mobile-layout #pfMobileShell .pf-notice-details span,body.pf-mobile-layout #pfMobileShell .pf-notice-details small{font-size:13px}
+body.pf-mobile-layout #pfMobileShell .pf-secondary-metrics summary{padding:12px 0;cursor:pointer}
+body.pf-mobile-layout #pfMobileShell #pm-profile{display:inline-flex!important;white-space:normal}
+body.pf-mobile-layout #pfMobileShell .pf-market-collapsible{margin:12px 16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+body.pf-mobile-layout #pfMobileShell #pfIndicadores,body.pf-mobile-layout #pfMobileShell #pfMostrarIndicadores{position:static!important;inset:auto!important;width:100%!important;height:auto!important;min-height:44px;flex-wrap:wrap}
+body.pf-mobile-layout #pfMobileShell{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px)!important}
+</style>
 </body>
 </html>
