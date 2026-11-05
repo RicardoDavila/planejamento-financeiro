@@ -20,7 +20,7 @@
   const hidden=Boolean(locked()),D=window.PFChartExplorer.data;
   const all=hidden?[]:window.PFQuickCards?window.PFQuickCards.apply(transacoes):transacoes;
   return {locked:hidden,dark:document.body.classList.contains('dark-mode'),
-   rows:hidden?[]:D.rows(getFilteredTransactions()),allRows:hidden?[]:D.rows(all),
+   rows:hidden?[]:D.rows(getFilteredTransactions()),allRows:hidden?[]:D.rows(window.PFPersonScope?window.PFPersonScope.apply(all):all),
    chosen:$('filtroDataFim')?.value||new Date().toISOString().slice(0,10),
    font:getComputedStyle(document.body).fontFamily};
  }

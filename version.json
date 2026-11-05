@@ -1,10 +1,10 @@
 {
-  "version": "V4.12.67",
-  "name": "V4.12.67",
+  "version": "V4.12.68",
+  "name": "V4.12.68",
   "channel": "pessoal",
   "notes": [
-    "Organiza Gráficos e análises somente no celular: filtros em cortina, Mais filtros, ações e Mais indicadores.",
-    "Remove o resumo executivo repetido apenas no celular. Mantém todos os gráficos, filtros rápidos, PDF, impressão e fechar.",
-    "Preserva o layout do PC e a correção de edição de lançamentos."
+    "Corrige a aplicação do tipo de pessoa cadastrado nos lançamentos, painel e bases dos gráficos.",
+    "Acrescenta Evolução mês a mês abaixo do Histórico de 12 meses, com receitas e saídas comparáveis e linhas de variação percentual.",
+    "Mantém filtros rápidos, gráficos existentes, impressão e as melhorias anteriores; não duplica os atalhos PF/PJ."
   ]
 }
