@@ -7904,7 +7904,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.66';
+ const CURRENT_VERSION='V4.12.67';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -11284,6 +11284,60 @@ body.pf-mobile-layout #pfMobileShell .pf-market-collapsible{margin:12px 16px;pad
 body.pf-mobile-layout #pfMobileShell #pfIndicadores,body.pf-mobile-layout #pfMobileShell #pfMostrarIndicadores{position:static!important;inset:auto!important;width:100%!important;height:auto!important;min-height:44px;flex-wrap:wrap}
 body.pf-mobile-layout #pfMobileShell{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px)!important}
 </style>
+
+<style id="pf-mobile-analysis-v67">
+body.pf-mobile-layout #modalGraficos #comparacaoTotaisGraficos{display:none!important}
+body.pf-mobile-layout #modalGraficos .pfma-bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+body.pf-mobile-layout #modalGraficos .pfma-bar button{min-height:44px;padding:10px 12px;border:1px solid #94a3b8;border-radius:10px;background:#eef2ff;color:#243452;font-size:14px}
+body.pf-mobile-layout.dark-mode #modalGraficos .pfma-bar button{background:#334155;color:#f8fafc}
+body.pf-mobile-layout #modalGraficos .pfma-summary{font-size:14px;line-height:1.5;margin:12px 0}
+body.pf-mobile-layout #modalGraficos .pfma-details{border:1px solid #94a3b866;border-radius:12px;padding:10px;margin:10px 0}
+body.pf-mobile-layout #modalGraficos .pfma-details>summary{cursor:pointer;min-height:44px;display:list-item;font-size:15px;font-weight:650;padding:10px 0}
+body.pf-mobile-layout #modalGraficos .pfma-details:not([open])>:not(summary){display:none!important}
+body.pf-mobile-layout #modalGraficos .pfma-details[open]>.pfma-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body.pf-mobile-layout #modalGraficos .pfma-period-options{display:flex;flex-direction:column;gap:5px}
+body.pf-mobile-layout #modalGraficos .pfma-period-options button{width:100%;min-height:44px;text-align:left;padding:10px;border-radius:8px}
+body.pf-mobile-layout #modalGraficos .pfma-actions{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+body.pf-mobile-layout #modalGraficos .pfma-actions button{min-height:46px;font-size:14px}
+body.pf-mobile-layout #modalGraficos .pfma-inputs{display:grid;grid-template-columns:1fr;gap:12px}
+body.pf-mobile-layout #modalGraficos .pfma-inputs label{font-size:14px!important}
+body.pf-mobile-layout #modalGraficos .pfma-inputs input,body.pf-mobile-layout #modalGraficos .pfma-inputs select{font-size:16px!important;min-height:44px;width:100%}
+body.pf-mobile-layout #modalGraficos #painelExecutivoGraficos .text-xs{font-size:14px!important;line-height:1.5}
+@media print{#modalGraficos .pfma-bar,#modalGraficos .pfma-summary,#modalGraficos .pfma-filter{display:none!important}}
+</style>
+<script id="pf-mobile-analysis-v67-script">
+(()=>{'use strict';const $=id=>document.getElementById(id);let undo=[],created=[],mounted=false;
+function remember(node,parent){if(!node||!parent)return;const mark=document.createComment('mobile-analysis-position');node.before(mark);undo.push(()=>{mark.replaceWith(node)});parent.append(node);}
+function make(tag,cls,parent,text){const node=document.createElement(tag);node.className=cls;if(text)node.textContent=text;parent.append(node);created.push(node);return node;}
+function details(parent,label){const d=make('details','pfma-details',parent);make('summary','',d,label);return d;}
+function update(){const text=$('pfma-summary');if(!text)return;const value=id=>$(id)?.value||'',label=id=>{const e=$(id);return e?.selectedOptions?.[0]?.textContent||e?.value||''};let count=0;for(const id of ['graficoDescricao','graficoValorMin','graficoValorMax'])if(value(id))count++;for(const id of ['graficoTipo','graficoRubrica','graficoSubItem','graficoStatusAvancado'])if(value(id)&&!['Todos','Todas'].includes(value(id)))count++;text.textContent=[value('graficoDataInicio').split('-').reverse().join('/'),value('graficoDataFim').split('-').reverse().join('/')].join(' a ')+' · '+label('graficoTipo')+' · '+label('graficoRubrica')+(count?' · '+count+' filtro(s) ativo(s)':'');if($('pfma-filter-button'))$('pfma-filter-button').textContent='Filtros'+(count?' ('+count+')':'');}
+function mount(){if(mounted)return;const modal=$('modalGraficos'),filters=modal?.querySelector('section[aria-label="Filtros dos gráficos"]');if(!filters)return;mounted=true;
+ const toolbar=make('div','pfma-bar',filters);filters.prepend(toolbar);
+ const summary=make('p','pfma-summary',filters);summary.id='pfma-summary';toolbar.after(summary);
+ const panel=details(filters,'Filtros da análise');panel.classList.add('pfma-filter');const basic=make('div','pfma-inputs',panel),advanced=details(panel,'Mais filtros'),extra=make('div','pfma-inputs',advanced);
+ const filterBtn=make('button','',toolbar,'Filtros');filterBtn.type='button';filterBtn.id='pfma-filter-button';panel.id='pfma-filter-panel';filterBtn.setAttribute('aria-controls',panel.id);filterBtn.setAttribute('aria-expanded','false');filterBtn.onclick=()=>{panel.open=!panel.open;filterBtn.setAttribute('aria-expanded',String(panel.open));};panel.addEventListener('toggle',()=>filterBtn.setAttribute('aria-expanded',String(panel.open)));
+ for(const id of ['graficoDataInicio','graficoDataFim','graficoTipo','graficoRubrica'])remember($(id)?.parentElement,basic);
+ for(const id of ['graficoSubItem','graficoDescricao','graficoStatusAvancado','graficoValorMin','graficoValorMax','graficoModoComparacao'])remember($(id)?.parentElement,extra);
+ const periods=details(filters,'Período ▾');toolbar.after(periods);const periodOptions=make('div','pfma-period-options',periods);
+ for(const b of [...filters.querySelectorAll('button[onclick^="atalhoPeriodoGraficos"]')]){remember(b,periodOptions);const close=()=>{periods.open=false;setTimeout(update,0)};b.addEventListener('click',close);undo.push(()=>b.removeEventListener('click',close));}
+ const more=details(filters,'Mais opções e visões salvas');
+ const saved=$('graficoVisoesSalvas');if(saved){const group=saved.parentElement;remember(group,more);}
+ const actions=make('div','pfma-actions',filters);const primary=filters.querySelector('button[onclick="gerarGraficoAnalise()"]');if(primary){remember(primary,actions);const old=primary.innerHTML;primary.textContent='Gerar análise';undo.push(()=>primary.innerHTML=old);}
+ for(const selector of ['gerarComparativoReceitasDespesas()','compararRubricaMesAnteriorAtual()'])remember(filters.querySelector('button[onclick="'+selector+'"]'),actions);
+ remember(filters.querySelector('button[onclick="limparFiltrosGraficos()"]'),toolbar);
+ // Preserve os botões originais de PDF, impressão e fechar, sempre disponíveis.
+ const title=modal.querySelector('h3');if(title){const old=title.innerHTML;title.textContent='Gráficos e análises';undo.push(()=>title.innerHTML=old);}
+ const exec=$('painelExecutivoGraficos');if(exec){const secondary=details(exec,'Mais indicadores'),grid=make('div','pfma-grid',secondary);for(const id of ['kpiGrafRecebidas','kpiGrafVencidas','kpiGrafPoupanca','kpiGrafComprometimento','kpiGrafPagas','kpiGrafVencer'])remember($(id)?.parentElement,grid);}
+ for(const [id,status] of [['kpiGrafPagas','Pago'],['kpiGrafVencer','A Vencer']]){const card=$(id)?.parentElement;if(!card)continue;const oldRole=card.getAttribute('role'),oldTab=card.getAttribute('tabindex');card.setAttribute('role','button');card.tabIndex=0;const pick=()=>{const field=$('graficoStatusAvancado');if(!field)return;const active=field.value===status&&$('graficoTipo').value==='Despesa';field.value=active?'Todos':status;$('graficoTipo').value=active?'Todos':'Despesa';atualizarVisibilidadeTipoGrafico();atualizarGraficos();update();};const keyboard=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick();}};card.addEventListener('click',pick);card.addEventListener('keydown',keyboard);undo.push(()=>{card.removeEventListener('click',pick);card.removeEventListener('keydown',keyboard);if(oldRole===null)card.removeAttribute('role');else card.setAttribute('role',oldRole);if(oldTab===null)card.removeAttribute('tabindex');else card.setAttribute('tabindex',oldTab);});}
+ const listener=()=>setTimeout(update,0);modal.addEventListener('change',listener);modal.addEventListener('input',listener);modal.addEventListener('click',listener);undo.push(()=>{modal.removeEventListener('change',listener);modal.removeEventListener('input',listener);modal.removeEventListener('click',listener)});
+ // Oculta somente os recipientes de filtros que ficaram vazios após a reorganização.
+ for(const child of [...filters.children])if(!created.includes(child)&&!child.querySelector('input,select,button')&&!child.matches('[role="alert"]')){const display=child.style.display;child.style.display='none';undo.push(()=>child.style.display=display);}
+ update();}
+function reconcile(){if(document.body.classList.contains('pf-mobile-layout'))mount();else if(mounted){for(const restore of undo.reverse())restore();for(const node of created.reverse())node.remove();undo=[];created=[];mounted=false;}}
+function start(){reconcile();new MutationObserver(reconcile).observe(document.body,{attributes:true,attributeFilter:['class']});const modal=$('modalGraficos');if(modal)new MutationObserver(update).observe(modal,{attributes:true,attributeFilter:['class','style']});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
 <style id="pf-rodape-mercado-ajustado">
 /* Contraste adicional somente no tema Dia. */
 body:not(.dark-mode) #pfIndicadores {

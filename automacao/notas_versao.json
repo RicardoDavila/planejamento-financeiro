@@ -1,10 +1,12 @@
 {
   "pessoal": [
-    "Corrige o toque no lançamento no celular: abre os detalhes e a ação Editar / lançar pagamento.",
-    "Mantém os filtros rápidos nos atalhos dos detalhes e preserva Mais indicadores, PC, nuvem e gráficos."
+    "Organiza Gráficos e análises somente no celular: filtros em cortina, Mais filtros, ações e Mais indicadores.",
+    "Remove o resumo executivo repetido apenas no celular. Mantém todos os gráficos, filtros rápidos, PDF, impressão e fechar.",
+    "Preserva o layout do PC e a correção de edição de lançamentos."
   ],
   "distribuicao": [
-    "Corrige o toque no lançamento no celular: abre os detalhes e a ação Editar / lançar pagamento.",
-    "Mantém os filtros rápidos nos atalhos dos detalhes e preserva Mais indicadores, PC, nuvem e gráficos."
+    "Organiza Gráficos e análises somente no celular: filtros em cortina, Mais filtros, ações e Mais indicadores.",
+    "Remove o resumo executivo repetido apenas no celular. Mantém todos os gráficos, filtros rápidos, PDF, impressão e fechar.",
+    "Preserva o layout do PC e a correção de edição de lançamentos."
   ]
 }
