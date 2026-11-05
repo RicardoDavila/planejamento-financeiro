@@ -7904,7 +7904,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.65';
+ const CURRENT_VERSION='V4.12.66';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -9421,7 +9421,7 @@ function install(){
   const month=original('filtroDataInicio').value;el('month').textContent=month?date(month)+' a '+date(original('filtroDataFim').value):'Todos os períodos';
   const overdue=transacoes.filter(late);el('alertCount').textContent=String(overdue.length);el('alertText').textContent=overdue.length+' vencido(s) · '+money(sum('Despesa',overdue));el('alertBanner').hidden=!overdue.length;
   const open=new Set([...el('list').querySelectorAll('.item.open')].map(x=>x.dataset.id));const groups=new Map();rows.slice(0,limit).forEach(r=>{const d=r.vencimento||'';if(!groups.has(d))groups.set(d,[]);groups.get(d).push(r);});
-  el('list').innerHTML=rows.length?[...groups].map(([day,list])=>'<div class="day"><span>'+esc(day?new Date(day+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'}):'Sem vencimento')+'</span><span class="num">'+money(list.reduce((a,r)=>a+Number(r.valor||0),0))+'</span></div><div class="group">'+list.map(r=>'<div class="item '+(open.has(String(r.id))?'open':'')+'" data-id="'+esc(r.id)+'"><button type="button" class="row" aria-expanded="'+open.has(String(r.id))+'"><div><b>'+esc(r.descricao||'Sem descrição')+'</b><small>'+esc(r.categoria||'Sem rubrica')+' · '+esc(r.subItem||'Sem subitem')+'</small></div><div class="right"><b class="num">'+money(r.valor)+'</b>'+badges(r)+'</div></button><div class="detail"><dl><dt>Vencimento</dt><dd>'+date(r.vencimento)+'</dd><dt>Pagamento</dt><dd>'+date(r.dataPg)+'</dd><dt>Tipo</dt><dd>'+esc(r.tipo)+'</dd><dt>Observação</dt><dd>'+esc(r.observacao||'—')+'</dd></dl><div class="actions"><button type="button" data-act="edit">Editar</button><button type="button" data-act="del" class="del">Excluir</button></div></div></div>').join('')+'</div>').join(''):'<p class="empty">Nenhum lançamento encontrado.<br>Ajuste a busca ou os filtros.</p>';
+  el('list').innerHTML=rows.length?[...groups].map(([day,list])=>'<div class="day"><span>'+esc(day?new Date(day+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'}):'Sem vencimento')+'</span><span class="num">'+money(list.reduce((a,r)=>a+Number(r.valor||0),0))+'</span></div><div class="group">'+list.map(r=>'<div class="item '+(open.has(String(r.id))?'open':'')+'" data-id="'+esc(r.id)+'"><button type="button" class="row" aria-expanded="'+open.has(String(r.id))+'"><div><b>'+esc(r.descricao||'Sem descrição')+'</b><small>'+esc(r.categoria||'Sem rubrica')+' · '+esc(r.subItem||'Sem subitem')+'</small></div><div class="right"><b class="num">'+money(r.valor)+'</b>'+badges(r)+'</div></button><div class="detail"><dl><dt>Vencimento</dt><dd>'+date(r.vencimento)+'</dd><dt>Pagamento</dt><dd>'+date(r.dataPg)+'</dd><dt>Tipo</dt><dd>'+esc(r.tipo)+'</dd><dt>Observação</dt><dd>'+esc(r.observacao||'—')+'</dd></dl><div class="actions"><button type="button" data-act="edit">Editar / lançar pagamento</button><button type="button" data-act="del" class="del">Excluir</button></div></div></div>').join('')+'</div>').join(''):'<p class="empty">Nenhum lançamento encontrado.<br>Ajuste a busca ou os filtros.</p>';
   el('more-rows').hidden=rows.length<=limit;el('tCount').textContent=rows.length+' lançamento(s)';el('tSum').textContent='Receitas '+money(income)+' · Despesas '+money(expense);
   const active=stateIds.filter(id=>original(id).value&&!['Todos','Todas'].includes(original(id).value));el('fCount').textContent=active.length+(statusFilter?1:0)?' · '+(active.length+(statusFilter?1:0)):'';
   el('active').innerHTML=active.map(id=>'<button type="button" data-clear="'+id+'">'+esc(original(id).value)+' ×</button>').join('')+(statusFilter?'<button type="button" data-clear="status">'+esc(select.options[select.selectedIndex].text)+' ×</button>':'');syncPeriod();
@@ -10641,6 +10641,8 @@ body.dark-mode #pfMobileShell .pf-dynamic-shortcuts button{background:#263b55;co
  }
  function activate(event){
   const node=event.target.closest('[data-pf-dynamic-field]');if(!node)return;
+  // No celular, o toque na linha abre as ações; filtros ficam nos atalhos dos detalhes.
+  if(node.closest('#pm-list .row'))return;
   if(event.target.closest('input,select,textarea,a,[contenteditable=true]'))return;
   if(node.matches('summary')){
    if(event.type!=='click')return;

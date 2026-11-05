@@ -1,9 +1,9 @@
 {
-  "version": "V4.12.65",
-  "name": "V4.12.65",
+  "version": "V4.12.66",
+  "name": "V4.12.66",
   "channel": "distribuicao",
   "notes": [
-    "No celular, move o card A vencer para Mais indicadores, deixando Receitas e Despesas lado a lado.",
-    "Preserva demais recursos, gráficos, nuvem, temas e layout do PC."
+    "Corrige o toque no lançamento no celular: abre os detalhes e a ação Editar / lançar pagamento.",
+    "Mantém os filtros rápidos nos atalhos dos detalhes e preserva Mais indicadores, PC, nuvem e gráficos."
   ]
 }
