@@ -1,10 +1,10 @@
 {
-  "version": "V4.12.68",
-  "name": "V4.12.68",
+  "version": "V4.12.69",
+  "name": "V4.12.69",
   "channel": "pessoal",
   "notes": [
-    "Corrige a aplicação do tipo de pessoa cadastrado nos lançamentos, painel e bases dos gráficos.",
-    "Acrescenta Evolução mês a mês abaixo do Histórico de 12 meses, com receitas e saídas comparáveis e linhas de variação percentual.",
-    "Mantém filtros rápidos, gráficos existentes, impressão e as melhorias anteriores; não duplica os atalhos PF/PJ."
+    "Separa os filtros de Gráficos e Evoluções dos filtros da página inicial, com seletor PF/PJ próprio herdado ao abrir.",
+    "Períodos rápidos e seletores aplicam a análise imediatamente; os gráficos usam a pessoa aplicada na análise.",
+    "Corrige a cor dos rótulos e percentuais da evolução mensal no modo escuro e preserva PF/PJ ao editar lançamentos."
   ]
 }
