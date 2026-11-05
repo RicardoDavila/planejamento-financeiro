@@ -7904,7 +7904,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.64';
+ const CURRENT_VERSION='V4.12.65';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -9476,7 +9476,7 @@ function install(){
  function toggleMobileNotices(){noticePanel.hidden=!noticePanel.hidden;el('notices').setAttribute('aria-expanded',String(!noticePanel.hidden));refreshMobileNotices();if(!noticePanel.hidden)noticePanel.scrollIntoView({behavior:'smooth',block:'start'});}
  el('notices').onclick=toggleMobileNotices;el('alertBanner').onclick=toggleMobileNotices;
  const noticeSource=original('pfAvisosConteudo');if(noticeSource)new MutationObserver(refreshMobileNotices).observe(noticeSource,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']});
- const secondary=document.createElement('details');secondary.className='pf-secondary-metrics';secondary.innerHTML='<summary>Mais indicadores</summary><div class="kpis"></div>';const kpis=el('kRec').closest('.kpis');kpis.after(secondary);for(const id of ['kReceived','kOverdue','kInv'])secondary.querySelector('.kpis').append(el(id).closest('.kpi'));
+ const secondary=document.createElement('details');secondary.className='pf-secondary-metrics';secondary.innerHTML='<summary>Mais indicadores</summary><div class="kpis"></div>';const kpis=el('kRec').closest('.kpis');kpis.after(secondary);for(const id of ['kVen','kReceived','kOverdue','kInv'])secondary.querySelector('.kpis').append(el(id).closest('.kpi'));
  const nextCard=el('kVen').closest('.kpi');nextCard.tabIndex=0;nextCard.setAttribute('role','button');nextCard.setAttribute('aria-label','Ver contas a vencer');const nextAction=()=>{statusFilter='pendente';select.value=statusFilter;aplicarFiltroRapido('7dias');renderTable();el('list').scrollIntoView({behavior:'smooth',block:'start'});};nextCard.onclick=nextAction;nextCard.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();nextAction();}};
  const originalMobileRender=render;render=function(){originalMobileRender();periodTrigger.textContent=el('month').textContent+' ▾';refreshMobileNotices();};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePeriods();closeFilters();noticePanel.hidden=true;el('notices').setAttribute('aria-expanded','false');}});

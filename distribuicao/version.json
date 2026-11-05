@@ -1,10 +1,9 @@
 {
-  "version": "V4.12.64",
-  "name": "V4.12.64",
+  "version": "V4.12.65",
+  "name": "V4.12.65",
   "channel": "distribuicao",
   "notes": [
-    "Melhora somente o celular: perfil do usuário, filtros em cortina e avisos completos sem alterar o período.",
-    "Preserva tema claro/escuro, nuvem e gráficos originais abaixo dos lançamentos.",
-    "Resumo e cotações deixam de cobrir o conteúdo; indicadores secundários ficam recolhíveis."
+    "No celular, move o card A vencer para Mais indicadores, deixando Receitas e Despesas lado a lado.",
+    "Preserva demais recursos, gráficos, nuvem, temas e layout do PC."
   ]
 }
