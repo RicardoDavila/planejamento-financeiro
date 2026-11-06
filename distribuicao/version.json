@@ -1,10 +1,10 @@
 {
-  "version": "V4.12.78",
-  "name": "V4.12.78",
+  "version": "V4.12.79",
+  "name": "V4.12.79",
   "channel": "distribuicao",
   "notes": [
-    "Posiciona Moeda imediatamente ao lado de Idioma na barra atual, também no celular.",
-    "Corrige a conversão nos sete cartões do painel gerencial e nos saldos adicionais.",
-    "Preserva os valores originais em BRL, edição, histórico, cálculos e layout existente."
+    "Adiciona Notas do período ao Assistente Financeiro, sem reorganizar o layout atual.",
+    "Inclui notas por mês com salvamento automático, busca, etiquetas, fixação, exportação e importação.",
+    "Mantém notas locais e isoladas por conta, sem envio à IA nem alteração dos registros financeiros."
   ]
 }
