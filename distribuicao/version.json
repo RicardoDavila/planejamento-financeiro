@@ -1,10 +1,10 @@
 {
-  "version": "V4.12.80",
-  "name": "V4.12.80",
+  "version": "V4.12.81",
+  "name": "V4.12.81",
   "channel": "distribuicao",
   "notes": [
-    "Corrige textos que permaneciam em português nos filtros, gráficos, fluxo de caixa, avisos e perfil ao selecionar inglês ou espanhol.",
-    "Traduz opções padrão sem alterar os valores dos seletores, nomes cadastrados ou registros financeiros.",
-    "Preserva layout, conversão de moedas e relatórios. Não inclui o bloco de notas adiado."
+    "Completa as traduções do saldo mínimo, próxima entrada, relatório mensal e legendas dos gráficos.",
+    "Corrige tradução do cabeçalho ordenado, meses abreviados e escala em milhares.",
+    "Preserva valores financeiros e nomes cadastrados."
   ]
 }

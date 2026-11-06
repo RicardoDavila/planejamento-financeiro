@@ -60,3 +60,19 @@ console.log('PASS: idiomas globais, armazenamento isolado, códigos/valores pres
 }
 
 assert.equal(load('en').api.translate('Meta Selic: 13,75 % a.a. · referência 06/11/2026'),'Selic target: 13,75 % p.a. · reference 06/11/2026');
+// Remaining English strings reported on 2026-11-06.
+{
+ const en=load('en').api;
+ assert.equal(en.translate('Menor saldo calculado: -R$ 29.721,08 em 19/11/2026. Próxima entrada prevista: 20/11/2026.'),'Lowest calculated balance: -R$ 29.721,08 on 19/11/2026. Next expected income: 20/11/2026.');
+ assert.equal(en.translate('Próxima entrada prevista: 20/11/2026.'),'Next expected income: 20/11/2026.');
+ assert.equal(en.translate('Vencimento ▴'),'Due date ▴');
+ assert.equal(en.translate('Vencimento ▾'),'Due date ▾');
+ assert.equal(en.translate('Resumo atualizado com os dados atuais do aplicativo.'),'Summary updated with the current app data.');
+ assert.equal(en.translate('Período de referência: 01/11/2026 a 30/11/2026'),'Reference period: 01/11/2026 to 30/11/2026');
+ assert.equal(en.translate('nov. de 26'),'Nov 26');
+ assert.equal(en.translate('13,5 mil'),'13.5k');
+ assert.equal(en.translate('N/D'),'N/A');
+ for(const caption of ['Resultado, composição e caixa • filtros independentes; pessoa inicial herdada do painel','Verde: receitas · Rosa: saídas (despesas e investimentos). Percentual = (mês atual − anterior) ÷ |anterior| × 100. N/D para base zero, mês parcial ou histórico insuficiente; não há linha ligando intervalos sem base.'])assert.notEqual(en.translate(caption),caption);
+ const portuguese=load('pt-BR').api;assert.equal(portuguese.translate('nov. de 26'),'nov. de 26');assert.equal(portuguese.translate('13,5 mil'),'13,5 mil');
+ console.log('PASS: saldo mínimo e próxima entrada, legenda completa, subtítulo, ordenação, relatório mensal, meses e escala.');
+}

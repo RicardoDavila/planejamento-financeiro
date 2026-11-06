@@ -12,7 +12,7 @@
 <script id="pf-global-language">
 /* Global UI language. Financial values, stored codes and user records stay canonical. */
 (()=>{
-const catalogue=[
+const catalogue=[["Resultado, composição e caixa • filtros independentes; pessoa inicial herdada do painel", "Results, composition and cash flow • independent filters; initial person type inherited from the dashboard", "Resultado, composición y caja • filtros independientes; tipo de persona inicial heredado del panel"], ["Resumo atualizado com os dados atuais do aplicativo.", "Summary updated with the current app data.", "Resumen actualizado con los datos actuales de la aplicación."], ["Atenção: o saldo previsto do período está negativo.", "Warning: the planned balance for the period is negative.", "Atención: el saldo previsto del período es negativo."], ["Saldos acumulados N/D para filtros de conteúdo. Limpe os filtros para avaliar o caixa.", "Cumulative balances are N/A with content filters. Clear the filters to assess cash flow.", "Saldos acumulados N/D con filtros de contenido. Borra los filtros para evaluar la caja."], ["Verde: receitas · Rosa: saídas (despesas e investimentos). Percentual = (mês atual − anterior) ÷ |anterior| × 100. N/D para base zero, mês parcial ou histórico insuficiente; não há linha ligando intervalos sem base.", "Green: income · Pink: outflows (expenses and investments). Percentage = (current month − previous month) ÷ |previous month| × 100. N/A for a zero baseline, partial month or insufficient history; intervals without a baseline are not connected by a line.", "Verde: ingresos · Rosa: salidas (gastos e inversiones). Porcentaje = (mes actual − anterior) ÷ |anterior| × 100. N/D para base cero, mes parcial o historial insuficiente; no se conectan intervalos sin base."],
 [
 "Idioma",
 "Language",
@@ -4407,6 +4407,7 @@ function bootFinancialLanguage(catalogue, options) {
  const textRecords=new WeakMap(),attributeRecords=new WeakMap(),chartLabels=new WeakMap();
  let trigger,menu;
  const patterns=[
+  [/^Próxima entrada prevista: (.+)\.$/,'Next expected income: $1.','Próximo ingreso previsto: $1.'],
   [/^Filtro rápido: (.+)\.$/,'Quick filter: $1.','Filtro rápido: $1.'],
   [/^referência (.+)$/,'reference $1','referencia $1'],
   [/^Meta Selic: (.+?) % a\.a\.$/,'Selic target: $1 % p.a.','Meta Selic: $1 % anual'],
@@ -4471,12 +4472,13 @@ function bootFinancialLanguage(catalogue, options) {
   if(row){let result=row[index];if(n===n.toLocaleUpperCase('pt-BR')&&/[a-zà-ÿ]/i.test(n))result=result.toLocaleUpperCase(locales[target]);return leading+result+trailing;}
   if(n.endsWith(':')){const label=bySource.get(n.slice(0,-1).trim().toLowerCase());if(label)return leading+label[index]+':'+trailing;}
   // Decorative toolbar arrows and icons are kept exactly where they already were.
-  const decorated=n.match(/^([^\p{L}\p{N}]*)(.*?)(\s*[▾▼▸▹]?)$/u);
+  const decorated=n.match(/^([^\p{L}\p{N}]*)(.*?)(\s*[▾▼▸▹▴▲△▽]?)$/u);
   if(decorated&&(row=bySource.get(decorated[2].trim().toLowerCase())))return leading+decorated[1]+row[index]+decorated[3]+trailing;
   if(n.includes('\n')||raw.includes('\n'))return raw.split('\n').map(line=>translate(line,target)).join('\n');
   const field=n.match(/^(Rubrica|Categoria|Descrição|Sub-Item|Tipo|Status): (.*)$/);if(field)return leading+translateBase(field[1],target)+': '+(['Tipo','Status'].includes(field[1])?translateBase(canonical(field[2]),target):field[2])+trailing;
   const profile=n.match(/^(Perfil|Tipo de pessoa): (.+)$/);if(profile)return leading+(profile[1]==='Perfil'?(target==='en'?'Role: ':'Perfil: '):(target==='en'?'Person type: ':'Tipo de persona: '))+translateBase(canonical(profile[2]),target)+trailing;
   const analysis=n.match(/^Modo: (.+)\. Tipo de pessoa: (.+)\. Critério: vencimento\.$/);if(analysis)return leading+(target==='en'?'Mode: ':'Modo: ')+translateBase(canonical(analysis[1]),target)+(target==='en'?'. Person type: ':'. Tipo de persona: ')+translateBase(canonical(analysis[2]),target)+(target==='en'?'. Based on due date.':'. Según fecha de vencimiento.')+trailing;
+  const risk=n.match(/^Menor saldo calculado: (.+?) em (.+?)\.(?: Próxima entrada prevista: (.+?)\.)?$/);if(risk)return leading+(target==='en'?'Lowest calculated balance: ':'Saldo mínimo calculado: ')+risk[1]+(target==='en'?' on ':' el ')+risk[2]+'.'+(risk[3]?' '+translateBase('Próxima entrada prevista: '+risk[3]+'.',target):'')+trailing;
   for(const [pattern,en,es]of patterns)if(pattern.test(n))return leading+n.replace(pattern,target==='en'?en:es)+trailing;
   if(n.includes(' • '))return leading+n.split(' • ').map(part=>translateBase(part,target)).join(' • ')+trailing;
   if(n.includes(' · ')&&!/^Saldo inicial calculado:/.test(n))return leading+n.split(' · ').map(part=>translateBase(part,target)).join(' · ')+trailing;
@@ -4485,10 +4487,14 @@ function bootFinancialLanguage(catalogue, options) {
   return raw;
  }
  function translate(value,target=language){
-  const result=translateBase(value,target);if(target==='pt-BR')return result;
+  let result=translateBase(value,target);if(/^Período de referência:/.test(String(value)))result=result.replace(/(\d{2}\/\d{2}\/\d{4}) a (?=\d{2}\/)/g,target==='en'?'$1 to ':'$1 a ');if(target==='pt-BR')return result;
   const months=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
   let localized=result.replace(/(\d{1,2}) de (janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro) de (\d{4})/gi,(_,day,month,year)=>new Date(Number(year),months.indexOf(month.toLowerCase()),Number(day),12).toLocaleDateString(locales[target],{day:'numeric',month:'long',year:'numeric'}));
   localized=localized.replace(/\b(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro) de (\d{4})\b/gi,(_,month,year)=>new Date(Number(year),months.indexOf(month.toLowerCase()),1,12).toLocaleDateString(locales[target],{month:'long',year:'numeric'}));
+  const shortMonths=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  localized=localized.replace(/\b(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\. de (\d{2}|\d{4})\b/gi,(_,month,year)=>new Date(Number(year.length===2?'20'+year:year),shortMonths.indexOf(month.toLowerCase()),1,12).toLocaleDateString(locales[target],{month:'short',year:year.length===2?'2-digit':'numeric'}));
+  if(target==='en'&&/^-?[\d.,]+ mil$/.test(localized.trim()))localized=localized.replace(',','.').replace(' mil','k');
+  if(localized.trim()==='N/D'&&target==='en')localized=localized.replace('N/D','N/A');
   return localized;
  }
  function originalText(element){
@@ -4525,7 +4531,7 @@ function bootFinancialLanguage(catalogue, options) {
   return !!element.closest('script,style,noscript,textarea,[contenteditable="true"],[data-pf-i18n-skip],#pfLanguageMenu,#pfLanguageButton,#pf493Actions,#pfMobileMaisPanel,#pfHelpMenu .pf-help-dropdown,.analysis-bars,.pf-bar-row,.pf-heat-cell,.pfce-alt,.pfce-bars,.pfce-detail tbody,.pfce-points,#pfDozeMeses,.grafico-area,svg text,.lcm-value,.lcm-valor,[data-g-item-field],[data-pf-dynamic-value]');
  }
  function applyNode(node){
-  const parent=node.parentElement;if(excluded(parent)||!normalize(node.data))return;
+  const parent=node.parentElement;const chartText=parent?.closest('svg text,#pfDozeMeses,.grafico-area');const chartSource=textRecords.get(node);const original=chartSource&&node.data===chartSource.last?chartSource.source:node.data;if(chartText&&/^(?:N\/D|-?[\d.,]+ mil|(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\. de \d{2,4})$/.test(original.trim())){const next=translate(original);node.data=next;textRecords.set(node,{source:original,last:next});return;}if(excluded(parent)||!normalize(node.data))return;
   const option=parent.closest('option');if(option){const select=option.parentElement;if(/rubric|categor|subitem|descri|conta|nome/i.test(select?.id||'')&&!/^(?:Todos?|Todas?|Todas as Rubricas|Todos os Sub[- ]Itens)$/i.test(normalize(node.data)))return;if(!option.hasAttribute('value'))option.setAttribute('value',option.value);}
   const old=textRecords.get(node),source=old&&node.data===old.last?old.source:canonical(node.data),next=translate(source);
   if(next!==node.data){parent.dataset.pfceUi='true';node.data=next;}
@@ -4586,7 +4592,7 @@ function bootFinancialLanguage(catalogue, options) {
   if(selection&&!selection.pfLanguageWrapped){selection.pfLanguageWrapped=true;const decorate=selection.decorate.bind(selection),install=selection.install.bind(selection);selection.decorate=html=>api.decorate(decorate(html));selection.install=target=>{install(target);target.eval('('+bootFinancialLanguage.toString()+')('+JSON.stringify(catalogue)+','+JSON.stringify({language,noMenu:true})+')');};}
   const core=window.PFAssistenteCore;if(core&&!core.pfLanguageWrapped){core.pfLanguageWrapped=true;const answer=core.answer.bind(core);core.answer=(question,...args)=>answer(language==='pt-BR'?question:uiQuestion(question),...args);}
   const gemini=window.PFGemini;if(gemini&&!gemini.pfLanguageWrapped){gemini.pfLanguageWrapped=true;const query=gemini.query.bind(gemini);gemini.query=args=>{if(language==='pt-BR')return query(args);const prefix=language==='en'?'Respond in English. ':'Responde en español. ';if((prefix+args.question).length>600)throw Error(translate('Reduza a pergunta para enviar no idioma selecionado.'));return query({...args,question:prefix+args.question});};}
-  if(typeof Chart!=='undefined'&&typeof Chart.register==='function')Chart.register({id:'pfGlobalLanguage',beforeUpdate(chart){for(const dataset of chart.data.datasets||[]){const previous=chartLabels.get(dataset),source=previous&&dataset.label===previous.last?previous.source:canonical(dataset.label);dataset.label=translate(source);chartLabels.set(dataset,{source,last:dataset.label});}}});
+  if(typeof Chart!=='undefined'&&typeof Chart.register==='function')Chart.register({id:'pfGlobalLanguage',beforeUpdate(chart){for(const axis of Object.values(chart.options.scales||{})){if(!axis.ticks)continue;const callback=axis.ticks.callback;if(callback&&!callback.pfLanguageWrapped){const wrapped=function(...args){const value=callback.apply(this,args);return Array.isArray(value)?value.map(v=>translate(v)):translate(value);};wrapped.pfLanguageWrapped=true;axis.ticks.callback=wrapped;}}for(const dataset of chart.data.datasets||[]){const previous=chartLabels.get(dataset),source=previous&&dataset.label===previous.last?previous.source:canonical(dataset.label);dataset.label=translate(source);chartLabels.set(dataset,{source,last:dataset.label});}}});
   observer=new MutationObserver(schedule);apply();syncContainer();
   try{if(window.opener?.PFI18n){const sync=()=>setLanguage(window.opener.PFI18n.getLanguage(),false);window.opener.addEventListener('pf-language-change',sync);window.addEventListener('pagehide',()=>{try{window.opener.removeEventListener('pf-language-change',sync);}catch(_){}},{once:true});}}catch(_){}
  }
