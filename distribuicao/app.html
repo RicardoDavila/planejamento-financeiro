@@ -7907,7 +7907,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.73';
+ const CURRENT_VERSION='V4.12.74';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -11632,6 +11632,38 @@ for (const name of ['salvarGraficosPDF','imprimirGraficos']) {
 }
 
 
+</script>
+
+<script id="pf-spelling-assistance">
+/* Native Portuguese suggestions; never changes entered text or financial records. */
+(() => {
+ 'use strict';
+ const selector='input,textarea,[contenteditable="true"]';
+ const message='Corretor em português: palavras suspeitas podem ser sublinhadas. No computador, clique com o botão direito para ver sugestões; no celular, use as sugestões do teclado. Depende do corretor estar ativado no navegador ou teclado.';
+ const hint=document.createElement('span');hint.id='pf-spelling-hint';hint.textContent='ABC · '+message;hint.hidden=true;hint.style.cssText='display:block;font:11px/1.5 system-ui;margin-top:5px;color:inherit;opacity:.85';hint.setAttribute('role','note');
+ function eligible(field){
+  if(!field?.matches?.(selector)||field.disabled||field.readOnly)return false;
+  if(field.tagName==='INPUT'&&field.type!=='text')return false;
+  const context=[field.id,field.name,field.getAttribute('oninput'),field.getAttribute('placeholder')].join(' ');
+  if(/senha|password|token|secret|chave|email|publickey|serviceid|templateid/i.test(context))return false;
+  return field.tagName==='TEXTAREA'||field.isContentEditable||/descri|observ|rubric|categor|subitem|classific/i.test(context);
+ }
+ function enable(field){
+  if(!eligible(field))return false;
+  field.setAttribute('lang','pt-BR');field.setAttribute('spellcheck','true');
+  if(!field.title)field.title=message;
+  return true;
+ }
+ function refresh(){document.querySelectorAll(selector).forEach(enable);}
+ document.addEventListener('focusin',event=>{
+  const field=event.target;if(!enable(field))return;
+  const described=(field.getAttribute('aria-describedby')||'').split(/\s+/).filter(Boolean);
+  if(!described.includes(hint.id))field.setAttribute('aria-describedby',[...described,hint.id].join(' '));
+  field.after(hint);hint.hidden=false;hint.style.display='block';
+ });
+ document.addEventListener('focusout',event=>{if(eligible(event.target)){hint.hidden=true;hint.style.display='none';}});
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh,{once:true});else refresh();
+})();
 </script>
 </body>
 </html>

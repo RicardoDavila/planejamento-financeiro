@@ -1,27 +1,23 @@
-# V4.12.73 — PDF e impressão na análise mensal
+# V4.12.74 — corretor ortográfico em português
 
-## O que mudou
+## Como usar
 
-A coluna “Análise do mês de receitas e despesas por rubrica e evolução” agora tem Salvar em PDF e Imprimir no topo. Cada gráfico também tem seus próprios botões, junto ao seletor do tipo de gráfico.
+Ao clicar em um campo de descrição, observações ou texto de classificação, aparece a indicação ABC com instruções. O campo solicita ao navegador verificação ortográfica em português do Brasil.
 
-Os botões do topo preparam os quatro gráficos. Os botões individuais preparam apenas o gráfico correspondente. O relatório mantém a visualização selecionada (áreas, pizza, colunas ou padrão), com título do projeto, logotipo incorporado, período, filtros e data de emissão. A apresentação usa fundo branco para impressão. Não depende do carregamento externo do logotipo.
+Palavras suspeitas podem ser sublinhadas pelo navegador. No computador, clique com o botão direito sobre a palavra para consultar as sugestões. No celular, as sugestões e sua apresentação dependem do teclado instalado.
 
-Antes da saída, o relatório apresenta a seleção de conteúdo e a prévia. Clique em Pré-visualizar e, depois, Gerar PDF ou Imprimir. Para o PDF, escolha Salvar como PDF no diálogo do navegador.
+A correção ortográfica em português precisa estar habilitada no navegador ou teclado. O sistema não tem um dicionário próprio e não garante a detecção de todos os erros. A marcação visual, a disponibilidade do dicionário e as sugestões dependem do navegador, de suas configurações e do teclado.
 
-Os dados, filtros e gráficos da tela original permanecem preservados. As verificações de acesso são repetidas antes de abrir o documento. Se a aba for bloqueada pelo navegador, o sistema informa que é necessário permitir sua abertura.
+O código não substitui palavras, não salva correções automaticamente e não envia os textos a um serviço de correção próprio. O corretor do navegador obedece às configurações de privacidade do próprio navegador. Senhas, e-mails, credenciais, datas e campos numéricos não recebem a assistência deste módulo.
+
+Os campos criados dinamicamente durante a edição também recebem a configuração quando são focados. O título e a indicação de ajuda são mantidos acessíveis sem substituir os rótulos dos campos.
 
 ## Instalação
 
-Este ZIP contém 18 arquivos e inclui cumulativamente a correção anterior da publicação e a seleção dos relatórios.
+Este pacote é cumulativo: inclui as melhorias anteriores dos relatórios, os botões de PDF/impressão com cabeçalho e logotipo e a correção dos testes de publicação.
 
-Extraia e copie o conteúdo para a raiz do repositório atual, substituindo os arquivos correspondentes. Inclua a pasta automacao no commit. Preserve os demais arquivos e pastas do repositório; este pacote é uma atualização, não um repositório completo. Faça um novo commit na main para publicar.
+Extraia e copie os arquivos para a raiz do repositório atual, substituindo os correspondentes. Inclua a pasta automacao no commit. Não exclua os demais arquivos do repositório. Depois, faça um novo commit na main para publicar.
 
 ## Verificação
 
-- A bateria de 56 testes usada pelo workflow passou.
-- O teste específico de exportação mensal passou: relatório completo e individual, cabeçalho, logotipo, período, filtros, tipo selecionado, escape de texto, bloqueio de acesso e popup bloqueado.
-- A compilação dos scripts das três versões passou.
-- A geração do site V4.12.73 concluiu com sucesso, incluindo as verificações de distribuição.
-- O ZIP foi comparado ao projeto original para conferir que inclui todas as alterações necessárias.
-
-A interação visual em navegador, celular e o PDF renderizado continuam sem conferência visual neste ambiente, que bloqueia a abertura do Chrome automatizado. Os testes de exportação usam documentos simulados e não substituem essa conferência visual.
+Os 56 testes de publicação passaram. As verificações de sintaxe dos scripts das três versões passaram. A geração do site V4.12.74 concluiu com sucesso. A verificação visual do sublinhado e das sugestões deve ser feita no navegador ou teclado usado pelo usuário; esse recurso é fornecido pelo navegador, e não pelo JavaScript da aplicação.

@@ -1,10 +1,10 @@
 {
   "pessoal": [
-    "Adiciona Salvar em PDF e Imprimir na análise mensal e em cada gráfico, com cabeçalho e logotipo do projeto.",
-    "Preserva o tipo de gráfico, os filtros e a seleção de conteúdo antes da exportação."
+    "Ativa sugestões ortográficas em português nos campos de descrição, observações e outros textos de classificação.",
+    "Mostra orientação ao focar o campo e preserva a digitação; as sugestões dependem do navegador ou teclado."
   ],
   "distribuicao": [
-    "Adiciona Salvar em PDF e Imprimir na análise mensal e em cada gráfico, com cabeçalho e logotipo do projeto.",
-    "Preserva o tipo de gráfico, os filtros e a seleção de conteúdo antes da exportação."
+    "Ativa sugestões ortográficas em português nos campos de descrição, observações e outros textos de classificação.",
+    "Mostra orientação ao focar o campo e preserva a digitação; as sugestões dependem do navegador ou teclado."
   ]
 }
