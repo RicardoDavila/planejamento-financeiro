@@ -1,19 +1,21 @@
-# Notas privadas no assistente financeiro — V4.12.79
+# Correção de traduções, avisos e perfil — V4.12.80
 
-Nome da atualização: Notas privadas no assistente financeiro
+Nome da atualização: Correção de traduções, avisos e perfil
 
-Abra Assistente financeiro > Notas do período. O painel abre separadamente, sem reorganizar o layout existente. O mês inicial acompanha o período do assistente; em intervalos, começa pelo mês da data inicial. O seletor Mês da nota permite consultar ou criar notas em outro mês.
+Corrige os textos identificados nas imagens: filtros de rubricas e subitens, agrupamento e opções do fluxo de caixa, modos e resumos da análise, títulos de gráficos, indicadores, explicações, avisos de vencimento/backup, saudação e perfil. Inclui inglês e espanhol, com retorno aos textos originais em português.
 
-Recursos: notas por mês, salvamento automático com indicação de sucesso ou falha, busca por título/texto/etiquetas, filtro por etiqueta, fixação, exportação de todas as notas para JSON, importação de JSON e exclusão de uma nota com confirmação.
+O conteúdo cadastrado pelo usuário (nomes, categorias, descrições e subitens) é preservado. Por exemplo, uma categoria chamada CELULAR continua com esse nome. As opções padrão como Todas as Rubricas são traduzidas mantendo o valor interno original; nenhum lançamento ou cálculo é reescrito. Idioma e moeda continuam independentes.
 
-Cada nota aceita título de até 120 caracteres, texto de até 20 mil caracteres e até 10 etiquetas de até 30 caracteres. O armazenamento admite até 2 mil notas, dentro do limite total de aproximadamente 3 milhões de caracteres e da capacidade disponível do navegador. Falhas de salvamento mantêm o texto aberto com aviso e a opção de tentar novamente. Alterações concorrentes na mesma nota são recusadas para não sobrescrever silenciosamente outra edição.
+O layout existente foi preservado. As mudanças de perfil apenas permitem reconhecer a saudação traduzida ao apresentar o nome do usuário. Também foi corrigida a aplicação da política de conexão para impedir que a inclusão do host de cotações alterasse o endereço de consulta dos indicadores BCB.
 
-As notas são locais deste navegador/dispositivo. Na distribuição, usam o adaptador de armazenamento isolado da conta. Não são enviadas à IA, à nuvem nem incluídas nos lançamentos, cálculos ou relatórios financeiros. A troca de idioma não traduz o conteúdo pessoal das notas. Use Exportar notas para guardar uma cópia ou transferi-las a outro navegador. A importação valida o arquivo antes de gravar e preserva as notas existentes, atribuindo outro identificador quando necessário.
+O bloco de notas permanece adiado. O pacote traz o gerador sem a integração de notas e uma verificação dessa ausência, inclusive para quem chegou a enviar a atualização de notas ao repositório antes de adiar a funcionalidade. Arquivos antigos não utilizados podem permanecer no repositório, sem exclusão manual.
 
-## Aplicação
+## Instalação
 
-Pacote complementar à versão com a correção de moedas V4.12.78. Extraia na raiz do projeto e substitua os arquivos correspondentes, incluindo automacao. Não apague os demais arquivos. Mantenha o publicar.yml que já funcionou. Após publicar, atualize a página e abra o Assistente financeiro.
+Substitua todos os arquivos correspondentes na raiz do projeto, incluindo os arquivos da pasta automacao. Não apague os demais arquivos e não altere publicar.yml. O pacote é complementar às atualizações anteriores de idioma/moeda e pode ser aplicado sobre o envio das notas que não chegou a ser publicado.
+
+Depois da publicação, recarregue a página e selecione inglês em Idioma. Confira os filtros, gráficos, fluxo de caixa, avisos e perfil; volte para português para verificar a restauração. O pacote não é uma publicação automática no GitHub.
 
 ## Verificação
 
-60 testes automatizados aprovados. Foram acrescentados testes de persistência, isolamento da chave de notas, busca, etiquetas, fixação, concorrência, limite de armazenamento, importação sem gravação parcial e exclusão. As versões públicas foram geradas com validação de JavaScript. Os blocos CSS existentes nas três aplicações foram preservados. O módulo real de notas também foi testado no navegador em ambiente isolado: criação, edição, salvamento automático, etiquetas, fixação e persistência após recarregar. Essa verificação não utilizou registros financeiros do projeto.
+Testes de tradução de mensagens fixas e compostas, preservação de nomes e valores dos seletores, troca e retorno de idioma, perfil, avisos e endpoint BCB. Geração das versões públicas e validação de JavaScript. Comparação dos blocos CSS existentes nas três aplicações com a versão anterior, sem alterações.

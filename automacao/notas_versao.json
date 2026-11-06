@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Adiciona Notas do período ao Assistente Financeiro, sem reorganizar o layout atual.",
-    "Inclui notas por mês com salvamento automático, busca, etiquetas, fixação, exportação e importação.",
-    "Mantém notas locais e isoladas por conta, sem envio à IA nem alteração dos registros financeiros."
+    "Corrige textos que permaneciam em português nos filtros, gráficos, fluxo de caixa, avisos e perfil ao selecionar inglês ou espanhol.",
+    "Traduz opções padrão sem alterar os valores dos seletores, nomes cadastrados ou registros financeiros.",
+    "Preserva layout, conversão de moedas e relatórios. Não inclui o bloco de notas adiado."
   ],
   "distribuicao": [
-    "Adiciona Notas do período ao Assistente Financeiro, sem reorganizar o layout atual.",
-    "Inclui notas por mês com salvamento automático, busca, etiquetas, fixação, exportação e importação.",
-    "Mantém notas locais e isoladas por conta, sem envio à IA nem alteração dos registros financeiros."
+    "Corrige textos que permaneciam em português nos filtros, gráficos, fluxo de caixa, avisos e perfil ao selecionar inglês ou espanhol.",
+    "Traduz opções padrão sem alterar os valores dos seletores, nomes cadastrados ou registros financeiros.",
+    "Preserva layout, conversão de moedas e relatórios. Não inclui o bloco de notas adiado."
   ]
 }

@@ -38,3 +38,25 @@ console.log('PASS: idiomas globais, armazenamento isolado, códigos/valores pres
  assert.equal(ctx.D.typeRows([{tipo:'Receita',valor:100},{tipo:'Despesa',valor:25}],'Income').length,1);
  console.log('PASS: legendas dos gráficos traduzidas; nomes do cadastro, séries de origem e valores numéricos preservados.');
 }
+// Regression cases from the English-language screenshots, including notices and profile.
+{
+ const en=load('en').api,es=load('es').api;
+ for(const text of ['Ocultar fluxo de caixa','Agrupar por','Dia','Ocultar dias sem movimento','Todas as Rubricas','Todos os Sub-Itens','Tipo de pessoa da análise','Modo de análise','Análise do período','Mapa de calor — saídas por dia','Receitas previstas por vencimento','Receitas previstas por descrição','Comprometimento','Saídas ÷ receitas','Sem data ou com valor zero','Pagamentos antes dos recebimentos','Dedução das saídas','Avisos do dia','Importante: faça um backup','Editar perfil','Como gostaria de ser chamado?'])assert.notEqual(en.translate(text),text,text);
+ assert.equal(en.translate('Olá, Ricardo Dávila!'),'Hello, Ricardo Dávila!');assert.equal(es.translate('Olá, Ricardo Dávila!'),'¡Hola, Ricardo Dávila!');
+ assert.equal(en.translate('Tipo de pessoa: Todas'),'Person type: All');assert.equal(en.translate('Perfil: Administrador'),'Role: Administrator');
+ assert.equal(en.translate('Rubrica: EMPRESA'),'Category: EMPRESA');assert.equal(en.translate('Descrição: Receitas'),'Description: Receitas');
+ assert(en.translate('Seu último backup registrado neste dispositivo foi há 7 dias. É importante fazer um novo backup e guardar o arquivo em local seguro.').startsWith('Your last backup'));
+ assert.equal(en.translate('3 documento(s) com vencimento em 06/11/2026.'),'3 document(s) due on 06/11/2026.');
+ assert.equal(en.translate('Modo: Análise do período. Tipo de pessoa: Todas. Critério: vencimento.'),'Mode: Period analysis. Person type: All. Based on due date.');
+ assert(en.translate('Saldo inicial calculado: -R$ 18.727,92 · Saldo final projetado: -R$ 2.721,08. Não conciliado com extrato bancário.').startsWith('Calculated opening balance: -R$ 18.727,92'));
+ assert(en.translate('Período: 1 de novembro de 2026 a 30 de novembro de 2026 · Critério: data de vencimento.').startsWith('Period: November 1, 2026'));
+ // Exercise actual DOM translation and returning to Portuguese. User categories remain canonical.
+ const window={localStorage:{getItem:()=> 'en'}},c={window,document:{readyState:'loading',addEventListener(){}},console};vm.createContext(c);vm.runInContext(source.replace('const api={','const api={_node:applyNode,'),c);
+ const make=(text,selectId,defaultValue)=>{const attrs={};const parent={dataset:{},parentElement:selectId?{id:selectId}:null,value:defaultValue,closest:q=>q==='option'&&selectId?parent:null,hasAttribute:k=>Object.hasOwn(attrs,k),setAttribute:(k,v)=>attrs[k]=v};return {node:{data:text,parentElement:parent},attrs};};
+ const option=make('Todas as Rubricas','filtroCategoria','Todos');c.window.PFI18n._node(option.node);assert.equal(option.node.data,'All categories');assert.equal(option.attrs.value,'Todos');
+ const custom=make('Receitas','filtroCategoria','Receitas');c.window.PFI18n._node(custom.node);assert.equal(custom.node.data,'Receitas');
+ const greeting=make('Olá, Ricardo Dávila!');c.window.PFI18n._node(greeting.node);assert.equal(greeting.node.data,'Hello, Ricardo Dávila!');c.window.PFI18n.setLanguage('pt-BR',false);c.window.PFI18n._node(greeting.node);assert.equal(greeting.node.data,'Olá, Ricardo Dávila!');
+ console.log('PASS: inglês/espanhol, avisos, perfil, nomes preservados, filtros padrão com valor original, mensagens compostas e retorno a português.');
+}
+
+assert.equal(load('en').api.translate('Meta Selic: 13,75 % a.a. · referência 06/11/2026'),'Selic target: 13,75 % p.a. · reference 06/11/2026');

@@ -12,4 +12,6 @@ class MobileLayoutTests(unittest.TestCase):
                 # Read-only chart-explorer bridges are UI instrumentation; the
                 # original desktop code still matches its accepted baseline.
                 block=re.sub(r'\n/\* (PFCE|PFQF) bridge:start \*/\n[\s\S]*?\n/\* \1 bridge:end \*/\n','',block)
+                # The name extractor accepts the translated greeting prefix only.
+                block=block.replace(r'replace(/^(?:Olá|Hello|¡?Hola),\s*/',r'replace(/^Olá,\s*/')
                 self.assertEqual(hashlib.sha256(block.encode()).hexdigest(),expected,name+': '+key)

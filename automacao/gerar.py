@@ -5,7 +5,6 @@ from correcao_atualizacoes import corrigir_atualizacoes
 from notas_publicacao import carregar_notas
 from aplicar_idiomas import aplicar_idiomas
 from aplicar_moedas import aplicar_moedas
-from aplicar_notas import aplicar_notas
 from correcao_rodape import corrigir_rodape
 import argparse, hashlib, json, os, pathlib, re, shutil, subprocess, tempfile
 from html.parser import HTMLParser
@@ -39,7 +38,7 @@ def validate_distribution_entry(html):
         raise ValueError('Publicação bloqueada: a tela de entrada da distribuição não carrega conta.js.')
 
 def generate(source, config, version):
-    source = normalize(aplicar_notas(aplicar_moedas(aplicar_idiomas(source))))
+    source = normalize(aplicar_moedas(aplicar_idiomas(source)))
     if not re.search(r'const dadosPadraoCompletos\s*=\s*\[\s*\]\s*;', source):
         raise ValueError('Publicação bloqueada: a base embutida precisa estar vazia. Não publique lançamentos pessoais no HTML.')
     for region in config['protectedRegions']:
@@ -98,7 +97,7 @@ def build(output, version):
         for name in ['index.html','graficos.html','version.json','manifest.webmanifest','service-worker.js','sw.js','icon-192.png','icon-512.png']:
             path=ROOT/name
             if path.exists(): shutil.copy2(path,staging/name)
-        pessoal=corrigir_rodape(corrigir_atualizacoes(corrigir_sincronizacao(aplicar_notas(aplicar_moedas(aplicar_idiomas(read(ROOT/'index.html')))))))
+        pessoal=corrigir_rodape(corrigir_atualizacoes(corrigir_sincronizacao(aplicar_moedas(aplicar_idiomas(read(ROOT/'index.html'))))))
         pessoal=re.sub(r"const CURRENT_VERSION='V[0-9.]+';","const CURRENT_VERSION='"+version+"';",pessoal)
         (staging/'index.html').write_text(pessoal,encoding='utf-8')
         (staging/'version.json').write_text(json.dumps({'version':version,'name':version,'channel':'pessoal','notes':notes['pessoal']},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
@@ -130,7 +129,7 @@ def build(output, version):
             for name in ['index.html','graficos.html','app.html','conta.js','isolamento.js','teste-guard.js','demonstracao.html','preview-celular.html','icon-192.png','icon-512.png']:
                 shutil.copy2(gemini_source/name,gemini_target/name)
             (gemini_target/'index.html').write_text(aplicar_idiomas(read(gemini_target/'index.html'),container=True),encoding='utf-8')
-            (gemini_target/'app.html').write_text(aplicar_notas(aplicar_moedas(aplicar_idiomas(read(gemini_target/'app.html')))),encoding='utf-8')
+            (gemini_target/'app.html').write_text(aplicar_moedas(aplicar_idiomas(read(gemini_target/'app.html'))),encoding='utf-8')
             (gemini_target/'graficos.html').write_text(aplicar_idiomas(read(gemini_target/'graficos.html'),graficos=True),encoding='utf-8')
             check_scripts(read(gemini_target/'app.html'),dist)
 
