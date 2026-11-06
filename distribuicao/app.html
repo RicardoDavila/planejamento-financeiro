@@ -7907,7 +7907,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.77';
+ const CURRENT_VERSION='V4.12.78';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -12719,7 +12719,7 @@ function bootCurrency(options={}){
  function eligible(parent){
   if(parent.closest('input,textarea,select,button,script,style,[contenteditable],#pfCurrencyMenu,#pfCurrencyButton,[data-pf-currency-note]'))return false;
   if(options.snapshot)return !parent.closest('[data-pf-report-controls]');
-  return !!parent.closest('#cardPrevReceita,#cardRecRecebidas,#cardDespesas,#cardPendente,#cardInvestimento,#cardSaldo,.g-metric .number,.analysis-amount,.pf-heat-value,.pf-bar-row strong,.pfce-alt,.g-chart,.chart,.lcm-value,.lcm-valor,.dashboard-v40-grid,#dashboardV40Alerta,#tabelaLancamentosWrapper td.text-right,#desktopGraphics .num');
+  return !!parent.closest('#pgReceitas,#pgRecebido,#pgDespesas,#pgAVencer,#pgVencido,#pgInvestimentos,#pgSaldo,.desktop-balance-grid strong,#cardPrevReceita,#cardRecRecebidas,#cardDespesas,#cardPendente,#cardInvestimento,#cardSaldo,.g-metric .number,.analysis-amount,.pf-heat-value,.pf-bar-row strong,.pfce-alt,.g-chart,.chart,.lcm-value,.lcm-valor,.dashboard-v40-grid,#dashboardV40Alerta,#tabelaLancamentosWrapper td.text-right,#desktopGraphics .num');
  }
  function apply(){
   observer?.disconnect();
@@ -12739,7 +12739,7 @@ function bootCurrency(options={}){
  }
  function updateCharts(){if(typeof Chart!=='undefined')for(const chart of Object.values(Chart.instances||{}))chart.update('none');}
  const schedule=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(()=>{scheduled=false;apply();place();});}};
- function place(){if(!button)return;const host=document.body.classList.contains('pf-mobile-layout')?document.querySelector('#pm-app .bar'):document.getElementById('pfMenuTopo');if(host&&button.parentElement!==host)host.append(button);}
+ function place(){if(!button)return;const language=document.getElementById('pfLanguageButton');if(language?.parentElement){if(language.nextElementSibling!==button)language.after(button);return;}const normal=document.getElementById('pfMenuTopo'),mobile=document.querySelector('#pm-app .bar'),host=normal?.getClientRects().length?normal:mobile||normal;if(host&&button.parentElement!==host)host.append(button);}
  function close(){if(menu)menu.hidden=true;button?.setAttribute('aria-expanded','false');}
  function addMenu(){
   button=document.createElement('button');button.id='pfCurrencyButton';button.setAttribute('data-pf-i18n-skip','');button.setAttribute('data-pfce-ui','true');button.setAttribute('aria-controls','pfCurrencyMenu');button.type='button';button.className='pf-menu-categoria';button.setAttribute('aria-haspopup','menu');button.setAttribute('aria-expanded','false');

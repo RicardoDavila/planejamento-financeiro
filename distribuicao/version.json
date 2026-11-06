@@ -1,10 +1,10 @@
 {
-  "version": "V4.12.77",
-  "name": "V4.12.77",
+  "version": "V4.12.78",
+  "name": "V4.12.78",
   "channel": "distribuicao",
   "notes": [
-    "Adiciona Moeda na barra superior, independente do idioma: BRL, USD e EUR.",
-    "Converte somente a consulta e os relatórios/PDF com PTAX de venda do Banco Central, informando a fonte e a data da cotação.",
-    "Mantém lançamentos, edição, histórico e cálculos em reais; ao voltar para BRL, exibe diretamente os valores originais."
+    "Posiciona Moeda imediatamente ao lado de Idioma na barra atual, também no celular.",
+    "Corrige a conversão nos sete cartões do painel gerencial e nos saldos adicionais.",
+    "Preserva os valores originais em BRL, edição, histórico, cálculos e layout existente."
   ]
 }
