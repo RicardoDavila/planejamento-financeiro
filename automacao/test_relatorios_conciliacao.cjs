@@ -32,6 +32,7 @@ for(const name of ['index.html','distribuicao/app.html','teste-gemini/app.html']
  ctx.URL={createObjectURL:b=>{emitted=b;return 'blob:teste'},revokeObjectURL(){}};ctx.Blob=Blob;ctx.setTimeout=()=>{};ctx.alert=()=>{};
  ctx.atualizarPainelGerencial=()=>{};ctx.obterPeriodoFiltroPainel=()=> 'Período de referência: 01/11/2026 a 30/11/2026';
  ctx.getFilteredTransactions=o=>(o?.ignorarPeriodo?rows:chosen).filter(t=>values.filtroTipo==='Todos'||t.tipo===values.filtroTipo);
+ vm.runInContext(html.match(/<script id="pf-report-selection-module">([\s\S]*?)<\/script>/)[1],ctx);
  vm.runInContext(html.match(/<script id="pf-report-theme">([\s\S]*?)<\/script>/)[1],ctx);
  const begin=html.indexOf('        function abrirRelatorioGerencial('),end=html.indexOf("        document.addEventListener('DOMContentLoaded'",begin);
  vm.runInContext(html.slice(begin,end),ctx);ctx.abrirRelatorioGerencial(false);

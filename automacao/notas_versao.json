@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Corrige a sobreposição do botão Fechar sobre Imprimir em Gráficos e Evoluções.",
-    "Agrupa Salvar PDF, Imprimir e Fechar com espaço próprio e quebra de linha em telas menores.",
-    "Mantém a correção do período inicial, filtros independentes e contraste no modo escuro."
+    "Permite escolher campos, tabelas e gráficos antes de gerar relatórios, com prévia, PDF e impressão.",
+    "Inclui selecionar tudo, desmarcar tudo e preferências opcionais sem alterar os registros financeiros.",
+    "Corrige a integração dos testes de publicação com o módulo de seleção de relatórios."
   ],
   "distribuicao": [
-    "Corrige a sobreposição do botão Fechar sobre Imprimir em Gráficos e Evoluções.",
-    "Agrupa Salvar PDF, Imprimir e Fechar com espaço próprio e quebra de linha em telas menores.",
-    "Mantém a correção do período inicial, filtros independentes e contraste no modo escuro."
+    "Permite escolher campos, tabelas e gráficos antes de gerar relatórios, com prévia, PDF e impressão.",
+    "Inclui selecionar tudo, desmarcar tudo e preferências opcionais sem alterar os registros financeiros.",
+    "Corrige a integração dos testes de publicação com o módulo de seleção de relatórios."
   ]
 }

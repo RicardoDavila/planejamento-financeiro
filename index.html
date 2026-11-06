@@ -11558,8 +11558,11 @@ function installReportSelection() {
   document.head.append(style);
   const remember = panel.querySelector('#pf-remember'), status = panel.querySelector('#pf-status');
   const key = 'pf-report-selection-v1:' + document.title;
+  // Use the application's storage adapter so distribution preferences remain isolated per account.
+  let preferenceStorage;
+  try { const owner = window.opener || window; preferenceStorage = owner.pfdLocal || owner.localStorage; } catch (_) {}
   try {
-    const saved = JSON.parse(localStorage.getItem(key) || 'null');
+    const saved = JSON.parse(preferenceStorage.getItem(key) || 'null');
     if (saved) { remember.checked = true; items.forEach(item => item.checked = saved[item.key] !== false); }
   } catch (_) { /* Storage may be unavailable for local/blob reports. */ }
   const options = panel.querySelector('.pf-options');
@@ -11577,8 +11580,8 @@ function installReportSelection() {
     panel.querySelector('#pf-pdf').disabled = panel.querySelector('#pf-print').disabled = !preview || !any;
     status.textContent = !any ? 'Selecione ao menos um conteúdo para gerar o relatório.' : preview ? 'Prévia atualizada abaixo. Gerar PDF abre a impressão: escolha Salvar como PDF.' : 'Seleção alterada. Clique em Pré-visualizar para conferir.';
     try {
-      if (remember.checked) localStorage.setItem(key, JSON.stringify(Object.fromEntries(items.map(item => [item.key,item.checked]))));
-      else localStorage.removeItem(key);
+      if (remember.checked) preferenceStorage.setItem(key, JSON.stringify(Object.fromEntries(items.map(item => [item.key,item.checked]))));
+      else preferenceStorage.removeItem(key);
     } catch (_) { if (remember.checked) status.textContent += ' Não foi possível salvar as preferências neste navegador.'; }
   }
   panel.querySelectorAll('[data-all]').forEach(button => button.onclick = () => {
