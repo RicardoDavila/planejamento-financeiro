@@ -1,10 +1,9 @@
 {
-  "version": "V4.12.71",
-  "name": "V4.12.71",
+  "version": "V4.12.72",
+  "name": "V4.12.72",
   "channel": "pessoal",
   "notes": [
-    "Corrige a sobreposição do botão Fechar sobre Imprimir em Gráficos e Evoluções.",
-    "Agrupa Salvar PDF, Imprimir e Fechar com espaço próprio e quebra de linha em telas menores.",
-    "Mantém a correção do período inicial, filtros independentes e contraste no modo escuro."
+    "Seleção de campos, tabelas e gráficos em cada relatório, com prévia antes do PDF ou impressão.",
+    "Preferências opcionais; seleção aplicada somente ao documento exportado."
   ]
 }

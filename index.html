@@ -5431,7 +5431,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             if(apiFluxo) relatorioHtml = relatorioHtml.replace('</head>','<style>'+apiFluxo.managerialCss+'</style></head>');
             relatorioHtml = window.PFReportTheme.decorate(relatorioHtml);
             if(window.PFChartExplorer)relatorioHtml=window.PFChartExplorer.decorate(relatorioHtml,{kind:'managerial',rows:lista,months:[...mesesComparativo].map(([key,m])=>({...m,key})),series:seriesMensais,descriptions:descricoesGrafico});
-            const relatorioUrl = URL.createObjectURL(new Blob([relatorioHtml], {type:'text/html;charset=utf-8'}));
+            const relatorioUrl = URL.createObjectURL(new Blob([window.PFReportSelection.decorate(relatorioHtml)], {type:'text/html;charset=utf-8'}));
             try { w.location.replace(relatorioUrl); }
             catch (erro) { URL.revokeObjectURL(relatorioUrl); w.close(); alert('Não foi possível abrir o relatório. Tente novamente.'); return; }
             setTimeout(() => URL.revokeObjectURL(relatorioUrl), 60000);
@@ -9933,7 +9933,7 @@ function openReport(){
  const actions='const safeCell='+safeCell.toString()+';'+csv.toString()+download.toString().replace('const x=window.XLSX;','const x=window.XLSX||window.opener?.XLSX;')+';const data='+payload+';document.getElementById("fc-print").onclick=()=>window.print();document.getElementById("fc-csv").onclick=()=>download(data.rows,"csv");document.getElementById("fc-xlsx").onclick=()=>download(data.rows,"xlsx");document.getElementById("fc-email").onclick=()=>{window.location.href=data.email;};';
  const html='<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório de Fluxo de Caixa</title><style>'+css+'</style></head><body><main>'+reportBody(m,meta)+'</main><script>'+actions+'<'+'/script></body></html>';
  const decorated=window.PFFinancialIcons?window.PFFinancialIcons.decorate(html):html;
- const reportUrl=URL.createObjectURL(new Blob([window.PFChartExplorer?window.PFChartExplorer.decorate(decorated,{kind:'cashflow',model:m,base:getFilteredTransactions({ignorarPeriodo:true,ignorarAtrasados:true})}):decorated],{type:'text/html;charset=utf-8'}));
+ const reportUrl=URL.createObjectURL(new Blob([window.PFReportSelection.decorate(window.PFChartExplorer?window.PFChartExplorer.decorate(decorated,{kind:'cashflow',model:m,base:getFilteredTransactions({ignorarPeriodo:true,ignorarAtrasados:true})}):decorated)],{type:'text/html;charset=utf-8'}));
  try{popup.location.replace(reportUrl);}catch(error){URL.revokeObjectURL(reportUrl);popup.close();alert('Não foi possível abrir o relatório. Tente novamente.');return;}
  setTimeout(()=>URL.revokeObjectURL(reportUrl),60000);
 }
@@ -11258,7 +11258,7 @@ function gRender(){const draftCategory=$('gCategory').value;$('gCategory').inner
 function gQuick(key){const ref=C.date((gApplied.to||cut()).slice(0,7)+'-01');if(key==='previous')ref.setUTCMonth(ref.getUTCMonth()-1);if(key==='next')ref.setUTCMonth(ref.getUTCMonth()+1);const target=C.iso(ref).slice(0,7);let [start,end]=C.range(target);if(key==='semester'){const y=target.slice(0,4),first=Number(target.slice(5))<=6;start=y+'-'+(first?'01':'07')+'-01';end=y+'-'+(first?'06-30':'12-31');}if(key==='year'){start=target.slice(0,4)+'-01-01';end=target.slice(0,4)+'-12-31';}$('gFrom').value=start;$('gTo').value=end;gApply();}
 function gSaveView(){openDialog('Salvar visão de Gráficos e Evoluções','<label class="field">Nome da visão<input id="gViewName" placeholder="Ex.: despesas de novembro"></label><p class="note">Salva a análise aplicada, não os campos ainda pendentes. A visão fica disponível nesta sessão de trabalho.</p>',()=>{const name=$('gViewName').value.trim();if(!name)throw Error('Informe um nome.');gViews[name]={filters:{...gApplied},mode:gMode,history:gHistoryScope,ranking:$('gRankingUnit').value,heat:$('gHeatKind').value};$('gSaved').innerHTML='<option value="">Escolha uma visão</option>'+Object.keys(gViews).map(n=>'<option>'+esc(n)+'</option>').join('');return 'Visão salva nesta sessão.';});}
 function gPrintHTML(){const d=gData(),mode=$('gMainTitle').textContent;return '<h1>Gráficos e Evoluções</h1><p>'+esc(gFiltersText())+'</p><p>Emitido em '+esc(new Date().toLocaleString('pt-BR'))+' · análise atualizada em '+esc(gUpdated)+' · '+esc($('pf495GreetingTitle')?.textContent||'Planejamento Financeiro')+' / '+esc($('pf495PerfilBadge')?.textContent||'')+'</p><p><b>Critério: vencimento. Resultado não inclui abertura e não é saldo bancário conciliado.</b></p><table><tr><th>Indicador</th><th>Valor</th></tr>'+[['Receitas cadastradas',fmt(d.r)],['Receitas recebidas',fmt(d.received)],['Despesas cadastradas',fmt(d.d)],['Despesas pagas',fmt(d.paid)],['Investimentos',fmt(d.investment)],['Resultado previsto do período',fmt(d.result)],['Despesas a vencer',fmt(d.due)],['Despesas vencidas',fmt(d.late)],['Margem prevista (resultado ÷ receitas)',pct(d.result,d.r)],['Comprometimento (saídas ÷ receitas)',pct(d.out,d.r)]].map(([k,v])=>'<tr><td>'+k+'</td><td>'+v+'</td></tr>').join('')+'</table>'+gAlertHTML(true)+'<section class="print-section"><h2>'+esc(mode)+'</h2>'+$('gMainChart').innerHTML+'<p>'+esc($('gModeNote').textContent)+'</p><h2>Ranking de rubricas — saídas</h2>'+gRankingHTML(true)+'</section><section class="print-section"><h2>Concentração por vencimento</h2>'+gHeatHTML(true)+'<p>Destaque: maior saída diária. Verde indica receitas na visão opcional.</p><h2>Histórico de 12 meses</h2><p>'+esc($('gHistoryCaption').textContent)+'</p><div class="g-history">'+gHistoryHTML()+'</div><p>N/D: histórico não fornecido; Fora do recorte: mês não consultado; Sem registros: nenhum registro corresponde aos filtros em mês com cobertura. Zero exige registros com soma zero.</p></section><section class="print-section"><h2>Evolução mês a mês</h2>'+monthlyEvolutionHTML()+'<h2>Todos os lançamentos da análise aplicada</h2>'+gTable(d.active,false)+'<p>'+totals(d.active)+'</p><h2>Pendências de cadastro</h2>'+gTable(d.pending,false)+'<p>Corrigir datas/valores no cadastro original antes de interpretar os movimentos. Não foram excluídos registros automaticamente.</p></section><p>Origem: cadastro financeiro do usuário. Margem prevista não comprova poupança realizada. Filtros e modo são os da análise aplicada; alterações ainda não aplicadas não entram neste relatório.</p>';}
-function gExport(){revealAfterPasswordV5(()=>{const popup=window.open('','_blank');if(!popup)return toast('Permita nova aba para imprimir/salvar a análise.');const ownCSS=document.getElementById('graphics-v6-style').textContent;popup.document.open();popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Gráficos e Evoluções — análise aplicada</title><style>'+reportStyles+':root{--ink:#243247;--muted:#526176;--line:#d7e1ee;--soft:#edf2f8;--blue:#203c64;--green:#047857;--red:#bd2b20;--redbg:#fff0ee;--purple:#5146cc}.row{display:flex;justify-content:space-between;gap:12px}.track{height:7px;background:#edf2f8}.track span{display:block;height:100%;background:#bd2b20}.note,small{color:#526176}.tablewrap{max-height:none!important;overflow:visible}.pos{color:#047857}.neg{color:#bd2b20}.g-alert h3{margin-top:0}.print-section{break-before:page}.chart{max-width:100%}'+ownCSS+'@media print{button{display:none!important}.g-history{grid-template-columns:repeat(6,minmax(0,1fr))}.g-heat{grid-template-columns:repeat(10,minmax(0,1fr))}.g-alert,.g-month,.g-day{break-inside:avoid}.print-section>h2{break-after:avoid}.tablewrap{overflow:visible;max-height:none}}</style></head><body><button onclick="window.print()">Imprimir / salvar PDF</button>'+gReportStaticHTML()+'</body></html>');popup.document.close();});}
+function gExport(){revealAfterPasswordV5(()=>{const popup=window.open('','_blank');if(!popup)return toast('Permita nova aba para imprimir/salvar a análise.');const ownCSS=document.getElementById('graphics-v6-style').textContent;popup.document.open();popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Gráficos e Evoluções — análise aplicada</title><style>'+reportStyles+':root{--ink:#243247;--muted:#526176;--line:#d7e1ee;--soft:#edf2f8;--blue:#203c64;--green:#047857;--red:#bd2b20;--redbg:#fff0ee;--purple:#5146cc}.row{display:flex;justify-content:space-between;gap:12px}.track{height:7px;background:#edf2f8}.track span{display:block;height:100%;background:#bd2b20}.note,small{color:#526176}.tablewrap{max-height:none!important;overflow:visible}.pos{color:#047857}.neg{color:#bd2b20}.g-alert h3{margin-top:0}.print-section{break-before:page}.chart{max-width:100%}'+ownCSS+'@media print{button{display:none!important}.g-history{grid-template-columns:repeat(6,minmax(0,1fr))}.g-heat{grid-template-columns:repeat(10,minmax(0,1fr))}.g-alert,.g-month,.g-day{break-inside:avoid}.print-section>h2{break-after:avoid}.tablewrap{overflow:visible;max-height:none}}</style></head><body><button onclick="window.print()">Imprimir / salvar PDF</button>'+gReportStaticHTML()+'</body></html>');window.PFReportSelection.install(popup);popup.document.close();});}
 $('gAdvancedButton').onclick=()=>{const show=$('gAdvanced').classList.contains('hidden');$('gAdvanced').classList.toggle('hidden',!show);$('gAdvancedButton').setAttribute('aria-expanded',String(show));$('gAdvancedButton').textContent=show?'Filtros avançados ▴':'Filtros avançados ▾';};$('gApply').onclick=()=>revealAfterPasswordV5(gApply);$('gClear').onclick=()=>{gFill({from:gApplied.from,to:gApplied.to,person:gApplied.person||'Todas',type:'',category:'',subItem:'',status:'',description:'',min:'',max:''});$('gMode').value='period';$('gHistoryScope').value='filtered';gApply();};$('gSave').onclick=gSaveView;$('gSaved').onchange=()=>{const v=gViews[$('gSaved').value];if(!v)return;gFill(v.filters);$('gMode').value=v.mode;$('gHistoryScope').value=v.history;$('gRankingUnit').value=v.ranking;$('gHeatKind').value=v.heat;gApply();};
 Object.values(gIds).forEach(id=>{$(id).onchange=()=>gApply();});$('gDescription').oninput=gMarkDirty;$('gMode').onchange=()=>gApply();$('gHistoryScope').onchange=()=>gApply();$('gRankingUnit').onchange=()=>{$('gRanking').innerHTML=gRankingHTML();};$('gHeatKind').onchange=()=>{$('gHeat').innerHTML=gHeatHTML();};$('gPageSize').onchange=()=>{gPage=0;gRenderDetail();};$('gPrevPage').onclick=()=>{gPage--;gRenderDetail();};$('gNextPage').onclick=()=>{gPage++;gRenderDetail();};$('gPdf').onclick=gExport;$('gPrint').onclick=gExport;
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset;if(v.gPeriod)gQuick(v.gPeriod);if(v.gRemove){gApplied[v.gRemove]='';gFill(gApplied);gApply();}if(v.gSort){gSort={field:v.gSort,desc:gSort.field===v.gSort?!gSort.desc:false};gRenderDetail();}if(v.gEdit)edit(Number(v.gEdit));if(v.gCategory)gDrill(gData().active.filter(t=>t.tipo!=='Receita'&&t.categoria===v.gCategory).map(t=>t.id),'Rubrica: '+v.gCategory);if(v.gDate)gDrill(gData().active.filter(t=>t.vencimento===v.gDate).map(t=>t.id),'Vencimento: '+br(v.gDate));if(v.gDup!==undefined){const a=duplicates(gData().active)[Number(v.gDup)];if(a)gDrill(a.map(t=>t.id),'Conferência de registros semelhantes');}if(v.gDrill==='before'){const a=gData().active.filter(t=>!C.paid(t)&&t.vencimento>=cut()),next=a.filter(t=>t.tipo==='Receita').sort((a,b)=>a.vencimento.localeCompare(b.vencimento))[0];gDrill(a.filter(t=>t.tipo!=='Receita'&&next&&t.vencimento<next.vencimento).map(t=>t.id),'Pagamentos antes da próxima entrada');}if(v.gHelp==='margin')info('Margem prevista','<p>Resultado previsto ÷ receitas cadastradas × 100. É uma proporção do resultado do período, não poupança já realizada.</p><p>Receitas zeradas: margem N/D. Investimentos entram nas saídas e no resultado.</p>');if(v.gHelp==='commitment')info('Comprometimento','<p>Despesas e investimentos cadastrados ÷ receitas cadastradas × 100. Não mede cobertura por dinheiro disponível em banco.</p>');if(v.gHelp==='pending'){$('gDataIssues').scrollIntoView({behavior:'smooth'});}});
@@ -11384,7 +11384,7 @@ document.addEventListener('click',e=>{const button=e.target.closest('#pfMenuTopo
 const reportOld=window.abrirRelatorioGerencial;window.abrirRelatorioGerencial=function(...args){if(!authorized())return;return revealAfterPasswordV5(()=>reportOld.apply(this,args))};
 // O relatório completo anterior é preservado. Recortes sem abertura de caixa usam N/D, como a tela.
 const originalFlowReport=window.abrirRelatorioFluxoCaixa;
-function desktopFlowReport(){if(!authorized())return;revealAfterPasswordV5(()=>{if(!hasPageContent())return originalFlowReport();const m=currentModel(),a=m.active,sum=a=>a.reduce((n,t)=>n+C.cents(t),0),rec=a.filter(t=>t.tipo==='Receita'),out=a.filter(t=>t.tipo!=='Receita'),groups=new Map();out.forEach(t=>groups.set(t.categoria||'Sem rubrica',(groups.get(t.categoria||'Sem rubrica')||0)+C.cents(t)));const future=getFilteredTransactions({ignorarPeriodo:true,ignorarAtrasados:true}).filter(t=>!C.paid(t)&&t.vencimento>=cut()&&t.vencimento<=C.add(cut(),29));const pop=window.open('','_blank');if(!pop)return toast('Permita a nova aba para o relatório.');const html='<h1>Fluxo de caixa — recorte filtrado</h1><p>'+br($('filtroDataInicio').value)+' a '+br($('filtroDataFim').value)+' · Tipo de pessoa: '+esc(entity())+'</p><p>Emitido em '+new Date().toLocaleString('pt-BR')+'</p><p>'+esc(window.PFCashFlow.filters())+' · '+esc(Object.entries(pageItems).map(([k,v])=>k+': '+v).join(' · '))+'</p><p>Saldo inicial, final e mínimo: N/D. Os filtros de conteúdo selecionam movimentos e não definem disponibilidade de caixa. Valores por vencimento; não conciliados com extrato bancário.</p><h2>Movimentação do período</h2>'+gBars([{label:'Receitas',value:sum(rec)},{label:'Saídas',value:-sum(out)},{label:'Resultado do período',value:sum(rec)-sum(out)}])+'<h2>Saídas por rubrica</h2>'+gBars([...groups].sort((a,b)=>b[1]-a[1]).map(([label,value])=>({label,value})))+'<h2>Fluxo por data</h2><table><thead><tr><th>Data</th><th>Receitas</th><th>Saídas</th><th>Resultado do dia</th><th>Acumulado</th></tr></thead><tbody>'+m.daily.map(d=>'<tr><td>'+br(d.date)+'</td><td>'+fmt(d.r)+'</td><td>'+fmt(d.out)+'</td><td>'+fmt(d.net)+'</td><td>N/D</td></tr>').join('')+'</tbody></table><h2>Lançamentos do período</h2>'+gTable(a,false)+'<h2>Próximos 30 dias ('+br(cut())+' a '+br(C.add(cut(),29))+')</h2>'+gTable(future,false);pop.document.open();pop.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Fluxo de caixa filtrado</title><style>'+reportStyles+':root{--green:#047857;--red:#bd2b20}.bar{margin:12px 0}.row{display:flex;justify-content:space-between}.track{height:12px;background:#edf2f8}.track span{display:block;height:100%}@media print{button{display:none}}</style></head><body><button onclick="window.print()">Imprimir / salvar PDF</button>'+html+'</body></html>');pop.document.close()})}
+function desktopFlowReport(){if(!authorized())return;revealAfterPasswordV5(()=>{if(!hasPageContent())return originalFlowReport();const m=currentModel(),a=m.active,sum=a=>a.reduce((n,t)=>n+C.cents(t),0),rec=a.filter(t=>t.tipo==='Receita'),out=a.filter(t=>t.tipo!=='Receita'),groups=new Map();out.forEach(t=>groups.set(t.categoria||'Sem rubrica',(groups.get(t.categoria||'Sem rubrica')||0)+C.cents(t)));const future=getFilteredTransactions({ignorarPeriodo:true,ignorarAtrasados:true}).filter(t=>!C.paid(t)&&t.vencimento>=cut()&&t.vencimento<=C.add(cut(),29));const pop=window.open('','_blank');if(!pop)return toast('Permita a nova aba para o relatório.');const html='<h1>Fluxo de caixa — recorte filtrado</h1><p>'+br($('filtroDataInicio').value)+' a '+br($('filtroDataFim').value)+' · Tipo de pessoa: '+esc(entity())+'</p><p>Emitido em '+new Date().toLocaleString('pt-BR')+'</p><p>'+esc(window.PFCashFlow.filters())+' · '+esc(Object.entries(pageItems).map(([k,v])=>k+': '+v).join(' · '))+'</p><p>Saldo inicial, final e mínimo: N/D. Os filtros de conteúdo selecionam movimentos e não definem disponibilidade de caixa. Valores por vencimento; não conciliados com extrato bancário.</p><h2>Movimentação do período</h2>'+gBars([{label:'Receitas',value:sum(rec)},{label:'Saídas',value:-sum(out)},{label:'Resultado do período',value:sum(rec)-sum(out)}])+'<h2>Saídas por rubrica</h2>'+gBars([...groups].sort((a,b)=>b[1]-a[1]).map(([label,value])=>({label,value})))+'<h2>Fluxo por data</h2><table><thead><tr><th>Data</th><th>Receitas</th><th>Saídas</th><th>Resultado do dia</th><th>Acumulado</th></tr></thead><tbody>'+m.daily.map(d=>'<tr><td>'+br(d.date)+'</td><td>'+fmt(d.r)+'</td><td>'+fmt(d.out)+'</td><td>'+fmt(d.net)+'</td><td>N/D</td></tr>').join('')+'</tbody></table><h2>Lançamentos do período</h2>'+gTable(a,false)+'<h2>Próximos 30 dias ('+br(cut())+' a '+br(C.add(cut(),29))+')</h2>'+gTable(future,false);pop.document.open();pop.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Fluxo de caixa filtrado</title><style>'+reportStyles+':root{--green:#047857;--red:#bd2b20}.bar{margin:12px 0}.row{display:flex;justify-content:space-between}.track{height:12px;background:#edf2f8}.track span{display:block;height:100%}@media print{button{display:none}}</style></head><body><button onclick="window.print()">Imprimir / salvar PDF</button>'+html+'</body></html>');window.PFReportSelection.install(pop);pop.document.close()})}
 window.abrirRelatorioFluxoCaixa=desktopFlowReport;$('fc-report').onclick=desktopFlowReport;
 for(const card of document.querySelectorAll('[data-pf-quick-card]')){card.dataset.desktopTooltip=card.title||'Filtrar lançamentos';card.setAttribute('aria-label',card.dataset.desktopTooltip);card.removeAttribute('title')}
 
@@ -11499,5 +11499,122 @@ body.dark-mode #desktopGraphics #gMonthlyChart svg{color:#e2e8f0}
 #desktopGraphics .panelheading .toolbar:has(#gPdf){display:flex!important;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;position:static!important}
 #desktopGraphics #gPdf,#desktopGraphics #gPrint,#desktopGraphics #desktop-graphics-close{position:static!important;inset:auto!important;transform:none!important;float:none!important;min-height:42px;margin:0!important;flex:0 0 auto;white-space:nowrap}
 @media(max-width:650px){#desktopGraphics .panelheading .toolbar:has(#gPdf){width:100%;justify-content:flex-start}#desktopGraphics #gPdf,#desktopGraphics #gPrint,#desktopGraphics #desktop-graphics-close{flex:1 1 auto;font-size:13px}}
-</style></body>
+</style><script id="pf-report-selection-module">
+/* Executed exclusively inside a generated report, never in the financial app. */
+function installReportSelection() {
+  if (document.getElementById('pf-report-selection')) return;
+  document.body.removeAttribute('onload');
+  const content = document.createElement('div');
+  content.id = 'pf-report-content';
+  [...document.body.childNodes].forEach(node => content.append(node));
+  document.body.append(content);
+  content.querySelectorAll('button').forEach(button => {
+    if (/print\(|imprimir|salvar.*pdf/i.test(button.getAttribute('onclick') || button.textContent)) button.remove();
+  });
+  const items = [], occurrences = new Map();
+  function add(label, nodes, kind) {
+    label = label.trim().replace(/\s+/g, ' ');
+    const base = kind + ':' + label, count = occurrences.get(base) || 0;
+    occurrences.set(base, count + 1);
+    items.push({label, nodes, kind, key:base + ':' + count, checked:true});
+  }
+  // Wrap heading ranges without changing the contents or recomputing any totals.
+  [...content.querySelectorAll('h2,h3')].reverse().forEach(heading => {
+    if (heading.closest('table')) return;
+    const section = document.createElement('div');
+    heading.before(section);
+    const level = Number(heading.tagName.slice(1));
+    let node = heading;
+    while (node) {
+      if (node !== heading && (/^H[123]$/.test(node.nodeName) || node.dataset?.pfHeading) && Number(node.dataset?.pfHeading || node.nodeName.slice(1)) <= level) break;
+      const next = node.nextSibling;
+      section.append(node);
+      node = next;
+    }
+    section.dataset.pfHeading = level;
+  });
+  content.querySelectorAll('[data-pf-heading],.kpi,.grafico,.bloco,.resumo,.grafico-print-bloco,.pf-chart-card').forEach(node => {
+    const label = node.querySelector('h2,h3,h4,.rotulo,.grafico-titulo,.bloco-titulo')?.textContent;
+    if (label) add(label, [node], 'Conteúdo');
+  });
+  content.querySelectorAll('table').forEach((table, index) => {
+    const title = table.closest('[data-pf-heading],.bloco')?.querySelector('h2,h3,.bloco-titulo')?.textContent || 'Tabela ' + (index + 1);
+    add(title, [table.closest('.bloco,.tablewrap') || table], 'Tabela');
+    const headers = [...(table.tHead?.rows[0]?.cells || [])];
+    headers.forEach((header, column) => {
+      if (header.colSpan !== 1) return;
+      const cells = [...table.rows].flatMap(row => { let offset = 0; return [...row.cells].filter(cell => { const match = offset === column && cell.colSpan === 1; offset += cell.colSpan; return match; }); });
+      add(title + ' — ' + header.textContent, cells, 'Campo');
+    });
+  });
+  content.querySelectorAll('.meta,.rodape').forEach(node => add(node.classList.contains('meta') ? 'Dados de emissão' : 'Rodapé', [node], 'Campo'));
+  if (!items.length) add('Conteúdo do relatório', [...content.children], 'Conteúdo');
+  const panel = document.createElement('section');
+  panel.id = 'pf-report-selection';
+  panel.innerHTML = '<h2>Incluir no relatório</h2><p>Escolha o conteúdo desta exportação. Os dados, cálculos e telas do sistema são preservados.</p><div class="pf-actions"><button type="button" data-all="1">Selecionar tudo</button><button type="button" data-all="0">Desmarcar tudo</button></div><div class="pf-options"></div><label class="pf-option"><input type="checkbox" id="pf-remember"> Salvar estas preferências para os próximos relatórios</label><div class="pf-actions"><button type="button" id="pf-preview">Pré-visualizar</button><button type="button" id="pf-pdf" disabled>Gerar PDF</button><button type="button" id="pf-print" disabled>Imprimir</button></div><p role="status" aria-live="polite" id="pf-status">Selecione os itens e pré-visualize antes de exportar.</p>';
+  document.body.prepend(panel);
+  const style = document.createElement('style');
+  style.textContent = '#pf-report-selection{box-sizing:border-box;max-width:1000px;margin:16px auto;padding:20px;background:#fff;color:#243247;border:1px solid #cbd5e1;border-radius:12px;font:14px/1.5 system-ui}#pf-report-selection h2{color:#243247;font:700 20px system-ui}.pf-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;max-height:45vh;overflow:auto;margin:12px 0}.pf-option{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px;cursor:pointer;overflow-wrap:anywhere}.pf-option input{width:20px;height:20px;flex-shrink:0}.pf-actions{display:flex;gap:8px;flex-wrap:wrap}#pf-report-selection button{min-height:44px;padding:8px 14px;border:1px solid #94a3b8;border-radius:7px;background:#203c64;color:white;font:600 14px system-ui;cursor:pointer}#pf-report-selection button:disabled{opacity:.45;cursor:default}html body .pf-report-excluded{display:none!important}#pf-report-content[hidden]{display:none!important}@media(max-width:640px){.pf-options{grid-template-columns:1fr}#pf-report-selection{margin:8px;padding:12px}.pf-actions button{flex:1}}@media print{#pf-report-selection{display:none!important}#pf-report-content{display:block!important}}';
+  document.head.append(style);
+  const remember = panel.querySelector('#pf-remember'), status = panel.querySelector('#pf-status');
+  const key = 'pf-report-selection-v1:' + document.title;
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || 'null');
+    if (saved) { remember.checked = true; items.forEach(item => item.checked = saved[item.key] !== false); }
+  } catch (_) { /* Storage may be unavailable for local/blob reports. */ }
+  const options = panel.querySelector('.pf-options');
+  items.forEach(item => {
+    const label = document.createElement('label'); label.className = 'pf-option';
+    const input = document.createElement('input'); input.type = 'checkbox'; input.checked = item.checked;
+    label.append(input, document.createTextNode(item.kind + ': ' + item.label)); options.append(label); item.input = input;
+    input.onchange = () => { item.checked = input.checked; update(false); };
+  });
+  function update(preview) {
+    content.querySelectorAll('.pf-report-excluded').forEach(node => node.classList.remove('pf-report-excluded'));
+    items.filter(item => !item.checked).forEach(item => item.nodes.forEach(node => node.classList.add('pf-report-excluded')));
+    const any = items.some(item => item.checked && item.kind !== 'Campo' && item.nodes.some(node => !node.closest('.pf-report-excluded')));
+    content.hidden = !preview || !any;
+    panel.querySelector('#pf-pdf').disabled = panel.querySelector('#pf-print').disabled = !preview || !any;
+    status.textContent = !any ? 'Selecione ao menos um conteúdo para gerar o relatório.' : preview ? 'Prévia atualizada abaixo. Gerar PDF abre a impressão: escolha Salvar como PDF.' : 'Seleção alterada. Clique em Pré-visualizar para conferir.';
+    try {
+      if (remember.checked) localStorage.setItem(key, JSON.stringify(Object.fromEntries(items.map(item => [item.key,item.checked]))));
+      else localStorage.removeItem(key);
+    } catch (_) { if (remember.checked) status.textContent += ' Não foi possível salvar as preferências neste navegador.'; }
+  }
+  panel.querySelectorAll('[data-all]').forEach(button => button.onclick = () => {
+    items.forEach(item => item.input.checked = item.checked = button.dataset.all === '1'); update(false);
+  });
+  remember.onchange = () => update(false);
+  panel.querySelector('#pf-preview').onclick = () => update(true);
+  panel.querySelector('#pf-pdf').onclick = panel.querySelector('#pf-print').onclick = () => { update(true); window.print(); };
+  update(false);
+}
+
+window.PFReportSelection = {
+  decorate(html) {
+    if (html.includes('id="pf-report-selection-bootstrap"')) return html;
+    html = html.replace(/ onload="setTimeout\(function\(\)\{window.focus\(\);window.print\(\);\},350\)"/g, '');
+    return html.replace('</body>', '<script id="pf-report-selection-bootstrap">(' + installReportSelection.toString() + ')();<' + '/script></body>');
+  },
+  install(target) { target.eval('(' + installReportSelection.toString() + ')()'); }
+};
+
+// Older distribution builds print charts directly. Export an isolated snapshot instead.
+for (const name of ['salvarGraficosPDF','imprimirGraficos']) {
+ if (typeof window[name] === 'function' && window[name].name !== 'gExport') window[name] = function() {
+  const source=document.getElementById('modalGraficos'); if(!source)return;
+  const copy=source.cloneNode(true);
+  copy.querySelectorAll('.no-print,.graficos-controles,.graficos-acoes,.fechamento-graficos').forEach(n=>n.remove());
+  const originals=[...source.querySelectorAll('canvas')];
+  copy.querySelectorAll('canvas').forEach((canvas,i)=>{const image=document.createElement('img');image.src=originals[i].toDataURL();image.style.cssText='max-width:100%;height:auto';canvas.replaceWith(image)});
+  copy.style.cssText='display:block;position:static;overflow:visible';
+  const popup=window.open('','_blank');if(!popup){alert('Permita uma nova aba para visualizar o relatório.');return;}
+  const css=[...document.querySelectorAll('style')].map(n=>n.outerHTML).join('');
+  popup.document.write(window.PFReportSelection.decorate('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório de gráficos</title>'+css+'</head><body>'+copy.outerHTML+'</body></html>'));popup.document.close();
+ };
+}
+
+
+</script>
+</body>
 </html>
