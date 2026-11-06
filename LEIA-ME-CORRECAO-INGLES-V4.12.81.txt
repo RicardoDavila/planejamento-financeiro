@@ -1,0 +1,6 @@
+V4.12.81 — Correção dos textos em inglês
+
+Substitua os arquivos do projeto pelos desta pasta, mantendo a mesma estrutura.
+Foram corrigidos os trechos das quatro imagens: situação do caixa, subtítulo e legenda dos gráficos, cabeçalho Vencimento e resumo mensal. Meses abreviados e escalas dos gráficos também acompanham o idioma.
+Os valores monetários e nomes cadastrados foram preservados.
+Validação: testes de idiomas e de incorporação nas páginas, incluindo os casos das imagens.
