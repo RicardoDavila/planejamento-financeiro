@@ -1,10 +1,12 @@
 {
   "pessoal": [
-    "Ativa sugestões ortográficas em português nos campos de descrição, observações e outros textos de classificação.",
-    "Mostra orientação ao focar o campo e preserva a digitação; as sugestões dependem do navegador ou teclado."
+    "Melhora os modos local e Gemini, exemplos clicáveis, atalhos e legibilidade do assistente financeiro.",
+    "Exibe o intervalo exato e permite consultar lançamentos de referência nas respostas locais.",
+    "Exemplos apenas preenchem a pergunta; envio continua exigindo Enter ou Enviar e autorização no Gemini."
   ],
   "distribuicao": [
-    "Ativa sugestões ortográficas em português nos campos de descrição, observações e outros textos de classificação.",
-    "Mostra orientação ao focar o campo e preserva a digitação; as sugestões dependem do navegador ou teclado."
+    "Melhora os modos local e Gemini, exemplos clicáveis, atalhos e legibilidade do assistente financeiro.",
+    "Exibe o intervalo exato e permite consultar lançamentos de referência nas respostas locais.",
+    "Exemplos apenas preenchem a pergunta; envio continua exigindo Enter ou Enviar e autorização no Gemini."
   ]
 }

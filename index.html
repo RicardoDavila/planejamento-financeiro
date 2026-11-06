@@ -8949,13 +8949,13 @@ body.auth-pendente #pfIaLaunch{display:none!important}
  box.innerHTML=`<div id="pfTesteBanner">Assistente Gemini</div>
  <button id="pfIaLaunch" type="button" aria-haspopup="dialog">✦ Assistente financeiro</button>
  <dialog id="pfIaDialog" aria-labelledby="pfIaTitle"><div class="ia-shell">
- <header><div><h2 id="pfIaTitle">Assistente financeiro</h2><p>Escolha entre cálculo local e consulta à IA.</p></div><button id="pfIaClose" type="button" aria-label="Fechar assistente">×</button></header>
- <div class="ia-controls"><label>Período de análise<br><select id="pfIaPeriodMode"><option value="month">Por mês</option><option value="range">Intervalo de datas</option></select></label><label id="pfIaMonthLabel">Mês e ano<br><input type="month" id="pfIaMonth" required></label><label id="pfIaStartLabel" hidden>Data inicial<br><input type="date" id="pfIaStart" disabled></label><label id="pfIaEndLabel" hidden>Data final<br><input type="date" id="pfIaEnd" disabled></label><label>Modo de resposta<br><select id="pfIaMode"><option value="local">Assistente local · sem envio</option><option value="gemini">Gemini · IA online</option></select></label></div>
- <div class="ia-notice" id="pfIaNotice"></div>
+ <header><div><h2 id="pfIaTitle">Assistente financeiro</h2><p>Consulte seus números localmente ou peça uma análise à IA online.</p></div><button id="pfIaClose" type="button" aria-label="Fechar assistente">×</button></header>
+ <div class="ia-controls"><label>Período de análise<br><select id="pfIaPeriodMode"><option value="month">Por mês</option><option value="range">Intervalo de datas</option></select></label><label id="pfIaMonthLabel">Mês e ano<br><input type="month" id="pfIaMonth" required></label><label id="pfIaStartLabel" hidden>Data inicial<br><input type="date" id="pfIaStart" disabled></label><label id="pfIaEndLabel" hidden>Data final<br><input type="date" id="pfIaEnd" disabled></label><label>Modo de resposta<br><select id="pfIaMode"><option value="local">Cálculo local · sem envio à IA</option><option value="gemini">Gemini · IA online</option></select></label><p id="pfIaPeriodSummary" class="ia-period-summary" role="status"></p></div>
+ <div class="ia-notice" id="pfIaNotice" role="note"></div>
  <div id="pfIaConsent"><label><input type="checkbox" id="pfIaAccept">Autorizo enviar minha pergunta e totais financeiros ao Gemini via Supabase. Categorias vão como códigos, sem enviar automaticamente descrições, nomes ou observações. Na faixa gratuita, o Google pode usar o conteúdo para melhorar seus produtos. Não incluirei dados pessoais na pergunta.</label></div>
- <div class="ia-chips"><button type="button" data-q="Faça um resumo do mês">Resumo</button><button type="button" data-q="Quanto gastei?">Gastos</button><button type="button" data-q="Compare com o mês anterior">Comparar meses</button><button type="button" data-q="Quais são as maiores categorias?">Categorias</button><button type="button" data-q="Quanto falta pagar?">A pagar</button></div>
+ <div class="ia-chips"><button type="button" data-q="Faça um resumo do período" title="Preenche uma pergunta de resumo; clique em Enviar para consultar.">Ver resumo do período</button><button type="button" data-q="Quanto gastei?" title="Preenche uma pergunta sobre despesas previstas e pagas.">Consultar gastos</button><button type="button" data-q="Compare com o mês anterior" title="Compara as despesas com o mês anterior.">Comparar períodos</button><button type="button" data-q="Quais são as maiores categorias?" title="Preenche uma consulta sobre as maiores categorias de despesas.">Ver categorias</button><button type="button" data-q="Quanto falta pagar?" title="Consulta valores de despesas em aberto no período.">Consultar valores a pagar</button></div>
  <div id="pfIaMessages" role="log" aria-label="Conversa com o assistente" aria-live="polite" aria-relevant="additions"></div>
- <div class="ia-footer"><form id="pfIaForm"><input id="pfIaQuestion" aria-label="Sua pergunta" placeholder="Pergunte sobre o período selecionado…" maxlength="600" autocomplete="off" required><button id="pfIaSend" type="submit">Enviar</button></form><div class="ia-footer-actions"><p id="pfIaStatus" role="status">Somente leitura · Conversa apenas nesta aba</p><button id="pfIaClear" type="button" aria-label="Limpar pesquisa e conversa para fazer uma nova pergunta">Limpar pesquisa</button></div></div>
+ <div class="ia-footer"><form id="pfIaForm"><input id="pfIaQuestion" aria-label="Sua pergunta" placeholder="Pergunte sobre seus gastos neste período…" aria-describedby="pfIaQuestionHelp" lang="pt-BR" spellcheck="true" maxlength="600" autocomplete="off" required><button id="pfIaSend" type="submit">Enviar</button></form><p id="pfIaQuestionHelp" class="ia-question-help">Escolha um exemplo ou escreva sua pergunta. Enter ou Enviar realiza a consulta.</p><div class="ia-footer-actions"><p id="pfIaStatus" role="status">Somente leitura · Conversa apenas nesta aba</p><button id="pfIaClear" type="button" aria-label="Limpar pesquisa e conversa para fazer uma nova pergunta" title="Apaga a pergunta e a conversa desta aba; não altera os registros financeiros.">Limpar conversa</button></div></div>
  </div></dialog>`;
  document.body.appendChild(box);
  const $=id=>document.getElementById(id),dialog=$('pfIaDialog'),messages=$('pfIaMessages');
@@ -8976,10 +8976,64 @@ body.auth-pendente #pfIaLaunch{display:none!important}
   if(typeof obterSessaoNuvem!=='function')throw Error('Entre na sua conta em Nuvem para usar o Gemini.');
   return await obterSessaoNuvem();
  }
- function add(text,by='Assistente local'){const article=document.createElement('article'),label=document.createElement('small');if(by==='Você')article.className='user';label.textContent=by;article.append(label,document.createTextNode(text));messages.appendChild(article);while(messages.children.length>60)messages.firstElementChild.remove();messages.scrollTop=messages.scrollHeight;}
+ function appendReferences(article,reference){
+  const bounds=core.periodBounds(reference.month),formatDate=value=>value.split('-').reverse().join('/');
+  const list=(start,end)=>reference.rows.filter(row=>row&&['despesa','receita'].includes(core.norm(row.tipo))&&Number.isFinite(Number(row.valor))&&Number(row.valor)>=0&&/^\d{4}-\d{2}-\d{2}$/.test(String(row.vencimento||'').slice(0,10))&&String(row.vencimento).slice(0,10)>=start&&String(row.vencimento).slice(0,10)<=end).map(row=>[formatDate(String(row.vencimento).slice(0,10)),String(row.tipo||''),String(row.categoria||'Sem categoria'),String(row.descricao||'Sem descrição'),core.money(Math.round(Number(row.valor)*100)),String(row.status||'Não informado')]);
+  const groups=[['Ver lançamentos do período',bounds.start,bounds.end]];
+  if(/compar|anterior|variacao|aument|diminui/.test(core.norm(reference.question)))groups.push(['Ver lançamentos do período anterior',bounds.previousStart,bounds.previousEnd]);
+  for(const [label,start,end] of groups){
+   const rows=list(start,end),details=document.createElement('details');details.className='ia-records';
+   const summary=document.createElement('summary');summary.textContent=label+' ('+rows.length+')';details.append(summary);
+   const note=document.createElement('p');note.textContent=formatDate(start)+' a '+formatDate(end)+'. Receitas e despesas válidas por vencimento; perguntas por categoria, status ou duplicidade podem usar apenas parte destes registros.';details.append(note);
+   const container=document.createElement('div');container.className='ia-records-scroll';details.append(container);
+   let rendered=false;
+   details.addEventListener('toggle',()=>{
+    if(!details.open||rendered||!allowed())return;rendered=true;
+    if(!rows.length){container.textContent='Nenhum lançamento válido neste período.';return;}
+    const table=document.createElement('table'),caption=document.createElement('caption');caption.textContent=label+' · '+formatDate(start)+' a '+formatDate(end);table.append(caption);
+    const head=document.createElement('thead'),headRow=document.createElement('tr');for(const title of ['Vencimento','Tipo','Categoria','Descrição','Valor','Status']){const cell=document.createElement('th');cell.scope='col';cell.textContent=title;headRow.append(cell);}head.append(headRow);table.append(head);
+    const body=document.createElement('tbody');table.append(body);container.append(table);
+    const progress=document.createElement('p'),more=document.createElement('button');more.type='button';more.textContent='Mostrar mais lançamentos';details.append(progress,more);
+    let offset=0;
+    function render(){if(!allowed())return;for(const values of rows.slice(offset,offset+100)){const row=document.createElement('tr');for(const value of values){const cell=document.createElement('td');cell.textContent=value;row.append(cell);}body.append(row);}offset=Math.min(offset+100,rows.length);progress.textContent='Mostrando '+offset+' de '+rows.length+' registros.';more.hidden=offset>=rows.length;}
+    more.onclick=render;render();
+   });article.append(details);
+  }
+ }
+ function add(text,by='Cálculo local',reference){const article=document.createElement('article'),label=document.createElement('small');if(by==='Você')article.className='user';label.textContent=by;article.append(label,document.createTextNode(text));if(by==='Cálculo local'||by==='Gemini'){const source=document.createElement('p');source.className='ia-response-source';source.textContent=by==='Gemini'?'Resposta de IA baseada no resumo autorizado. Confira os valores nos registros financeiros.':'Fonte: cadastro financeiro · cálculo por vencimento · nenhum registro alterado.';article.append(source);}if(reference&&by==='Cálculo local')appendReferences(article,reference);messages.querySelector('.ia-welcome')?.remove();messages.appendChild(article);while(messages.children.length>60)messages.firstElementChild.remove();messages.scrollTop=messages.scrollHeight;}
  function cancel(){revision++;controller?.abort();controller=null;$('pfIaSend').disabled=false;$('pfIaStatus').textContent='Somente leitura · Conversa apenas nesta aba';}
- function note(){const live=$('pfIaMode').value==='gemini';$('pfIaConsent').style.display=live?'block':'none';$('pfIaAccept').checked=false;$('pfIaNotice').textContent=live?(config.demo?'Prévia com dados fictícios: o Gemini real não pode ser consultado aqui.':'Gemini usa a pergunta e um resumo do período escolhido. Limite inicial: 10 consultas por conta e 30 no total por dia UTC, sujeito também à cota gratuita do Google. Nenhuma consulta é enviada sem sua autorização.'):'Cálculo local no navegador. Não envia perguntas nem totais a serviços de IA.';}
- function welcome(){add('Escolha o mês ou intervalo de datas e o modo de resposta. O modo local continua disponível sem API. As consultas usam a data de vencimento no período selecionado; saldo não inclui saldo inicial de conta.');}
+ function note(){const live=$('pfIaMode').value==='gemini';$('pfIaConsent').style.display=live?'block':'none';$('pfIaAccept').checked=false;$('pfIaNotice').textContent=live?(config.demo?'Prévia com dados fictícios: o Gemini real não pode ser consultado aqui.':'Gemini recebe sua pergunta e totais do período via Supabase; categorias são codificadas. Revise a autorização abaixo antes de enviar. Limite inicial: 10 consultas por conta e 30 no total por dia UTC, sujeito também à cota gratuita do Google. Nenhuma consulta é enviada sem sua autorização.'):'Cálculo local no navegador: esta consulta não envia perguntas ou totais à IA. A sincronização em nuvem do sistema continua independente deste modo.';}
+ function periodText(){
+  const bounds=core.periodBounds(selectedPeriod());
+  const date=value=>new Date(value+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
+  return date(bounds.start)+' a '+date(bounds.end);
+ }
+ function updatePeriod(){try{$('pfIaPeriodSummary').textContent='Período: '+periodText()+' · Critério: data de vencimento.';}catch(error){$('pfIaPeriodSummary').textContent=error.message;}}
+ function prepareQuestion(question){
+  if(!allowed())return;
+  $('pfIaQuestion').value=question;
+  $('pfIaQuestion').focus({preventScroll:true});
+  $('pfIaStatus').textContent='Pergunta pronta. Pressione Enter ou clique em Enviar para consultar.';
+ }
+ function welcome(){
+  updatePeriod();
+  const section=document.createElement('section');section.className='ia-welcome';
+  const heading=document.createElement('h3');heading.textContent='O que você quer consultar?';section.append(heading);
+  const intro=document.createElement('p');intro.textContent=$('pfIaMode').value==='gemini'?'Prepare uma pergunta. O envio à IA só ocorre ao consultar, com sua autorização marcada.':'O cálculo local responde às consultas abaixo usando os registros financeiros, sem enviar perguntas ou totais à IA.';section.append(intro);
+  const examples=document.createElement('div');examples.className='ia-examples';
+  const range=$('pfIaPeriodMode').value==='range';
+  for(const [label,question] of [
+   ['Ver resumo do período','Faça um resumo do período'],
+   ['Quanto gastei?','Quanto gastei?'],
+   ['Comparar com o período anterior',range?'Compare com o período anterior':'Compare com o mês anterior'],
+   ['Quais são as maiores categorias?','Quais são as maiores categorias?'],
+   ['Quanto falta pagar?','Quanto falta pagar?'],
+   ['Tenho receitas a receber?','Tenho receitas a receber?']
+  ]){const button=document.createElement('button');button.type='button';button.textContent=label;button.title='Preenche a pergunta. Confira e clique em Enviar.';button.onclick=()=>prepareQuestion(question);examples.append(button);}
+  section.append(examples);
+  const basis=document.createElement('p');basis.className='ia-basis';basis.textContent='Fonte: receitas e despesas do cadastro financeiro. As consultas usam vencimento; o saldo não inclui saldo inicial de conta. No modo por mês, a consulta de vencimentos usa toda a base; no intervalo personalizado, respeita as datas selecionadas.';section.append(basis);
+  messages.append(section);
+ }
  note();welcome();
  function fitViewport(){
   const viewport=window.visualViewport;
@@ -8994,7 +9048,7 @@ body.auth-pendente #pfIaLaunch{display:none!important}
  $('pfIaLaunch').onclick=()=>{if(!allowed())return;fitViewport();dialog.showModal();$('pfIaClose').focus({preventScroll:true});requestAnimationFrame(fitViewport);};
  $('pfIaClose').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{cancel();$('pfIaAccept').checked=false;$('pfIaLaunch').focus();});
  $('pfIaClear').onclick=()=>{cancel();messages.replaceChildren();$('pfIaQuestion').value='';$('pfIaAccept').checked=false;welcome();$('pfIaQuestion').focus({preventScroll:true});requestAnimationFrame(fitViewport);};
- $('pfIaMode').onchange=()=>{cancel();note();};
+ $('pfIaMode').onchange=()=>{cancel();note();messages.replaceChildren();welcome();};
  function periodChanged(){
   cancel();messages.replaceChildren();$('pfIaAccept').checked=false;
   const range=$('pfIaPeriodMode').value==='range';
@@ -9003,8 +9057,8 @@ body.auth-pendente #pfIaLaunch{display:none!important}
   for(const id of ['pfIaStart','pfIaEnd']){$(id+'Label').hidden=!range;$(id).disabled=!range;$(id).required=range;}
   $('pfIaEnd').min=$('pfIaStart').value;$('pfIaStart').max=$('pfIaEnd').value;
   const compare=dialog.querySelector('.ia-chips button:nth-child(3)');
-  if(compare){compare.textContent=range?'Comparar períodos':'Comparar meses';compare.dataset.q=range?'Compare com o período anterior':'Compare com o mês anterior';}
-  add(range?'Intervalo alterado. As datas inicial e final estão incluídas; comparação com o período anterior de igual duração. Vencimentos também respeitam o intervalo.':'Período alterado. Faça uma nova pergunta.');
+  if(compare){compare.textContent='Comparar períodos';compare.title=range?'Compara com o intervalo anterior de igual duração.':'Compara com o mês anterior.';compare.dataset.q=range?'Compare com o período anterior':'Compare com o mês anterior';}
+  welcome();
   requestAnimationFrame(fitViewport);
  }
  $('pfIaPeriodMode').onchange=periodChanged;
@@ -9024,7 +9078,7 @@ body.auth-pendente #pfIaLaunch{display:none!important}
   }
   add(question,'Você');$('pfIaQuestion').value='';
   const rows=typeof transacoes!=='undefined'?transacoes:[];
-  if(mode==='local'){try{add(core.answer(question,rows,month));}catch{add('Não foi possível analisar os dados deste mês.');}return;}
+  if(mode==='local'){try{add(core.answer(question,rows,month),'Cálculo local',{rows,month,question});}catch{add('Não foi possível analisar os dados deste mês.');}return;}
   let capturedOwner=null;const run=++revision;controller=new AbortController();const currentController=controller;
   $('pfIaSend').disabled=true;$('pfIaStatus').textContent='Consultando Gemini…';let timer;
   try{
@@ -9050,7 +9104,7 @@ body.auth-pendente #pfIaLaunch{display:none!important}
    if(event==='SIGNED_OUT')cloudOwner=null;else if(next)cloudOwner=next;
   });
  }catch{}
- $('pfIaForm').onsubmit=e=>{e.preventDefault();send($('pfIaQuestion').value);};document.querySelectorAll('#pfIaDialog [data-q]').forEach(b=>b.onclick=()=>send(b.dataset.q));
+ $('pfIaForm').onsubmit=e=>{e.preventDefault();send($('pfIaQuestion').value);};document.querySelectorAll('#pfIaDialog [data-q]').forEach(b=>b.onclick=()=>prepareQuestion(b.dataset.q));
  if(new URLSearchParams(location.search).get('assistente')==='1')window.addEventListener('load',()=>$('pfIaLaunch').click(),{once:true});
 })();
 </script>
@@ -11699,5 +11753,35 @@ for (const name of ['salvarGraficosPDF','imprimirGraficos']) {
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh,{once:true});else refresh();
 })();
 </script>
+
+<style id="pf-assistente-clarity">
+html body #pfIaDialog .ia-records{margin-top:12px;padding-top:10px;border-top:1px solid #cbd5e1;white-space:normal}html body #pfIaDialog .ia-records summary{cursor:pointer;font-weight:600;color:#3730a3;min-height:44px;padding:10px 0}html body #pfIaDialog .ia-records p{font-size:12px;line-height:1.5;color:#334155}html body #pfIaDialog .ia-records-scroll{overflow-x:auto;max-width:100%}html body #pfIaDialog .ia-records table{border-collapse:collapse;font-size:12px;width:100%;min-width:600px}html body #pfIaDialog .ia-records th,html body #pfIaDialog .ia-records td{padding:8px;text-align:left;border-bottom:1px solid #cbd5e1;color:#0f172a!important;background:white!important}html body #pfIaDialog .ia-records th{background:#eef2ff!important;font-weight:700}html body #pfIaDialog .ia-records button{min-height:44px;padding:10px;border:1px solid #818cf8;border-radius:8px;color:#312e81;background:white}
+
+html body #pfIaDialog .ia-controls{gap:12px;background:#fff!important;color:#0f172a!important}
+html body #pfIaDialog .ia-controls label{min-width:0;flex:1 1 165px}
+html body #pfIaDialog .ia-controls select,html body #pfIaDialog .ia-controls input{width:100%;min-height:44px;background:#fff!important;color:#0f172a!important;border-color:#64748b!important}
+html body #pfIaDialog .ia-period-summary{flex:1 0 100%;margin:0;font-size:13px;font-weight:600;color:#334155!important;line-height:1.5}
+html body #pfIaDialog .ia-notice{font-size:13px;line-height:1.5;color:#312e81!important;background:#eef2ff!important}
+html body #pfIaDialog #pfIaConsent{max-height:170px;overflow:auto;background:#fff7ed!important;color:#7c2d12!important}
+html body #pfIaDialog #pfIaConsent label{font-size:13px;line-height:1.5;color:#7c2d12!important}
+html body #pfIaDialog #pfIaAccept{flex-shrink:0;width:20px;height:20px;min-width:20px;margin-top:2px}
+html body #pfIaDialog .ia-chips button,html body #pfIaDialog .ia-examples button{min-height:44px;border:1px solid #818cf8;background:#fff!important;color:#312e81!important;font:600 13px/1.4 system-ui;padding:10px 12px;white-space:normal;text-align:left}
+html body #pfIaDialog .ia-examples{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}
+html body #pfIaDialog .ia-examples button{border-radius:10px}
+html body #pfIaDialog .ia-welcome{padding:18px;border:1px solid #cbd5e1;border-radius:14px;background:#fff!important;color:#0f172a!important}
+html body #pfIaDialog .ia-welcome h3{margin:0 0 8px;font:700 19px/1.3 system-ui;color:#1e1b4b!important}
+html body #pfIaDialog .ia-welcome p{font-size:13px;line-height:1.6;margin:8px 0;color:#334155!important}
+html body #pfIaDialog .ia-basis,html body #pfIaDialog .ia-response-source{border-top:1px solid #cbd5e1;padding-top:10px;font-size:12px;color:#334155!important;white-space:normal}
+html body #pfIaDialog #pfIaMessages article:not(.user){background:#fff!important;color:#0f172a!important}
+html body #pfIaDialog #pfIaMessages article small{opacity:1;color:#3730a3!important;font-size:11px}
+html body #pfIaDialog #pfIaMessages article.user small{color:#fff!important}
+html body #pfIaDialog #pfIaQuestion{min-height:52px;font-size:16px;background:#fff!important;color:#0f172a!important;border-color:#64748b!important;padding:12px}
+html body #pfIaDialog #pfIaQuestion::placeholder{color:#475569!important;opacity:1}
+html body #pfIaDialog #pfIaSend{min-height:52px;padding:12px 20px;background:#4338ca!important;color:#fff!important;font-size:15px}
+html body #pfIaDialog .ia-question-help,html body #pfIaDialog #pfIaStatus{font-size:12px;line-height:1.5;color:#334155!important;margin:8px 0 0}
+html body #pfIaDialog #pfIaClear{background:transparent!important;color:#475569!important;border-color:#cbd5e1}
+html body #pfIaDialog :focus-visible{outline:3px solid #4338ca!important;outline-offset:3px}
+@media(max-width:600px){html body #pfIaDialog .ia-examples{grid-template-columns:1fr}html body #pfIaDialog .ia-welcome{padding:14px}html body #pfIaDialog .ia-chips{gap:8px}html body #pfIaDialog .ia-chips button{white-space:nowrap}html body #pfIaDialog #pfIaSend{padding:10px 14px}html body #pfIaDialog .ia-controls label{flex-basis:140px}}
+</style>
 </body>
 </html>
