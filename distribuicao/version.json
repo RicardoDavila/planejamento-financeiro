@@ -1,10 +1,10 @@
 {
-  "version": "V4.12.76",
-  "name": "V4.12.76",
+  "version": "V4.12.77",
+  "name": "V4.12.77",
   "channel": "distribuicao",
   "notes": [
-    "Adiciona o menu global de idioma na barra superior: Português (Brasil), English e Español.",
-    "Preserva o layout e os estilos existentes; a preferência é salva no armazenamento da aplicação.",
-    "Centraliza traduções de interface e compartilha o idioma com relatórios, assistente e janelas de gráficos sem reescrever os registros financeiros."
+    "Adiciona Moeda na barra superior, independente do idioma: BRL, USD e EUR.",
+    "Converte somente a consulta e os relatórios/PDF com PTAX de venda do Banco Central, informando a fonte e a data da cotação.",
+    "Mantém lançamentos, edição, histórico e cálculos em reais; ao voltar para BRL, exibe diretamente os valores originais."
   ]
 }

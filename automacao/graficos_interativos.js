@@ -37,6 +37,7 @@
  }
  function boot(factory,payload){
   const D=factory(),NS='http://www.w3.org/2000/svg',states=new Map(),contexts={},colors=['#047857','#bd2b20','#2563eb','#7c3aed','#b45309','#0e7490','#9d174d','#475569'];
+  const baseText=n=>window.PFCurrency?.originalText(n)??n?.textContent;
   const money=v=>(Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   const color=c=>{if(!document.body.classList.contains('dark-mode')||window.matchMedia?.('print').matches)return c;return ({'#047857':'#6ee7b7','#16a34a':'#6ee7b7','#10b981':'#6ee7b7','#bd2b20':'#fda4af','#dc2626':'#fda4af','#2563eb':'#93c5fd','#7c3aed':'#d8b4fe','#b45309':'#fcd34d'})[c]||c;};
   let scheduled=false,serial=0;
@@ -223,7 +224,7 @@
   function bindRows(source,selector){for(const n of source.querySelectorAll(selector)){if(n.classList.contains('pfce-hit'))continue;n.classList.add('pfce-hit');n.setAttribute('tabindex','0');n.setAttribute('role','button');n.setAttribute('aria-label',(n.getAttribute('title')||n.textContent)+' — abrir lançamentos');}}
   function domBars(id,title,rows,options={}){
    const source=document.getElementById(id);if(!source)return;
-   const selector=options.selector||'.pf-bar-row',nodes=[...source.querySelectorAll(selector)],labels=nodes.map(n=>options.label?.(n)||n.querySelector('span')?.getAttribute('title')||n.querySelector('span')?.textContent||n.textContent),values=nodes.map(n=>options.value?.(n)??D.number(n.querySelector('strong,.analysis-amount')?.textContent));
+   const selector=options.selector||'.pf-bar-row',nodes=[...source.querySelectorAll(selector)],labels=nodes.map(n=>options.label?.(n)||n.querySelector('span')?.getAttribute('title')||n.querySelector('span')?.textContent||n.textContent),values=nodes.map(n=>options.value?.(n)??D.number(baseText(n.querySelector('strong,.analysis-amount'))));
    const m=D.model(title,labels,[{label:options.series||'Valor',values,color:options.color||'#047857'}],(j,i)=>options.resolve?options.resolve(labels[i],i):rows.filter(r=>(r.categoria||'Outros')===labels[i]),options.additive!==false);
    m.records=rows;
    mount(source,m,{mark:()=>bindRows(source,selector),hit:target=>{const node=target.closest(selector);return node&&source.contains(node)?{j:0,i:nodes.indexOf(node)}:null;}});
@@ -238,13 +239,13 @@
     }
     for(const [id,type,color]of [['clean-revenue-category-bars','Receita','#047857'],['clean-category-bars','Despesa','#bd2b20']]){
      const source=document.getElementById(id);if(!source)continue;
-     const native=[...source.querySelectorAll('details.analysis-rubric')],labels=native.map(n=>n.dataset.rubric),values=native.map(n=>D.number(n.querySelector('summary .analysis-amount')?.textContent)),scoped=rows.filter(r=>r.tipo===type);
+     const native=[...source.querySelectorAll('details.analysis-rubric')],labels=native.map(n=>n.dataset.rubric),values=native.map(n=>D.number(baseText(n.querySelector('summary .analysis-amount')))),scoped=rows.filter(r=>r.tipo===type);
      const m=D.model(type+' por rubrica',labels,[{label:type,values,color}],(j,i)=>scoped.filter(r=>(r.categoria||'Sem rubrica')===labels[i]));m.records=scoped;
      mount(source,m,{hit:target=>{
       if(target.closest('summary'))return null;
       const row=target.closest('.analysis-description-row'),group=row?.closest('details.analysis-rubric');if(!row||!group)return null;
       const description=row.querySelector('span')?.textContent;
-      return {point:{key:'description:'+group.dataset.rubric+':'+description,label:description,series:type,value:D.number(row.querySelector('.analysis-amount')?.textContent),j:0,i:labels.indexOf(group.dataset.rubric)},rows:scoped.filter(r=>(r.categoria||'Sem rubrica')===group.dataset.rubric&&(r.descricao.trim()||'Sem descrição')===description)};
+      return {point:{key:'description:'+group.dataset.rubric+':'+description,label:description,series:type,value:D.number(baseText(row.querySelector('.analysis-amount'))),j:0,i:labels.indexOf(group.dataset.rubric)},rows:scoped.filter(r=>(r.categoria||'Sem rubrica')===group.dataset.rubric&&(r.descricao.trim()||'Sem descrição')===description)};
      },mark:()=>bindRows(source,'.analysis-description-row')});
     }
    }
@@ -257,7 +258,7 @@
     const bucket=r=>{if(!r.vencimento)return 3;const days=Math.max(0,Math.floor((today-new Date(r.vencimento+'T00:00:00'))/86400000));return days<=7?0:days<=30?1:2;};
     domBars('pfAtrasos','Vencidos por faixa de atraso',des,{color:'#b45309',resolve:(label,i)=>des.filter(r=>r.status==='Vencido'&&bucket(r)===i)});
     const ref=document.getElementById('graficoDataFim')?.value||document.getElementById('graficoDataInicio')?.value||new Date().toISOString().slice(0,10),month=ref.slice(0,7);
-    domBars('pfHeatmap','Mapa de calor — despesas por dia do mês',des,{selector:'.pf-heat-cell',color:'#bd2b20',label:n=>'Dia '+n.querySelector('.pf-heat-day')?.textContent,value:n=>D.number(n.querySelector('.pf-heat-value')?.textContent),resolve:(label,i)=>des.filter(r=>r.vencimento===month+'-'+String(i+1).padStart(2,'0'))});
+    domBars('pfHeatmap','Mapa de calor — despesas por dia do mês',des,{selector:'.pf-heat-cell',color:'#bd2b20',label:n=>'Dia '+n.querySelector('.pf-heat-day')?.textContent,value:n=>D.number(baseText(n.querySelector('.pf-heat-value'))),resolve:(label,i)=>des.filter(r=>r.vencimento===month+'-'+String(i+1).padStart(2,'0'))});
     const source=document.getElementById('pfDozeMeses');
     if(source){
      const d=new Date(ref+'T12:00:00'),from=document.getElementById('graficoDataInicio')?.value||'',to=document.getElementById('graficoDataFim')?.value||'';

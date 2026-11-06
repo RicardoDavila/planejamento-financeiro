@@ -1,0 +1,1 @@
+(() => {const sync=()=>{try{window.opener?.PFCurrency?.installView(window);}catch(_){}};window.addEventListener('load',sync,{once:true});try{window.opener?.addEventListener('pf-currency-change',sync);window.addEventListener('pagehide',()=>window.opener?.removeEventListener('pf-currency-change',sync),{once:true});}catch(_){};})();
