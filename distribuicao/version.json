@@ -1,9 +1,9 @@
 {
-  "version": "V4.12.72",
-  "name": "V4.12.72",
+  "version": "V4.12.73",
+  "name": "V4.12.73",
   "channel": "distribuicao",
   "notes": [
-    "Seleção de campos, tabelas e gráficos em cada relatório, com prévia antes do PDF ou impressão.",
-    "Preferências opcionais; seleção aplicada somente ao documento exportado."
+    "Adiciona Salvar em PDF e Imprimir na coluna de análise mensal e em cada gráfico.",
+    "Relatórios com logotipo, cabeçalho, período, filtros e data de emissão, preservando o tipo de gráfico escolhido."
   ]
 }

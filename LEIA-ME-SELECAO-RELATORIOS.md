@@ -1,35 +1,27 @@
-# Correção da publicação — V4.12.72
+# V4.12.73 — PDF e impressão na análise mensal
 
-## Aplicar no GitHub
+## O que mudou
 
-Este é um pacote de atualização com 16 arquivos alterados, abaixo do limite de 90.
+A coluna “Análise do mês de receitas e despesas por rubrica e evolução” agora tem Salvar em PDF e Imprimir no topo. Cada gráfico também tem seus próprios botões, junto ao seletor do tipo de gráfico.
 
-1. Extraia o ZIP no computador.
-2. Copie seu conteúdo para a raiz do repositório existente, substituindo os arquivos correspondentes e mantendo as pastas automacao, distribuicao e teste-gemini nos caminhos indicados.
-3. Inclua os arquivos da pasta automacao no mesmo commit. Eles corrigem a integração dos testes com o novo módulo de seleção dos relatórios.
-4. Preserve todos os outros arquivos do repositório, inclusive .github/workflows/publicar.yml e os demais scripts de automacao. Este ZIP não substitui o repositório inteiro.
-5. Faça o commit na branch main para executar novamente a publicação.
+Os botões do topo preparam os quatro gráficos. Os botões individuais preparam apenas o gráfico correspondente. O relatório mantém a visualização selecionada (áreas, pizza, colunas ou padrão), com título do projeto, logotipo incorporado, período, filtros e data de emissão. A apresentação usa fundo branco para impressão. Não depende do carregamento externo do logotipo.
 
-## Correções
+Antes da saída, o relatório apresenta a seleção de conteúdo e a prévia. Clique em Pré-visualizar e, depois, Gerar PDF ou Imprimir. Para o PDF, escolha Salvar como PDF no diálogo do navegador.
 
-O pacote anterior omitiu testes que precisavam acompanhar a atualização. Os testes de relatórios gerenciais, conciliação e fluxo de caixa agora carregam o novo módulo. O teste de geração exige prévia antes da impressão. Foi acrescentada uma verificação descoberta pelo comando de testes do workflow.
+Os dados, filtros e gráficos da tela original permanecem preservados. As verificações de acesso são repetidas antes de abrir o documento. Se a aba for bloqueada pelo navegador, o sistema informa que é necessário permitir sua abertura.
 
-As preferências dos relatórios usam o adaptador de armazenamento da aplicação de origem, preservando o isolamento por conta na distribuição.
+## Instalação
 
-## Funcionalidade
+Este ZIP contém 18 arquivos e inclui cumulativamente a correção anterior da publicação e a seleção dos relatórios.
 
-Abra um relatório, escolha os campos, tabelas e gráficos e clique em Pré-visualizar. Gerar PDF e Imprimir ficam disponíveis depois da prévia. Gerar PDF abre o diálogo do navegador, onde se escolhe Salvar como PDF. Qualquer alteração na seleção exige atualizar a prévia. Todos os itens começam selecionados, exceto quando há preferências salvas por opção do usuário.
-
-A seleção afeta somente o documento gerado. Os registros financeiros, cálculos, totais e telas normais permanecem preservados.
+Extraia e copie o conteúdo para a raiz do repositório atual, substituindo os arquivos correspondentes. Inclua a pasta automacao no commit. Preserve os demais arquivos e pastas do repositório; este pacote é uma atualização, não um repositório completo. Faça um novo commit na main para publicar.
 
 ## Verificação
 
-Foi executada a mesma sequência de verificação e geração usada pelo workflow publicar.yml:
+- A bateria de 56 testes usada pelo workflow passou.
+- O teste específico de exportação mensal passou: relatório completo e individual, cabeçalho, logotipo, período, filtros, tipo selecionado, escape de texto, bloqueio de acesso e popup bloqueado.
+- A compilação dos scripts das três versões passou.
+- A geração do site V4.12.73 concluiu com sucesso, incluindo as verificações de distribuição.
+- O ZIP foi comparado ao projeto original para conferir que inclui todas as alterações necessárias.
 
-- python -m unittest discover -s automacao -p 'test_*.py' -v: 56 testes passaram.
-- python automacao/gerar.py --output [pasta vazia] --version V4.12.72: geração concluída, incluindo verificações de JavaScript e isolamento.
-- O pacote foi conferido contra o ZIP original: todos os arquivos alterados e novos necessários estão incluídos.
-
-A execução efetiva do GitHub Actions depende do repositório remoto. A imagem enviada mostra a etapa que falhou, mas não contém o log detalhado. A falha de integração dos testes foi reproduzida e corrigida localmente.
-
-A validação visual em navegador, celular e PDF continua pendente: o ambiente local bloqueou a abertura do Chrome automatizado (spawn EPERM). O teste de navegador foi incluído como verificação opcional e não faz parte da descoberta automática do workflow.
+A interação visual em navegador, celular e o PDF renderizado continuam sem conferência visual neste ambiente, que bloqueia a abertura do Chrome automatizado. Os testes de exportação usam documentos simulados e não substituem essa conferência visual.

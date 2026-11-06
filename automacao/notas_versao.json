@@ -1,12 +1,10 @@
 {
   "pessoal": [
-    "Permite escolher campos, tabelas e gráficos antes de gerar relatórios, com prévia, PDF e impressão.",
-    "Inclui selecionar tudo, desmarcar tudo e preferências opcionais sem alterar os registros financeiros.",
-    "Corrige a integração dos testes de publicação com o módulo de seleção de relatórios."
+    "Adiciona Salvar em PDF e Imprimir na análise mensal e em cada gráfico, com cabeçalho e logotipo do projeto.",
+    "Preserva o tipo de gráfico, os filtros e a seleção de conteúdo antes da exportação."
   ],
   "distribuicao": [
-    "Permite escolher campos, tabelas e gráficos antes de gerar relatórios, com prévia, PDF e impressão.",
-    "Inclui selecionar tudo, desmarcar tudo e preferências opcionais sem alterar os registros financeiros.",
-    "Corrige a integração dos testes de publicação com o módulo de seleção de relatórios."
+    "Adiciona Salvar em PDF e Imprimir na análise mensal e em cada gráfico, com cabeçalho e logotipo do projeto.",
+    "Preserva o tipo de gráfico, os filtros e a seleção de conteúdo antes da exportação."
   ]
 }

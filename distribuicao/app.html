@@ -7907,7 +7907,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.72';
+ const CURRENT_VERSION='V4.12.73';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -10228,7 +10228,8 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
 @media print{.pfce-tools,.pfce-message,.pfce-close,.pfce-points{display:none!important}.pfce-alt{overflow:visible;--pfce-hole:#fff}.pfce-svg{min-width:0;width:100%;color:#1e293b!important}.pfce-detail{max-height:none;background:white!important;color:#1e293b!important;break-inside:auto}.pfce-scroll{max-height:none;overflow:visible}.pfce-detail th,.pfce-detail td{color:#1e293b!important}.pfce-bars{break-inside:auto}}
 
 </style>
-<script id="pf-chart-explorer">/* Exploração visual: não escreve em contas, transações, armazenamento ou rede. */
+<script id="pf-chart-explorer">
+/* Exploração visual: não escreve em contas, transações, armazenamento ou rede. */
 (() => {
  'use strict';
  function chartData(){
@@ -10278,9 +10279,53 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
    if(typeof protecaoAutenticada!=='undefined'&&!protecaoAutenticada)return true;
    return !!state.source.closest('#clean-month-analysis')&&!!document.getElementById('painelGerencial')?.classList.contains('pf-painel-oculto');
   }
+  function exportMonthlyChart(source) {
+   const selected=[...states.values()].filter(state=>state.source.closest('#clean-month-analysis')&&(!source||state.source===source)&&state.source.isConnected);
+   if(!selected.length||selected.some(protectedState))return;
+   if(typeof window.pfdAssert==='function')try{window.pfdAssert();}catch(_){return;}
+   const popup=window.open('','_blank');
+   if(!popup){alert('Permita a abertura de uma nova aba para visualizar e exportar os gráficos.');return;}
+   try {
+    const report=document.implementation.createHTMLDocument('Análise mensal — gráficos');
+    report.documentElement.lang='pt-BR';
+    const viewport=report.createElement('meta');viewport.name='viewport';viewport.content='width=device-width,initial-scale=1';report.head.append(viewport);
+    const header=report.createElement('header');header.className='pf-monthly-report-header marca';
+    const logo=report.createElement('img');logo.className='pf-report-logo';logo.src=window.PFReportTheme.logo;logo.alt='Logotipo do Planejamento Financeiro';logo.width=logo.height=52;header.append(logo);
+    const heading=report.createElement('h1');heading.textContent='Planejamento Financeiro';header.append(heading);
+    const subtitle=report.createElement('p');subtitle.textContent=source?selected[0].model.title:'Análise do mês de receitas e despesas por rubrica e evolução';header.append(subtitle);
+    const period=report.createElement('p');period.textContent=typeof obterPeriodoFiltroPainel==='function'?obterPeriodoFiltroPainel():'Período de referência: '+String(contexts.monthly?.chosen||'');header.append(period);
+    const filters=report.createElement('p');filters.textContent=window.PFCashFlow?.filters?.()||'Filtros atuais da análise mensal';header.append(filters);
+    const issued=report.createElement('p');issued.textContent='Emitido em '+new Date().toLocaleString('pt-BR');header.append(issued);report.body.append(header);
+    for(const state of selected){
+     const section=report.createElement('section');section.className='pf-monthly-report-chart '+(state.source.closest('.analysis-expense')?'analysis-expense':'analysis-revenue');
+     const title=report.createElement('h2');title.textContent=state.model.title;section.append(title);
+     const caption=report.createElement('p');caption.textContent='Tipo de gráfico: '+(state.select.selectedOptions?.[0]?.textContent||state.mode)+(state.seriesLabel.hidden?'':' · Série: '+state.seriesSelect.selectedOptions?.[0]?.textContent);section.append(caption);
+     const description=state.source.closest('.analysis-revenue,.analysis-expense')?.querySelector('h3 + p');if(description)section.append(report.importNode(description,true));
+     const visible=state.alt.hidden?state.displayNode:state.alt,copy=report.importNode(visible,true);copy.removeAttribute('id');copy.hidden=false;
+     copy.querySelectorAll('script,button,input,select,[hidden]').forEach(node=>node.remove());
+     const palette={'#6ee7b7':'#047857','#fda4af':'#bd2b20','#93c5fd':'#2563eb','#c4b5fd':'#7c3aed','#d8b4fe':'#7c3aed','#fcd34d':'#b45309','#e2e8f0':'#243247'};
+     for(const node of [copy,...copy.querySelectorAll('*')]){
+      for(const attr of [...node.attributes])if(/^on/i.test(attr.name))node.removeAttribute(attr.name);
+      for(const attr of ['fill','stroke']){const value=node.getAttribute(attr);if(palette[value])node.setAttribute(attr,palette[value]);}
+     }
+     section.append(copy);report.body.append(section);
+    }
+    const footer=report.createElement('footer');footer.textContent='Relatório de Planejamento Financeiro · Uso interno';report.body.append(footer);
+    const style=report.createElement('style');style.textContent=(document.getElementById('pf-chart-explorer-style')?.textContent||'')+'body{margin:0 auto;padding:24px;max-width:1100px;background:white;color:#243247;font:13px/1.5 system-ui}.pf-monthly-report-header{position:relative;border-bottom:2px solid #203c64;padding:0 0 16px 70px;margin-bottom:24px}.pf-monthly-report-header .pf-report-logo{position:absolute;left:0;top:0;width:52px;height:52px}.pf-monthly-report-header h1{margin:0;font-size:24px}.pf-monthly-report-header p{margin:4px 0}.pf-monthly-report-chart{margin:0 0 28px;break-inside:avoid;min-width:0}.pf-monthly-report-chart h2{font-size:18px;break-after:avoid}.pfce-svg{min-width:0!important;max-width:100%;color:#243247!important}.pfce-alt{overflow:visible!important;--pfce-hole:white}.analysis-row{display:grid;grid-template-columns:minmax(90px,1fr) 2fr minmax(110px,auto);gap:10px;align-items:center;margin:12px 0}.analysis-track{display:block;height:10px;background:#edf2f8;border-radius:5px}.analysis-fill{display:block;height:100%;background:#047857}.analysis-expense .analysis-fill{background:#bd2b20}.analysis-amount{text-align:right;font-variant-numeric:tabular-nums}.analysis-rubric{margin:10px 0}.analysis-rubric summary{display:flex;justify-content:space-between;gap:16px}.analysis-description-row{display:flex;justify-content:space-between;padding:5px}footer{border-top:1px solid #cbd5e1;padding-top:12px;color:#526176}@page{size:A4 landscape;margin:12mm}@media print{body{padding:0;max-width:none}.pf-monthly-report-chart{break-inside:avoid}.pfce-svg{width:100%;height:auto;max-height:150mm}.pfce-point text{fill:#243247!important}}';report.head.append(style);
+    let html='<!doctype html>'+report.documentElement.outerHTML;
+    html=window.PFReportTheme.decorate(html);
+    html=window.PFReportSelection.decorate(html);
+    popup.document.open();popup.document.write(html);popup.document.close();
+   } catch(error){popup.close();alert('Não foi possível preparar o relatório de gráficos. Tente novamente.');}
+  }
+  function monthlyExportTools(){
+   const panel=document.getElementById('clean-month-analysis');if(!panel||document.getElementById('pf-monthly-export-actions'))return;
+   const tools=element('div',undefined,'pfce-tools');tools.id='pf-monthly-export-actions';tools.dataset.pfceUi='true';tools.style.padding='0 16px';
+   for(const label of ['Salvar em PDF','Imprimir']){const button=element('button',label);button.type='button';button.style.minHeight='44px';button.onclick=()=>exportMonthlyChart();tools.append(button);}
+   const content=document.getElementById('clean-analysis-content');if(content)content.before(tools);
+  }
   function pointRows(state,p){return D.rows(state.model.resolve?.(p.j,p.i)||[]);}
   function detail(state,point,overrideRows,passive=false){
-/* desktop-composition-bridge */ if(!payload&&!passive&&window.PFDesktopApproved?.showComposition){if(protectedState(state))return;window.PFDesktopApproved.showComposition(overrideRows||pointRows(state,point),point.label+" · "+point.series);return;}
    if(protectedState(state))return;
    if(state.selection===point.key){state.selection=null;state.detail.hidden=true;return;}
    state.selection=point.key;state.selectionIdentity=JSON.stringify([point.label,point.series]);state.detail.replaceChildren();state.detail.hidden=false;
@@ -10389,6 +10434,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
     const initialMode=(!payload&&({'clean-revenue-history-bars':'area','clean-history-bars':'pie','clean-revenue-category-bars':'default','clean-category-bars':'column'})[source.id])||'default';
     select.value=initialMode;
     state={source,displayNode:anchor,tools,alt,message,detail:panel,points:pointList,mode:initialMode,seriesLabel,seriesSelect,xLabel,xSelect,yLabel,ySelect,select,selection:null,id:++serial};states.set(source,state);
+    if(!payload&&source.closest('#clean-month-analysis'))for(const label of ['Salvar em PDF','Imprimir']){const button=element('button',label);button.type='button';button.style.minHeight='44px';button.onclick=()=>exportMonthlyChart(source);tools.append(button);}
     select.onchange=()=>{state.mode=select.value;state.selection=null;panel.hidden=true;pointList.hidden=true;draw(state);if(state.mode==='default'&&options.chart)options.chart()?.resize();};
     for(const s of [seriesSelect,xSelect,ySelect])s.onchange=()=>{state.selection=null;panel.hidden=true;draw(state);};
     listButton.onclick=()=>{if(protectedState(state)||!state.model)return;pointList.hidden=!pointList.hidden;pointList.replaceChildren();if(pointList.hidden)return;for(const p of D.points(state.model)){const b=element('button',p.label+' · '+p.series+' · '+money(p.value));b.type='button';b.onclick=()=>detail(state,p);pointList.append(b);}};
@@ -10415,6 +10461,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
   function rootModels(){
    const monthly=contexts.monthly;
    if(monthly){
+    monthlyExportTools();
     const rows=D.rows(monthly.rows),all=D.rows(window.PFQuickCards?window.PFQuickCards.apply(monthly.allRows):monthly.allRows),ref=String(monthly.chosen||new Date().toISOString()).slice(0,7).split('-').map(Number),months=Array.from({length:6},(_,i)=>D.month(ref[0],ref[1]-6+i));
     for(const [id,type,key,color]of [['clean-revenue-history-bars','Receita','revenueHistory','#047857'],['clean-history-bars','Despesa','expenseHistory','#bd2b20']]){
      domBars(id,type==='Receita'?'Evolução das Receitas':'Evolução das Despesas',all,{selector:'.analysis-row',color,resolve:(label,i)=>all.filter(r=>r.tipo===type&&r.vencimento.startsWith(months[i]?.key||'invalid'))});
@@ -10572,6 +10619,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
  };
  window.PFChartExplorer=api;
 })();
+
 </script>
 <style id="pf-dynamic-filters-style">
 .pf-dynamic-item{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px}
