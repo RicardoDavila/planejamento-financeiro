@@ -43,7 +43,7 @@
   const sum=a=>a.reduce((s,r)=>s+r.valor,0);
   const month=(year,index)=>{const d=new Date(year,index,1);return {key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),label:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'})};};
   const typeRows=(arr,label)=>{
-   const n=norm(label);let out=arr;
+   const n=norm(typeof window!=='undefined'&&window.PFI18n?window.PFI18n.canonical(label):label);let out=arr;
    if(/saldo|balanco|filtro|valor|total \(r\$\)/.test(n)&&!/receit|despes/.test(n))return out;
    if(/receit|recebid|entrada/.test(n))out=out.filter(r=>r.tipo==='Receita');
    else if(/despes|pag[ao]|saida|vencid|vencer/.test(n))out=out.filter(r=>r.tipo==='Despesa');
@@ -54,7 +54,8 @@
    return out;
   };
   function model(title,labels,series,resolve,additive=true){
-   return {title,labels:labels.map(String),series:series.map((s,j)=>({label:String(s.label||'Valor'),sourceIndex:s.sourceIndex??j,color:s.color||['#047857','#bd2b20','#2563eb','#7c3aed','#b45309'][j%5],values:s.values.map(v=>Number.isFinite(Number(v))?Number(v):0)})),resolve,additive};
+   const ui=value=>typeof window!=='undefined'&&typeof window.PFI18n?.translate==='function'?window.PFI18n.translate(String(value)):String(value);
+   return {title:ui(title),labels:labels.map(String),series:series.map((s,j)=>({label:ui(s.label||'Valor'),sourceIndex:s.sourceIndex??j,color:s.color||['#047857','#bd2b20','#2563eb','#7c3aed','#b45309'][j%5],values:s.values.map(v=>Number.isFinite(Number(v))?Number(v):0)})),resolve,additive};
   }
   function points(m){return m.series.flatMap((s,j)=>s.values.map((v,i)=>({key:j+':'+i,label:m.labels[i]||String(i+1),value:v,series:s.label,color:s.color,i,j})));}
   function pie(m,j){
@@ -427,4 +428,30 @@ function categoryBreakdownBars(entries,descriptions,format,escape,expanded=new S
  window.addEventListener('message',event=>{if(event.source!==window.opener||event.origin!==location.origin||event.data?.channel!==channel||event.data?.type!=='pf-chart-state')return;const state=event.data.state;if(!state||!Array.isArray(state.rows)||!Array.isArray(state.allRows))return;render(state)});
  window.addEventListener('load',()=>{if(channel&&window.opener&&!window.opener.closed)window.opener.postMessage({type:'pf-chart-ready',channel},location.origin==='null'?'*':location.origin)});
  setInterval(()=>{if(!window.opener||window.opener.closed){empty();$('status').textContent='Janela principal fechada. Reabra os gráficos pelo aplicativo.'}},700);
- </script></body></html>
+ </script>
+
+
+
+
+
+
+<script id="pf-global-language">
+/* Chart windows receive only the display language from their existing opener. */
+(()=>{
+ 'use strict';
+ let language='pt-BR',observer,scheduled=false;
+ const records=new WeakMap(),attributeRecords=new WeakMap();
+ const parentApi=()=>{try{return window.opener&&!window.opener.closed?window.opener.PFI18n:null;}catch(_){return null;}};
+ const originalText=node=>{if(!node)return '';if(node.nodeType===3){const saved=records.get(node);return saved&&node.data===saved.last?saved.source:node.data;}return [...(node.childNodes||[])].map(originalText).join('');};
+ window.PFI18n={getLanguage:()=>language,canonical:value=>parentApi()?.canonical(value)||value,originalText,translate:(value,target=language)=>parentApi()?.translate(value,target)||value};
+ const translate=value=>parentApi()?.translate(value,language)||value;
+ const skip=element=>!element||!!element.closest('script,style,.analysis-bars,.pfce-alt,.pfce-bars,.pfce-detail tbody,.pfce-points,svg text,tbody,input,textarea');
+ function observe(){observer.observe(document.body,{subtree:true,childList:true,characterData:true});}
+ function apply(){scheduled=false;observer?.disconnect();let changed=false;try{const previousLanguage=language;language=parentApi()?.getLanguage()||'pt-BR';changed=language!==previousLanguage;document.documentElement.lang=language;const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode()){const parent=node.parentElement;if(skip(parent)||!node.data.trim())continue;const previous=records.get(node),source=previous&&node.data===previous.last?previous.source:parentApi()?.canonical(node.data)||node.data;if(parent.tagName==='OPTION'&&!parent.hasAttribute('value'))parent.setAttribute('value',parent.value);const next=translate(source);if(node.data!==next){parent.dataset.pfceUi='true';node.data=next;}records.set(node,{source,last:next});}for(const element of document.querySelectorAll('[title],[aria-label]')){if(skip(element))continue;let saved=attributeRecords.get(element);if(!saved){saved={};attributeRecords.set(element,saved);}for(const name of ['title','aria-label']){const value=element.getAttribute(name);if(!value)continue;const previous=saved[name],source=previous&&value===previous.last?previous.source:value,next=translate(source);if(value!==next)element.setAttribute(name,next);saved[name]={source,last:next};}}}finally{observe();}if(changed)window.PFChartExplorer?.refresh?.();}
+ function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(apply);}
+ function install(){observer=new MutationObserver(schedule);apply();try{if(window.opener){window.opener.addEventListener('pf-language-change',schedule);window.addEventListener('pagehide',()=>{try{window.opener.removeEventListener('pf-language-change',schedule);}catch(_){}},{once:true});}}catch(_){} }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+
+</script>
+</body></html>

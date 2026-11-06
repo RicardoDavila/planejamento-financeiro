@@ -8551,7 +8551,7 @@ body.auth-pendente #pfIaLaunch{display:none!important}
   const bounds=core.periodBounds(reference.month),formatDate=value=>value.split('-').reverse().join('/');
   const list=(start,end)=>reference.rows.filter(row=>row&&['despesa','receita'].includes(core.norm(row.tipo))&&Number.isFinite(Number(row.valor))&&Number(row.valor)>=0&&/^\d{4}-\d{2}-\d{2}$/.test(String(row.vencimento||'').slice(0,10))&&String(row.vencimento).slice(0,10)>=start&&String(row.vencimento).slice(0,10)<=end).map(row=>[formatDate(String(row.vencimento).slice(0,10)),String(row.tipo||''),String(row.categoria||'Sem categoria'),String(row.descricao||'Sem descrição'),core.money(Math.round(Number(row.valor)*100)),String(row.status||'Não informado')]);
   const groups=[['Ver lançamentos do período',bounds.start,bounds.end]];
-  if(/compar|anterior|variacao|aument|diminui/.test(core.norm(reference.question)))groups.push(['Ver lançamentos do período anterior',bounds.previousStart,bounds.previousEnd]);
+  if(/compar|anterior|variacao|aument|diminui/.test(core.norm(window.PFI18n?window.PFI18n.question(reference.question):reference.question)))groups.push(['Ver lançamentos do período anterior',bounds.previousStart,bounds.previousEnd]);
   for(const [label,start,end] of groups){
    const rows=list(start,end),details=document.createElement('details');details.className='ia-records';
    const summary=document.createElement('summary');summary.textContent=label+' ('+rows.length+')';details.append(summary);
@@ -8582,7 +8582,7 @@ body.auth-pendente #pfIaLaunch{display:none!important}
  function updatePeriod(){try{$('pfIaPeriodSummary').textContent='Período: '+periodText()+' · Critério: data de vencimento.';}catch(error){$('pfIaPeriodSummary').textContent=error.message;}}
  function prepareQuestion(question){
   if(!allowed())return;
-  $('pfIaQuestion').value=question;
+  $('pfIaQuestion').value=window.PFI18n?window.PFI18n.translate(question):question;
   $('pfIaQuestion').focus({preventScroll:true});
   $('pfIaStatus').textContent='Pergunta pronta. Pressione Enter ou clique em Enviar para consultar.';
  }
@@ -9956,7 +9956,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
   const sum=a=>a.reduce((s,r)=>s+r.valor,0);
   const month=(year,index)=>{const d=new Date(year,index,1);return {key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),label:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'})};};
   const typeRows=(arr,label)=>{
-   const n=norm(label);let out=arr;
+   const n=norm(typeof window!=='undefined'&&window.PFI18n?window.PFI18n.canonical(label):label);let out=arr;
    if(/saldo|balanco|filtro|valor|total \(r\$\)/.test(n)&&!/receit|despes/.test(n))return out;
    if(/receit|recebid|entrada/.test(n))out=out.filter(r=>r.tipo==='Receita');
    else if(/despes|pag[ao]|saida|vencid|vencer/.test(n))out=out.filter(r=>r.tipo==='Despesa');
@@ -9967,7 +9967,8 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
    return out;
   };
   function model(title,labels,series,resolve,additive=true){
-   return {title,labels:labels.map(String),series:series.map((s,j)=>({label:String(s.label||'Valor'),sourceIndex:s.sourceIndex??j,color:s.color||['#047857','#bd2b20','#2563eb','#7c3aed','#b45309'][j%5],values:s.values.map(v=>Number.isFinite(Number(v))?Number(v):0)})),resolve,additive};
+   const ui=value=>typeof window!=='undefined'&&typeof window.PFI18n?.translate==='function'?window.PFI18n.translate(String(value)):String(value);
+   return {title:ui(title),labels:labels.map(String),series:series.map((s,j)=>({label:ui(s.label||'Valor'),sourceIndex:s.sourceIndex??j,color:s.color||['#047857','#bd2b20','#2563eb','#7c3aed','#b45309'][j%5],values:s.values.map(v=>Number.isFinite(Number(v))?Number(v):0)})),resolve,additive};
   }
   function points(m){return m.series.flatMap((s,j)=>s.values.map((v,i)=>({key:j+':'+i,label:m.labels[i]||String(i+1),value:v,series:s.label,color:s.color,i,j})));}
   function pie(m,j){
@@ -10275,7 +10276,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
     const m=payload.model,records=D.rows(m.rows),future=D.rows(m.future),base=D.rows(payload.base),seriesRows=(arr,type)=>type==='Receita'?arr.filter(r=>r.tipo==='Receita'):arr.filter(r=>r.tipo!=='Receita');
     const charts=[...document.querySelectorAll('.fc-chart')];
     for(const chart of charts){
-     const title=chart.querySelector('h3')?.textContent||'',nodes=[...chart.children].filter(n=>n.matches('svg,.fc-category-columns')),source=reportWrapper(chart,nodes);if(!source)continue;
+     const title=(typeof window!=='undefined'&&window.PFI18n?window.PFI18n.originalText(chart.querySelector('h3')):chart.querySelector('h3')?.textContent)||'',nodes=[...chart.children].filter(n=>n.matches('svg,.fc-category-columns')),source=reportWrapper(chart,nodes);if(!source)continue;
      if(title==='Evolução do saldo acumulado'||title==='Evolução do saldo projetado'){
       const projected=title.includes('projetado'),points=projected?m.projection:[{date:m.start||m.daily[0]?.date,balance:m.opening,initial:true},...m.daily];
       const model=D.model(title,points.map(p=>(p.initial?'Saldo inicial · ':'')+dateLabel(p.date||'')),[{label:'Saldo',values:points.map(p=>p.balance/100),color:'#2563eb'}],(j,i)=>{
@@ -10986,5 +10987,949 @@ html body #pfIaDialog #pfIaClear{background:transparent!important;color:#475569!
 html body #pfIaDialog :focus-visible{outline:3px solid #4338ca!important;outline-offset:3px}
 @media(max-width:600px){html body #pfIaDialog .ia-examples{grid-template-columns:1fr}html body #pfIaDialog .ia-welcome{padding:14px}html body #pfIaDialog .ia-chips{gap:8px}html body #pfIaDialog .ia-chips button{white-space:nowrap}html body #pfIaDialog #pfIaSend{padding:10px 14px}html body #pfIaDialog .ia-controls label{flex-basis:140px}}
 </style>
+
+
+
+
+
+
+
+<script id="pf-global-language">
+/* Global UI language. Financial values, stored codes and user records stay canonical. */
+(()=>{
+const catalogue=[
+["Idioma", "Language", "Idioma"],
+["Português (Brasil)", "Português (Brasil)", "Português (Brasil)"],
+["Menu principal", "Main menu", "Menú principal"],
+["Ações e ferramentas", "Actions and tools", "Acciones y herramientas"],
+["Segurança", "Security", "Seguridad"],
+["Ajuda e informações", "Help and information", "Ayuda e información"],
+["Ajuda", "Help", "Ayuda"],
+["Menu", "Menu", "Menú"],
+["Navegação", "Navigation", "Navegación"],
+["Navegação principal", "Main navigation", "Navegación principal"],
+["Navegação do aplicativo", "App navigation", "Navegación de la aplicación"],
+["Gestão financeira", "Financial management", "Gestión financiera"],
+["Financeiro", "Finance", "Finanzas"],
+["Planejamento", "Planning", "Planificación"],
+["Painel Gerencial", "Management dashboard", "Panel de gestión"],
+["Painel executivo", "Executive dashboard", "Panel ejecutivo"],
+["Resumo Financeiro", "Financial summary", "Resumen financiero"],
+["Resumo do período.", "Period summary.", "Resumen del período."],
+["Aqui está o resumo das suas finanças.", "Here is your financial summary.", "Este es tu resumen financiero."],
+["Novo lançamento", "New transaction", "Nuevo movimiento"],
+["Novo Lançamento", "New transaction", "Nuevo movimiento"],
+["Lançamento rápido", "Quick transaction", "Movimiento rápido"],
+["Lançamento Rápido", "Quick transaction", "Movimiento rápido"],
+["Novo", "New", "Nuevo"],
+["Lançamentos", "Transactions", "Movimientos"],
+["Lançamentos, Rúbricas e Sub-Itens", "Transactions, categories and subitems", "Movimientos, categorías y subcategorías"],
+["Lançamentos do recorte (detalhamento)", "Transactions in this selection (details)", "Movimientos de esta selección (detalle)"],
+["Lançamentos em cartões no celular", "Transaction cards on mobile", "Tarjetas de movimientos en el móvil"],
+["Cadastros", "Reference data", "Datos de referencia"],
+["Cadastros e rubricas", "Reference data and categories", "Datos de referencia y categorías"],
+["Gerenciar cadastros", "Manage reference data", "Gestionar datos de referencia"],
+["Cadastro", "Record", "Registro"],
+["Nova rubrica", "New category", "Nueva categoría"],
+["Novo subitem", "New subitem", "Nueva subcategoría"],
+["NOVA RUBRICA", "NEW CATEGORY", "NUEVA CATEGORÍA"],
+["NOVO SUB-ITEM", "NEW SUBITEM", "NUEVA SUBCATEGORÍA"],
+["Rubrica", "Category", "Categoría"],
+["Rúbrica", "Category", "Categoría"],
+["Rubricas", "Categories", "Categorías"],
+["Rubrica (opcional)", "Category (optional)", "Categoría (opcional)"],
+["Sub-Item", "Subitem", "Subcategoría"],
+["Subitem", "Subitem", "Subcategoría"],
+["Subitens", "Subitems", "Subcategorías"],
+["Sub-Item (opcional)", "Subitem (optional)", "Subcategoría (opcional)"],
+["Descrição", "Description", "Descripción"],
+["Observação", "Notes", "Observaciones"],
+["Observações", "Notes", "Observaciones"],
+["Observações...", "Notes…", "Observaciones…"],
+["Obs...", "Notes…", "Observaciones…"],
+["Opcional — Sem descrição", "Optional — No description", "Opcional — Sin descripción"],
+["Ex: Aluguel, Luz...", "E.g. Rent, electricity…", "Ej.: Alquiler, electricidad…"],
+["Sem descrição", "No description", "Sin descripción"],
+["Sem rubrica", "No category", "Sin categoría"],
+["Sem categoria", "No category", "Sin categoría"],
+["Sem subitem", "No subitem", "Sin subcategoría"],
+["Nome atual", "Current name", "Nombre actual"],
+["Unificar com", "Merge with", "Unificar con"],
+["Unificar", "Merge", "Unificar"],
+["Renomear", "Rename", "Renombrar"],
+["Excluir", "Delete", "Eliminar"],
+["Corrija nomes sem apagar os lançamentos. Excluir é permitido apenas quando o cadastro não estiver em uso.", "Correct names without deleting transactions. A reference item can only be deleted when it is not in use.", "Corrige los nombres sin borrar movimientos. Solo se puede eliminar un registro de referencia cuando no esté en uso."],
+["Os lançamentos do nome atual passarão a usar o nome escolhido acima.", "Transactions with the current name will use the name selected above.", "Los movimientos con el nombre actual pasarán a usar el nombre elegido arriba."],
+["Tipo", "Type", "Tipo"],
+["Tipo de pessoa", "Person type", "Tipo de persona"],
+["Pessoa física", "Individual", "Persona física"],
+["Pessoa jurídica", "Business", "Persona jurídica"],
+["Receita", "Income", "Ingreso"],
+["Receitas", "Income", "Ingresos"],
+["Despesa", "Expense", "Gasto"],
+["Despesas", "Expenses", "Gastos"],
+["Investimento", "Investment", "Inversión"],
+["Investimentos", "Investments", "Inversiones"],
+["Recebido", "Received", "Recibido"],
+["Recebidas", "Received", "Recibidos"],
+["Pago", "Paid", "Pagado"],
+["Pagas", "Paid", "Pagados"],
+["Não Recebido", "Not received", "No recibido"],
+["Pendente", "Pending", "Pendiente"],
+["A Vencer", "Due", "Por vencer"],
+["Vencido", "Overdue", "Vencido"],
+["Atrasados", "Overdue", "Atrasados"],
+["Situação", "Situation", "Situación"],
+["Status", "Status", "Estado"],
+["Valor", "Amount", "Importe"],
+["Valor (R$)", "Amount (BRL)", "Importe (BRL)"],
+["Valor mínimo (R$)", "Minimum amount (BRL)", "Importe mínimo (BRL)"],
+["Valor máximo (R$)", "Maximum amount (BRL)", "Importe máximo (BRL)"],
+["Sem mínimo", "No minimum", "Sin mínimo"],
+["Sem máximo", "No maximum", "Sin máximo"],
+["Data", "Date", "Fecha"],
+["DT VCTO", "DUE DATE", "VENCIMIENTO"],
+["Dt Pg", "Payment date", "Fecha de pago"],
+["Data do Vencimento", "Due date", "Fecha de vencimiento"],
+["Data do Pg / Recebimento", "Payment / receipt date", "Fecha de pago / cobro"],
+["Vencimento", "Due date", "Vencimiento"],
+["Pagamento", "Payment", "Pago"],
+["Vencimento Início", "First due date", "Vencimiento inicial"],
+["Vencimento Fim", "Last due date", "Vencimiento final"],
+["Ano", "Year", "Año"],
+["Mês", "Month", "Mes"],
+["Hoje", "Today", "Hoy"],
+["Este mês", "This month", "Este mes"],
+["Mês anterior", "Previous month", "Mes anterior"],
+["Mês Anterior", "Previous month", "Mes anterior"],
+["Mês posterior", "Next month", "Mes siguiente"],
+["Próximo mês", "Next month", "Próximo mes"],
+["Últimos 7 dias", "Last 7 days", "Últimos 7 días"],
+["7 dias", "7 days", "7 días"],
+["Trimestre", "Quarter", "Trimestre"],
+["Semestre", "Half year", "Semestre"],
+["Mesmo período do ano passado", "Same period last year", "Mismo período del año pasado"],
+["Período início", "Period start", "Inicio del período"],
+["Período fim", "Period end", "Fin del período"],
+["Período anterior", "Previous period", "Período anterior"],
+["Período atual", "Current period", "Período actual"],
+["Período rápido", "Quick period", "Período rápido"],
+["Período: conforme filtros selecionados", "Period: according to the selected filters", "Período: según los filtros seleccionados"],
+["Defina o período e os critérios", "Set the period and criteria", "Define el período y los criterios"],
+["Dom", "Sun", "Dom"],
+["Seg", "Mon", "Lun"],
+["Ter", "Tue", "Mar"],
+["Qua", "Wed", "Mié"],
+["Qui", "Thu", "Jue"],
+["Sex", "Fri", "Vie"],
+["Sáb", "Sat", "Sáb"],
+["Janeiro", "January", "Enero"],
+["Fevereiro", "February", "Febrero"],
+["Março", "March", "Marzo"],
+["Abril", "April", "Abril"],
+["Maio", "May", "Mayo"],
+["Junho", "June", "Junio"],
+["Julho", "July", "Julio"],
+["Agosto", "August", "Agosto"],
+["Setembro", "September", "Septiembre"],
+["Outubro", "October", "Octubre"],
+["Novembro", "November", "Noviembre"],
+["Dezembro", "December", "Diciembre"],
+["Filtros", "Filters", "Filtros"],
+["Filtrar", "Filter", "Filtrar"],
+["Filtrar por Tipo", "Filter by type", "Filtrar por tipo"],
+["Filtrar por tipo", "Filter by type", "Filtrar por tipo"],
+["Filtrar Descrição", "Filter description", "Filtrar descripción"],
+["Filtrar descrição...", "Filter description…", "Filtrar descripción…"],
+["Filtros dos gráficos", "Chart filters", "Filtros de gráficos"],
+["Filtros da análise", "Analysis filters", "Filtros del análisis"],
+["Filtros de lançamentos", "Transaction filters", "Filtros de movimientos"],
+["Filtros rápidos", "Quick filters", "Filtros rápidos"],
+["Pesquisar Rubrica", "Search categories", "Buscar categorías"],
+["Pesquisar Sub-Item", "Search subitems", "Buscar subcategorías"],
+["Pesquisar rubrica...", "Search categories…", "Buscar categorías…"],
+["Pesquisar sub-item...", "Search subitems…", "Buscar subcategorías…"],
+["Todos", "All", "Todos"],
+["Todas", "All", "Todas"],
+["Todos os Tipos", "All types", "Todos los tipos"],
+["Todos os tipos", "All types", "Todos los tipos"],
+["Todos os status", "All statuses", "Todos los estados"],
+["Todas as Rubricas", "All categories", "Todas las categorías"],
+["Todos os Sub-Itens", "All subitems", "Todas las subcategorías"],
+["Todas as ações", "All actions", "Todas las acciones"],
+["Somente receitas", "Income only", "Solo ingresos"],
+["Somente despesas", "Expenses only", "Solo gastos"],
+["Aplicar", "Apply", "Aplicar"],
+["Aplicar filtros", "Apply filters", "Aplicar filtros"],
+["Limpar", "Clear", "Limpiar"],
+["Limpar filtros", "Clear filters", "Limpiar filtros"],
+["Limpar filtro", "Clear filter", "Limpiar filtro"],
+["Refine os lançamentos por tipo, rubrica, sub-item, descrição ou período.", "Refine transactions by type, category, subitem, description or period.", "Filtra movimientos por tipo, categoría, subcategoría, descripción o período."],
+["Valores conforme os filtros selecionados", "Amounts according to the selected filters", "Importes según los filtros seleccionados"],
+["Deslize a tabela para ver todas as colunas", "Scroll the table to see every column", "Desliza la tabla para ver todas las columnas"],
+["Visões salvas…", "Saved views…", "Vistas guardadas…"],
+["Salvar visão", "Save view", "Guardar vista"],
+["Excluir visão", "Delete view", "Eliminar vista"],
+["Excluir a visão selecionada", "Delete the selected view", "Eliminar la vista seleccionada"],
+["Salvar", "Save", "Guardar"],
+["Salvar alterações", "Save changes", "Guardar cambios"],
+["Salvar Alterações", "Save changes", "Guardar cambios"],
+["Cancelar", "Cancel", "Cancelar"],
+["Fechar", "Close", "Cerrar"],
+["Voltar", "Back", "Volver"],
+["Atualizar", "Refresh", "Actualizar"],
+["Continuar", "Continue", "Continuar"],
+["Sim", "Yes", "Sí"],
+["Não", "No", "No"],
+["Ações", "Actions", "Acciones"],
+["Ações rápidas", "Quick actions", "Acciones rápidas"],
+["Ação principal", "Main action", "Acción principal"],
+["Mais", "More", "Más"],
+["Mais ações", "More actions", "Más acciones"],
+["Mais opções", "More options", "Más opciones"],
+["Ferramentas", "Tools", "Herramientas"],
+["Análises", "Analysis", "Análisis"],
+["Gráficos", "Charts", "Gráficos"],
+["Gráficos evolutivos", "Trend charts", "Gráficos de evolución"],
+["Gráficos Evolutivos", "Trend charts", "Gráficos de evolución"],
+["Gráficos e Evoluções", "Charts and trends", "Gráficos y evolución"],
+["Gráficos do período", "Period charts", "Gráficos del período"],
+["Gráficos e análises", "Charts and analysis", "Gráficos y análisis"],
+["Gráficos Evolutivos e Análise Comparativa Individual", "Trend charts and individual comparative analysis", "Gráficos de evolución y análisis comparativo individual"],
+["Tipo de gráfico", "Chart type", "Tipo de gráfico"],
+["Padrão (original)", "Default (original)", "Predeterminado (original)"],
+["Linhas", "Lines", "Líneas"],
+["Áreas", "Areas", "Áreas"],
+["Colunas", "Columns", "Columnas"],
+["Barras horizontais", "Horizontal bars", "Barras horizontales"],
+["Pizza (circular)", "Pie chart", "Gráfico circular"],
+["Rosca", "Doughnut", "Anillo"],
+["Dispersão", "Scatter", "Dispersión"],
+["Série", "Series", "Serie"],
+["Eixo X", "X axis", "Eje X"],
+["Eixo Y", "Y axis", "Eje Y"],
+["Ver pontos e lançamentos", "View points and transactions", "Ver puntos y movimientos"],
+["Recolher detalhes", "Collapse details", "Ocultar detalles"],
+["Clique em uma barra, ponto ou fatia para abrir os lançamentos.", "Click a bar, point or slice to view the transactions.", "Pulsa una barra, un punto o un sector para ver los movimientos."],
+["Clique em uma rubrica para abrir as descrições e os lançamentos.", "Click a category to view descriptions and transactions.", "Pulsa una categoría para ver las descripciones y movimientos."],
+["Evolução das Receitas", "Income trend", "Evolución de ingresos"],
+["Evolução das Despesas", "Expense trend", "Evolución de gastos"],
+["Receitas por Rubrica", "Income by category", "Ingresos por categoría"],
+["Despesas por Rubricas", "Expenses by category", "Gastos por categoría"],
+["Despesas por Descrição", "Expenses by description", "Gastos por descripción"],
+["Distribuição por Rubrica", "Distribution by category", "Distribución por categoría"],
+["Evolução Temporal", "Trend over time", "Evolución temporal"],
+["Comparar receitas x despesas", "Compare income and expenses", "Comparar ingresos y gastos"],
+["Comparação", "Comparison", "Comparación"],
+["Comparativo Mês Anterior X Mês Atual", "Previous month vs current month", "Mes anterior frente al actual"],
+["Comparação entre o mês anterior e o mês atual", "Comparison of the previous and current month", "Comparación del mes anterior con el actual"],
+["Sem comparação", "No comparison", "Sin comparación"],
+["Gerar gráfico", "Generate chart", "Generar gráfico"],
+["Gerar análise", "Generate analysis", "Generar análisis"],
+["Mostrar gráficos", "Show charts", "Mostrar gráficos"],
+["Ocultar", "Hide", "Ocultar"],
+["Mostrar", "Show", "Mostrar"],
+["Mostrar valores", "Show amounts", "Mostrar importes"],
+["Ocultar valores", "Hide amounts", "Ocultar importes"],
+["Total de receitas de cada mês. Seis meses até o fim do período selecionado, incluindo meses sem registros.", "Monthly income totals. Six months through the end of the selected period, including months with no records.", "Ingresos totales por mes. Seis meses hasta el final del período seleccionado, incluidos meses sin registros."],
+["Total de despesas de cada mês. Seis meses até o fim do período selecionado, incluindo meses sem registros.", "Monthly expense totals. Six months through the end of the selected period, including months with no records.", "Gastos totales por mes. Seis meses hasta el final del período seleccionado, incluidos meses sin registros."],
+["Receitas previstas nos lançamentos filtrados.", "Planned income in the filtered transactions.", "Ingresos previstos en los movimientos filtrados."],
+["Despesas previstas nos lançamentos filtrados.", "Planned expenses in the filtered transactions.", "Gastos previstos en los movimientos filtrados."],
+["Análise do mês de receitas e despesas por rubrica e evolução", "Monthly analysis of income and expenses by category and trend", "Análisis mensual de ingresos y gastos por categoría y evolución"],
+["Receitas por Rubrica (clique na barra para abrir lançamentos)", "Income by category (click a bar to view transactions)", "Ingresos por categoría (pulsa una barra para ver movimientos)"],
+["Despesas por Rubricas (clique na barra para abrir lançamentos)", "Expenses by category (click a bar to view transactions)", "Gastos por categoría (pulsa una barra para ver movimientos)"],
+["Cascata financeira", "Financial waterfall", "Cascada financiera"],
+["Ranking de rubricas — despesas", "Expense category ranking", "Clasificación de categorías de gastos"],
+["Mapa de calor — despesas por dia do mês", "Heatmap — expenses by day of month", "Mapa de calor — gastos por día del mes"],
+["Vencidos por faixa de atraso", "Overdue amounts by age", "Importes vencidos por antigüedad"],
+["Últimos 12 meses — receitas, despesas e saldo", "Last 12 months — income, expenses and balance", "Últimos 12 meses — ingresos, gastos y saldo"],
+["Maiores despesas", "Largest expenses", "Mayores gastos"],
+["Menores despesas", "Smallest expenses", "Menores gastos"],
+["Acumulado", "Cumulative", "Acumulado"],
+["Saldo", "Balance", "Saldo"],
+["Saldo Líquido", "Net balance", "Saldo neto"],
+["Saldo previsto", "Planned balance", "Saldo previsto"],
+["Resultado do período", "Period result", "Resultado del período"],
+["Resultado previsto do período", "Planned period result", "Resultado previsto del período"],
+["Resultado líquido previsto", "Planned net result", "Resultado neto previsto"],
+["Receitas previstas", "Planned income", "Ingresos previstos"],
+["Receitas recebidas", "Received income", "Ingresos recibidos"],
+["Receitas não recebidas", "Unreceived income", "Ingresos no recibidos"],
+["Receitas cadastradas", "Registered income", "Ingresos registrados"],
+["Despesas cadastradas", "Registered expenses", "Gastos registrados"],
+["Despesas pagas", "Paid expenses", "Gastos pagados"],
+["Despesas a vencer", "Expenses due", "Gastos por vencer"],
+["Despesas vencidas", "Overdue expenses", "Gastos vencidos"],
+["Total Pendente", "Pending total", "Total pendiente"],
+["Total de Receitas", "Total income", "Ingresos totales"],
+["Total de Despesas", "Total expenses", "Gastos totales"],
+["Receitas e despesas", "Income and expenses", "Ingresos y gastos"],
+["Prev de Receita", "Planned income", "Ingresos previstos"],
+["Rec Recebidas", "Received income", "Ingresos recibidos"],
+["Investimento mês", "Monthly investment", "Inversión del mes"],
+["Comprometimento previsto", "Planned commitment ratio", "Compromiso previsto"],
+["Margem prevista do período", "Planned period margin", "Margen previsto del período"],
+["Situação financeira controlada.", "Financial situation under control.", "Situación financiera controlada."],
+["Controlada", "Under control", "Controlada"],
+["Atenção", "Attention", "Atención"],
+["Atenção: há valores a vencer", "Attention: amounts are coming due", "Atención: hay importes por vencer"],
+["Atenção dcto vencendo hoje", "Attention: payment due today", "Atención: pago con vencimiento hoy"],
+["Atenção dcto vencido", "Attention: overdue payment", "Atención: pago vencido"],
+["Mostrar Painel Gerencial", "Show management dashboard", "Mostrar panel de gestión"],
+["Mostrar painel", "Show dashboard", "Mostrar panel"],
+["Ocultar painel", "Hide dashboard", "Ocultar panel"],
+["Mostrar resumo", "Show summary", "Mostrar resumen"],
+["Valores ocultos. Confirme sua senha em Mostrar resumo para visualizar.", "Amounts hidden. Confirm your password under Show summary to view them.", "Importes ocultos. Confirma tu contraseña en Mostrar resumen para verlos."],
+["Resumo financeiro do mês", "Monthly financial summary", "Resumen financiero del mes"],
+["Resumo financeiro no celular", "Financial summary on mobile", "Resumen financiero en el móvil"],
+["Resumo Executivo — Total de Receitas x Total de Despesas", "Executive summary — total income vs total expenses", "Resumen ejecutivo — ingresos totales frente a gastos totales"],
+["Calendário", "Calendar", "Calendario"],
+["Calendário Financeiro", "Financial calendar", "Calendario financiero"],
+["Calendário financeiro", "Financial calendar", "Calendario financiero"],
+["Selecione um dia.", "Select a day.", "Selecciona un día."],
+["Toque em um dia para ver os lançamentos", "Tap a day to view transactions", "Pulsa un día para ver los movimientos"],
+["Calculadora", "Calculator", "Calculadora"],
+["Calculadora financeira", "Financial calculator", "Calculadora financiera"],
+["Visor da calculadora", "Calculator display", "Pantalla de la calculadora"],
+["Operações financeiras e porcentagem", "Financial operations and percentages", "Operaciones financieras y porcentajes"],
+["calcula a porcentagem do valor em operação.", "calculates the percentage of the current value.", "calcula el porcentaje del valor en la operación."],
+["Relatórios", "Reports", "Informes"],
+["Relatório", "Report", "Informe"],
+["Relatório mensal", "Monthly report", "Informe mensual"],
+["Relatório Mensal", "Monthly report", "Informe mensual"],
+["Relatório completo", "Full report", "Informe completo"],
+["Relatório financeiro", "Financial report", "Informe financiero"],
+["Relatório Gerencial", "Management report", "Informe de gestión"],
+["de Planejamento Financeiro", "of Planejamento Financeiro", "de Planejamento Financeiro"],
+["Relatório Gerencial de Planejamento Financeiro", "Planejamento Financeiro management report", "Informe de gestión de Planejamento Financeiro"],
+["RELATÓRIO GRÁFICO FINANCEIRO", "FINANCIAL CHART REPORT", "INFORME GRÁFICO FINANCIERO"],
+["RELATÓRIO FINANCEIRO MES - DESPESAS E RECEITAS", "MONTHLY FINANCIAL REPORT — EXPENSES AND INCOME", "INFORME FINANCIERO MENSUAL — GASTOS E INGRESOS"],
+["Incluir no relatório", "Include in report", "Incluir en el informe"],
+["Selecionar tudo", "Select all", "Seleccionar todo"],
+["Desmarcar tudo", "Clear selection", "Desmarcar todo"],
+["Pré-visualizar", "Preview", "Vista previa"],
+["Gerar PDF", "Generate PDF", "Generar PDF"],
+["Imprimir", "Print", "Imprimir"],
+["Salvar em PDF", "Save as PDF", "Guardar como PDF"],
+["Imprimir / Salvar PDF", "Print / Save PDF", "Imprimir / Guardar PDF"],
+["Imprimir / salvar PDF", "Print / Save PDF", "Imprimir / Guardar PDF"],
+["Fechar relatório", "Close report", "Cerrar informe"],
+["Salvar estas preferências para os próximos relatórios", "Save these preferences for future reports", "Guardar estas preferencias para futuros informes"],
+["Escolha o conteúdo desta exportação. Os dados, cálculos e telas do sistema são preservados.", "Choose the contents of this export. App data, calculations and screens are preserved.", "Elige el contenido de esta exportación. Se conservan los datos, cálculos y pantallas del sistema."],
+["Selecione os itens e pré-visualize antes de exportar.", "Select items and preview before exporting.", "Selecciona los elementos y revisa la vista previa antes de exportar."],
+["Selecione ao menos um conteúdo para gerar o relatório.", "Select at least one item to generate the report.", "Selecciona al menos un elemento para generar el informe."],
+["Seleção alterada. Clique em Pré-visualizar para conferir.", "Selection changed. Click Preview to review it.", "Selección modificada. Pulsa Vista previa para revisarla."],
+["Prévia atualizada abaixo. Gerar PDF abre a impressão: escolha Salvar como PDF.", "Preview updated below. Generate PDF opens printing: choose Save as PDF.", "Vista previa actualizada abajo. Generar PDF abre la impresión: elige Guardar como PDF."],
+["Dados de emissão", "Issue details", "Datos de emisión"],
+["Rodapé", "Footer", "Pie de página"],
+["Conteúdo", "Content", "Contenido"],
+["Campo", "Field", "Campo"],
+["Tabela", "Table", "Tabla"],
+["Resumo executivo", "Executive summary", "Resumen ejecutivo"],
+["Composição financeira do período", "Period financial breakdown", "Composición financiera del período"],
+["Despesas pendentes (a vencer e vencidas)", "Outstanding expenses (due and overdue)", "Gastos pendientes (por vencer y vencidos)"],
+["Situação financeira do período", "Period financial situation", "Situación financiera del período"],
+["Indicador", "Indicator", "Indicador"],
+["Indicadores", "Indicators", "Indicadores"],
+["Confidencial", "Confidential", "Confidencial"],
+["Uso interno", "Internal use", "Uso interno"],
+["Fluxo de caixa", "Cash flow", "Flujo de caja"],
+["Fluxo de caixa por data", "Cash flow by date", "Flujo de caja por fecha"],
+["Fluxo de caixa — recorte filtrado", "Cash flow — filtered selection", "Flujo de caja — selección filtrada"],
+["Relatório de Fluxo de Caixa", "Cash flow report", "Informe de flujo de caja"],
+["Movimentação do período", "Period movements", "Movimientos del período"],
+["Saídas por rubrica", "Outflows by category", "Salidas por categoría"],
+["Fluxo por data", "Flow by date", "Flujo por fecha"],
+["Lançamentos do período", "Period transactions", "Movimientos del período"],
+["Resultado do dia", "Daily result", "Resultado del día"],
+["Previsão dos próximos 30 dias", "Next 30 days forecast", "Previsión de los próximos 30 días"],
+["Visão consolidada do banco e projeção dos próximos 30 dias.", "Consolidated database view and next 30 days projection.", "Vista consolidada de la base de datos y proyección de los próximos 30 días."],
+["Histórico", "History", "Historial"],
+["Histórico de alterações", "Change history", "Historial de cambios"],
+["Lixeira", "Trash", "Papelera"],
+["Lixeira e recuperação", "Trash and recovery", "Papelera y recuperación"],
+["Restaurar", "Restore", "Restaurar"],
+["Recuperar", "Recover", "Recuperar"],
+["Backup", "Backup", "Copia de seguridad"],
+["Fazer Backup dos Dados", "Back up data", "Crear copia de seguridad"],
+["Fazer backup agora", "Back up now", "Crear copia ahora"],
+["Backup concluído", "Backup completed", "Copia de seguridad completada"],
+["Restaurar Backup", "Restore backup", "Restaurar copia de seguridad"],
+["Continuar com a Restauração", "Continue restoration", "Continuar restauración"],
+["Importante: faça um backup", "Important: make a backup", "Importante: crea una copia de seguridad"],
+["ATENÇÃO: Para a segurança do sistema, faça um backup dos dados atuais.", "WARNING: back up current data to protect the system.", "ATENCIÓN: crea una copia de los datos actuales para proteger el sistema."],
+["O backup dos dados atuais foi concluído com sucesso. Deseja continuar com a restauração?", "The current data was backed up successfully. Continue with restoration?", "La copia de los datos actuales se completó. ¿Quieres continuar con la restauración?"],
+["Importar Excel", "Import Excel", "Importar Excel"],
+["Importar e Atualizar dados via Excel", "Import and update data with Excel", "Importar y actualizar datos con Excel"],
+["Exportar CSV", "Export CSV", "Exportar CSV"],
+["Exportar Excel (DB)", "Export Excel (DB)", "Exportar Excel (BD)"],
+["Exportar PDF", "Export PDF", "Exportar PDF"],
+["Exportar Banco de Dados Excel com IDs Relacionais", "Export Excel database with relational IDs", "Exportar base de datos Excel con identificadores relacionales"],
+["Exportar os lançamentos financeiros para um arquivo CSV.", "Export financial transactions to a CSV file.", "Exportar movimientos financieros a un archivo CSV."],
+["Exportar o banco de dados completo para Excel, incluindo IDs e tabelas de referência.", "Export the full database to Excel, including IDs and reference tables.", "Exportar la base de datos completa a Excel, incluidos identificadores y tablas de referencia."],
+["Importar e atualizar lançamentos a partir de uma planilha Excel. Faça um Backup antes da importação.", "Import and update transactions from Excel. Make a backup before importing.", "Importar y actualizar movimientos desde Excel. Crea una copia de seguridad antes de importar."],
+["Restaurar os dados a partir de um arquivo de Backup salvo anteriormente.", "Restore data from a previously saved backup.", "Restaurar datos desde una copia de seguridad guardada previamente."],
+["Criar uma cópia de segurança dos dados para preservação e recuperação futura.", "Create a backup for preservation and future recovery.", "Crear una copia de seguridad para conservar y recuperar los datos."],
+["Segurança e Acesso", "Security and access", "Seguridad y acceso"],
+["Segurança e acesso", "Security and access", "Seguridad y acceso"],
+["Segurança do Banco", "Database security", "Seguridad de la base de datos"],
+["Proteção e acesso", "Protection and access", "Protección y acceso"],
+["Acesso protegido", "Protected access", "Acceso protegido"],
+["Configuração inicial obrigatória", "Required initial setup", "Configuración inicial obligatoria"],
+["Configurar proteção por senha e recuperação", "Configure password protection and recovery", "Configurar protección con contraseña y recuperación"],
+["Cadastre o e-mail de recuperação e a senha que será exigida para abrir o sistema.", "Set the recovery email and the password required to open the app.", "Registra el correo de recuperación y la contraseña para abrir la aplicación."],
+["Salvar e ativar proteção", "Save and enable protection", "Guardar y activar protección"],
+["Digite sua senha", "Enter your password", "Introduce tu contraseña"],
+["Digite sua senha para abrir a aplicação.", "Enter your password to open the app.", "Introduce tu contraseña para abrir la aplicación."],
+["Digite a senha de abertura do projeto.", "Enter the project access password.", "Introduce la contraseña de acceso al proyecto."],
+["Digite a senha do Planejamento Financeiro", "Enter your Planejamento Financeiro password", "Introduce tu contraseña de Planejamento Financeiro"],
+["Senha do Planejamento Financeiro", "Planejamento Financeiro password", "Contraseña de Planejamento Financeiro"],
+["Senha do projeto", "Project password", "Contraseña del proyecto"],
+["Senha de acesso", "Access password", "Contraseña de acceso"],
+["Senha atual", "Current password", "Contraseña actual"],
+["Nova senha", "New password", "Nueva contraseña"],
+["Confirmar senha", "Confirm password", "Confirmar contraseña"],
+["Confirmar nova senha", "Confirm new password", "Confirmar nueva contraseña"],
+["Repita a nova senha", "Repeat the new password", "Repite la nueva contraseña"],
+["Mínimo de 6 caracteres", "At least 6 characters", "Mínimo de 6 caracteres"],
+["Esqueci minha senha", "Forgot password", "Olvidé mi contraseña"],
+["Recuperar senha", "Recover password", "Recuperar contraseña"],
+["Redefinir senha", "Reset password", "Restablecer contraseña"],
+["Salvar nova senha", "Save new password", "Guardar nueva contraseña"],
+["Senha incorreta. Tente novamente.", "Incorrect password. Try again.", "Contraseña incorrecta. Inténtalo de nuevo."],
+["Configure a senha em Segurança e Acesso.", "Set a password under Security and access.", "Configura una contraseña en Seguridad y acceso."],
+["Não foi possível validar.", "Validation failed.", "No se pudo validar."],
+["E-mail de recuperação", "Recovery email", "Correo de recuperación"],
+["Recuperação por e-mail:", "Email recovery:", "Recuperación por correo:"],
+["Enviar código", "Send code", "Enviar código"],
+["Código recebido", "Received code", "Código recibido"],
+["Informe o e-mail cadastrado. Um código de verificação será enviado para esse endereço.", "Enter your registered email. A verification code will be sent to that address.", "Introduce el correo registrado. Se enviará un código de verificación a esa dirección."],
+["Atualize senha, e-mail e recuperação.", "Update your password, email and recovery options.", "Actualiza la contraseña, el correo y la recuperación."],
+["Configurações avançadas de recuperação", "Advanced recovery settings", "Configuración avanzada de recuperación"],
+["Confirmação de Administrador", "Administrator confirmation", "Confirmación de administrador"],
+["Confirmar Administrador", "Confirm administrator", "Confirmar administrador"],
+["Administrador", "Administrator", "Administrador"],
+["Usuário", "User", "Usuario"],
+["Perfil atual", "Current role", "Perfil actual"],
+["Perfil de acesso", "Access role", "Perfil de acceso"],
+["Nome do usuário", "User name", "Nombre de usuario"],
+["Nome do usuário — Cadastrar nome", "User name — Register name", "Nombre de usuario — Registrar nombre"],
+["Como gostaria de ser chamado?", "What would you like to be called?", "¿Cómo quieres que te llamemos?"],
+["Digite seu nome", "Enter your name", "Introduce tu nombre"],
+["Salvar nome", "Save name", "Guardar nombre"],
+["Editar perfil", "Edit profile", "Editar perfil"],
+["Personalize a saudação do dashboard", "Customize the dashboard greeting", "Personaliza el saludo del panel"],
+["Personalizar a saudação do dashboard", "Customize the dashboard greeting", "Personalizar el saludo del panel"],
+["Sair", "Sign out", "Salir"],
+["Sair do aplicativo", "Exit app", "Salir de la aplicación"],
+["Sair e bloquear o aplicativo", "Exit and lock the app", "Salir y bloquear la aplicación"],
+["Aplicação encerrada", "App closed", "Aplicación cerrada"],
+["Abrir novamente", "Open again", "Abrir de nuevo"],
+["O acesso foi encerrado e o sistema está bloqueado.", "Access has ended and the app is locked.", "El acceso ha finalizado y la aplicación está bloqueada."],
+["Se o navegador não puder fechar esta janela automaticamente, você pode fechá-la normalmente.", "If the browser cannot close this window automatically, you can close it yourself.", "Si el navegador no puede cerrar esta ventana automáticamente, puedes cerrarla manualmente."],
+["Nuvem", "Cloud", "Nube"],
+["Nuvem Online", "Cloud online", "Nube en línea"],
+["Local", "Local", "Local"],
+["Conta Supabase Auth", "Supabase Auth account", "Cuenta Supabase Auth"],
+["E-mail da sincronização", "Sync email", "Correo de sincronización"],
+["Senha da sincronização", "Sync password", "Contraseña de sincronización"],
+["Senha da conta Supabase Auth", "Supabase Auth password", "Contraseña de Supabase Auth"],
+["Nova senha da sincronização", "New sync password", "Nueva contraseña de sincronización"],
+["Entrar", "Sign in", "Entrar"],
+["Criar conta", "Create account", "Crear cuenta"],
+["Entrar / Sincronizar", "Sign in / Sync", "Entrar / Sincronizar"],
+["Redefinir senha da nuvem", "Reset cloud password", "Restablecer contraseña de la nube"],
+["Sincronizar", "Sync", "Sincronizar"],
+["Sincronizar agora", "Sync now", "Sincronizar ahora"],
+["Sincronizar com a Nuvem", "Sync with cloud", "Sincronizar con la nube"],
+["Sincronização com a Nuvem", "Cloud synchronization", "Sincronización con la nube"],
+["Sincronização em Nuvem", "Cloud synchronization", "Sincronización en la nube"],
+["Computador ↔ celular", "Computer ↔ mobile", "Ordenador ↔ móvil"],
+["Sincronizar dados entre computador e celular", "Sync data between computer and mobile", "Sincronizar datos entre ordenador y móvil"],
+["Sincronizar os dados deste dispositivo com a nuvem", "Sync this device with the cloud", "Sincronizar este dispositivo con la nube"],
+["Desconectar este dispositivo da nuvem", "Disconnect this device from cloud", "Desconectar este dispositivo de la nube"],
+["Configure sua conta de sincronização do Supabase para usar o mesmo banco em seus dispositivos.", "Set up your Supabase sync account to use the same database across your devices.", "Configura tu cuenta de sincronización de Supabase para usar la misma base de datos en tus dispositivos."],
+["Testar conexão da nuvem", "Test cloud connection", "Probar conexión con la nube"],
+["Avisos", "Notices", "Avisos"],
+["AVISOS DO DIA", "TODAY'S NOTICES", "AVISOS DEL DÍA"],
+["Ocultar avisos", "Hide notices", "Ocultar avisos"],
+["Fechar aviso", "Close notice", "Cerrar aviso"],
+["Indicadores econômicos do Banco Central", "Central Bank economic indicators", "Indicadores económicos del Banco Central"],
+["Consultando indicadores econômicos…", "Loading economic indicators…", "Consultando indicadores económicos…"],
+["Pausar", "Pause", "Pausar"],
+["Mostrar indicadores", "Show indicators", "Mostrar indicadores"],
+["Ocultar indicadores", "Hide indicators", "Ocultar indicadores"],
+["Dois monitores", "Two monitors", "Dos monitores"],
+["Claro", "Light", "Claro"],
+["Escuro", "Dark", "Oscuro"],
+["Instalar aplicativo", "Install app", "Instalar aplicación"],
+["Instalar Planejamento Financeiro", "Install Planejamento Financeiro", "Instalar Planejamento Financeiro"],
+["Escolher onde instalar o Planejamento Financeiro", "Choose where to install Planejamento Financeiro", "Elegir dónde instalar Planejamento Financeiro"],
+["Onde você deseja instalar o Planejamento Financeiro?", "Where would you like to install Planejamento Financeiro?", "¿Dónde quieres instalar Planejamento Financeiro?"],
+["Neste computador", "On this computer", "En este ordenador"],
+["No celular", "On mobile", "En el móvil"],
+["Instalar neste celular", "Install on this mobile", "Instalar en este móvil"],
+["Link do aplicativo", "App link", "Enlace de la aplicación"],
+["Compartilhar link", "Share link", "Compartir enlace"],
+["Copiar link", "Copy link", "Copiar enlace"],
+["Manual de Operação", "Operating manual", "Manual de uso"],
+["Pesquisar dúvidas nos manuais", "Search questions in manuals", "Buscar dudas en los manuales"],
+["Versão atual do projeto", "Current project version", "Versión actual del proyecto"],
+["Verificar novas versões", "Check for updates", "Buscar actualizaciones"],
+["Sobre o Planejamento Financeiro", "About Planejamento Financeiro", "Acerca de Planejamento Financeiro"],
+["Nenhuma ferramenta encontrada.", "No tools found.", "No se encontraron herramientas."],
+["Fechar menu", "Close menu", "Cerrar menú"],
+["Fechar calculadora", "Close calculator", "Cerrar calculadora"],
+["Buscar ferramenta…", "Search tools…", "Buscar herramientas…"],
+["Buscar ferramenta", "Search tools", "Buscar herramientas"],
+["A senha será validada pela proteção do Planejamento Financeiro e não será armazenada pelo aplicativo.", "The password is checked by Planejamento Financeiro protection and will not be stored by the app.", "La contraseña se verifica con la protección de Planejamento Financeiro y no se almacena en la aplicación."],
+["Preencha os dados essenciais e salve.", "Fill in the essential details and save.", "Completa los datos esenciales y guarda."],
+["Simulações e recorrência", "Simulations and recurring transactions", "Simulaciones y movimientos recurrentes"],
+["Simular atraso de uma receita", "Simulate delayed income", "Simular retraso de un ingreso"],
+["Receita selecionada", "Selected income", "Ingreso seleccionado"],
+["Dias de atraso", "Days late", "Días de retraso"],
+["Visualizar cenário", "Preview scenario", "Ver escenario"],
+["Recorrência mensal", "Monthly recurrence", "Recurrencia mensual"],
+["Mês de destino", "Target month", "Mes de destino"],
+["Prévia das recorrências", "Recurring transaction preview", "Vista previa de recurrencias"],
+["Recorrente", "Recurring", "Recurrente"],
+["Baixar selecionados", "Settle selected transactions", "Liquidar movimientos seleccionados"],
+["Desfazer", "Undo", "Deshacer"],
+["Selecionar", "Select", "Seleccionar"],
+["Composição", "Breakdown", "Composición"],
+["Voltar à análise completa", "Back to full analysis", "Volver al análisis completo"],
+["Nenhum registro neste recorte de detalhamento.", "No records in this detail selection.", "No hay registros en esta selección de detalle."],
+["Informe um período válido: início não pode ser posterior ao fim.", "Enter a valid period: start must not be after end.", "Introduce un período válido: el inicio no puede ser posterior al final."],
+["Selecione até 367 dias por análise.", "Select up to 367 days per analysis.", "Selecciona hasta 367 días por análisis."],
+["Revise os valores mínimo e máximo.", "Review the minimum and maximum amounts.", "Revisa los importes mínimo y máximo."],
+["A data inicial deve ser anterior ou igual à data final. Corrija o período para consultar os gráficos.", "The start date must be on or before the end date. Correct the period to view charts.", "La fecha inicial debe ser anterior o igual a la final. Corrige el período para consultar los gráficos."],
+["O valor mínimo deve ser menor ou igual ao valor máximo. Corrija os valores para consultar os gráficos.", "The minimum amount must not exceed the maximum. Correct the amounts to view charts.", "El importe mínimo no puede superar el máximo. Corrige los importes para consultar los gráficos."],
+["Selecione os filtros e gere a análise para atualizar os indicadores.", "Select filters and generate the analysis to refresh the indicators.", "Selecciona los filtros y genera el análisis para actualizar los indicadores."],
+["Assistente financeiro", "Financial assistant", "Asistente financiero"],
+["Consulte seus números localmente ou peça uma análise à IA online.", "Check your figures locally or request an online AI analysis.", "Consulta tus cifras localmente o solicita un análisis a la IA en línea."],
+["Período de análise", "Analysis period", "Período de análisis"],
+["Por mês", "By month", "Por mes"],
+["Intervalo de datas", "Date range", "Intervalo de fechas"],
+["Mês e ano", "Month and year", "Mes y año"],
+["Data inicial", "Start date", "Fecha inicial"],
+["Data final", "End date", "Fecha final"],
+["Modo de resposta", "Response mode", "Modo de respuesta"],
+["Cálculo local · sem envio à IA", "Local calculation · no AI submission", "Cálculo local · sin envío a la IA"],
+["Gemini · IA online", "Gemini · online AI", "Gemini · IA en línea"],
+["Cálculo local", "Local calculation", "Cálculo local"],
+["Você", "You", "Tú"],
+["Aviso", "Notice", "Aviso"],
+["O que você quer consultar?", "What would you like to check?", "¿Qué quieres consultar?"],
+["O cálculo local responde às consultas abaixo usando os registros financeiros, sem enviar perguntas ou totais à IA.", "Local calculations answer the queries below using financial records, without sending questions or totals to AI.", "El cálculo local responde a las consultas siguientes con los registros financieros, sin enviar preguntas ni totales a la IA."],
+["Prepare uma pergunta. O envio à IA só ocorre ao consultar, com sua autorização marcada.", "Prepare a question. Data is sent to AI only when you submit it with authorization checked.", "Prepara una pregunta. Solo se envían datos a la IA al consultar con la autorización marcada."],
+["Cálculo local no navegador: esta consulta não envia perguntas ou totais à IA. A sincronização em nuvem do sistema continua independente deste modo.", "Local browser calculation: this query does not send questions or totals to AI. Cloud synchronization remains independent of this mode.", "Cálculo local en el navegador: esta consulta no envía preguntas ni totales a la IA. La sincronización en la nube sigue siendo independiente de este modo."],
+["Ver resumo do período", "View period summary", "Ver resumen del período"],
+["Consultar gastos", "Check expenses", "Consultar gastos"],
+["Comparar períodos", "Compare periods", "Comparar períodos"],
+["Ver categorias", "View categories", "Ver categorías"],
+["Consultar valores a pagar", "Check unpaid amounts", "Consultar importes pendientes"],
+["Quanto gastei?", "How much did I spend?", "¿Cuánto gasté?"],
+["Quais são as maiores categorias?", "What are the largest categories?", "¿Cuáles son las mayores categorías?"],
+["Quanto falta pagar?", "How much is still unpaid?", "¿Cuánto queda por pagar?"],
+["Tenho receitas a receber?", "Do I have unreceived income?", "¿Tengo ingresos por cobrar?"],
+["Comparar com o período anterior", "Compare with the previous period", "Comparar con el período anterior"],
+["Faça um resumo do período", "Summarize this period", "Resume este período"],
+["Faça um resumo do mês", "Summarize this month", "Resume este mes"],
+["Compare com o mês anterior", "Compare with the previous month", "Compara con el mes anterior"],
+["Compare com o período anterior", "Compare with the previous period", "Compara con el período anterior"],
+["Sua pergunta", "Your question", "Tu pregunta"],
+["Pergunte sobre seus gastos neste período…", "Ask about your expenses in this period…", "Pregunta sobre tus gastos en este período…"],
+["Pergunte sobre o período selecionado…", "Ask about the selected period…", "Pregunta sobre el período seleccionado…"],
+["Enviar", "Send", "Enviar"],
+["Limpar conversa", "Clear conversation", "Limpiar conversación"],
+["Limpar pesquisa e conversa para fazer uma nova pergunta", "Clear the question and conversation to start a new query", "Limpiar la pregunta y conversación para iniciar otra consulta"],
+["Escolha um exemplo ou escreva sua pergunta. Enter ou Enviar realiza a consulta.", "Choose an example or write your question. Press Enter or Send to run it.", "Elige un ejemplo o escribe tu pregunta. Pulsa Enter o Enviar para consultar."],
+["Somente leitura · Conversa apenas nesta aba", "Read only · Conversation stays in this tab", "Solo lectura · Conversación solo en esta pestaña"],
+["Pergunta pronta. Pressione Enter ou clique em Enviar para consultar.", "Question ready. Press Enter or click Send.", "Pregunta lista. Pulsa Enter o Enviar para consultar."],
+["Preenche a pergunta. Confira e clique em Enviar.", "Fills in the question. Review it and click Send.", "Completa la pregunta. Revísala y pulsa Enviar."],
+["Fonte: cadastro financeiro · cálculo por vencimento · nenhum registro alterado.", "Source: financial records · calculated by due date · no records changed.", "Fuente: registros financieros · cálculo por vencimiento · sin cambios en los registros."],
+["Resposta de IA baseada no resumo autorizado. Confira os valores nos registros financeiros.", "AI response based on the authorized summary. Check amounts against the financial records.", "Respuesta de IA basada en el resumen autorizado. Comprueba los importes en los registros financieros."],
+["Consultando Gemini…", "Querying Gemini…", "Consultando Gemini…"],
+["Marque a autorização de envio acima antes de consultar o Gemini.", "Check the sending authorization above before querying Gemini.", "Marca la autorización de envío antes de consultar Gemini."],
+["O tempo de consulta esgotou. Tente novamente ou use o modo local.", "The query timed out. Try again or use local mode.", "La consulta agotó el tiempo. Inténtalo de nuevo o usa el modo local."],
+["Não foi possível analisar os dados deste mês.", "Unable to analyze this month's data.", "No se pudieron analizar los datos de este mes."],
+["Mostrar mais lançamentos", "Show more transactions", "Mostrar más movimientos"],
+["Nenhum lançamento válido neste período.", "No valid transactions in this period.", "No hay movimientos válidos en este período."],
+["Preenche uma pergunta de resumo; clique em Enviar para consultar.", "Fills in a summary question; click Send to run it.", "Completa una pregunta de resumen; pulsa Enviar para consultar."],
+["Preenche uma pergunta sobre despesas previstas e pagas.", "Fills in a question about planned and paid expenses.", "Completa una pregunta sobre gastos previstos y pagados."],
+["Compara as despesas com o mês anterior.", "Compares expenses with the previous month.", "Compara los gastos con el mes anterior."],
+["Compara com o intervalo anterior de igual duração.", "Compares with the previous range of the same length.", "Compara con el intervalo anterior de igual duración."],
+["Compara com o mês anterior.", "Compares with the previous month.", "Compara con el mes anterior."],
+["Preenche uma consulta sobre as maiores categorias de despesas.", "Fills in a query about the largest expense categories.", "Completa una consulta sobre las mayores categorías de gastos."],
+["Consulta valores de despesas em aberto no período.", "Queries unpaid expenses in the period.", "Consulta los gastos pendientes del período."],
+["Apaga a pergunta e a conversa desta aba; não altera os registros financeiros.", "Clears this tab's question and conversation without changing financial records.", "Borra la pregunta y conversación de esta pestaña sin modificar los registros financieros."],
+["Fonte: receitas e despesas do cadastro financeiro. As consultas usam vencimento; o saldo não inclui saldo inicial de conta. No modo por mês, a consulta de vencimentos usa toda a base; no intervalo personalizado, respeita as datas selecionadas.", "Source: income and expenses in the financial records. Queries use due dates; balance excludes the opening account balance. Monthly due-date queries use the full database; custom ranges respect the selected dates.", "Fuente: ingresos y gastos de los registros financieros. Las consultas usan el vencimiento; el saldo no incluye saldo inicial. Las consultas mensuales de vencimientos usan toda la base; los intervalos personalizados respetan las fechas seleccionadas."],
+["Não foi possível salvar a preferência de idioma neste navegador.", "Unable to save the language preference in this browser.", "No se pudo guardar el idioma en este navegador."],
+["Reduza a pergunta para enviar no idioma selecionado.", "Shorten the question to send it in the selected language.", "Acorta la pregunta para enviarla en el idioma seleccionado."],
+["Sincronizado com os dados e filtros da janela principal.", "Synced with the main window's data and filters.", "Sincronizado con los datos y filtros de la ventana principal."],
+["Valores protegidos na janela principal.", "Amounts protected in the main window.", "Importes protegidos en la ventana principal."],
+["Janela principal fechada. Reabra os gráficos pelo aplicativo.", "Main window closed. Reopen charts from the app.", "Ventana principal cerrada. Abre los gráficos de nuevo desde la aplicación."],
+["A tecla", "The key", "La tecla"],
+["Abrir a Lixeira para consultar e recuperar lançamentos excluídos.", "Open Trash to view and recover deleted transactions.", "Abrir la papelera para consultar y recuperar movimientos eliminados."],
+["Abrir a calculadora financeira, incluindo operações com percentual.", "Open the financial calculator, including percentage operations.", "Abrir la calculadora financiera, incluidas operaciones con porcentajes."],
+["Abrir a impressão para salvar os gráficos em PDF", "Open printing to save charts as PDF", "Abrir la impresión para guardar los gráficos en PDF"],
+["Abrir os gráficos para acompanhar a evolução financeira.", "Open charts to track financial trends.", "Abrir los gráficos para seguir la evolución financiera."],
+["Abrir os recursos de segurança, backup, importação, exportação e sincronização.", "Open security, backup, import, export and sync tools.", "Abrir las herramientas de seguridad, copias de seguridad, importación, exportación y sincronización."],
+["Ajuda / Help", "Help", "Ayuda"],
+["Ajuda e informações do aplicativo", "App help and information", "Ayuda e información de la aplicación"],
+["Cadastrar uma nova receita, despesa ou investimento.", "Add income, an expense or an investment.", "Registrar un ingreso, gasto o inversión."],
+["Configurar a proteção por senha, autenticação e recuperação de acesso.", "Configure password protection, authentication and access recovery.", "Configurar protección con contraseña, autenticación y recuperación de acceso."],
+["Configuração do serviço de envio de códigos de recuperação por e-mail.", "Configure the email service for recovery codes.", "Configurar el servicio de envío de códigos de recuperación por correo."],
+["Consultar o histórico de alterações realizadas no banco de dados.", "View the database change history.", "Consultar el historial de cambios de la base de datos."],
+["Copie o link e abra no navegador do celular para instalar o Planejamento Financeiro e criar o ícone na tela inicial.", "Copy the link and open it in your mobile browser to install Planejamento Financeiro and add its home-screen icon.", "Copia el enlace y ábrelo en el navegador del móvil para instalar Planejamento Financeiro y añadir su icono a la pantalla de inicio."],
+["Criar um novo Sub-Item para detalhar os lançamentos.", "Create a subitem to detail transactions.", "Crear una subcategoría para detallar los movimientos."],
+["Criar uma nova Rubrica para organizar os lançamentos.", "Create a category to organize transactions.", "Crear una categoría para organizar los movimientos."],
+["Disciplina financeira hoje,", "Financial discipline today,", "Disciplina financiera hoy,"],
+["mais oportunidades amanhã.", "more opportunities tomorrow.", "más oportunidades mañana."],
+["“Disciplina financeira hoje, mais oportunidades amanhã.”", "“Financial discipline today, more opportunities tomorrow.”", "«Disciplina financiera hoy, más oportunidades mañana»."],
+["Fonte: Banco Central do Brasil, séries SGS 432, 195 e 1", "Source: Banco Central do Brasil, SGS series 432, 195 and 1", "Fuente: Banco Central do Brasil, series SGS 432, 195 y 1"],
+["Gerar um relatório financeiro em PDF.", "Generate a financial report as PDF.", "Generar un informe financiero en PDF."],
+["Imprimir os Gráficos Evolutivos", "Print trend charts", "Imprimir gráficos de evolución"],
+["Indicadores; passe o mouse ou use Pausar para parar o movimento", "Indicators; hover or use Pause to stop scrolling", "Indicadores; pasa el cursor o usa Pausar para detener el movimiento"],
+["Intensidade maior indica maior total de despesas naquele dia.", "Higher intensity means higher total expenses that day.", "Una mayor intensidad indica más gastos totales ese día."],
+["O link de recuperação foi validado. Defina agora uma nova senha para a conta usada na sincronização entre computador e celular.", "The recovery link was validated. Set a new password for the account used to sync computer and mobile.", "Se validó el enlace de recuperación. Define una nueva contraseña para la cuenta de sincronización entre ordenador y móvil."],
+["O nome será guardado neste navegador e aparecerá em “Olá, [nome]!”.", "Your name will be saved in this browser and shown in the dashboard greeting.", "Tu nombre se guardará en este navegador y aparecerá en el saludo del panel."],
+["Para mudar de Usuário para Administrador será solicitada a senha do Planejamento Financeiro.", "Changing from User to Administrator requires the Planejamento Financeiro password.", "Para cambiar de Usuario a Administrador se solicitará la contraseña de Planejamento Financeiro."],
+["Percentual de variação", "Percentage change", "Variación porcentual"],
+["Sincronizar os dados deste dispositivo com o banco de dados na nuvem.", "Sync this device's data with the cloud database.", "Sincronizar los datos de este dispositivo con la base de datos en la nube."],
+["Visualizar o resumo financeiro do mês.", "View the monthly financial summary.", "Ver el resumen financiero del mes."],
+["Visualizar os lançamentos financeiros organizados por data.", "View financial transactions organized by date.", "Ver los movimientos financieros organizados por fecha."],
+["abra no Chrome. Toque em “Instalar aplicativo” quando disponível ou no menu ⋮ → “Adicionar à tela inicial” → “Instalar”.", "open in Chrome. Tap “Install app” when available, or use ⋮ → “Add to Home screen” → “Install”.", "abre en Chrome. Pulsa «Instalar aplicación» cuando esté disponible, o usa ⋮ → «Añadir a pantalla de inicio» → «Instalar»."],
+["abra no Safari. Toque em Compartilhar → “Adicionar à Tela de Início”.", "open in Safari. Tap Share → “Add to Home Screen”.", "abre en Safari. Pulsa Compartir → «Añadir a pantalla de inicio»."],
+["03 · Receitas, saídas e distribuição dos gastos", "03 · Income, outflows and expense breakdown", "03 · Ingresos, salidas y distribución de gastos"],
+["04 · Detalhamento e situação dos lançamentos", "04 · Transaction details and status", "04 · Detalle y estado de los movimientos"],
+["05 · Previsão dos próximos 30 dias", "05 · Next 30 days forecast", "05 · Previsión de los próximos 30 días"],
+["A lixeira está vazia.", "Trash is empty.", "La papelera está vacía."],
+["Abertura por tipo de pessoa não informada. Os totais de movimentação continuam disponíveis.", "Opening balance by person type is unavailable. Movement totals remain available.", "No se informó el saldo inicial por tipo de persona. Los totales de movimientos siguen disponibles."],
+["Abrir esta página no manual", "Open this page in the manual", "Abrir esta página en el manual"],
+["Agora não", "Not now", "Ahora no"],
+["Alterações pendentes. Clique em Aplicar filtros para atualizar a análise.", "Pending changes. Click Apply filters to refresh the analysis.", "Cambios pendientes. Pulsa Aplicar filtros para actualizar el análisis."],
+["Análise aplicada:", "Applied analysis:", "Análisis aplicado:"],
+["Análise atualizada em", "Analysis updated on", "Análisis actualizado el"],
+["Atenção:", "Attention:", "Atención:"],
+["Atrasados no período", "Overdue in the period", "Vencidos en el período"],
+["Ação", "Action", "Acción"],
+["Baixar seleção", "Settle selection", "Liquidar selección"],
+["Carregando as páginas do manual…", "Loading manual pages…", "Cargando las páginas del manual…"],
+["Carregando página", "Loading page", "Cargando página"],
+["Como ler este relatório", "How to read this report", "Cómo leer este informe"],
+["Comparativo de barras independentes, não uma cascata encadeada. Não considera saldo inicial. Saídas incluem despesas e investimentos.", "Independent bar comparison, not a chained waterfall. Opening balance is excluded. Outflows include expenses and investments.", "Comparación de barras independientes, no una cascada encadenada. No incluye saldo inicial. Las salidas incluyen gastos e inversiones."],
+["Concentração por vencimento", "Due-date concentration", "Concentración por vencimiento"],
+["Conciliação das bases na data de corte", "Reconciliation at the cutoff date", "Conciliación en la fecha de corte"],
+["Conferir lançamentos", "Review transactions", "Revisar movimientos"],
+["Configure a senha de abertura em Segurança e Acesso.", "Set an access password under Security and access.", "Configura la contraseña de apertura en Seguridad y acceso."],
+["Consultando a versão publicada…", "Checking the published version…", "Consultando la versión publicada…"],
+["Corrigir datas/valores no cadastro original antes de interpretar os movimentos. Não foram excluídos registros automaticamente.", "Correct dates and amounts in the original records before interpreting movements. No records were deleted automatically.", "Corrige fechas e importes en los registros originales antes de interpretar los movimientos. No se eliminaron registros automáticamente."],
+["Cotações e referências", "Rates and references", "Cotizaciones y referencias"],
+["Critério: vencimento. Resultado não inclui abertura e não é saldo bancário conciliado.", "Based on due dates. The result excludes opening balance and is not a reconciled bank balance.", "Criterio: vencimiento. El resultado no incluye saldo inicial ni representa un saldo bancario conciliado."],
+["Critérios e conferências", "Criteria and checks", "Criterios y verificaciones"],
+["Cópia de segurança", "Backup", "Copia de seguridad"],
+["Despesas e investimentos cadastrados ÷ receitas cadastradas × 100. Não mede cobertura por dinheiro disponível em banco.", "Registered expenses and investments ÷ registered income × 100. This does not measure coverage by available bank funds.", "Gastos e inversiones registrados ÷ ingresos registrados × 100. No mide la cobertura con dinero disponible en el banco."],
+["Destaque: maior saída diária. Verde indica receitas na visão opcional.", "Highlight: largest daily outflow. Green represents income in the optional view.", "Destacado: mayor salida diaria. El verde indica ingresos en la vista opcional."],
+["Digite uma dúvida com palavras relacionadas ao aplicativo.", "Enter a question using terms related to the app.", "Escribe una duda con palabras relacionadas con la aplicación."],
+["Editar / lançar pagamento", "Edit / record payment", "Editar / registrar pago"],
+["Escolha séries diferentes para os eixos X e Y.", "Choose different series for the X and Y axes.", "Elige series diferentes para los ejes X e Y."],
+["Escolha uma visão", "Choose a view", "Elige una vista"],
+["Evolução do caixa por vencimento", "Cash flow trend by due date", "Evolución de caja por vencimiento"],
+["Evolução do saldo acumulado", "Cumulative balance trend", "Evolución del saldo acumulado"],
+["Evolução do saldo projetado", "Projected balance trend", "Evolución del saldo proyectado"],
+["Evolução mês a mês", "Month-by-month trend", "Evolución mes a mes"],
+["Excluir seleção", "Delete selection", "Eliminar selección"],
+["Excluído em", "Deleted on", "Eliminado el"],
+["Filtros avançados", "Advanced filters", "Filtros avanzados"],
+["Gerar relatório de fluxo de caixa", "Generate cash flow report", "Generar informe de flujo de caja"],
+["Gráficos do original e opções de visualização", "Original charts and display options", "Gráficos originales y opciones de visualización"],
+["Gráficos e Evoluções — análise aplicada", "Charts and trends — applied analysis", "Gráficos y evolución — análisis aplicado"],
+["Gráficos e opções selecionadas", "Charts and selected options", "Gráficos y opciones seleccionadas"],
+["Histórico N/D", "History N/A", "Historial N/D"],
+["Histórico de 12 meses", "12-month history", "Historial de 12 meses"],
+["Histórico não fornecido nesta análise. Comparação e variação: N/D.", "History not provided in this analysis. Comparison and change: N/A.", "No se proporcionó historial en este análisis. Comparación y variación: N/D."],
+["Impressão: A4 paisagem. Em Mais definições, desmarque Cabeçalhos e rodapés para retirar a URL e o título do navegador.", "Printing: A4 landscape. Under More settings, turn off Headers and footers to remove the browser URL and title.", "Impresión: A4 horizontal. En Más ajustes, desmarca Encabezados y pies de página para quitar la URL y el título del navegador."],
+["Indicadores e leitura do período", "Period indicators and interpretation", "Indicadores e interpretación del período"],
+["Início", "Start", "Inicio"],
+["Lançamento enviado à lixeira.", "Transaction moved to Trash.", "Movimiento enviado a la papelera."],
+["Lançamentos identificados como pagos", "Transactions marked as paid", "Movimientos identificados como pagados"],
+["Lixeira — recuperar lançamentos", "Trash — recover transactions", "Papelera — recuperar movimientos"],
+["Líquido:", "Net:", "Neto:"],
+["Marque Recorrente no cadastro. A geração exige prévia e confirmação e evita repetir a mesma origem no mês.", "Mark Recurring in the record. Generation requires preview and confirmation and prevents repeating the same source in a month.", "Marca Recurrente en el registro. La generación requiere vista previa y confirmación y evita repetir el mismo origen en el mes."],
+["Mês anterior × mês atual", "Previous month × current month", "Mes anterior × mes actual"],
+["Nenhum lançamento datado com valor no recorte.", "No dated transactions with an amount in this selection.", "No hay movimientos con fecha e importe en esta selección."],
+["Nenhum lançamento encontrado.", "No transactions found.", "No se encontraron movimientos."],
+["Nenhum lançamento neste dia.", "No transactions on this day.", "No hay movimientos en este día."],
+["Nenhum lançamento nos próximos 30 dias dentro do período/filtros selecionados.", "No transactions in the next 30 days within the selected period and filters.", "No hay movimientos en los próximos 30 días dentro del período y filtros seleccionados."],
+["Nenhum lançamento.", "No transactions.", "No hay movimientos."],
+["Nenhuma alteração registrada.", "No changes recorded.", "No hay cambios registrados."],
+["Nenhuma descrição de despesa nos filtros selecionados", "No expense descriptions in the selected filters", "No hay descripciones de gastos en los filtros seleccionados"],
+["Nenhuma pendência corresponde aos filtros.", "No pending items match the filters.", "Ningún pendiente coincide con los filtros."],
+["Nenhuma recorrência nova para esse mês.", "No new recurring transactions for this month.", "No hay nuevas recurrencias para este mes."],
+["Nenhuma saída no período.", "No outflows in the period.", "No hay salidas en el período."],
+["Nome da visão", "View name", "Nombre de la vista"],
+["Não classificado", "Unclassified", "Sin clasificar"],
+["Não foi possível compartilhar. Use Copiar link.", "Unable to share. Use Copy link.", "No se pudo compartir. Usa Copiar enlace."],
+["Não foi possível desenhar esta página. Você pode usar Baixar PDF para consultar o documento.", "Unable to render this page. Use Download PDF to read the document.", "No se pudo mostrar esta página. Usa Descargar PDF para consultar el documento."],
+["Não foi possível exibir as páginas:", "Unable to display the pages:", "No se pudieron mostrar las páginas:"],
+["Não há entrada futura em aberto identificada nos filtros atuais.", "No outstanding future inflow was found with the current filters.", "No se encontró ninguna entrada futura pendiente con los filtros actuales."],
+["Organização financeira hoje", "Financial organization today", "Organización financiera hoy"],
+["Os filtros da análise foram preservados.", "Analysis filters were preserved.", "Se conservaron los filtros del análisis."],
+["Pagos / recebidos no período", "Paid / received in the period", "Pagados / recibidos en el período"],
+["Para instalar neste computador, abra a versão publicada no Chrome. Esta cópia local serve para testes.", "To install on this computer, open the published version in Chrome. This local copy is for testing.", "Para instalar en este ordenador, abre la versión publicada en Chrome. Esta copia local es de prueba."],
+["Pendências de cadastro", "Record issues", "Datos pendientes de registro"],
+["Percentuais sobre os valores exibidos nesta série. Mais de oito partes são agrupadas em “Outros”.", "Percentages of the values shown in this series. More than eight parts are grouped as “Other”.", "Porcentajes de los valores de esta serie. Más de ocho partes se agrupan en «Otros»."],
+["Período inválido: revise as datas selecionadas.", "Invalid period: review the selected dates.", "Período no válido: revisa las fechas seleccionadas."],
+["Período:", "Period:", "Período:"],
+["Pizza indisponível para valores negativos ou resultado derivado. Selecione Barras, Linhas ou Áreas.", "Pie charts are unavailable for negative values or derived results. Select Bars, Lines or Areas.", "El gráfico circular no está disponible para valores negativos o resultados derivados. Selecciona Barras, Líneas o Áreas."],
+["Por rúbrica e sub-item", "By category and subitem", "Por categoría y subcategoría"],
+["Preparando atualização…", "Preparing update…", "Preparando actualización…"],
+["Previsão: hoje e os próximos 29 dias, com os filtros de conteúdo e independentemente do mês selecionado.", "Forecast: today and the next 29 days, using content filters regardless of the selected month.", "Previsión: hoy y los próximos 29 días, con los filtros de contenido e independientemente del mes seleccionado."],
+["Principais alertas e ações sugeridas", "Main alerts and suggested actions", "Alertas principales y acciones sugeridas"],
+["Próxima", "Next", "Siguiente"],
+["Qual é sua dúvida?", "What is your question?", "¿Cuál es tu duda?"],
+["Ranking de rubricas — saídas", "Outflow category ranking", "Clasificación de categorías de salidas"],
+["Receitas cadastradas no período filtrado", "Income registered in the filtered period", "Ingresos registrados en el período filtrado"],
+["Receitas e saídas lado a lado. Linhas tracejadas: variação mensal de receitas (azul) e saídas (amarelo), no eixo percentual à direita.", "Income and outflows side by side. Dashed lines show monthly changes in income (blue) and outflows (yellow), on the percentage axis on the right.", "Ingresos y salidas lado a lado. Las líneas discontinuas muestran la variación mensual de ingresos (azul) y salidas (amarillo), en el eje porcentual derecho."],
+["Receitas e saídas por semana", "Weekly income and outflows", "Ingresos y salidas por semana"],
+["Receitas marcadas como “Não Recebido” ainda dependem de confirmação.", "Income marked as “Not received” still requires confirmation.", "Los ingresos marcados como «No recibido» aún requieren confirmación."],
+["Receitas zeradas: margem N/D. Investimentos entram nas saídas e no resultado.", "Zero income: margin N/A. Investments are included in outflows and results.", "Ingresos cero: margen N/D. Las inversiones se incluyen en las salidas y el resultado."],
+["Receitas × saídas por semana", "Weekly income × outflows", "Ingresos × salidas por semana"],
+["Recorrente mensal (geração mediante prévia)", "Monthly recurring (generation after preview)", "Recurrente mensual (generación con vista previa)"],
+["Recorrências geradas. Nova geração do mesmo mês não repetirá esses registros.", "Recurring transactions generated. Generating again for this month will not duplicate them.", "Recurrencias generadas. Volver a generar el mismo mes no duplicará estos registros."],
+["Recorte de um único tipo de movimentação: os valores representam somente os lançamentos selecionados e não o saldo completo de caixa.", "Single movement type selected: values represent only the selected transactions, not the full cash balance.", "Selección de un solo tipo de movimiento: los valores representan solo los movimientos seleccionados, no el saldo completo de caja."],
+["Relatório de Planejamento Financeiro · Uso interno", "Planejamento Financeiro report · Internal use", "Informe de Planejamento Financeiro · Uso interno"],
+["Relatório de gráficos", "Chart report", "Informe de gráficos"],
+["Relatório gerado com os lançamentos atualmente filtrados no sistema.", "Report generated from the transactions currently filtered in the app.", "Informe generado con los movimientos actualmente filtrados en la aplicación."],
+["Resultado do período e saldo acumulado", "Period result and cumulative balance", "Resultado del período y saldo acumulado"],
+["Resultado previsto ÷ receitas cadastradas × 100. É uma proporção do resultado do período, não poupança já realizada.", "Planned result ÷ registered income × 100. This is the period result ratio, not savings already realized.", "Resultado previsto ÷ ingresos registrados × 100. Es una proporción del resultado del período, no ahorro ya realizado."],
+["Revise os compromissos próximos para apoiar o controle do fluxo de caixa.", "Review upcoming commitments to support cash flow management.", "Revisa los próximos compromisos para controlar el flujo de caja."],
+["Saldo previsto do período", "Planned period balance", "Saldo previsto del período"],
+["Salva a análise aplicada, não os campos ainda pendentes. A visão fica disponível nesta sessão de trabalho.", "Saves the applied analysis, not pending fields. The view is available for this work session.", "Guarda el análisis aplicado, no los campos pendientes. La vista queda disponible durante esta sesión de trabajo."],
+["Saídas", "Outflows", "Salidas"],
+["Saídas por rúbrica", "Outflows by category", "Salidas por categoría"],
+["Selecionar visíveis", "Select visible", "Seleccionar visibles"],
+["Selecione um documento. O acesso será verificado pelo Supabase.", "Select a document. Supabase will verify access.", "Selecciona un documento. Supabase verificará el acceso."],
+["Sem contas em aberto nos próximos 30 dias para os filtros de conteúdo.", "No unpaid bills in the next 30 days for these content filters.", "No hay cuentas pendientes en los próximos 30 días con estos filtros."],
+["Sem dados para esta visualização.", "No data for this view.", "No hay datos para esta vista."],
+["Sem dados para o gráfico.", "No chart data.", "No hay datos para el gráfico."],
+["Sem lançamentos", "No transactions", "Sin movimientos"],
+["Sem lançamentos neste recorte.", "No transactions in this selection.", "No hay movimientos en esta selección."],
+["Sem lançamentos no período selecionado", "No transactions in the selected period", "No hay movimientos en el período seleccionado"],
+["Sem lançamentos para este ponto.", "No transactions for this point.", "No hay movimientos para este punto."],
+["Sem movimentações para o período selecionado.", "No movements in the selected period.", "No hay movimientos en el período seleccionado."],
+["Sem movimentações.", "No movements.", "No hay movimientos."],
+["Sem saídas neste recorte.", "No outflows in this selection.", "No hay salidas en esta selección."],
+["Senha não autorizada. O perfil continuará como Usuário.", "Password not authorized. The role will remain User.", "Contraseña no autorizada. El perfil seguirá siendo Usuario."],
+["Subtotal dos lançamentos filtrados:", "Filtered transaction subtotal:", "Subtotal de movimientos filtrados:"],
+["Tipo de gráfico:", "Chart type:", "Tipo de gráfico:"],
+["Todas as descrições de despesas que atendem aos filtros, individualmente", "Every expense description matching the filters, individually", "Todas las descripciones de gastos que coinciden con los filtros, individualmente"],
+["Todos os lançamentos da análise aplicada", "All transactions in the applied analysis", "Todos los movimientos del análisis aplicado"],
+["Trajetória do saldo por vencimento", "Balance trajectory by due date", "Trayectoria del saldo por vencimiento"],
+["Use o menu do navegador para instalar conforme as instruções acima.", "Use the browser menu to install as described above.", "Usa el menú del navegador para instalar según las instrucciones anteriores."],
+["Valor e participação sobre o total de saídas", "Amount and share of total outflows", "Importe y proporción de las salidas totales"],
+["Variação (%)", "Change (%)", "Variación (%)"],
+["Ver lançamentos", "View transactions", "Ver movimientos"],
+["Ver valores e variações mês a mês", "View monthly amounts and changes", "Ver importes y variaciones mes a mes"],
+["Verde: receitas · Vermelho: saídas · Valores em reais", "Green: income · Red: outflows · Amounts in BRL", "Verde: ingresos · Rojo: salidas · Importes en reales"],
+["Versão desta cópia:", "This copy's version:", "Versión de esta copia:"],
+["Versão identificada no arquivo de distribuição carregado.", "Version identified in the loaded distribution file.", "Versión identificada en el archivo de distribución cargado."],
+["Total da despesa no período", "Total expenses in the period", "Gastos totales del período"],
+["Despesas já pagas", "Expenses already paid", "Gastos ya pagados"],
+["Análise do mês · desbloqueie o painel para consultar", "Monthly analysis · unlock the dashboard to view", "Análisis mensual · desbloquea el panel para consultar"],
+["Conversa com o assistente", "Assistant conversation", "Conversación con el asistente"],
+["Este resultado não inclui saldo inicial de conta.", "This result does not include the opening account balance.", "Este resultado no incluye el saldo inicial de la cuenta."],
+["Critério: período do vencimento; lista limitada aos primeiros 8 registros.", "Based on the due-date period; list limited to the first 8 records.", "Criterio: período de vencimiento; lista limitada a los primeros 8 registros."],
+["Critério: mês do vencimento; pagamentos de outros meses não entram neste total.", "Based on the due-date month; payments from other months are excluded.", "Criterio: mes de vencimiento; los pagos de otros meses no se incluyen en este total."],
+["Critério: intervalo do vencimento; pagamentos fora do intervalo não entram neste total.", "Based on the due-date range; payments outside the range are excluded.", "Criterio: intervalo de vencimiento; los pagos fuera del intervalo no se incluyen en este total."],
+["Autorizo enviar minha pergunta e totais financeiros ao Gemini via Supabase. Categorias vão como códigos, sem enviar automaticamente descrições, nomes ou observações. Na faixa gratuita, o Google pode usar o conteúdo para melhorar seus produtos. Não incluirei dados pessoais na pergunta.", "I authorize sending my question and financial totals to Gemini via Supabase. Categories are coded; descriptions, names and notes are not sent automatically. On the free tier, Google may use content to improve its products. I will not include personal data in the question.", "Autorizo enviar mi pregunta y los totales financieros a Gemini mediante Supabase. Las categorías se envían como códigos, sin enviar automáticamente descripciones, nombres ni observaciones. En el nivel gratuito, Google puede usar el contenido para mejorar sus productos. No incluiré datos personales en la pregunta."],
+["Gemini recebe sua pergunta e totais do período via Supabase; categorias são codificadas. Revise a autorização abaixo antes de enviar. Limite inicial: 10 consultas por conta e 30 no total por dia UTC, sujeito também à cota gratuita do Google. Nenhuma consulta é enviada sem sua autorização.", "Gemini receives your question and period totals via Supabase; categories are coded. Review the authorization below before sending. Initial limit: 10 queries per account and 30 overall per UTC day, also subject to Google's free quota. No query is sent without your authorization.", "Gemini recibe tu pregunta y los totales del período mediante Supabase; las categorías se codifican. Revisa la autorización antes de enviar. Límite inicial: 10 consultas por cuenta y 30 en total por día UTC, sujeto también a la cuota gratuita de Google. No se envía ninguna consulta sin tu autorización."],
+["Entre na sua conta em Nuvem para usar o Gemini. O modo local continua disponível.", "Sign in to your cloud account to use Gemini. Local mode remains available.", "Entra en tu cuenta de la nube para usar Gemini. El modo local sigue disponible."],
+["Para usar o Gemini, abra o endereço publicado do projeto. Arquivos locais continuam com o assistente local.", "To use Gemini, open the project's published address. Local files still support the local assistant.", "Para usar Gemini, abre la dirección publicada del proyecto. Los archivos locales siguen usando el asistente local."],
+["Prévia com dados fictícios: o Gemini real não pode ser consultado aqui.", "Preview with sample data: real Gemini queries are unavailable here.", "Vista previa con datos ficticios: aquí no se puede consultar Gemini real."],
+["Esta prévia usa dados fictícios e não chama a API. Use o endereço publicado e entre na sua conta da nuvem para consultar o Gemini.", "This preview uses sample data and does not call the API. Open the published address and sign in to your cloud account to query Gemini.", "Esta vista previa usa datos ficticios y no llama a la API. Abre la dirección publicada y entra en tu cuenta de la nube para consultar Gemini."],
+["Posso consultar resumo, gastos, receitas, saldo, categorias, comparação com o mês anterior, contas a vencer, valores a pagar e possíveis duplicados. Use os atalhos ou pergunte, por exemplo: “Quanto falta pagar?”. Perguntas fora dessas consultas ainda não são reconhecidas pelo assistente local.", "I can check summaries, expenses, income, balances, categories, previous-month comparisons, bills due, unpaid amounts and possible duplicates. Use the shortcuts or ask, for example, “How much is still unpaid?”. Other queries are not yet recognized by the local assistant.", "Puedo consultar resúmenes, gastos, ingresos, saldos, categorías, comparaciones con el mes anterior, vencimientos, importes pendientes y posibles duplicados. Usa los accesos directos o pregunta, por ejemplo, «¿Cuánto queda por pagar?». El asistente local aún no reconoce otras consultas."],
+["Somente leitura · Conversa apenas nesta aba", "Read only · Conversation stays in this tab", "Solo lectura · Conversación solo en esta pestaña"],
+["Fechar assistente", "Close assistant", "Cerrar asistente"],
+["Editar", "Edit", "Editar"],
+["Conversa apenas nesta aba", "Conversation stays in this tab", "Conversación solo en esta pestaña"],
+["Prévia do relatório", "Report preview", "Vista previa del informe"],
+["O registro será enviado para a Lixeira e poderá ser recuperado.", "The record will be moved to Trash and can be recovered.", "El registro se enviará a la papelera y se podrá recuperar."],
+["Há baixas anteriores ao vencimento. Confirmar?", "Some settlement dates are before their due dates. Confirm?", "Hay liquidaciones anteriores al vencimiento. ¿Confirmar?"],
+["Deseja sair e bloquear o Planejamento Financeiro?", "Exit and lock Planejamento Financeiro?", "¿Salir y bloquear Planejamento Financeiro?"],
+["Os dados permanecem neste dispositivo e a conta da nuvem não será desconectada.", "Data stays on this device and the cloud account will not be disconnected.", "Los datos permanecen en este dispositivo y no se desconectará la cuenta de la nube."]
+];
+function bootFinancialLanguage(catalogue, options) {
+ 'use strict';
+ options=options||{};
+ if(window.PFI18n)return window.PFI18n;
+ const locales={'pt-BR':'pt-BR',en:'en-US',es:'es-ES'},key='pf_ui_language_v1';
+ const normalize=value=>String(value??'').replace(/\s+/g,' ').trim();
+ const bySource=new Map(),reverse={en:new Map(),es:new Map()};
+ for(const row of catalogue){bySource.set(normalize(row[0]).toLowerCase(),row);for(const [i,lang]of [[1,'en'],[2,'es']])if(!reverse[lang].has(normalize(row[i]).toLowerCase()))reverse[lang].set(normalize(row[i]).toLowerCase(),row[0]);}
+ let language='pt-BR',store,saveFailed=false,observer,scheduled=false,started=false;
+ try{const owner=window.opener?.PFI18n?window.opener:window;store=owner.pfdLocal||owner.localStorage;const saved=options.language||window.opener?.PFI18n?.getLanguage()||store?.getItem(key);if(Object.hasOwn(locales,saved))language=saved;}catch(_){if(Object.hasOwn(locales,options.language))language=options.language;}
+ const textRecords=new WeakMap(),attributeRecords=new WeakMap(),chartLabels=new WeakMap();
+ let trigger,menu;
+ const patterns=[
+  [/^Enviar (\d+) lançamento\(s\) para a Lixeira\?$/,'Move $1 transaction(s) to Trash?','¿Enviar $1 movimiento(s) a la papelera?'],
+  [/^Excluir o lançamento ID (\d+) — (.+)\?$/,'Delete transaction ID $1 — $2?','¿Eliminar el movimiento ID $1 — $2?'],
+  [/^Excluir o cadastro “(.+)”\?$/,'Delete the reference item “$1”?','¿Eliminar el registro de referencia «$1»?'],
+  [/^Unificar “(.+)” com “(.+)”, preservando os lançamentos\?$/,'Merge “$1” into “$2”, preserving transactions?','¿Unificar «$1» con «$2», conservando los movimientos?'],
+  [/^Gerar (\d+) lançamento\(s\) recorrente\(s\)\?$/,'Generate $1 recurring transaction(s)?','¿Generar $1 movimiento(s) recurrente(s)?'],
+  [/^Período: (.+) a (.+) · Critério: data de vencimento\.$/,'Period: $1 to $2 · Based on due date.','Período: del $1 al $2 · Por fecha de vencimiento.'],
+  [/^Período de referência: (.+)$/,'Reference period: $1','Período de referencia: $1'],
+  [/^Período: (.+) · Critério: data de vencimento\.$/,'Period: $1 · Based on due date.','Período: $1 · Por fecha de vencimiento.'],
+  [/^Emitido em (.+)$/,'Issued on $1','Emitido el $1'],
+  [/^Data de emissão:?\s*(.*)$/,'Issue date: $1','Fecha de emisión: $1'],
+  [/^Ver lançamentos do período \((\d+)\)$/,'View period transactions ($1)','Ver movimientos del período ($1)'],
+  [/^Ver lançamentos do período anterior \((\d+)\)$/,'View previous-period transactions ($1)','Ver movimientos del período anterior ($1)'],
+  [/^Mostrando (\d+) de (\d+) registros\.$/,'Showing $1 of $2 records.','Mostrando $1 de $2 registros.'],
+  [/^Tabela (\d+)$/,'Table $1','Tabla $1'],
+  [/^Conteúdo: (.+)$/,'Content: $1','Contenido: $1'],
+  [/^Tabela: (.+)$/,'Table: $1','Tabla: $1'],
+  [/^Campo: (.+)$/,'Field: $1','Campo: $1'],
+  [/^Nenhum (.+) encontrado\.$/,'No $1 found.','No se encontró $1.'],
+  [/^Resumo de (.+) por vencimento:$/,'Summary of $1 by due date:','Resumen de $1 por vencimiento:'],
+  [/^Despesas previstas por vencimento:$/,'Planned expenses by due date:','Gastos previstos por vencimiento:'],
+  [/^Despesas em aberto em (.+): (.+) em (\d+) lançamento\(s\)\.$/,'Unpaid expenses in $1: $2 across $3 transaction(s).','Gastos pendientes en $1: $2 en $3 movimiento(s).'],
+  [/^Receitas a receber em (.+): (.+) em (\d+) lançamento\(s\)\.$/,'Unreceived income in $1: $2 across $3 transaction(s).','Ingresos por cobrar en $1: $2 en $3 movimiento(s).'],
+  [/^Em (.+): receitas previstas de (.+), das quais (.+) estão recebidas\. Critério: período do vencimento\.$/,'In $1: planned income of $2, with $3 received. Based on the due-date period.','En $1: ingresos previstos de $2, con $3 recibidos. Según el período de vencimiento.'],
+  [/^Em (.+): despesas previstas de (.+), das quais (.+) estão pagas e (.+) em aberto\.(.*)$/,'In $1: planned expenses of $2, with $3 paid and $4 unpaid.$5','En $1: gastos previstos de $2, con $3 pagados y $4 pendientes.$5'],
+  [/^Maiores categorias de despesas previstas em (.+):$/,'Largest planned expense categories in $1:','Mayores categorías de gastos previstos en $1:'],
+  [/^Total (.+)$/,'Total $1','Total $1'],
+  [/^Filtros \((\d+)\)$/,'Filters ($1)','Filtros ($1)'],
+  [/^Tipo de gráfico: (.+)$/,'Chart type: $1','Tipo de gráfico: $1']
+ ];
+ function canonical(value){const raw=String(value??''),n=normalize(raw).toLowerCase();return reverse.en.get(n)||reverse.es.get(n)||raw;}
+ function translateBase(value,target=language){
+  const raw=String(value??'');if(target==='pt-BR')return raw;
+  const leading=raw.match(/^\s*/)[0],trailing=raw.match(/\s*$/)[0],n=normalize(raw);if(!n)return raw;
+  const index=target==='en'?1:2;
+  let row=bySource.get(n.toLowerCase());
+  if(row){let result=row[index];if(n===n.toLocaleUpperCase('pt-BR')&&/[a-zà-ÿ]/i.test(n))result=result.toLocaleUpperCase(locales[target]);return leading+result+trailing;}
+  // Decorative toolbar arrows and icons are kept exactly where they already were.
+  const decorated=n.match(/^([^\p{L}\p{N}]*)(.*?)(\s*[▾▼▸▹]?)$/u);
+  if(decorated&&(row=bySource.get(decorated[2].trim().toLowerCase())))return leading+decorated[1]+row[index]+decorated[3]+trailing;
+  if(n.includes('\n')||raw.includes('\n'))return raw.split('\n').map(line=>translate(line,target)).join('\n');
+  for(const [pattern,en,es]of patterns)if(pattern.test(n))return leading+n.replace(pattern,target==='en'?en:es)+trailing;
+  const bullets=[['• Receitas previstas:','• Planned income:','• Ingresos previstos:'],['• Despesas previstas:','• Planned expenses:','• Gastos previstos:'],['• Saldo previsto:','• Planned balance:','• Saldo previsto:'],['• Recebido:','• Received:','• Recibido:'],['• Pago:','• Paid:','• Pagado:'],['• Diferença entre recebido e pago:','• Difference between received and paid:','• Diferencia entre lo recibido y pagado:'],['• Vencidos:','• Overdue:','• Vencidos:'],['• Vencendo hoje:','• Due today:','• Con vencimiento hoy:'],['• Próximos 30 dias (após hoje):','• Next 30 days (after today):','• Próximos 30 días (después de hoy):'],['• Diferença:','• Difference:','• Diferencia:']];
+  for(const row of bullets)if(n.startsWith(row[0]))return leading+row[index]+n.slice(row[0].length)+trailing;
+  return raw;
+ }
+ function translate(value,target=language){
+  const result=translateBase(value,target);if(target==='pt-BR')return result;
+  const months=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  let localized=result.replace(/(\d{1,2}) de (janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro) de (\d{4})/gi,(_,day,month,year)=>new Date(Number(year),months.indexOf(month.toLowerCase()),Number(day),12).toLocaleDateString(locales[target],{day:'numeric',month:'long',year:'numeric'}));
+  localized=localized.replace(/\b(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro) de (\d{4})\b/gi,(_,month,year)=>new Date(Number(year),months.indexOf(month.toLowerCase()),1,12).toLocaleDateString(locales[target],{month:'long',year:'numeric'}));
+  return localized;
+ }
+ function originalText(element){
+  if(!element)return '';
+  if(element.nodeType===3){const saved=textRecords.get(element);return saved&&element.data===saved.last?saved.source:element.data;}
+  return element.childNodes?[...element.childNodes].map(originalText).join(''):element.textContent||'';
+ }
+ function uiQuestion(question){
+  const text=canonical(question);if(text!==question)return text;
+  const n=String(question).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  let command;
+  if(/compar|previous|anterior/.test(n))command='Compare com o período anterior';
+  else if(/duplicat|duplicad|repetid/.test(n))command='Há lançamentos duplicados?';
+  else if(/categories|categorias|ranking/.test(n))command='Quais são as maiores categorias?';
+  else if(/unpaid|to pay|por pagar|pendiente/.test(n))command='Quanto falta pagar?';
+  else if(/receiv|por cobrar|a recibir/.test(n))command='Tenho receitas a receber?';
+  else if(/income|revenue|ingres/.test(n))command='Quais são as receitas?';
+  else if(/spent|spend|expense|gasto/.test(n))command='Quanto gastei?';
+  else if(/summar|balance|resumen|saldo/.test(n))command='Faça um resumo do período';
+  else if(/help|ayuda/.test(n))command='Como usar?';
+  if(!command)return question;
+  const category=String(question).match(/(?:in (?:the )?category|en la categoria|en la categoría)\s+(.+?)\s*[?!.]*$/i);
+  return command+(category?' na categoria '+category[1]:'');
+ }
+ const api={getLanguage:()=>language,translate,canonical,originalText,question:uiQuestion,setLanguage,
+  decorate(html){const script='<script id="pf-global-language-report">('+bootFinancialLanguage.toString()+')('+JSON.stringify(catalogue).replace(/</g,'\\u003c')+','+JSON.stringify({language,noMenu:true})+');<'+'/script>';return html.includes('id="pf-global-language-report"')?html:html.replace('</body>',script+'</body>');}
+ };
+ window.PFI18n=api;
+ function excluded(element){
+  if(!element)return true;
+  if(element.closest('.user')&&element.tagName!=='SMALL')return true;
+  if(element.closest('tbody,tfoot')&&!element.closest('button'))return true;
+  return !!element.closest('script,style,noscript,textarea,[contenteditable="true"],[data-pf-i18n-skip],#pfLanguageMenu,#pfLanguageButton,#pf495GreetingTitle,#pf493Actions,#pfMobileMaisPanel,#pfHelpMenu .pf-help-dropdown,.pf-dynamic-notice,.pf-qc-notice,.analysis-bars,.pf-bar-row,.pf-heat-cell,.pfce-alt,.pfce-bars,.pfce-detail tbody,.pfce-points,#pfDozeMeses,.grafico-area,svg text,.lcm-value,.lcm-valor,[data-g-item-field],[data-pf-dynamic-value]');
+ }
+ function applyNode(node){
+  const parent=node.parentElement;if(excluded(parent)||!normalize(node.data))return;
+  const option=parent.closest('option');if(option){const select=option.parentElement;if(/rubric|categor|subitem|descri|conta|nome/i.test(select?.id||'')&&!/^Todos?$|^Todas?$/.test(normalize(node.data)))return;if(!option.hasAttribute('value'))option.setAttribute('value',option.value);}
+  const old=textRecords.get(node),source=old&&node.data===old.last?old.source:canonical(node.data),next=translate(source);
+  if(next!==node.data){parent.dataset.pfceUi='true';node.data=next;}
+  textRecords.set(node,{source,last:next});
+ }
+ function applyAttribute(element,name){
+  if(excluded(element))return;const value=element.getAttribute(name);if(!value)return;
+  let record=attributeRecords.get(element);if(!record){record={};attributeRecords.set(element,record);}
+  const previous=record[name],source=previous&&value===previous.last?previous.source:canonical(value),next=translate(source);
+  if(value!==next)element.setAttribute(name,next);record[name]={source,last:next};
+ }
+ function observe(){observer?.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['hidden','class','open','title','placeholder','aria-label']});}
+ function apply(){
+  scheduled=false;if(!document.body)return;observer?.disconnect();
+  try{ensureMenu();document.documentElement.lang=language;const question=document.getElementById('pfIaQuestion');if(question)question.lang=language;
+   const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode())applyNode(node);
+   for(const element of document.querySelectorAll('[placeholder],[title],[aria-label]'))for(const name of ['placeholder','title','aria-label'])applyAttribute(element,name);
+   if(trigger)trigger.textContent=translate('Idioma')+' ▾';
+   if(menu)for(const item of menu.querySelectorAll('[data-pf-locale]'))item.setAttribute('aria-checked',String(item.dataset.pfLocale===language));
+  }finally{observe();}
+ }
+ function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(apply);}
+ function closeMenu(focus=false){if(!menu)return;menu.hidden=true;trigger?.setAttribute('aria-expanded','false');if(focus)trigger?.focus();}
+ function openMenu(){
+  const other=document.getElementById('desktop-dropdown');if(other)other.hidden=true;
+  const r=trigger.getBoundingClientRect();menu.style.left=Math.max(8,Math.min(r.left,window.innerWidth-240))+'px';menu.style.top=(r.bottom+5)+'px';
+  const template=document.getElementById('desktop-dropdown');if(template){const style=getComputedStyle(template);for(const property of ['backgroundColor','color','borderColor','borderRadius','boxShadow','fontFamily'])menu.style[property]=style[property];}
+  menu.hidden=false;trigger.setAttribute('aria-expanded','true');menu.querySelector('[aria-checked="true"]')?.focus();
+ }
+ function ensureMenu(){
+  if(options.noMenu)return;
+  const normal=document.getElementById('pfMenuTopo'),mobile=document.querySelector('#pm-app .bar'),host=normal?.getClientRects().length?normal:mobile||normal;if(!host)return;
+  if(!trigger){
+   trigger=document.createElement('button');trigger.id='pfLanguageButton';trigger.type='button';trigger.className='pf-menu-categoria';trigger.setAttribute('aria-haspopup','menu');trigger.setAttribute('aria-controls','pfLanguageMenu');trigger.setAttribute('aria-expanded','false');trigger.setAttribute('data-pf-i18n-skip','');trigger.setAttribute('data-pfce-ui','true');
+   menu=document.createElement('div');menu.id='pfLanguageMenu';menu.hidden=true;menu.setAttribute('role','menu');menu.setAttribute('data-pfce-ui','true');document.body.append(menu);
+   for(const [value,label]of [['pt-BR','Português (Brasil)'],['en','English'],['es','Español']]){const item=document.createElement('button');item.type='button';item.textContent=label;item.lang=value;item.dataset.pfLocale=value;item.setAttribute('role','menuitemradio');item.setAttribute('aria-checked',String(value===language));item.tabIndex=-1;item.onclick=()=>{setLanguage(value);closeMenu(true);};menu.append(item);}
+   trigger.onclick=event=>{event.stopPropagation();menu.hidden?openMenu():closeMenu(true);};
+   trigger.onkeydown=event=>{if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();openMenu();}};
+   menu.onkeydown=event=>{const items=[...menu.querySelectorAll('button')],index=items.indexOf(document.activeElement);if(event.key==='Escape'){event.preventDefault();closeMenu(true);}else if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){event.preventDefault();items[event.key==='Home'?0:event.key==='End'?items.length-1:(index+(event.key==='ArrowDown'?1:-1)+items.length)%items.length].focus();}else if(event.key==='Tab')closeMenu();};
+   document.addEventListener('pointerdown',event=>{if(!menu.contains(event.target)&&!trigger.contains(event.target))closeMenu();});window.addEventListener('resize',()=>{closeMenu();schedule();});window.addEventListener('scroll',()=>closeMenu(),true);
+   const style=document.createElement('style');style.id='pf-global-language-style';style.textContent='#pfLanguageButton{display:inline-flex!important;align-items:center;justify-content:center;white-space:nowrap;flex-shrink:0}#pfLanguageMenu{position:fixed;z-index:2147483000;min-width:220px;max-width:calc(100vw - 16px);padding:5px;background:#243f85;color:white;border:1px solid #7083c0;border-radius:8px;box-shadow:0 12px 30px #0f172a40}#pfLanguageMenu[hidden]{display:none!important}#pfLanguageMenu button{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;text-align:left;border:0;border-radius:5px;padding:10px 12px;background:transparent;color:inherit;font-family:inherit;font-size:12px;font-weight:600;line-height:1.5;cursor:pointer}#pfLanguageMenu button:hover,#pfLanguageMenu button:focus-visible{background:#ffffff20;outline:2px solid #a5b4fc;outline-offset:-2px}#pfLanguageMenu button[aria-checked="true"]:after{content:"✓";margin-left:12px}@media print{#pfLanguageButton,#pfLanguageMenu{display:none!important}}';document.head.append(style);
+  }
+  if(trigger.parentElement!==host){const help=host.querySelector('[data-pf-categoria="ajuda"]');if(help)help.after(trigger);else host.append(trigger);}
+ }
+ function syncContainer(){try{if(window.parent!==window&&window.parent?.PFI18n)window.parent.PFI18n.setLanguage(language,false);}catch(_){}}
+ function setLanguage(value,persist=true){
+  if(!Object.hasOwn(locales,value))return;language=value;saveFailed=false;
+  if(persist&&!options.noMenu)try{store?.setItem(key,value);if(!store)saveFailed=true;}catch(_){saveFailed=true;}
+  apply();if(trigger)trigger.title=saveFailed?translate('Não foi possível salvar a preferência de idioma neste navegador.'):'Português (Brasil) / English / Español';
+  syncContainer();window.PFChartExplorer?.refresh?.();
+  if(typeof window.CustomEvent==='function')window.dispatchEvent(new CustomEvent('pf-language-change',{detail:{language}}));
+  if(typeof Chart!=='undefined')for(const chart of Object.values(Chart.instances||{}))chart.update('none');
+ }
+ function install(){
+  if(started)return;started=true;
+  for(const name of ['alert','confirm','prompt'])if(typeof window[name]==='function'){const native=window[name].bind(window);window[name]=(message,...args)=>native(translate(message),...args);}
+  const selection=window.PFReportSelection;
+  if(selection&&!selection.pfLanguageWrapped){selection.pfLanguageWrapped=true;const decorate=selection.decorate.bind(selection),install=selection.install.bind(selection);selection.decorate=html=>api.decorate(decorate(html));selection.install=target=>{install(target);target.eval('('+bootFinancialLanguage.toString()+')('+JSON.stringify(catalogue)+','+JSON.stringify({language,noMenu:true})+')');};}
+  const core=window.PFAssistenteCore;if(core&&!core.pfLanguageWrapped){core.pfLanguageWrapped=true;const answer=core.answer.bind(core);core.answer=(question,...args)=>answer(language==='pt-BR'?question:uiQuestion(question),...args);}
+  const gemini=window.PFGemini;if(gemini&&!gemini.pfLanguageWrapped){gemini.pfLanguageWrapped=true;const query=gemini.query.bind(gemini);gemini.query=args=>{if(language==='pt-BR')return query(args);const prefix=language==='en'?'Respond in English. ':'Responde en español. ';if((prefix+args.question).length>600)throw Error(translate('Reduza a pergunta para enviar no idioma selecionado.'));return query({...args,question:prefix+args.question});};}
+  if(typeof Chart!=='undefined'&&typeof Chart.register==='function')Chart.register({id:'pfGlobalLanguage',beforeUpdate(chart){for(const dataset of chart.data.datasets||[]){const previous=chartLabels.get(dataset),source=previous&&dataset.label===previous.last?previous.source:canonical(dataset.label);dataset.label=translate(source);chartLabels.set(dataset,{source,last:dataset.label});}}});
+  observer=new MutationObserver(schedule);apply();syncContainer();
+  try{if(window.opener?.PFI18n){const sync=()=>setLanguage(window.opener.PFI18n.getLanguage(),false);window.opener.addEventListener('pf-language-change',sync);window.addEventListener('pagehide',()=>{try{window.opener.removeEventListener('pf-language-change',sync);}catch(_){}},{once:true});}}catch(_){}
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+ return api;
+}
+
+bootFinancialLanguage(catalogue);
+})();
+
+</script>
 </body>
 </html>

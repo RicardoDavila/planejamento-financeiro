@@ -1,38 +1,52 @@
-# V4.12.75 — melhorias no assistente financeiro
+# V4.12.76 — idioma global na barra atual
 
-## Alterações
+Nome sugerido para a atualização: Idioma global sem alterar o layout
 
-- O modo local se chama “Cálculo local · sem envio à IA”. O aviso esclarece que a sincronização em nuvem do sistema é independente.
-- O Gemini informa que a pergunta e totais do período são enviados via Supabase, com categorias codificadas. A autorização existente continua obrigatória e não é marcada automaticamente.
-- A área inicial contém seis exemplos compatíveis com o cálculo local: resumo, gastos, comparação, categorias, valores a pagar e receitas a receber.
-- Exemplos e atalhos apenas preenchem a pergunta. Pressione Enter ou clique em Enviar para consultar. Nenhuma consulta à IA é disparada ao escolher um exemplo.
-- Atalhos têm nomes explícitos e dicas ao passar o cursor.
-- O intervalo exato é exibido com datas por extenso, tanto por mês quanto no intervalo personalizado.
-- A pergunta tem campo maior, placeholder orientador e ajuda de teclado. Enviar recebe maior destaque; Limpar conversa tem apresentação secundária.
-- As respostas aparecem em cartões com identificação da origem. Nas respostas locais, é possível abrir os lançamentos de referência do período; comparações também oferecem o período anterior.
-- Os registros são somente de leitura, mostrados em lotes de 100 com botão para mostrar mais. A tabela tem rolagem horizontal própria em telas estreitas.
-- As listas de referência contêm receitas e despesas válidas do período inteiro. O texto esclarece que perguntas por categoria, status ou duplicidade podem usar apenas parte dessa lista; elas não são apresentadas como prova exata de cada frase da resposta.
-- Contraste, foco visível, áreas de toque e distribuição em telas menores foram ajustados.
+## O que foi integrado
 
-## Dados e segurança
+A barra superior atual recebe somente um novo botão: Idioma ▾. O menu abre para baixo e oferece Português (Brasil), English e Español. Não foram incorporadas as telas redesenhadas da demonstração.
 
-Os cálculos existentes não foram alterados. As consultas continuam por vencimento e o saldo não inclui saldo inicial de conta. Consultas locais de vencimentos no modo por mês podem consultar toda a base, conforme aviso; em intervalo personalizado, respeitam as datas selecionadas.
+A preferência se aplica aos textos cadastrados da interface e fica salva no navegador. Na distribuição com contas, o armazenamento utiliza o adaptador isolado da conta. O assistente e os relatórios não recebem seletores próprios.
 
-A consulta ao Gemini continua exigindo conta, autorização e ação explícita de envio. Limpar conversa, trocar o período ou modo e sair da conta invalidam respostas pendentes. Nenhum lançamento é editado pela nova interface.
+As páginas de conta acompanham o idioma selecionado na aplicação sem criar outro menu. As janelas de gráficos recebem apenas o idioma da janela principal, sem novo acesso a banco, sessão ou armazenamento.
 
-## Instalação
+## Preservação do layout e dos dados
 
-O ZIP contém 20 arquivos, abaixo do limite de 90, e é cumulativo em relação ao projeto original enviado: inclui também as atualizações anteriores de relatórios, PDF/impressão, corretor ortográfico e correção dos testes de publicação.
+Todos os blocos de CSS existentes nas aplicações, páginas de entrada e janelas de gráficos foram comparados à versão V4.12.75 e preservados. As regras novas se limitam a #pfLanguageButton e #pfLanguageMenu. O botão reutiliza a classe dos itens da barra e o menu aproveita as cores da lista suspensa atual.
 
-Extraia e copie o conteúdo para a raiz do repositório existente, substituindo os arquivos correspondentes. Inclua a pasta automacao no commit e preserve todos os demais arquivos do repositório. Faça um novo commit na main para publicar.
+Grades, cartões, posições dos painéis, temas, fontes e controles existentes não foram redesenhados. Em idiomas diferentes, textos mais longos podem ter as quebras naturais permitidas pelo CSS já existente.
 
-## Verificação
+Registros financeiros, nomes, descrições, observações, códigos de tipos/status, valores de filtros e cálculos permanecem preservados. Os dados dos registros não são reescritos para traduzir a interface. Opções de sistema mantêm seus valores internos originais mesmo quando o texto exibido é traduzido.
 
-- A bateria usada na publicação passou com 57 testes.
-- O novo teste verifica as três versões: exemplos e atalhos sem envio, envio pelo formulário/Enter, intervalo exato, registros de referência, autorização do Gemini, cancelamento de respostas pendentes, logout e preservação dos dados. As chamadas externas são simuladas; nenhuma consulta real ao Gemini foi enviada.
-- As verificações de sintaxe dos scripts passaram.
-- A geração do site V4.12.75 concluiu com sucesso, incluindo os controles de distribuição.
-- Após os ajustes finais de texto/contraste, o teste específico, a compilação dos scripts e a geração do site foram repetidos com sucesso.
-- O ZIP foi comparado ao original para conferir que inclui todas as alterações necessárias.
+A moeda continua BRL. Os formatos numéricos financeiros das rotinas existentes são mantidos, para preservar leitura, impressão e cálculos. Datas por extenso e rótulos de datas cadastrados no módulo acompanham o idioma. Controles e diálogos nativos seguem também as configurações do navegador/sistema.
 
-Limitação: a conferência visual em navegador real e celular permanece pendente, pois o ambiente bloqueou a abertura do Chrome automatizado. Os testes de interface usam um documento simulado e não substituem a conferência visual.
+## Traduções e assistente
+
+O catálogo central tem 761 entradas e está em automacao/idiomas.js. O módulo observa textos dinâmicos e atributos de ajuda sem alterar valores digitados. Novos textos sem tradução cadastrada continuam em português como alternativa segura. Documentos externos, manuais PDF e conteúdo dos registros não são retraduzidos automaticamente.
+
+O assistente local reconhece as consultas predefinidas e termos usuais nos três idiomas, mantendo os cálculos existentes. No Gemini, a pergunta recebe uma instrução para responder no idioma escolhido. Conta, limites, verificação de autorização e ação explícita de envio continuam exigidos. Nenhuma consulta é disparada apenas ao trocar o idioma. Perguntas que ultrapassem o limite após essa instrução devem ser reduzidas; não são truncadas silenciosamente.
+
+Não foi adicionado serviço externo de tradução. A escolha de idioma não envia registros a tradutores externos.
+
+## Instalar a atualização
+
+O ZIP contém 32 arquivos, abaixo do limite de 90. É cumulativo em relação ao projeto originalmente enviado, incluindo as correções anteriores desta conversa.
+
+1. Extraia o ZIP.
+2. Copie o conteúdo para a raiz do repositório atual, substituindo os arquivos correspondentes.
+3. Inclua todos os arquivos da pasta automacao no mesmo commit. O gerador de publicação depende dos novos módulos e testes.
+4. Preserve os demais arquivos, pastas e o workflow .github/workflows/publicar.yml. Este pacote é uma atualização, não um repositório completo.
+5. Faça um novo commit na main para publicar.
+
+A tradução deve ser editada em automacao/idiomas.js. O helper automacao/aplicar_idiomas.py incorpora o módulo nos HTMLs; o gerador de publicação mantém as cópias sincronizadas. O módulo separado automacao/idiomas_graficos.js conserva o isolamento das janelas de gráficos.
+
+## Verificações
+
+- Bateria completa de 58 testes de publicação aprovada, incluindo isolamento, sessão, dados financeiros, relatórios e idiomas.
+- Geração do site V4.12.76 concluída com verificações de scripts e distribuição.
+- Comparação dos estilos existentes com a versão anterior sem alterações.
+- Testes específicos de legendas, valores numéricos, nomes do cadastro e valores internos dos filtros preservados.
+- Verificação interativa em navegador com uma página de validação isolada: menu global, traduções dinâmicas, preferência após recarregar, filtros com códigos originais, pergunta/resposta local em inglês e registros financeiros intactos. Foram usados somente dados fictícios nessa validação, sem consulta real ao Gemini.
+- ZIP conferido contra o arquivo original para garantir a inclusão de todas as alterações necessárias.
+
+A conferência visual foi feita em ambiente de validação, não na sessão financeira real do usuário. A publicação efetiva no GitHub Actions e a conferência final do aplicativo instalado ocorrem após aplicar o pacote.

@@ -8,7 +8,7 @@
   const sum=a=>a.reduce((s,r)=>s+r.valor,0);
   const month=(year,index)=>{const d=new Date(year,index,1);return {key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),label:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'})};};
   const typeRows=(arr,label)=>{
-   const n=norm(label);let out=arr;
+   const n=norm(typeof window!=='undefined'&&window.PFI18n?window.PFI18n.canonical(label):label);let out=arr;
    if(/saldo|balanco|filtro|valor|total \(r\$\)/.test(n)&&!/receit|despes/.test(n))return out;
    if(/receit|recebid|entrada/.test(n))out=out.filter(r=>r.tipo==='Receita');
    else if(/despes|pag[ao]|saida|vencid|vencer/.test(n))out=out.filter(r=>r.tipo==='Despesa');
@@ -19,7 +19,8 @@
    return out;
   };
   function model(title,labels,series,resolve,additive=true){
-   return {title,labels:labels.map(String),series:series.map((s,j)=>({label:String(s.label||'Valor'),sourceIndex:s.sourceIndex??j,color:s.color||['#047857','#bd2b20','#2563eb','#7c3aed','#b45309'][j%5],values:s.values.map(v=>Number.isFinite(Number(v))?Number(v):0)})),resolve,additive};
+   const ui=value=>typeof window!=='undefined'&&typeof window.PFI18n?.translate==='function'?window.PFI18n.translate(String(value)):String(value);
+   return {title:ui(title),labels:labels.map(String),series:series.map((s,j)=>({label:ui(s.label||'Valor'),sourceIndex:s.sourceIndex??j,color:s.color||['#047857','#bd2b20','#2563eb','#7c3aed','#b45309'][j%5],values:s.values.map(v=>Number.isFinite(Number(v))?Number(v):0)})),resolve,additive};
   }
   function points(m){return m.series.flatMap((s,j)=>s.values.map((v,i)=>({key:j+':'+i,label:m.labels[i]||String(i+1),value:v,series:s.label,color:s.color,i,j})));}
   function pie(m,j){
@@ -327,7 +328,7 @@
     const m=payload.model,records=D.rows(m.rows),future=D.rows(m.future),base=D.rows(payload.base),seriesRows=(arr,type)=>type==='Receita'?arr.filter(r=>r.tipo==='Receita'):arr.filter(r=>r.tipo!=='Receita');
     const charts=[...document.querySelectorAll('.fc-chart')];
     for(const chart of charts){
-     const title=chart.querySelector('h3')?.textContent||'',nodes=[...chart.children].filter(n=>n.matches('svg,.fc-category-columns')),source=reportWrapper(chart,nodes);if(!source)continue;
+     const title=(typeof window!=='undefined'&&window.PFI18n?window.PFI18n.originalText(chart.querySelector('h3')):chart.querySelector('h3')?.textContent)||'',nodes=[...chart.children].filter(n=>n.matches('svg,.fc-category-columns')),source=reportWrapper(chart,nodes);if(!source)continue;
      if(title==='Evolução do saldo acumulado'||title==='Evolução do saldo projetado'){
       const projected=title.includes('projetado'),points=projected?m.projection:[{date:m.start||m.daily[0]?.date,balance:m.opening,initial:true},...m.daily];
       const model=D.model(title,points.map(p=>(p.initial?'Saldo inicial · ':'')+dateLabel(p.date||'')),[{label:'Saldo',values:points.map(p=>p.balance/100),color:'#2563eb'}],(j,i)=>{

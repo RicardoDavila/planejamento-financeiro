@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Melhora os modos local e Gemini, exemplos clicáveis, atalhos e legibilidade do assistente financeiro.",
-    "Exibe o intervalo exato e permite consultar lançamentos de referência nas respostas locais.",
-    "Exemplos apenas preenchem a pergunta; envio continua exigindo Enter ou Enviar e autorização no Gemini."
+    "Adiciona o menu global de idioma na barra superior: Português (Brasil), English e Español.",
+    "Preserva o layout e os estilos existentes; a preferência é salva no armazenamento da aplicação.",
+    "Centraliza traduções de interface e compartilha o idioma com relatórios, assistente e janelas de gráficos sem reescrever os registros financeiros."
   ],
   "distribuicao": [
-    "Melhora os modos local e Gemini, exemplos clicáveis, atalhos e legibilidade do assistente financeiro.",
-    "Exibe o intervalo exato e permite consultar lançamentos de referência nas respostas locais.",
-    "Exemplos apenas preenchem a pergunta; envio continua exigindo Enter ou Enviar e autorização no Gemini."
+    "Adiciona o menu global de idioma na barra superior: Português (Brasil), English e Español.",
+    "Preserva o layout e os estilos existentes; a preferência é salva no armazenamento da aplicação.",
+    "Centraliza traduções de interface e compartilha o idioma com relatórios, assistente e janelas de gráficos sem reescrever os registros financeiros."
   ]
 }
