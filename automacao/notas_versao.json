@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Corrige textos que permaneciam em português nos filtros, gráficos, fluxo de caixa, avisos e perfil ao selecionar inglês ou espanhol.",
-    "Traduz opções padrão sem alterar os valores dos seletores, nomes cadastrados ou registros financeiros.",
-    "Preserva layout, conversão de moedas e relatórios. Não inclui o bloco de notas adiado."
+    "Corrige colisões dos identificadores dos cadastros e alinha as referências das importações e exportações.",
+    "Preserva os IDs dos lançamentos e leva o catálogo de referências no pacote de sincronização.",
+    "Melhora a validação da importação Excel; a atualização não inclui nem substitui os dados financeiros do usuário."
   ],
   "distribuicao": [
-    "Corrige textos que permaneciam em português nos filtros, gráficos, fluxo de caixa, avisos e perfil ao selecionar inglês ou espanhol.",
-    "Traduz opções padrão sem alterar os valores dos seletores, nomes cadastrados ou registros financeiros.",
-    "Preserva layout, conversão de moedas e relatórios. Não inclui o bloco de notas adiado."
+    "Corrige colisões dos identificadores dos cadastros e alinha as referências das importações e exportações.",
+    "Preserva os IDs dos lançamentos e o isolamento de armazenamento por conta.",
+    "Leva o catálogo de referências no pacote de sincronização, mantendo compatibilidade com pacotes anteriores."
   ]
 }

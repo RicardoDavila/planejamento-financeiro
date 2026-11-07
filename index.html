@@ -3424,14 +3424,19 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
         // Gerador interno de ID estruturado para exportação e banco de dados
         function gerarIdTexto(prefixo, texto) {
-            if (!texto) return `${prefixo}-00`;
-            let hash = 0;
-            const str = texto.toString().trim().toUpperCase();
-            for (let i = 0; i < str.length; i++) {
-                hash = ((hash << 5) - hash) + str.charCodeAt(i);
-                hash |= 0;
-            }
-            return `${prefixo}-${Math.abs(hash) % 900 + 100}`;
+            if (texto === undefined || texto === null || String(texto).trim() === '') return `${prefixo}-00`;
+            const nome = String(texto).trim();
+            const fixos = {
+                TIP: { 'Despesa': '243', 'Receita': '937', 'Investimentos': '802' },
+                STA: { 'Pendente': '993', 'A Vencer': '756', 'Vencido': '632', 'Pago': '125', 'Recebido': '937', 'Não Recebido': '555' }
+            };
+            const grupo = fixos[prefixo];
+            const codigo = grupo && Object.prototype.hasOwnProperty.call(grupo, nome) ? grupo[nome] : null;
+            if (codigo) return `${prefixo}-${codigo}`;
+            // Codificação reversível do texto completo: não reduz nomes a um hash.
+            // Cada unidade UTF-16 ocupa quatro dígitos; nomes distintos não colidem.
+            const codigoTexto = nome.split('').map(c => c.charCodeAt(0).toString(16).padStart(4, '0')).join('');
+            return `${prefixo}-U${codigoTexto}`;
         }
 
         const CHAVE_BANCO_MESTRE = 'planejamento_financeiro_banco_mestre_v1';
@@ -3622,10 +3627,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 if (item.tipo === 'Receita' && item.status === 'Pendente') item.status = 'Não Recebido';
                 // IDs permanentes das tabelas de referência. Se o valor for alterado,
                 // o ID relacional correspondente também precisa acompanhar a alteração.
-                item.idTipo = item.idTipo || gerarIdTexto('TIP', item.tipo);
-                item.idRubrica = item.idRubrica || gerarIdTexto('RUB', item.categoria);
-                item.idSubItem = item.idSubItem || gerarIdTexto('SUB', item.subItem);
-                item.idDescricao = item.idDescricao || gerarIdTexto('DSC', item.descricao);
+                item.idTipo = gerarIdTexto('TIP', item.tipo);
+                item.idRubrica = gerarIdTexto('RUB', item.categoria);
+                item.idSubItem = gerarIdTexto('SUB', item.subItem);
+                item.idDescricao = gerarIdTexto('DSC', item.descricao);
                 item.idStatus = gerarIdTexto('STA', item.status);
                 return item;
             });
@@ -3838,14 +3843,74 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             }
         }
 
+        function pfLerCatalogoReferencias() {
+            const salvo = localStorage.getItem('pf_catalogo_referencias_v3');
+            if (!salvo) return {};
+            const catalogo = JSON.parse(salvo);
+            if (!catalogo || typeof catalogo !== 'object' || Array.isArray(catalogo)) throw new Error('Catálogo de referências inválido.');
+            return catalogo;
+        }
+
+        function pfGuardarCatalogoReferencias(tabelas) {
+            if (!tabelas || typeof tabelas !== 'object') return;
+            const nomes = { tipos: 'Tipo', rubricas: 'Rubrica', subItens: 'SubItem', status: 'Status', descricoes: 'Descricao' };
+            const catalogo = {};
+            for (const [chave, campo] of Object.entries(nomes)) {
+                if (!Array.isArray(tabelas[chave])) continue;
+                catalogo[chave] = [...new Set(tabelas[chave].map(r => r[campo])
+                    .filter(v => typeof v === 'string' && v.trim()).map(v => v.trim()))];
+            }
+            localStorage.setItem('pf_catalogo_referencias_v3', JSON.stringify(catalogo));
+        }
+
+        function pfLerLinhasExcel(workbook, nomeAba) {
+            const rows = XLSX.utils.sheet_to_json(workbook.Sheets[nomeAba], { defval: '' });
+            const campos = [
+                ['Tabela_Tipos', 'ID_Tipo', 'Tipo'], ['Tabela_Rubricas', 'ID_Rubrica', 'Rubrica'],
+                ['Tabela_SubItens', 'ID_SubItem', 'SubItem'], ['Tabela_Descricoes', 'ID_Descricao', 'Descricao'],
+                ['Tabela_Status', 'ID_Status', 'Status']
+            ];
+            const ids = new Set();
+            const mapas = campos.map(([aba, campoId, campoNome]) => {
+                const mapa = new Map();
+                if (workbook.Sheets[aba]) for (const ref of XLSX.utils.sheet_to_json(workbook.Sheets[aba], { defval: '' })) {
+                    const id = String(ref[campoId] ?? '').trim(), nome = String(ref[campoNome] ?? '').trim();
+                    if (!id || !nome) continue;
+                    if (!mapa.has(id)) mapa.set(id, new Set());
+                    mapa.get(id).add(nome);
+                }
+                return mapa;
+            });
+            return rows.map((row, index) => {
+                const id = Number(row.ID_Item ?? row.ID ?? row.id);
+                if (!Number.isSafeInteger(id) || id <= 0) throw new Error(`ID_Item inválido na linha ${index + 2}.`);
+                if (ids.has(id)) throw new Error(`ID_Item duplicado na planilha: ${id}. Nenhum lançamento foi importado.`);
+                ids.add(id);
+                const result = { ...row, ID_Item: id };
+                campos.forEach(([, campoId, campoNome], i) => {
+                    // Nomes preenchidos preservam a compatibilidade com exportações antigas.
+                    if (String(result[campoNome] ?? '').trim()) return;
+                    const idRef = String(result[campoId] ?? '').trim();
+                    if (!idRef) return;
+                    const nomes = mapas[i].get(idRef);
+                    if (!nomes || nomes.size !== 1) throw new Error(`Referência ausente ou ambígua: ${campoId} ${idRef}, linha ${index + 2}.`);
+                    result[campoNome] = [...nomes][0];
+                });
+                return result;
+            });
+        }
+
         function obterTabelasReferencia() {
-            const unicos = (campo) => [...new Set(transacoes.map(t => t[campo]).filter(v => v !== undefined && v !== null && String(v) !== ''))];
+            const catalogo = pfLerCatalogoReferencias();
+            const unicos = campo => transacoes.map(t => t[campo]).filter(v => v !== undefined && v !== null && String(v).trim() !== '');
+            const tabela = (chave, prefixo, campoId, campoNome, nomes) => [...new Set([...(catalogo[chave] || []), ...nomes].map(v => String(v).trim()).filter(Boolean))]
+                .map(v => ({ [campoId]: gerarIdTexto(prefixo, v), [campoNome]: v }));
             return {
-                tipos: [...new Set(['Despesa', 'Receita', 'Investimentos', ...unicos('tipo')])].map(v => ({ ID_Tipo: gerarIdTexto('TIP', v), Tipo: v })),
-                rubricas: getRubricasCadastradas().map(v => ({ ID_Rubrica: gerarIdTexto('RUB', v), Rubrica: v })),
-                subItens: getSubItensCadastrados().map(v => ({ ID_SubItem: gerarIdTexto('SUB', v), SubItem: v })),
-                status: [...new Set(['Pendente', 'A Vencer', 'Vencido', 'Pago', 'Recebido', 'Não Recebido', ...unicos('status')])].map(v => ({ ID_Status: gerarIdTexto('STA', v), Status: v })),
-                descricoes: unicos('descricao').map(v => ({ ID_Descricao: gerarIdTexto('DSC', v), Descricao: v }))
+                tipos: tabela('tipos', 'TIP', 'ID_Tipo', 'Tipo', ['Despesa', 'Receita', 'Investimentos', ...unicos('tipo')]),
+                rubricas: tabela('rubricas', 'RUB', 'ID_Rubrica', 'Rubrica', [...getRubricasCadastradas(), ...unicos('categoria')]),
+                subItens: tabela('subItens', 'SUB', 'ID_SubItem', 'SubItem', [...getSubItensCadastrados(), ...unicos('subItem')]),
+                status: tabela('status', 'STA', 'ID_Status', 'Status', ['Pendente', 'A Vencer', 'Vencido', 'Pago', 'Recebido', 'Não Recebido', ...unicos('status')]),
+                descricoes: tabela('descricoes', 'DSC', 'ID_Descricao', 'Descricao', unicos('descricao'))
             };
         }
 
@@ -3859,13 +3924,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 ID_Item: t.id,
                 Vencimento: t.vencimento || '',
                 DataPagamento: t.dataPg || '',
-                ID_Tipo: t.idTipo || gerarIdTexto('TIP', t.tipo),
+                ID_Tipo: gerarIdTexto('TIP', t.tipo),
                 Tipo: t.tipo || '',
-                ID_Rubrica: t.idRubrica || gerarIdTexto('RUB', t.categoria),
+                ID_Rubrica: gerarIdTexto('RUB', t.categoria),
                 Rubrica: t.categoria || '',
-                ID_SubItem: t.idSubItem || gerarIdTexto('SUB', t.subItem),
+                ID_SubItem: gerarIdTexto('SUB', t.subItem),
                 SubItem: t.subItem || '',
-                ID_Descricao: t.idDescricao || gerarIdTexto('DSC', t.descricao),
+                ID_Descricao: gerarIdTexto('DSC', t.descricao),
                 Descricao: t.descricao || '',
                 Valor: t.valor || 0,
                 ID_Status: gerarIdTexto('STA', t.status),
@@ -3904,7 +3969,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                     const workbook = XLSX.read(data, { type: 'array' });
                     const nomeAba = workbook.SheetNames.includes('Lancamentos_DB') ? 'Lancamentos_DB' : workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[nomeAba];
-                    const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+                    const rows = pfLerLinhasExcel(workbook, nomeAba);
                     if (!rows.length) throw new Error('A planilha de lançamentos está vazia.');
 
                     // Backup automático antes de alterar a base atual.
@@ -3924,6 +3989,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                         const subItem = row.SubItem || row.subItem || 'Geral';
                         const descricao = row.Descricao || row.descricao || '';
                         const item = {
+                            ...(porId.get(String(idNumerico)) || {}),
                             id: idNumerico,
                             vencimento: row.Vencimento || row.vencimento || '',
                             dataPg: row.DataPagamento || row.dataPg || '',
@@ -4120,6 +4186,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
         function executarRestauracaoBackup(conteudo) {
             try {
+                validarBackup(conteudo);
+                pfGuardarCatalogoReferencias(conteudo.tabelas);
                 transacoes = normalizarTransacoes(conteudo.transacoes);
                     if (conteudo.data_abertura_projeto && /^\d{4}-\d{2}-\d{2}$/.test(conteudo.data_abertura_projeto)) {
                         localStorage.setItem(CHAVE_DATA_ABERTURA, conteudo.data_abertura_projeto);
@@ -4513,6 +4581,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 subitens_ocultos: JSON.parse(localStorage.getItem('pf_subitens_ocultos') || '[]'),
                 rubricas_extras: JSON.parse(localStorage.getItem('rubricas_extras') || '[]'),
                 subitens_extras: JSON.parse(localStorage.getItem('subitens_extras') || '[]'),
+                versao_referencias: 3,
+                tabelas_referencia: obterTabelasReferencia(),
                 lixeira: obterLixeira(),
                 historico: obterHistorico()
             };
@@ -4534,6 +4604,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             if (Array.isArray(payload.subitens_extras)) localStorage.setItem('subitens_extras', JSON.stringify(payload.subitens_extras));
             if (Array.isArray(payload.lixeira)) localStorage.setItem(CHAVE_LIXEIRA, JSON.stringify(payload.lixeira));
             if (Array.isArray(payload.historico)) localStorage.setItem(CHAVE_HISTORICO, JSON.stringify(payload.historico));
+            if (payload.tabelas_referencia) pfGuardarCatalogoReferencias(payload.tabelas_referencia);
         }
 
         async function carregarPacoteNuvem() {
@@ -8051,7 +8122,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V4.12.63';
+ const CURRENT_VERSION='V4.12.82';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';

@@ -66,8 +66,8 @@
       "line": 4386
     },
     {
-      "context": "            if (Array.isArray(payload.lixeira)) pfdLocal.setItem(CHAVE_LIXEIRA, JSON.stringify(payload.lixeira));\n            if (Array.isArray(payload.historico)) pfdLocal.setItem(CHAVE_HISTORICO, JSON.stringify(payload.historico));\n        }\n\n        async function carregarPacoteNuvem() {\n            // Leitura autenticada do banco remoto.\n            const session = await obterSessaoNuvem();\n            if (!session) return null;\n            const headers = await obterHeadersRestNuvem(session);\n            const url = REST_SYNC_URL + '?select=payload,updated_at&user_id=eq.' + encodeURIComponent(session.user.id) + '&limit=1';\n",
-      "replacement": "            if (Array.isArray(payload.lixeira)) pfdLocal.setItem(CHAVE_LIXEIRA, JSON.stringify(payload.lixeira));\n            if (Array.isArray(payload.historico)) pfdLocal.setItem(CHAVE_HISTORICO, JSON.stringify(payload.historico));\n        }\n\n        async function carregarPacoteNuvem() {\n            window.pfdAssert();\n            // Leitura autenticada do banco remoto.\n            const session = await obterSessaoNuvem();\n            if (!session) return null;\n            const headers = await obterHeadersRestNuvem(session);\n            const url = REST_SYNC_URL + '?select=payload,updated_at&user_id=eq.' + encodeURIComponent(session.user.id) + '&limit=1';\n",
+      "context": "            if (Array.isArray(payload.lixeira)) pfdLocal.setItem(CHAVE_LIXEIRA, JSON.stringify(payload.lixeira));\n            if (Array.isArray(payload.historico)) pfdLocal.setItem(CHAVE_HISTORICO, JSON.stringify(payload.historico));\n            if (payload.tabelas_referencia) pfGuardarCatalogoReferencias(payload.tabelas_referencia);\n        }\n\n        async function carregarPacoteNuvem() {\n            // Leitura autenticada do banco remoto.\n            const session = await obterSessaoNuvem();\n            if (!session) return null;\n            const headers = await obterHeadersRestNuvem(session);\n            const url = REST_SYNC_URL + '?select=payload,updated_at&user_id=eq.' + encodeURIComponent(session.user.id) + '&limit=1';\n",
+      "replacement": "            if (Array.isArray(payload.lixeira)) pfdLocal.setItem(CHAVE_LIXEIRA, JSON.stringify(payload.lixeira));\n            if (Array.isArray(payload.historico)) pfdLocal.setItem(CHAVE_HISTORICO, JSON.stringify(payload.historico));\n            if (payload.tabelas_referencia) pfGuardarCatalogoReferencias(payload.tabelas_referencia);\n        }\n\n        async function carregarPacoteNuvem() {\n            window.pfdAssert();\n            // Leitura autenticada do banco remoto.\n            const session = await obterSessaoNuvem();\n            if (!session) return null;\n            const headers = await obterHeadersRestNuvem(session);\n            const url = REST_SYNC_URL + '?select=payload,updated_at&user_id=eq.' + encodeURIComponent(session.user.id) + '&limit=1';\n",
       "line": 4404
     },
     {
@@ -150,7 +150,7 @@
     {
       "start": "        const SUPABASE_URL",
       "end": "        function salvarLocalStorage",
-      "sha256": "71b090565c6128edc4a2d8bcf3024b2061eeb9b47ddac0915fdcfbecd8411aab"
+      "sha256": "4582254a3511a93f55b0a8b84b680a460cfd0775743712f6a3a05c0ad85cab88"
     }
   ],
   "protectedFiles": {

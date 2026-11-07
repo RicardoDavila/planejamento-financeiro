@@ -1,10 +1,10 @@
 {
-  "version": "V4.12.81",
-  "name": "V4.12.81",
+  "version": "V4.12.82",
+  "name": "V4.12.82",
   "channel": "pessoal",
   "notes": [
-    "Completa as traduções do saldo mínimo, próxima entrada, relatório mensal e legendas dos gráficos.",
-    "Corrige tradução do cabeçalho ordenado, meses abreviados e escala em milhares.",
-    "Preserva valores financeiros e nomes cadastrados."
+    "Corrige colisões dos identificadores dos cadastros e alinha as referências das importações e exportações.",
+    "Preserva os IDs dos lançamentos e leva o catálogo de referências no pacote de sincronização.",
+    "Melhora a validação da importação Excel; a atualização não inclui nem substitui os dados financeiros do usuário."
   ]
 }
