@@ -16480,6 +16480,39 @@ html body #appConteudo section#painelGerencial {
 html body #appConteudo section#painelGerencial > div:first-child h2 {
     margin: 10px !important;
 }
+
+/* Alinhamento do subtítulo e uniformidade dos cards do painel. */
+html body #appConteudo section#painelGerencial #periodoPainelGerencial {
+    margin: 0 10px 10px !important;
+}
+html body #appConteudo #painelResumoGerencial {
+    grid-auto-rows: 1fr;
+    align-items: stretch;
+}
+html body #appConteudo #painelResumoGerencial > div {
+    box-sizing: border-box;
+    min-width: 0;
+}
+html body #appConteudo #painelResumoGerencial #pgSituacao {
+    font-size: 25px !important;
+    font-weight: 650 !important;
+    letter-spacing: -.65px;
+    line-height: 1.25;
+    margin-top: 8px !important;
+    overflow-wrap: anywhere;
+}
+html body #appConteudo #pgSemaforo #desktop-situation-risk {
+    display: block;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-top: 8px;
+    overflow-wrap: anywhere;
+}
+@media (max-width: 800px) {
+    html body #appConteudo #painelResumoGerencial #pgSituacao {
+        font-size: 21px !important;
+    }
+}
 </style>
 </body>
 </html>
