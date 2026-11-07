@@ -16573,5 +16573,114 @@ html body #appConteudo section#painelGerencial #clean-flow-details {
     margin-right: 20px !important;
 }
 </style>
+
+<style id="pf-painel-contorno-e-espacamento">
+/* Um único contorno e um único fundo para a área do painel. */
+@media screen {
+  html body #appConteudo section#painelGerencial {
+    box-sizing: border-box;
+    background: #1c293b !important;
+    border: 1px solid #64748b !important;
+    border-radius: 18px !important;
+    padding: 20px !important;
+    min-width: 0;
+  }
+
+  html body #appConteudo section#painelGerencial > div:first-child {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 0 16px !important;
+    min-width: 0;
+    gap: 16px !important;
+  }
+
+  html body #appConteudo section#painelGerencial > div:first-child h2 {
+    color: #f8fafc !important;
+    margin: 0 0 8px !important;
+  }
+
+  html body #appConteudo section#painelGerencial #periodoPainelGerencial {
+    color: #cbd5e1 !important;
+    margin: 0 !important;
+  }
+
+  html body #appConteudo section#painelGerencial #pfPainelAcoes {
+    flex-wrap: wrap !important;
+    min-width: 0;
+    max-width: 100%;
+    gap: 8px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  html body #appConteudo section#painelGerencial #painelResumoGerencial {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 0 16px !important;
+    box-sizing: border-box;
+  }
+
+  html body #appConteudo section#painelGerencial #pfPainelRodape {
+    box-sizing: border-box;
+    background: rgba(148, 163, 184, .08) !important;
+    border: 1px solid #475569 !important;
+    border-radius: 12px !important;
+    padding: 14px 16px !important;
+    margin: 0 !important;
+    min-width: 0;
+  }
+
+  html body #appConteudo section#painelGerencial #desktop-paid-progress {
+    background: transparent !important;
+    color: #e2e8f0 !important;
+    margin: 0 0 10px !important;
+    overflow-wrap: anywhere;
+  }
+
+  html body #appConteudo section#painelGerencial #clean-flow-toggle {
+    margin: 0 !important;
+    max-width: 100%;
+  }
+
+  html body #appConteudo section#painelGerencial #clean-flow-details {
+    margin: 16px 0 0 !important;
+  }
+
+  html body #appConteudo section#painelGerencial.pf-painel-oculto > div:first-child {
+    margin-bottom: 0 !important;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  html body #appConteudo section#painelGerencial {
+    padding: 14px !important;
+  }
+}
+
+</style>
+<script id="pf-painel-rodape-espacado">
+(function () {
+  function organizarRodapePainel() {
+    const painel = document.getElementById('painelGerencial');
+    const progresso = document.getElementById('desktop-paid-progress');
+    const botao = document.getElementById('clean-flow-toggle');
+    if (!painel || !progresso || !botao || document.getElementById('pfPainelRodape')) return;
+    if (progresso.parentElement !== painel || botao.parentElement !== painel) return;
+    const rodape = document.createElement('div');
+    rodape.id = 'pfPainelRodape';
+    progresso.before(rodape);
+    rodape.append(progresso, botao);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', organizarRodapePainel, { once: true });
+  } else {
+    organizarRodapePainel();
+  }
+})();
+
+</script>
 </body>
 </html>
