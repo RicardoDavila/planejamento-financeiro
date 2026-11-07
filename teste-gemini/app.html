@@ -15919,5 +15919,77 @@ html body #appConteudo section#painelGerencial #clean-flow-details {
 })();
 
 </script>
+
+<style id="pf-rolagem-coluna-dados">
+/* PC com duas colunas: a barra dos dados fica entre o painel e os gráficos. */
+@media screen and (min-width: 1200px) {
+  html body.layout-proposal:not(.pf-mobile-layout):not(.layout-charts-detached) #layout-left {
+    position: sticky;
+    top: calc(var(--pf-layout-top, 58px) + 12px);
+    max-height: calc(100dvh - var(--pf-layout-top, 58px) - 24px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    scrollbar-gutter: stable;
+    scrollbar-width: auto;
+    scrollbar-color: #64748b #e2e8f0;
+    padding-right: 10px;
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout):not(.layout-charts-detached) #layout-left:focus-visible {
+    outline: 2px solid #818cf8;
+    outline-offset: -2px;
+    border-radius: 8px;
+  }
+
+  html body.layout-proposal #layout-left::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  html body.layout-proposal #layout-left::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 8px;
+  }
+
+  html body.layout-proposal #layout-left::-webkit-scrollbar-thumb {
+    background: #64748b;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+  }
+
+  html body.layout-proposal.dark-mode #layout-left {
+    scrollbar-color: #94a3b8 #111b2a;
+  }
+
+  html body.layout-proposal.dark-mode #layout-left::-webkit-scrollbar-track {
+    background: #111b2a;
+  }
+
+  html body.layout-proposal.dark-mode #layout-left::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-color: #111b2a;
+  }
+}
+
+</style>
+<script id="pf-identificar-rolagem-dados">
+(function () {
+  function identificarAreaDeDados() {
+    const coluna = document.getElementById('layout-left');
+    if (!coluna) return;
+    coluna.tabIndex = 0;
+    coluna.setAttribute('role', 'region');
+    coluna.setAttribute('aria-label', 'Painel e lançamentos com rolagem independente');
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', identificarAreaDeDados, { once: true });
+  } else {
+    identificarAreaDeDados();
+  }
+})();
+
+</script>
 </body>
 </html>
