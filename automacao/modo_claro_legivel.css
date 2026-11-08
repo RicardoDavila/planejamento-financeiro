@@ -1,0 +1,230 @@
+/* Primeira etapa do modo claro: paleta e legibilidade, sem mudar os cálculos. */
+@media screen and (min-width: 901px) {
+  html body:not(.dark-mode):not(.auth-pendente) {
+    background: #f3f5f7 !important;
+    color: #17212b !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo {
+    color: #17212b;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  html body:not(.dark-mode) #appConteudo section#painelGerencial {
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #17212b !important;
+    box-shadow: 0 3px 14px rgba(23, 33, 43, .05) !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo section#painelGerencial > div:first-child h2 {
+    color: #17212b !important;
+    font-size: 22px !important;
+    line-height: 1.35;
+  }
+
+  html body:not(.dark-mode) #appConteudo #painelGerencial #periodoPainelGerencial {
+    color: #5b6573 !important;
+    font-size: 14px !important;
+    line-height: 1.5;
+  }
+
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial > div {
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #17212b !important;
+    padding: 18px !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial > div > p:first-child {
+    color: #5b6573 !important;
+    font-size: 13px !important;
+    line-height: 1.45;
+    font-weight: 700 !important;
+    letter-spacing: .3px !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial > div > p:last-child {
+    color: #17212b !important;
+    font-size: 28px !important;
+    line-height: 1.25;
+    font-variant-numeric: tabular-nums;
+  }
+
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgReceitas { color: #1e40af !important; }
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgRecebido { color: #166534 !important; }
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgAVencer { color: #92400e !important; }
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgVencido { color: #b91c1c !important; }
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgInvestimentos { color: #6b21a8 !important; }
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgSaldo { color: #17212b !important; }
+
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial > div:has(#pgSaldo) {
+    background: #eff6ff !important;
+    border-color: #1d4ed8 !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgSituacao {
+    color: #17212b !important;
+    font-size: 22px !important;
+    line-height: 1.4;
+  }
+
+  html body:not(.dark-mode) #appConteudo #pgSemaforo #desktop-situation-risk {
+    color: #5b6573 !important;
+    font-size: 13px !important;
+    line-height: 1.5;
+  }
+
+  html body:not(.dark-mode) #appConteudo #painelGerencial #pfPainelRodape {
+    background: #f3f5f7 !important;
+    border-color: #cbd5e1 !important;
+    color: #17212b !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo #painelGerencial #desktop-paid-progress {
+    color: #17212b !important;
+    font-size: 14px !important;
+    line-height: 1.5;
+  }
+
+  html body:not(.dark-mode) #appConteudo #pfPainelAcoes button,
+  html body:not(.dark-mode) #appConteudo #clean-flow-toggle,
+  html body:not(.dark-mode) #appConteudo #clean-month-analysis button {
+    color: #17212b !important;
+    background: #ffffff !important;
+    border-color: #64748b !important;
+    font-size: 14px !important;
+    line-height: 1.4;
+    min-height: 40px;
+  }
+
+  html body:not(.dark-mode) #appConteudo #clean-flow-details,
+  html body:not(.dark-mode) #appConteudo #clean-flow-details > div,
+  html body:not(.dark-mode) #appConteudo #clean-month-analysis,
+  html body:not(.dark-mode) #appConteudo #clean-analysis-content,
+  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper {
+    background: #ffffff !important;
+    color: #17212b !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo #fc-toolbar,
+  html body:not(.dark-mode) #appConteudo #desktop-flow-tools,
+  html body:not(.dark-mode) #appConteudo #desktop-selection,
+  html body:not(.dark-mode) #appConteudo #desktop-visible-totals {
+    color: #17212b !important;
+    font-size: 14px !important;
+    line-height: 1.55;
+  }
+
+  html body:not(.dark-mode) #appConteudo #fc-toolbar small,
+  html body:not(.dark-mode) #appConteudo #clean-month-analysis p {
+    color: #5b6573 !important;
+    font-size: 13px !important;
+    line-height: 1.55;
+  }
+
+  html body:not(.dark-mode) #appConteudo #clean-month-analysis h3 {
+    color: #17212b !important;
+    font-size: 17px !important;
+    line-height: 1.4;
+  }
+
+  html body:not(.dark-mode) #appConteudo #clean-month-analysis .pfce-legend {
+    color: #17212b !important;
+    font-size: 13px !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo .pf-filtros-titulo,
+  html body:not(.dark-mode) #appConteudo .pf-filtro-item label,
+  html body:not(.dark-mode) #appConteudo #desktop-person-label {
+    color: #17212b !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 1.45;
+  }
+
+  html body:not(.dark-mode) #appConteudo .pf-filtros-painel,
+  html body:not(.dark-mode) #appConteudo .pf-filtros-cabecalho {
+    color: #17212b !important;
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo .pf-filtro-item input,
+  html body:not(.dark-mode) #appConteudo .pf-filtro-item select,
+  html body:not(.dark-mode) #appConteudo #desktop-person,
+  html body:not(.dark-mode) #appConteudo #fc-group,
+  html body:not(.dark-mode) #appConteudo #clean-month-analysis select {
+    color: #17212b !important;
+    background: #ffffff !important;
+    border-color: #64748b !important;
+    font-size: 14px !important;
+    line-height: 1.4;
+    min-height: 40px;
+  }
+
+  html body:not(.dark-mode) #appConteudo .pf-filtro-item input::placeholder {
+    color: #5b6573 !important;
+    opacity: 1;
+  }
+
+  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper table {
+    min-width: 1280px !important;
+    font-size: 13px !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper th,
+  html body:not(.dark-mode) #appConteudo #clean-flow-details th {
+    color: #17212b !important;
+    background: #eef2f6 !important;
+    border-color: #cbd5e1 !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    padding: 12px 8px !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper td,
+  html body:not(.dark-mode) #appConteudo #clean-flow-details td {
+    color: #17212b !important;
+    background: #ffffff !important;
+    border-color: #dbe2ea !important;
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+    padding: 12px 8px !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper tbody tr:nth-child(even) td,
+  html body:not(.dark-mode) #appConteudo #clean-flow-details tbody tr:nth-child(even) td {
+    background: #f8fafc !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper .desktop-item-filter {
+    font-size: 13px !important;
+    line-height: 1.5;
+  }
+
+  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper .desktop-observation-cell,
+  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper .desktop-delay {
+    color: #5b6573 !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo #clean-flow-details td:nth-child(n+2) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  html body:not(.dark-mode) #appConteudo #desktop-flow-curve text {
+    fill: #5b6573 !important;
+    font-size: 12px !important;
+  }
+
+  html body:not(.dark-mode) #appConteudo :is(input, select, button, a):focus-visible {
+    outline: 2px solid #1d4ed8 !important;
+    outline-offset: 2px;
+  }
+}
