@@ -4,6 +4,7 @@ from pathlib import Path
 import json
 from aplicar_modo_claro import aplicar_modo_claro
 from aplicar_dimensoes import aplicar_dimensoes
+from aplicar_notas_pessoais import aplicar_notas_pessoais
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -42,7 +43,7 @@ def validate_tree(root,restore_light=False):
         if name.startswith('teste-gemini/') and not (root/'teste-gemini').exists():continue
         html=path.read_text(encoding='utf-8-sig')
         # The generator restores this canonical CSS automatically, without altering data.
-        if restore_light:html=aplicar_dimensoes(aplicar_modo_claro(html))
+        if restore_light:html=aplicar_notas_pessoais(aplicar_dimensoes(aplicar_modo_claro(html)),name.startswith('distribuicao/'))
         validate_html(html,name,approved=approved)
     for name in approved['graficos']:
         if name.startswith('teste-gemini/') and not (root/'teste-gemini').exists():continue
