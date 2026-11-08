@@ -20,8 +20,38 @@
             }catch(_){return null;}
         }
         function pfDetalheFalhaLoginNuvem(error){
-            if(error?.code==='invalid_credentials'||/invalid login credentials/i.test(error?.message||''))return 'E-mail ou senha da conta de sincronização não conferem. Use a mesma conta da nuvem do computador. A senha de abertura do aplicativo é independente. Seus dados locais foram mantidos.';
+            if(error?.code==='invalid_credentials'||/invalid login credentials/i.test(error?.message||''))return 'A nuvem recusou esta tentativa de login (invalid_credentials). A sessão já salva não foi encerrada. A senha da conta de sincronização é independente da senha de abertura do aplicativo. Use Testar conexão da nuvem para verificar a sessão atual. Seus dados locais foram mantidos.';
             return resumirErroSupabase(error);
+        }
+        function pfMostrarDiagnosticoNuvem(texto,ok=false){
+            let box=document.getElementById('nuvemDiagnosticoMsg');
+            if(!box){
+                const anchor=document.getElementById('nuvemStatusMsg');if(!anchor)return;
+                box=document.createElement('div');box.id='nuvemDiagnosticoMsg';box.setAttribute('role','status');box.setAttribute('aria-live','polite');anchor.after(box);
+            }
+            box.textContent=texto;box.className='text-xs rounded-lg border p-3 mt-2 '+(ok?'bg-blue-50 border-blue-200 text-blue-800':'bg-amber-50 border-amber-200 text-amber-900');
+            // Somente diagnóstico. Não altera badge, confirmação, sessão ou banco.
+        }
+        async function pfTestarConexaoNuvem(){
+            try{
+                if(!supabaseCliente&&!inicializarSupabaseCliente())throw Error('Biblioteca Supabase não carregada.');
+                const session=await obterSessaoNuvem();
+                if(!session?.user?.id){pfMostrarDiagnosticoNuvem('Diagnóstico: não há sessão válida neste dispositivo. A sincronização financeira ainda não foi confirmada.');return {estado:'sem_sessao'};}
+                const owner=String(session.user.id),remote=await carregarPacoteNuvem();
+                if(String((await obterSessaoNuvem())?.user?.id||'')!==owner)throw Error('A conta mudou durante o diagnóstico. Abra novamente a sincronização.');
+                if(!remote?.payload){pfMostrarDiagnosticoNuvem('Conexão OK: conta e sessão acessíveis. Ainda não há banco salvo para esta conta na nuvem. Testar conexão não envia os dados.',true);return {estado:'sem_banco'};}
+                if(!Array.isArray(remote.payload.transacoes))throw Error('A nuvem não devolveu um banco financeiro válido.');
+                const local=coletarPacoteNuvem(),same=pfDadosFinanceirosIguais(local,remote.payload),changed=pfTemAlteracoesLocais();
+                const known=localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO)||'',confirmed=pfMesmaVersao(known,remote.updated_at);
+                const counts=' Neste dispositivo: '+local.transacoes.length+' lançamento(s); na nuvem: '+remote.payload.transacoes.length+'.';
+                if(changed&&!confirmed&&!same){
+                    pfMostrarDiagnosticoNuvem('Conexão OK, mas existe conflito entre as cópias financeiras.'+counts+' Há alterações locais e a versão atual da nuvem ainda não foi confirmada neste dispositivo. O envio automático é bloqueado para evitar sobrescrever dados. Se a cópia do PC/nuvem for a correta, use Receber dados do PC/nuvem (com backup) e confira as duas cópias antes de confirmar.');
+                    return {estado:'conflito',local:local.transacoes.length,nuvem:remote.payload.transacoes.length};
+                }
+                if(same){pfMostrarDiagnosticoNuvem('Conexão OK: conta, sessão e tabela acessíveis. A movimentação financeira comparada coincide.'+counts+' Este teste não envia nem recebe dados e não muda o indicador de sincronização. Para confirmar a operação, use Sincronizar agora.',true);return {estado:'copias_iguais'};}
+                pfMostrarDiagnosticoNuvem('Conexão OK: conta, sessão e tabela acessíveis.'+counts+(changed?' Há alterações locais aguardando confirmação de envio.':' Há dados diferentes na nuvem que podem ser recebidos.')+' Use Sincronizar agora para executar a transferência; testar conexão apenas verifica o acesso.',true);
+                return {estado:changed?'envio_pendente':'recebimento_pendente'};
+            }catch(error){pfMostrarDiagnosticoNuvem('Falha no diagnóstico: '+resumirErroSupabase(error)+'. Nenhum lançamento foi substituído.');return {estado:'erro'};}
         }
         function pfComparacaoRecebimento(p){const c={...p};delete c.atualizado_localmente_em;return JSON.stringify(pfCanonicoSync(c));}
         async function receberDadosNuvemComBackup(){

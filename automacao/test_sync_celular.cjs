@@ -27,6 +27,18 @@ function setup(o={}){
  x=setup();x.values.set('known','confirmed');assert(x.ctx.pfSalvarBaseFinanceiraConfirmada(x.initial,'A','confirmed'));let local=copy(x.initial);local.transacoes[0].status='Vencido';local.transacoes[0].idStatus='calculado';assert(x.ctx.pfDadosFinanceirosIguais(local,x.ctx.pfLerBaseFinanceiraConfirmada().financeiro));assert.deepEqual(x.initial.transacoes[0].status,'A Vencer');
  local.transacoes[0].status='Pago';assert(!x.ctx.pfDadosFinanceirosIguais(local,x.initial));local=copy(x.initial);local.transacoes[0].valor=11;assert(!x.ctx.pfDadosFinanceirosIguais(local,x.initial));local=copy(x.initial);local.lixeira=[{item:{id:7}}];assert(!x.ctx.pfDadosFinanceirosIguais(local,x.initial));
  x.setOwner('B');assert.equal(x.ctx.pfLerBaseFinanceiraConfirmada(),null);assert.equal(x.ctx.pfSalvarBaseFinanceiraConfirmada(x.initial,'A','confirmed'),false);x.setOwner('A');x.values.set('known','another-version');assert.equal(x.ctx.pfLerBaseFinanceiraConfirmada(),null);
+ // Testar conexão é somente leitura, inclusive quando há um conflito real entre cópias.
+ for(const scenario of ['conflito','iguais','recebimento','sem_sessao','sem_banco']){
+  x=setup({noSession:scenario==='sem_sessao',noRemote:scenario==='sem_banco'});
+  if(scenario==='iguais')x.setLocal(x.remote.payload);
+  const before=copy(x.local()),metadata=[...x.values],badge={textContent:'Falha na sincronização'},message={textContent:'Falha anterior preservada'},diagnosis={textContent:'',className:''};
+  x.ctx.document.getElementById=id=>({statusNuvemBadge:badge,nuvemStatusMsg:message,nuvemDiagnosticoMsg:diagnosis}[id]||null);
+  x.ctx.supabaseCliente={};x.ctx.pfTemAlteracoesLocais=()=>scenario==='conflito';
+  x.ctx.atualizarStatusNuvem=()=>{throw Error('Diagnóstico não deve confirmar sincronização nem substituir a mensagem anterior')};
+  const result=await x.ctx.pfTestarConexaoNuvem();
+  const expected={conflito:'conflito',iguais:'copias_iguais',recebimento:'recebimento_pendente',sem_sessao:'sem_sessao',sem_banco:'sem_banco'}[scenario];assert.equal(result.estado,expected);
+  assert.equal(badge.textContent,'Falha na sincronização');assert.equal(message.textContent,'Falha anterior preservada');assert.deepEqual(x.local(),before);assert.deepEqual([...x.values],metadata);assert.equal(x.counts().applies,0);assert.equal(x.counts().downloads,0);assert(diagnosis.textContent.length>0);
+ }
  // Executa a rotina real de login da versão pessoal gerada, com credenciais fictícias.
  if(process.argv[2]){const html=fs.readFileSync(process.argv[2],'utf8'),a=html.indexOf('        async function entrarNuvem()'),b=html.indexOf('        async function criarContaNuvem()',a);assert(a>=0&&b>a);
  x=setup();x.values.set('known','confirmed');x.ctx.pfSalvarBaseFinanceiraConfirmada(x.initial,'A','confirmed');const t=html.indexOf('        function pfTemAlteracoesLocais(){'),end=html.indexOf('        async function salvarPacoteNuvem()',t);vm.runInContext(html.slice(t,end),x.ctx);local=copy(x.initial);local.transacoes[0].status='Vencido';local.transacoes[0].idStatus='calculado';x.setLocal(local);assert.equal(x.ctx.pfTemAlteracoesLocais(),false);local.transacoes[0].valor=12;x.setLocal(local);assert.equal(x.ctx.pfTemAlteracoesLocais(),true);
@@ -34,5 +46,5 @@ function setup(o={}){
  x.ctx.document.getElementById=id=>elements[id]||null;x.ctx.document.querySelector=()=>button;x.ctx.supabaseCliente={auth:{signOut:async()=>{signouts++;},signInWithPassword:async()=>({error:{code:'invalid_credentials',message:'Invalid login credentials'}})}};
  vm.runInContext(html.slice(a,b),x.ctx);await x.ctx.entrarNuvem();assert.equal(signouts,0);assert.equal(x.ctx.obterSessaoNuvemManual().user.id,'A');assert(x.alerts.some(s=>s.includes('senha da conta de sincronização')));assert.equal(button.disabled,false);
  }
- console.log('PASS: recebimento com backup e confirmação, cancelamento, conflitos, troca de conta, falha de armazenamento, status calculados e login recusado sem logout');
+ console.log('PASS: recebimento com backup e confirmação, cancelamento, conflitos, troca de conta, falha de armazenamento, status calculados, login recusado sem logout e diagnóstico sem falsa confirmação ou alterações financeiras');
 })().catch(e=>{console.error(e);process.exitCode=1});

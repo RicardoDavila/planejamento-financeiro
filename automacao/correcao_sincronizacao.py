@@ -45,6 +45,10 @@ def corrigir_sincronizacao(html, distribuicao=False):
     if html.count(anchor)!=1:raise ValueError('Não foi possível incluir o recebimento seguro no painel de nuvem.')
     html=html.replace(anchor,'                    '+button+'\n'+anchor,1)
     html=html.replace('neste PC','neste dispositivo').replace('este PC','este dispositivo')
+    # Acesso à conta/tabela não comprova transferência: não deixe o teste pintar Online.
+    a=html.index('        async function testarConexaoNuvem() {')
+    b=html.index('        function fecharConfiguracaoNuvem()',a)
+    html=html[:a]+'        async function testarConexaoNuvem() { return await pfTestarConexaoNuvem(); }\n\n'+html[b:]
     if not distribuicao:
         old="try { await supabaseCliente.auth.signOut({ scope: 'local' }); } catch (_) {}"
         if html.count(old)!=1:raise ValueError('A rotina de login mudou; revise a preservação da sessão.')

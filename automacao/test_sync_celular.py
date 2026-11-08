@@ -10,6 +10,9 @@ class SincronizacaoCelularTests(unittest.TestCase):
         a=html.index('        async function entrarNuvem()');b=html.index('        async function criarContaNuvem()',a)
         self.assertNotIn('auth.signOut',html[a:b])
         self.assertIn('pfDetalheFalhaLoginNuvem(e)',html[a:b])
+        a=html.index('        async function testarConexaoNuvem()');b=html.index('        function fecharConfiguracaoNuvem()',a)
+        self.assertIn('pfTestarConexaoNuvem()',html[a:b])
+        self.assertNotIn('atualizarStatusNuvem',html[a:b])
         with tempfile.TemporaryDirectory() as temp:
             file=pathlib.Path(temp)/'pessoal.html';file.write_text(html,encoding='utf-8')
             subprocess.run(['node',str(gerar.ROOT/'automacao/test_sync_celular.cjs'),str(file)],check=True)
