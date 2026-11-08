@@ -1,0 +1,18 @@
+{
+  "descricao": "Recursos aprovados que devem permanecer nas próximas versões; revisar este contrato quando uma mudança autorizada substituir um recurso.",
+  "aplicativos": ["index.html", "distribuicao/app.html", "teste-gemini/app.html"],
+  "graficos": ["graficos.html", "distribuicao/graficos.html", "teste-gemini/graficos.html"],
+  "blocos_aplicativo": {
+    "pf-ajuste-painel-gerencial": ["#painelGerencial", "#periodoPainelGerencial", "#pgSemaforo"],
+    "pf-painel-contorno-e-espacamento": ["#pfPainelRodape", "#pfPainelAcoes"],
+    "pf-painel-rodape-espacado": ["pfPainelRodape"],
+    "pf-rolagem-coluna-dados": ["overflow-y"],
+    "pf-rodape-lancamento-modo-escuro": ["body.dark-mode", "#formLancamento"],
+    "pf-modo-claro-legibilidade": ["body:not(.dark-mode)", "#f3f5f7", "#17212b", "#5b6573"],
+    "pf-global-language": ["lastIndexOf('</body>')"],
+    "pf-global-currency": ["lastIndexOf('</body>')"],
+    "pf-dimensoes-colunas": ["#layout-left", "#layout-right", "min-width: 0 !important", "table-layout: fixed !important", "overflow-wrap: anywhere !important", "#clean-month-analysis .pfce-svg"]
+  },
+  "bloco_relatorios": "pf-report-selection-module",
+  "recursos_relatorios": ["function financialModel", "function summaryHTML", "data-mode=\"summary\"", "data-mode=\"full\"", "pf-report-selection-bootstrap", "lastIndexOf('</body>')"]
+}

@@ -1,0 +1,120 @@
+/* PC: o conteúdo se adapta à coluna; as rolagens verticais são preservadas. */
+@media screen and (min-width: 901px) {
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #layout-workspace,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #layout-left,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #layout-right {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #layout-left,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #layout-right {
+    overflow-x: hidden !important;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-analysis-content,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-analysis-content > section,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis .pfce-alt {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper table,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-flow-details table {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper table th,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper table td,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-flow-details table th,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-flow-details table td {
+    min-width: 0 !important;
+    max-width: none !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    box-sizing: border-box;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(1) { width: 3% !important; }
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(2),
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(3) { width: 7.5% !important; }
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(4) { width: 6% !important; }
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(5) { width: 9% !important; }
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(6) { width: 8% !important; }
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(7) { width: 15% !important; }
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(8) { width: 5% !important; }
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(9),
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(10) { width: 10% !important; }
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(11) { width: 11% !important; }
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:nth-child(12) { width: 8% !important; }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper th:first-child,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper td:first-child {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper .desktop-select-cell,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper .desktop-person-cell,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper .desktop-item-filter,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper .desktop-delay,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper .desktop-observation-cell {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #tabelaLancamentosWrapper td:last-child button {
+    display: inline-flex;
+    margin: 2px !important;
+    max-width: 100%;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis .pfce-svg,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis canvas,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #desktop-flow-curve svg {
+    display: block;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis .pfce-bar {
+    min-width: 0;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(24px, 1fr) minmax(0, auto);
+    box-sizing: border-box;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis .pfce-bar > *,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis .pfce-tools > *,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis .pfce-tools label {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-wrap: anywhere;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis .pfce-tools {
+    display: flex;
+    flex-wrap: wrap !important;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis .pfce-tools button,
+  html body.layout-proposal:not(.pf-mobile-layout) #appConteudo #clean-month-analysis .pfce-amount {
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+  }
+}

@@ -1,0 +1,12 @@
+# Preservação das atualizações aprovadas
+
+- Use como base o estado mais recente do repositório, incluindo mudanças aprovadas anteriormente. Não reconstrua uma atualização a partir de um ZIP antigo sem comparar as diferenças com a base atual.
+- Preserve cores e legibilidade do modo claro, modo escuro, margens do painel/cards/rodapé, rolagens independentes, filtros e os modos Resumido e Completo dos relatórios, salvo mudança solicitada pelo usuário.
+- As regras do modo claro ficam em `automacao/modo_claro_legivel.css` e são aplicadas por `automacao/aplicar_modo_claro.py`. Atualize a fonte e sincronize os três HTMLs; não mantenha cópias divergentes.
+- As dimensões das duas colunas ficam em `automacao/dimensoes_colunas.css`, aplicadas por `automacao/aplicar_dimensoes.py`. Preserve a adaptação real das tabelas e gráficos à largura disponível: não reintroduza larguras mínimas fixas que obriguem rolagem horizontal, nem esconda dados ou colunas para disfarçar transbordamentos. Mantenha as rolagens verticais independentes.
+- Consulte `automacao/recursos_aprovados.json`. Se uma mudança autorizada substituir um recurso, atualize o contrato e seus testes para a nova solução; não remova verificações para contornar falhas.
+- Ao aprovar uma nova correção que deva permanecer, registre-a no contrato quando aplicável e acrescente cobertura de regressão quando houver um comportamento relevante a proteger. Não suponha que o contrato atual cubra qualquer alteração futura automaticamente.
+- Antes de entregar: execute `python automacao/verificar_recursos_aprovados.py`, `python -m unittest discover -s automacao -p 'test_*.py'` e a geração oficial em uma pasta vazia. Confira os arquivos gerados, além dos fontes.
+- Verifique que o pacote de atualização inclui todos os arquivos novos importados pelo gerador. Preserve os caminhos no ZIP e informe a quantidade de arquivos para envio ao GitHub.
+- Não inclua bancos de dados, backups pessoais, credenciais ou demonstrações locais no pacote de publicação. Não modifique dados financeiros em tarefas de layout.
+- Informe com precisão o que foi testado automaticamente e o que depende de conferência visual. Não declare publicação feita sem verificar o resultado no GitHub.
