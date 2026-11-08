@@ -14,7 +14,7 @@
     "pf-dimensoes-colunas": ["#layout-left", "#layout-right", "min-width: 0 !important", "table-layout: fixed !important", "overflow-wrap: anywhere !important", "#clean-month-analysis .pfce-svg"],
     "pf-notas-style": ["body.dark-mode #pfNotas", "@media print", "#pfNotas[hidden]"],
     "pf-notas-core": ["indexedStore", "pf_notas_gravar_v3", "p_dono:who", "expectedToken"],
-    "pf-notas-ui": ["data-pf-i18n-skip", "data-pf-private", "PFNotas", "getClientRects"]
+    "pf-notas-ui": ["data-pf-i18n-skip", "data-pf-private", "PFNotas", "getClientRects", "#pfMobileShell > header.bar", "pfNotasMaisBtn", "diagnostico:"]
   },
   "bloco_relatorios": "pf-report-selection-module",
   "recursos_relatorios": ["function financialModel", "function summaryHTML", "data-mode=\"summary\"", "data-mode=\"full\"", "pf-report-selection-bootstrap", "lastIndexOf('</body>')"]

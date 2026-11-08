@@ -6,6 +6,22 @@
  const clone=value=>JSON.parse(JSON.stringify(value));
  const content=n=>JSON.stringify([n.titulo,n.texto,n.cor,!!n.fixa,!!n.deleted]);
  const titleCopy=s=>(String(s||'Sem título').slice(0,179)+' (cópia de conflito)').slice(0,200);
+ function diagnose(error){
+  const candidate=String(error?.code||''),code=/^[A-Z0-9_]{1,32}$/.test(candidate)?candidate:'SEM_CODIGO';
+  const text=String(error?.message||''),phase=error?.pfNotasPhase==='leitura'?'leitura':error?.pfNotasPhase==='gravacao'?'gravação':'local';
+  let kind='desconhecido',message='Não foi possível concluir a operação. As notas pendentes continuam neste dispositivo.';
+  if(code==='42501'){kind='permissao';message='O servidor recusou o acesso às notas. Precisamos conferir as permissões da conta; isso não significa que o SQL esteja ausente.';}
+  else if(['PGRST301','PGRST302','401'].includes(code)||error?.status===401){kind='sessao';message='A sessão da nuvem não foi aceita. Entre novamente na mesma conta para sincronizar as notas pendentes.';}
+  else if(['PGRST202','42883'].includes(code)){kind='funcao';message='A API não encontrou a função das notas. Confira o projeto Supabase conectado e a atualização do cache da API.';}
+  else if(['PGRST205','42P01'].includes(code)){kind='tabela';message='A API não encontrou a tabela das notas neste projeto. Confira se o aplicativo usa o mesmo Supabase em que o SQL foi executado.';}
+  else if(['42703','PGRST204'].includes(code)){kind='estrutura';message='A estrutura da tabela de notas não corresponde à versão do aplicativo. Confira as colunas da tabela no mesmo projeto Supabase.';}
+  else if(['23514','23502','22023'].includes(code)){kind='dados';message='O servidor recusou o formato de uma nota. A alteração local foi mantida para correção e reenvio.';}
+  else if(/failed to fetch|networkerror|network request failed|load failed/i.test(text)){kind='rede';message='Não foi possível alcançar a nuvem. Confira a conexão; as notas pendentes foram mantidas.';}
+  else if(code==='40001'){kind='revisao';message='A base da nota precisa ser atualizada. A alteração local continua pendente; tente sincronizar novamente.';}
+  else if(/quota|armazenamento|storage|indexeddb/i.test(text)){kind='armazenamento';message='Não foi possível confirmar o salvamento neste dispositivo. Mantenha o editor aberto e exporte o rascunho.';}
+  return {code,phase,kind,message};
+ }
+ function remoteError(error,phase){const result=new Error(String(error?.message||'Falha na sincronização das notas.'));result.code=error?.code;result.status=error?.status;result.pfNotasPhase=phase;return result;}
  function fields(n){
   const titulo=String(n.titulo??''),texto=String(n.texto??'');
   if(titulo.length>200||texto.length>100000)throw Error('Título ou texto excedeu o limite da nota.');
@@ -110,7 +126,7 @@
    // Pull every page, even if this device has no changes. Never infer deletion from absence.
    for(let offset=0;current();offset+=500){
     const {data,error}=await client.from('pf_notas_v3').select('id,user_id,titulo,texto,cor,fixa,deleted,versao,mutacao,updated_at').eq('user_id',who).order('id').range(offset,offset+499);
-    if(error)throw error;if(!current())return {stale:true};
+    if(error)throw remoteError(error,'leitura');if(!current())return {stale:true};
     if(!Array.isArray(data))throw Error('Lista de notas inválida.');
     for(const row of data){const merged=await applyRemote(who,row,generation);if(merged.conflict)conflicts++;}
     if(data.length<500)break;
@@ -120,7 +136,7 @@
    for(const snapshot of pending){
     if(!current())return {stale:true};
     const {data,error}=await client.rpc('pf_notas_gravar_v3',{p_dono:who,p_id:snapshot.id,p_base:snapshot.serverVersion,p_mutacao:snapshot.op,p_titulo:snapshot.titulo,p_texto:snapshot.texto,p_cor:snapshot.cor,p_fixa:snapshot.fixa,p_excluida:snapshot.deleted});
-    if(error)throw error;if(!current())return {stale:true};
+    if(error)throw remoteError(error,'gravacao');if(!current())return {stale:true};
     if(!data||!['aplicada','conflito'].includes(data.status)||!data.nota)throw Error('Confirmação inválida do servidor de notas.');
     if(data.status==='aplicada')await acknowledge(who,snapshot,data.nota,generation);
     else{const merged=await applyRemote(who,data.nota,generation);if(merged.conflict)conflicts++;}
@@ -153,7 +169,7 @@
    }
   };
  }
- const api={create,indexedStore,colors:COLORS,fields};
+ const api={create,indexedStore,colors:COLORS,fields,diagnose};
  if(typeof window!=='undefined')window.PFNotasCore=api;
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })();

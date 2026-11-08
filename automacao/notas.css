@@ -29,6 +29,10 @@ body.dark-mode #pfNotas{--pfn-bg:#1c293b;--pfn-ink:#f1f5f9;--pfn-muted:#cbd5e1;-
 #pfNotas button[aria-pressed=true]{outline:2px solid #3b82f6;outline-offset:1px}
 #pfNotas .pfn-editor-status{font-size:12px;color:var(--pfn-muted);min-height:18px}
 #pfNotas .pfn-account{padding:8px 14px;border-top:1px solid var(--pfn-line);font-size:11px;color:var(--pfn-muted)}
+#pfNotas #pfnDiagnostic{padding:8px 14px;border-top:1px solid var(--pfn-line);font-size:12px}#pfNotas #pfnDiagnostic summary{cursor:pointer}#pfNotas #pfnDiagnostic pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0;color:var(--pfn-muted);font-size:11px}
+body.pf-mobile-layout #pfMobileShell>header.bar{grid-template-areas:"title title menu" "cloud notices theme" "notes notes notes"!important}
+body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-area:notes;display:inline-flex!important;justify-content:center;width:100%;min-height:44px;padding:9px 12px;font-size:15px;border:1px solid var(--line,#64748b);border-radius:8px;background:var(--card,#fff);color:var(--text,#17212b)}
+#pfNotasMaisBtn[hidden]{display:none!important}#pfMenuItens>#pfNotasMaisBtn:not([hidden]){display:flex;align-items:center;gap:8px;width:100%;min-height:44px;text-align:left}
 @media(max-width:600px){#pfNotas{width:100vw}#pfNotas .pfn-head button{min-height:44px}#pfNotas input,#pfNotas textarea{font-size:16px}}
 @media(prefers-reduced-motion:reduce){#pfNotas{scroll-behavior:auto}}
-@media print{html body #pfNotas,html body #pfNotasBtn,html body #pfNotasBackdrop{display:none!important}}
+@media print{html body #pfNotas,html body #pfNotasBtn,html body #pfNotasMaisBtn,html body #pfNotasBackdrop{display:none!important}}

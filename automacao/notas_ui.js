@@ -10,17 +10,22 @@
   function allowed(){try{if(CFG.isAllowed)return !!CFG.isAllowed();if(window.pfdAssert)window.pfdAssert();return typeof protecaoAutenticada!=='undefined'&&protecaoAutenticada===true&&!document.body.classList.contains('auth-pendente');}catch(_){return false;}}
   const legacyStore=()=>window.pfdLocal||window.localStorage;
   let draft=null,timer=null,writeChain=Promise.resolve(),rows=[],generation=0,filterTag='',restoreFocus=null,refreshTimer=null,syncTimer=null,busy=false,lastAttempt=0,authClient=null,authSubscription=null,authSerial=0,changing=false;
-  const asked=new Set(),unsaved=new Map();
+  const asked=new Set(),unsaved=new Map();let lastFailure=null;
   let channel;try{channel=typeof BroadcastChannel==='function'?new BroadcastChannel('pf-notas-v3'):null;}catch(_){}
   const panel=document.createElement('aside');panel.id='pfNotas';panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-labelledby','pfnTitle');panel.setAttribute('data-pf-i18n-skip','');panel.setAttribute('data-pf-private','');
   panel.innerHTML='<header class="pfn-head"><h2 id="pfnTitle">Notas</h2><button id="pfnSync" type="button" title="Sincronizar notas">Sincronizar</button><button id="pfnNew" type="button">+ Nova</button><button id="pfnExport" type="button">Exportar</button><button id="pfnClose" type="button" aria-label="Fechar bloco de notas">✕</button></header><div class="pfn-sync" id="pfnState" role="status" aria-live="polite">Identificando conta…</div><section id="pfnListView" style="display:flex;flex:1;min-height:0;flex-direction:column"><div class="pfn-tools"><label class="pfn-field-label" for="pfnSearch">Buscar notas</label><input id="pfnSearch" type="search" placeholder="Texto ou #tag"><div class="pfn-tags" id="pfnTags"></div></div><div class="pfn-list" id="pfnList"></div></section><section id="pfnEditView" class="pfn-editor" hidden><div class="pfn-bar"><button type="button" id="pfnBack">← Voltar</button><button type="button" id="pfnPin" aria-pressed="false">Fixar</button><button type="button" id="pfnSummary">Resumo do painel</button><button type="button" id="pfnCheck">☐ Tarefa</button><button type="button" id="pfnDelete">Excluir</button></div><div class="pfn-bar" id="pfnColors" role="group" aria-label="Cor da nota"></div><label class="pfn-field-label" for="pfnHeading">Título</label><input id="pfnHeading" maxlength="200" placeholder="Título da nota"><label class="pfn-field-label" for="pfnText">Texto</label><textarea id="pfnText" maxlength="100000" placeholder="Escreva aqui. Use #tags, @20/11/2026 ou [ ] tarefa."></textarea><div class="pfn-editor-status" id="pfnSaved" role="status" aria-live="polite"></div></section><footer class="pfn-account" id="pfnAccount"></footer>';
+  const diagnostic=document.createElement('details');diagnostic.id='pfnDiagnostic';diagnostic.hidden=true;diagnostic.innerHTML='<summary>Detalhes da sincronização</summary><pre id="pfnDiagnosticText"></pre>';panel.append(diagnostic);
   const backdrop=document.createElement('div');backdrop.id='pfNotasBackdrop';backdrop.hidden=true;backdrop.setAttribute('data-pf-private','');document.body.append(backdrop,panel);
   function status(message,state='info'){$('pfnState').textContent=message;$('pfnState').dataset.state=state;}
   const engine=Core.create({store:CFG.store||Core.indexedStore(window.indexedDB),changed:event=>{
    if(['saved','synced','imported'].includes(event.kind)){try{channel?.postMessage({owner:event.owner});}catch(_){}scheduleRefresh();}
   }});
-  function errorMessage(error){const text=String(error?.message||error||'Falha desconhecida');return /pf_notas|schema cache|PGRST202|42P01/i.test(text)?'Notas guardadas neste dispositivo. Para ativar a nuvem, instale o SQL do bloco de notas no Supabase.':text;}
-  function fail(error){status(errorMessage(error),'error');}
+  function project(){try{const url=client()?.supabaseUrl||(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:null);const host=new URL(url).hostname;return /^[a-z0-9-]+\.supabase\.co$/i.test(host)?host.split('.')[0]:'domínio personalizado';}catch(_){return 'não identificado';}}
+  function fail(error){
+   const info=Core.diagnose(error);lastFailure={diagnostico:'notas-v3.1',codigo:info.code,etapa:info.phase,tipo:info.kind,projeto:project()};
+   $('pfnDiagnosticText').textContent=JSON.stringify(lastFailure,null,2);diagnostic.hidden=false;
+   status(info.message+' Código: '+info.code+'.','error');
+  }
   const tags=text=>[...new Set((String(text).match(/#[\p{L}\d_-]+/gu)||[]).map(s=>s.toLocaleLowerCase('pt-BR')))];
   function reminder(text){const m=String(text).match(/@(\d{2})\/(\d{2})(?:\/(\d{4}))?/);if(!m)return null;const year=Number(m[3]||new Date().getFullYear()),month=Number(m[2])-1,day=Number(m[1]),date=new Date(year,month,day);return date.getFullYear()===year&&date.getMonth()===month&&date.getDate()===day?date:null;}
   const late=n=>{const date=reminder(n.texto),today=new Date();today.setHours(0,0,0,0);return date&&date<=today;};
@@ -65,7 +70,7 @@
   }
   async function back(){const current=draft,at=generation;try{await flush();if(at===generation&&draft===current){listView();await refresh();}}catch(_){} }
   async function close(){const at=generation;try{await flush();if(at!==generation)return;panel.hidden=true;backdrop.hidden=true;restoreFocus?.focus?.();}catch(_){} }
-  function forceClose(){panel.hidden=true;backdrop.hidden=true;draft=null;$('pfnHeading').value='';$('pfnText').value='';$('pfnSaved').textContent='';rows=[];filterTag='';$('pfnList').replaceChildren();$('pfnTags').replaceChildren();$('pfnSearch').value='';$('pfnEditView').hidden=true;$('pfnListView').hidden=false;const badge=$('pfNotasBadge');if(badge)badge.textContent='';}
+  function forceClose(){panel.hidden=true;backdrop.hidden=true;draft=null;$('pfnHeading').value='';$('pfnText').value='';$('pfnSaved').textContent='';rows=[];filterTag='';lastFailure=null;diagnostic.hidden=true;$('pfnDiagnosticText').textContent='';$('pfnList').replaceChildren();$('pfnTags').replaceChildren();$('pfnSearch').value='';$('pfnEditView').hidden=true;$('pfnListView').hidden=false;const badge=$('pfNotasBadge');if(badge)badge.textContent='';}
   async function open(){if(!allowed())return;restoreFocus=document.activeElement;panel.hidden=false;backdrop.hidden=false;enable();await refresh();if(panel.hidden)return;const recovery=unsaved.get(engine.owner());if(!draft&&recovery&&enable()){openNote(recovery);draft.touched=true;status('Rascunho recuperado da memória desta aba. Exporte ou tente salvar novamente.','error');}else $('pfnSearch').focus();sync();}
   function scheduleSync(){clearTimeout(syncTimer);syncTimer=setTimeout(sync,1500);}
   async function sync(){
@@ -107,9 +112,12 @@
    found.auth.getSession().then(({data,error})=>{if(error)throw error;if(authSerial===start)switchOwner(data?.session?.user?.id||null);}).catch(e=>{if(authSerial===start){switchOwner(null);fail(e);}});
   }
   function mount(){
-   const normal=$('pfMenuTopo'),mobile=document.querySelector('#pm-app .bar');const host=normal?.getClientRects().length?normal:mobile?.getClientRects().length?mobile:null;
+   const normal=$('pfMenuTopo'),mobile=document.querySelector('#pfMobileShell > header.bar')||document.querySelector('#pm-app .bar'),mobileMode=document.body.classList.contains('pf-mobile-layout');const host=mobileMode?(mobile?.getClientRects().length?mobile:null):normal?.getClientRects().length?normal:mobile?.getClientRects().length?mobile:null;
    let button=$('pfNotasBtn');if(!button&&host){button=document.createElement('button');button.type='button';button.id='pfNotasBtn';button.className='pf-menu-categoria';button.setAttribute('data-pf-i18n-skip','');button.setAttribute('aria-controls','pfNotas');button.innerHTML='📝 Notas <span id="pfNotasBadge"></span>';button.onclick=()=>panel.hidden?open():close();}
    if(button){button.hidden=!allowed()||!host;if(host&&button.parentElement!==host)host.append(button);button.setAttribute('aria-expanded',String(!panel.hidden));}
+   const menu=$('pfMenuItens');let more=$('pfNotasMaisBtn');
+   if(menu&&mobile&&!more){more=document.createElement('button');more.id='pfNotasMaisBtn';more.type='button';more.setAttribute('data-pf-i18n-skip','');more.setAttribute('aria-controls','pfNotas');more.textContent='📝 Notas';more.onclick=e=>{e.stopPropagation();$('pfMenuFechar')?.click();open();};}
+   if(more){more.hidden=!allowed()||!mobile?.getClientRects().length;if(menu&&more.parentElement!==menu)menu.append(more);}
   }
   function append(text){if(!draft)return;const area=$('pfnText');if(area.value.length-(area.selectionEnd-area.selectionStart)+text.length>100000)return status('O texto excederia o limite da nota.','error');area.setRangeText(text,area.selectionStart,area.selectionEnd,'end');area.focus();queue();}
   function download(text){const url=URL.createObjectURL(new Blob(['\ufeff'+text],{type:'text/plain;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='notas-'+new Date().toLocaleDateString('sv-SE')+'.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);}
@@ -147,7 +155,7 @@
    if(Date.now()-lastAttempt>=60000&&document.visibilityState==='visible')sync();
   },1000);
   let mounting=false;new MutationObserver(()=>{if(mounting)return;mounting=true;setTimeout(()=>{mounting=false;mount();},100);}).observe(document.body,{childList:true,subtree:true});
-  window.PFNotas={abrir:open,sync,conta:()=>engine.owner(),estado:()=>({conta:engine.owner(),notas:rows.filter(n=>!n.deleted).length,pendentes:rows.filter(n=>n.dirty).length}),importarAntigas:()=>{asked.delete(engine.owner());return migrate();}};
+  window.PFNotas={abrir:open,sync,conta:()=>engine.owner(),diagnostico:()=>lastFailure?{...lastFailure}:{diagnostico:'notas-v3.1',projeto:project(),situacao:'Nenhuma falha registrada'},estado:()=>({conta:engine.owner(),notas:rows.filter(n=>!n.deleted).length,pendentes:rows.filter(n=>n.dirty).length}),importarAntigas:()=>{asked.delete(engine.owner());return migrate();}};
   mount();if(allowed())bindClient();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();

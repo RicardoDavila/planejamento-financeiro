@@ -42,6 +42,12 @@ async function run(){
  await test('confirmação inválida mantém a alteração pendente',async()=>{const st=memory(),e=engine(st),s=server();await e.save(id(),note(),null);s.wrongReply=true;await assert.rejects(e.sync(s),/não confirmou/);assert.equal((await e.list())[0].dirty,true);});
  await test('paginação mantém notas após a primeira página',async()=>{const st=memory(),e=engine(st),s=server();for(let i=0;i<503;i++)s.seed(A,note('nota '+i));await e.sync(s);assert.equal((await e.list()).length,503);});
  await test('título de conflito respeita limite e relógio não escolhe vencedor',async()=>{const st=memory(),e=engine(st),s=server();const r=s.seed(A,{...note(),titulo:'a'.repeat(200)});await e.sync(s);const n=(await e.list())[0];await e.save(n.id,{...note('minha edição'),titulo:'a'.repeat(200)},n.localToken);s.seed(A,{...r,texto:'servidor',versao:2,mutacao:id()});await e.sync(s);assert((await e.list()).every(n=>n.titulo.length<=200));assert.deepEqual(new Set((await e.list()).map(n=>n.texto)),new Set(['minha edição','servidor']));});
+ await test('diagnóstico distingue permissão, sessão, estrutura e rede sem expor dados',async()=>{
+  assert.equal(Core.diagnose({code:'42501',message:'permission denied for table pf_notas_v3'}).kind,'permissao');
+  assert.equal(Core.diagnose({code:'PGRST301'}).kind,'sessao');assert.equal(Core.diagnose({code:'PGRST202'}).kind,'funcao');assert.equal(Core.diagnose({code:'PGRST205'}).kind,'tabela');assert.equal(Core.diagnose({code:'42703'}).kind,'estrutura');assert.equal(Core.diagnose({message:'Failed to fetch'}).kind,'rede');
+  assert.equal(Core.diagnose({message:'outro erro em pf_notas_v3'}).kind,'desconhecido');
+  const result=Core.diagnose({code:'42501',message:'texto privado',details:'token secreto',pfNotasPhase:'leitura'});assert.equal(result.phase,'leitura');assert(!JSON.stringify(result).includes('privado'));assert(!JSON.stringify(result).includes('secreto'));
+ });
  const sql=fs.readFileSync(path.join(__dirname,'notas_supabase.sql'),'utf8');
  assert(sql.includes("security definer set search_path=''"));assert(sql.includes('p_dono<>dono'));assert(sql.includes('atual.versao<>p_base'));assert(sql.includes('for select to authenticated'));assert(sql.includes('revoke all on public.pf_notas_v3 from public,anon,authenticated'));assert(!/drop table|truncate table/i.test(sql));
  console.log('Notas: '+checks.length+' cenários comportamentais aprovados; contrato SQL verificado estaticamente, sem execução em banco.');
