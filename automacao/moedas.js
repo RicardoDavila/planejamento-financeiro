@@ -65,7 +65,7 @@ function bootCurrency(options={}){
  function setCurrency(c){if(!codes.includes(c)||options.snapshot)return;sequence++;busy=false;selected=c;updateCharts();window.dispatchEvent(new Event('pf-currency-change'));try{store?.setItem(key,c);}catch(_){}apply();if(c!=='BRL')load();}
  function requireSnapshot(){const s=snapshot();if(s.currency!=='BRL'&&!valid(s.quote,s.currency)){alert('Aguarde uma cotação válida ou selecione BRL antes de gerar o relatório.');throw Error('Cotação indisponível.');}return JSON.parse(JSON.stringify(s));}
  function decorate(html,s=requireSnapshot()){
-  const code='('+bootCurrency.toString()+')('+JSON.stringify({snapshot:s,locale:locale()}).replace(/</g,'\\u003c')+');';return html.replace(/<\/body>/i,'<script>'+code+'<\/script></body>');
+  const code='('+bootCurrency.toString()+')('+JSON.stringify({snapshot:s,locale:locale()}).replace(/</g,'\\u003c')+');';const script='<script>'+code.replace(/<\/script/gi,'<\\/script')+'<'+'/script>',at=html.toLowerCase().lastIndexOf('</body>');return at<0?html+script:html.slice(0,at)+script+html.slice(at);
  }
  const api={installView:target=>{const s=requireSnapshot();if(target.PFCurrency)target.PFCurrency.setSnapshot(s);else target.eval('('+bootCurrency.toString()+')('+JSON.stringify({snapshot:s,locale:locale()})+')');},setSnapshot:s=>{if(!options.snapshot)return;options.snapshot=s;selected=s.currency;quotes={};if(s.quote)quotes[selected]=s.quote;const n=document.querySelector('[data-pf-currency-note]');if(n)n.textContent=note(s);apply();},getCurrency:()=>selected,snapshot:requireSnapshot,value,format,valid,originalText,setCurrency,refresh:load,decorate,note};window.PFCurrency=api;
  function install(){

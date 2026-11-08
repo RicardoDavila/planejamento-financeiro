@@ -5147,6 +5147,7 @@ body.dark-mode .pf-chart-card canvas {filter:brightness(1.12) contrast(1.08);}
             if(apiFluxo) relatorioHtml = relatorioHtml.replace('</head>','<style>'+apiFluxo.managerialCss+'</style></head>');
             relatorioHtml = window.PFReportTheme.decorate(relatorioHtml);
             if(window.PFChartExplorer)relatorioHtml=window.PFChartExplorer.decorate(relatorioHtml,{kind:'managerial',rows:lista,months:[...mesesComparativo].map(([key,m])=>({...m,key})),series:seriesMensais,descriptions:descricoesGrafico});
+            window.PFReportSelection.setContext(window.PFReportSelection.context({kind:'gerencial',title:'Relatório Gerencial de Planejamento Financeiro',rows:registrosRelatorio}));
             const relatorioUrl = URL.createObjectURL(new Blob([window.PFReportSelection.decorate(relatorioHtml)], {type:'text/html;charset=utf-8'}));
             try { w.location.replace(relatorioUrl); }
             catch (erro) { URL.revokeObjectURL(relatorioUrl); w.close(); alert('Não foi possível abrir o relatório. Tente novamente.'); return; }
@@ -9595,6 +9596,7 @@ function openReport(){
  const actions='const safeCell='+safeCell.toString()+';'+csv.toString()+download.toString().replace('const x=window.XLSX;','const x=window.XLSX||window.opener?.XLSX;')+';const data='+payload+';document.getElementById("fc-print").onclick=()=>window.print();document.getElementById("fc-csv").onclick=()=>download(data.rows,"csv");document.getElementById("fc-xlsx").onclick=()=>download(data.rows,"xlsx");document.getElementById("fc-email").onclick=()=>{window.location.href=data.email;};';
  const html='<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório de Fluxo de Caixa</title><style>'+css+'</style></head><body><main>'+reportBody(m,meta)+'</main><script>'+actions+'<'+'/script></body></html>';
  const decorated=window.PFFinancialIcons?window.PFFinancialIcons.decorate(html):html;
+ window.PFReportSelection.setContext(window.PFReportSelection.context({kind:'fluxo',title:'Relatório de fluxo de caixa',rows:m.rows,start:m.start,end:m.end,today:m.today}));
  const reportUrl=URL.createObjectURL(new Blob([window.PFReportSelection.decorate(window.PFChartExplorer?window.PFChartExplorer.decorate(decorated,{kind:'cashflow',model:m,base:getFilteredTransactions({ignorarPeriodo:true,ignorarAtrasados:true})}):decorated)],{type:'text/html;charset=utf-8'}));
  try{popup.location.replace(reportUrl);}catch(error){URL.revokeObjectURL(reportUrl);popup.close();alert('Não foi possível abrir o relatório. Tente novamente.');return;}
  setTimeout(()=>URL.revokeObjectURL(reportUrl),60000);
@@ -10016,8 +10018,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
 @media print{.pfce-tools,.pfce-message,.pfce-close,.pfce-points{display:none!important}.pfce-alt{overflow:visible;--pfce-hole:#fff}.pfce-svg{min-width:0;width:100%;color:#1e293b!important}.pfce-detail{max-height:none;background:white!important;color:#1e293b!important;break-inside:auto}.pfce-scroll{max-height:none;overflow:visible}.pfce-detail th,.pfce-detail td{color:#1e293b!important}.pfce-bars{break-inside:auto}}
 
 </style>
-<script id="pf-chart-explorer">
-/* Exploração visual: não escreve em contas, transações, armazenamento ou rede. */
+<script id="pf-chart-explorer">/* Exploração visual: não escreve em contas, transações, armazenamento ou rede. */
 (() => {
  'use strict';
  function chartData(){
@@ -10080,7 +10081,7 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
     report.documentElement.lang='pt-BR';
     const viewport=report.createElement('meta');viewport.name='viewport';viewport.content='width=device-width,initial-scale=1';report.head.append(viewport);
     const header=report.createElement('header');header.className='pf-monthly-report-header marca';
-    const logo=report.createElement('img');logo.className='pf-report-logo';logo.src=window.PFReportTheme.logo;logo.alt='Logotipo do Planejamento Financeiro';logo.width=logo.height=52;header.append(logo);
+    const logo=report.createElement('img');logo.className='pf-report-logo';logo.src=window.PFReportTheme?.logo||window.opener?.PFReportTheme?.logo||'';logo.alt='Logotipo do Planejamento Financeiro';logo.width=logo.height=52;header.append(logo);
     const heading=report.createElement('h1');heading.textContent='Planejamento Financeiro';header.append(heading);
     const subtitle=report.createElement('p');subtitle.textContent=source?selected[0].model.title:'Análise do mês de receitas e despesas por rubrica e evolução';header.append(subtitle);
     const period=report.createElement('p');period.textContent=typeof obterPeriodoFiltroPainel==='function'?obterPeriodoFiltroPainel():'Período de referência: '+String(contexts.monthly?.chosen||'');header.append(period);
@@ -10103,7 +10104,9 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
     const footer=report.createElement('footer');footer.textContent='Relatório de Planejamento Financeiro · Uso interno';report.body.append(footer);
     const style=report.createElement('style');style.textContent=(document.getElementById('pf-chart-explorer-style')?.textContent||'')+'body{margin:0 auto;padding:24px;max-width:1100px;background:white;color:#243247;font:13px/1.5 system-ui}.pf-monthly-report-header{position:relative;border-bottom:2px solid #203c64;padding:0 0 16px 70px;margin-bottom:24px}.pf-monthly-report-header .pf-report-logo{position:absolute;left:0;top:0;width:52px;height:52px}.pf-monthly-report-header h1{margin:0;font-size:24px}.pf-monthly-report-header p{margin:4px 0}.pf-monthly-report-chart{margin:0 0 28px;break-inside:avoid;min-width:0}.pf-monthly-report-chart h2{font-size:18px;break-after:avoid}.pfce-svg{min-width:0!important;max-width:100%;color:#243247!important}.pfce-alt{overflow:visible!important;--pfce-hole:white}.analysis-row{display:grid;grid-template-columns:minmax(90px,1fr) 2fr minmax(110px,auto);gap:10px;align-items:center;margin:12px 0}.analysis-track{display:block;height:10px;background:#edf2f8;border-radius:5px}.analysis-fill{display:block;height:100%;background:#047857}.analysis-expense .analysis-fill{background:#bd2b20}.analysis-amount{text-align:right;font-variant-numeric:tabular-nums}.analysis-rubric{margin:10px 0}.analysis-rubric summary{display:flex;justify-content:space-between;gap:16px}.analysis-description-row{display:flex;justify-content:space-between;padding:5px}footer{border-top:1px solid #cbd5e1;padding-top:12px;color:#526176}@page{size:A4 landscape;margin:12mm}@media print{body{padding:0;max-width:none}.pf-monthly-report-chart{break-inside:avoid}.pfce-svg{width:100%;height:auto;max-height:150mm}.pfce-point text{fill:#243247!important}}';report.head.append(style);
     let html='<!doctype html>'+report.documentElement.outerHTML;
-    html=window.PFReportTheme.decorate(html);
+    if(window.PFReportTheme)html=window.PFReportTheme.decorate(html);
+    const snapshotRows=[...new Map(selected.flatMap(state=>D.points(state.model).flatMap(point=>state.model.resolve(point.j,point.i)||[])).map(row=>[row.id,row])).values()];
+    window.PFReportSelection.setContext(window.PFReportSelection.context({kind:'mensal',title:subtitle.textContent,rows:snapshotRows,base:snapshotRows,start:undefined,end:undefined,filters:filters.textContent,balanceAvailable:false,scopeNote:'Totais dos lançamentos representados nos gráficos exportados, sem repetição por ID. Cada gráfico completo conserva seu intervalo original.'}));
     html=window.PFReportSelection.decorate(html);
     popup.document.open();popup.document.write(html);popup.document.close();
    } catch(error){popup.close();alert('Não foi possível preparar o relatório de gráficos. Tente novamente.');}
@@ -10409,7 +10412,6 @@ svg.pf-fin-icon[data-pf-kind="balance"]{color:#1d4ed8}
  };
  window.PFChartExplorer=api;
 })();
-
 </script>
 <style id="pf-dynamic-filters-style">
 .pf-dynamic-item{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px}
@@ -10877,109 +10879,221 @@ body.pf-mobile-layout.dark-mode #pm-app>#clean-month-analysis.layout-mobile-char
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
-<script id="pf-report-selection-module">
-/* Executed exclusively inside a generated report, never in the financial app. */
-function installReportSelection() {
-  if (document.getElementById('pf-report-selection')) return;
-  document.body.removeAttribute('onload');
-  const content = document.createElement('div');
-  content.id = 'pf-report-content';
-  [...document.body.childNodes].forEach(node => content.append(node));
-  document.body.append(content);
-  content.querySelectorAll('button').forEach(button => {
-    if (/print\(|imprimir|salvar.*pdf/i.test(button.getAttribute('onclick') || button.textContent)) button.remove();
-  });
-  const items = [], occurrences = new Map();
-  function add(label, nodes, kind) {
-    label = label.trim().replace(/\s+/g, ' ');
-    const base = kind + ':' + label, count = occurrences.get(base) || 0;
-    occurrences.set(base, count + 1);
-    items.push({label, nodes, kind, key:base + ':' + count, checked:true});
-  }
-  // Wrap heading ranges without changing the contents or recomputing any totals.
-  [...content.querySelectorAll('h2,h3')].reverse().forEach(heading => {
-    if (heading.closest('table')) return;
-    const section = document.createElement('div');
-    heading.before(section);
-    const level = Number(heading.tagName.slice(1));
-    let node = heading;
-    while (node) {
-      if (node !== heading && (/^H[123]$/.test(node.nodeName) || node.dataset?.pfHeading) && Number(node.dataset?.pfHeading || node.nodeName.slice(1)) <= level) break;
-      const next = node.nextSibling;
-      section.append(node);
-      node = next;
+<script id="pf-report-selection-module">/* Relatórios: modelos explícitos, duas apresentações e exportação sem código visível. */
+(function () {
+  'use strict';
+  function financialModel(input) {
+    input = input || {};
+    const validDate = value => /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) && !Number.isNaN(Date.parse(value + 'T12:00:00Z')) && new Date(value + 'T12:00:00Z').toISOString().slice(0,10) === value;
+    const day = (value, n) => { const d = new Date(value + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+    const now = new Date(), today = input.today || now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+    const rows = Array.isArray(input.rows) ? input.rows.map(t => ({ ...t })) : null;
+    const base = Array.isArray(input.base) ? input.base.map(t => ({ ...t })) : rows || [];
+    const dates = (rows || []).map(t => t.vencimento).filter(validDate).sort();
+    const start = input.start || dates[0] || today, end = input.end || dates.at(-1) || today;
+    if (!validDate(today) || !validDate(start) || !validDate(end) || start > end) throw Error('Período inválido para o relatório.');
+    const cents = t => { const n = Number(t.valor); if (!Number.isFinite(n)) throw Error('Valor inválido no relatório.'); return Math.round(n * 100); };
+    const paid = t => !!t.dataPg || ['Pago', 'Paga', 'Recebido', 'Recebida', 'Liquidado', 'Liquidada', 'feito'].includes(t.status);
+    const incoming = t => t.tipo === 'Receita';
+    const signed = t => incoming(t) ? cents(t) : -cents(t);
+    const sum = (a, f = cents) => a.reduce((n, t) => n + f(t), 0);
+    const active = (rows || []).filter(t => ['Receita', 'Despesa', 'Investimentos'].includes(t.tipo));
+    const rec = active.filter(incoming), exp = active.filter(t => t.tipo === 'Despesa'), inv = active.filter(t => t.tipo === 'Investimentos');
+    const overdue = t => !paid(t) && validDate(t.vencimento) && t.vencimento < today;
+    const future = t => !paid(t) && validDate(t.vencimento) && t.vencimento >= today;
+    const endHorizon = day(today, 29);
+    const upcoming = base.filter(t => ['Receita', 'Despesa', 'Investimentos'].includes(t.tipo) && future(t) && t.vencimento <= endHorizon).sort((a, b) => a.vencimento.localeCompare(b.vencimento) || String(a.descricao).localeCompare(String(b.descricao)));
+    const historic = base.filter(t => overdue(t) && t.vencimento < start);
+    const available = rows !== null && input.balanceAvailable === true;
+    let opening = null, closing = null, current = null, minimum = null, minimumScheduled = null, projection = [], daily = [];
+    if (available) {
+      opening = sum(base.filter(t => validDate(t.vencimento) && t.vencimento < start), signed);
+      let acc = opening;
+      const length = Math.round((Date.parse(end + 'T12:00:00Z') - Date.parse(start + 'T12:00:00Z')) / 86400000);
+      if (length > 3660) throw Error('Período muito extenso para a trajetória diária.');
+      const groups = new Map();
+      for (const t of active) if (validDate(t.vencimento) && t.vencimento >= start && t.vencimento <= end) groups.set(t.vencimento, (groups.get(t.vencimento) || 0) + signed(t));
+      for (let i = 0; i <= length; i++) { const date = day(start, i); acc += groups.get(date) || 0; daily.push({ date, balance: acc }); }
+      closing = acc;
+      minimumScheduled = daily.reduce((a, p) => !a || p.balance < a.balance ? p : a, null);
+      current = sum(base.filter(t => paid(t) && validDate(t.dataPg || t.vencimento) && (t.dataPg || t.vencimento) <= today), signed);
+      let projected = current;
+      for (let i = 0; i < 30; i++) { const date = day(today, i); projected += sum(upcoming.filter(t => t.vencimento === date), signed); projection.push({ date, balance: projected }); }
+      minimum = projection.reduce((a, p) => !a || p.balance < a.balance ? p : a, null);
     }
-    section.dataset.pfHeading = level;
-  });
-  content.querySelectorAll('[data-pf-heading],.kpi,.grafico,.bloco,.resumo,.grafico-print-bloco,.pf-chart-card').forEach(node => {
-    const label = node.querySelector('h2,h3,h4,.rotulo,.grafico-titulo,.bloco-titulo')?.textContent;
-    if (label) add(label, [node], 'Conteúdo');
-  });
-  content.querySelectorAll('table').forEach((table, index) => {
-    const title = table.closest('[data-pf-heading],.bloco')?.querySelector('h2,h3,.bloco-titulo')?.textContent || 'Tabela ' + (index + 1);
-    add(title, [table.closest('.bloco,.tablewrap') || table], 'Tabela');
-    const headers = [...(table.tHead?.rows[0]?.cells || [])];
-    headers.forEach((header, column) => {
-      if (header.colSpan !== 1) return;
-      const cells = [...table.rows].flatMap(row => { let offset = 0; return [...row.cells].filter(cell => { const match = offset === column && cell.colSpan === 1; offset += cell.colSpan; return match; }); });
-      add(title + ' — ' + header.textContent, cells, 'Campo');
-    });
-  });
-  content.querySelectorAll('.meta,.rodape').forEach(node => add(node.classList.contains('meta') ? 'Dados de emissão' : 'Rodapé', [node], 'Campo'));
-  if (!items.length) add('Conteúdo do relatório', [...content.children], 'Conteúdo');
-  const panel = document.createElement('section');
-  panel.id = 'pf-report-selection';
-  panel.innerHTML = '<h2>Incluir no relatório</h2><p>Escolha o conteúdo desta exportação. Os dados, cálculos e telas do sistema são preservados.</p><div class="pf-actions"><button type="button" data-all="1">Selecionar tudo</button><button type="button" data-all="0">Desmarcar tudo</button></div><div class="pf-options"></div><label class="pf-option"><input type="checkbox" id="pf-remember"> Salvar estas preferências para os próximos relatórios</label><div class="pf-actions"><button type="button" id="pf-preview">Pré-visualizar</button><button type="button" id="pf-pdf" disabled>Gerar PDF</button><button type="button" id="pf-print" disabled>Imprimir</button></div><p role="status" aria-live="polite" id="pf-status">Selecione os itens e pré-visualize antes de exportar.</p>';
-  document.body.prepend(panel);
-  const style = document.createElement('style');
-  style.textContent = '#pf-report-selection{box-sizing:border-box;max-width:1000px;margin:16px auto;padding:20px;background:#fff;color:#243247;border:1px solid #cbd5e1;border-radius:12px;font:14px/1.5 system-ui}#pf-report-selection h2{color:#243247;font:700 20px system-ui}.pf-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;max-height:45vh;overflow:auto;margin:12px 0}.pf-option{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px;cursor:pointer;overflow-wrap:anywhere}.pf-option input{width:20px;height:20px;flex-shrink:0}.pf-actions{display:flex;gap:8px;flex-wrap:wrap}#pf-report-selection button{min-height:44px;padding:8px 14px;border:1px solid #94a3b8;border-radius:7px;background:#203c64;color:white;font:600 14px system-ui;cursor:pointer}#pf-report-selection button:disabled{opacity:.45;cursor:default}html body .pf-report-excluded{display:none!important}#pf-report-content[hidden]{display:none!important}@media(max-width:640px){.pf-options{grid-template-columns:1fr}#pf-report-selection{margin:8px;padding:12px}.pf-actions button{flex:1}}@media print{#pf-report-selection{display:none!important}#pf-report-content{display:block!important}}';
-  document.head.append(style);
-  const remember = panel.querySelector('#pf-remember'), status = panel.querySelector('#pf-status');
-  const key = 'pf-report-selection-v1:' + document.title;
-  // Use the application's storage adapter so distribution preferences remain isolated per account.
-  let preferenceStorage;
-  try { const owner = window.opener || window; preferenceStorage = owner.pfdLocal || owner.localStorage; } catch (_) {}
-  try {
-    const saved = JSON.parse(preferenceStorage.getItem(key) || 'null');
-    if (saved) { remember.checked = true; items.forEach(item => item.checked = saved[item.key] !== false); }
-  } catch (_) { /* Storage may be unavailable for local/blob reports. */ }
-  const options = panel.querySelector('.pf-options');
-  items.forEach(item => {
-    const label = document.createElement('label'); label.className = 'pf-option';
-    const input = document.createElement('input'); input.type = 'checkbox'; input.checked = item.checked;
-    label.append(input, document.createTextNode(item.kind + ': ' + item.label)); options.append(label); item.input = input;
-    input.onchange = () => { item.checked = input.checked; update(false); };
-  });
-  function update(preview) {
-    content.querySelectorAll('.pf-report-excluded').forEach(node => node.classList.remove('pf-report-excluded'));
-    items.filter(item => !item.checked).forEach(item => item.nodes.forEach(node => node.classList.add('pf-report-excluded')));
-    const any = items.some(item => item.checked && item.kind !== 'Campo' && item.nodes.some(node => !node.closest('.pf-report-excluded')));
-    content.hidden = !preview || !any;
-    panel.querySelector('#pf-pdf').disabled = panel.querySelector('#pf-print').disabled = !preview || !any;
-    status.textContent = !any ? 'Selecione ao menos um conteúdo para gerar o relatório.' : preview ? 'Prévia atualizada abaixo. Gerar PDF abre a impressão: escolha Salvar como PDF.' : 'Seleção alterada. Clique em Pré-visualizar para conferir.';
-    try {
-      if (remember.checked) preferenceStorage.setItem(key, JSON.stringify(Object.fromEntries(items.map(item => [item.key,item.checked]))));
-      else preferenceStorage.removeItem(key);
-    } catch (_) { if (remember.checked) status.textContent += ' Não foi possível salvar as preferências neste navegador.'; }
+    const stats = rows === null ? null : {
+      revenue: sum(rec), received: sum(rec.filter(paid)), receivable: sum(rec.filter(t => !paid(t))),
+      receivableOnTime: sum(rec.filter(future)), overdueReceivable: sum(rec.filter(overdue)),
+      expense: sum(exp), paidExpense: sum(exp.filter(paid)), due: sum(exp.filter(future)), overdueExpense: sum(exp.filter(overdue)),
+      investment: sum(inv), result: sum(rec) - sum(exp) - sum(inv),
+      pastReceivable: sum(historic.filter(incoming)), pastPayable: sum(historic.filter(t => !incoming(t)))
+    };
+    const clean = t => ({ id: t.id, descricao: String(t.descricao || 'Sem descrição'), vencimento: String(t.vencimento || ''), valor: cents(t), tipo: t.tipo });
+    const payments = upcoming.filter(t => !incoming(t)), receipts = upcoming.filter(incoming);
+    const groupUpcoming = a => [...a.reduce((m, t) => { const g = m.get(t.vencimento) || { date: t.vencimento, count: 0, total: 0, names: [] }; g.count++; g.total += cents(t); g.names.push(String(t.descricao || 'Sem descrição')); m.set(t.vencimento, g); return m; }, new Map()).values()];
+    return {
+      title: String(input.title || 'Relatório financeiro'), kind: String(input.kind || 'gerencial'), start, end, today,
+      issued: String(input.issued || new Date().toLocaleString('pt-BR')), filters: String(input.filters || 'Filtros da exportação atual'), scopeNote: String(input.scopeNote || ''), demo: !!input.demo,
+      available: rows !== null, balanceAvailable: available, stats, opening, closing, current, minimum, minimumScheduled, daily, projection,
+      payments: groupUpcoming(payments).slice(0, 6), morePayments: Math.max(0, groupUpcoming(payments).length - 6),
+      receipts: groupUpcoming(receipts).slice(0, 4), moreReceipts: Math.max(0, groupUpcoming(receipts).length - 4),
+      top: exp.slice().sort((a, b) => cents(b) - cents(a) || String(a.descricao).localeCompare(String(b.descricao))).slice(0, 5).map(clean), count: active.length,
+      undated: active.filter(t => !validDate(t.vencimento)).length,
+      futureLabel: today + ' a ' + endHorizon
+    };
   }
-  panel.querySelectorAll('[data-all]').forEach(button => button.onclick = () => {
-    items.forEach(item => item.input.checked = item.checked = button.dataset.all === '1'); update(false);
-  });
-  remember.onchange = () => update(false);
-  panel.querySelector('#pf-preview').onclick = () => update(true);
-  panel.querySelector('#pf-pdf').onclick = panel.querySelector('#pf-print').onclick = () => { update(true); window.print(); };
-  update(false);
-}
 
-window.PFReportSelection = {
-  decorate(html) {
-    if (html.includes('id="pf-report-selection-bootstrap"')) return html;
-    html = html.replace(/ onload="setTimeout\(function\(\)\{window.focus\(\);window.print\(\);\},350\)"/g, '');
-    return html.replace('</body>', '<script id="pf-report-selection-bootstrap">(' + installReportSelection.toString() + ')();<' + '/script></body>');
-  },
-  install(target) { target.eval('(' + installReportSelection.toString() + ')()'); }
-};
+  function summaryHTML(m) {
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const br = s => /^\d{4}-\d{2}-\d{2}$/.test(s || '') ? s.split('-').reverse().join('/') : 'N/D';
+    const money = n => n === null || n === undefined ? 'N/D' : (n / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const s = m.stats;
+    const section = (key, html) => '<section data-summary="' + key + '">' + html + '</section>';
+    const metric = (label, value, cls) => '<div class="pf-s-metric ' + (cls || '') + '"><span>' + esc(label) + '</span><strong>' + esc(money(value)) + '</strong></div>';
+    let html = '<article class="pf-summary-page"><header class="pf-s-header"><span class="pf-s-eyebrow">RELATÓRIO RESUMIDO</span><h1>' + esc(m.title) + '</h1><p>' + br(m.start) + ' a ' + br(m.end) + ' · Emissão: ' + esc(m.issued) + '</p><p>Referência: ' + br(m.today) + ' · Critério do período: vencimento</p><p><b>Filtros:</b> ' + esc(m.filters) + '</p>' + (m.scopeNote ? '<p>' + esc(m.scopeNote) + '</p>' : '') + '</header>';
+    html += section('indicators', '<h2>Visão geral do período</h2>' + (s ? '<div class="pf-s-metrics">' + metric('Receitas previstas', s.revenue) + metric('Receitas recebidas', s.received, 'positive') + metric('A receber — total em aberto', s.receivable) + metric('Despesas pagas', s.paidExpense) + metric('Despesas a vencer', s.due, 'warning') + metric('Despesas vencidas no período', s.overdueExpense, 'negative') + metric('Despesas totais', s.expense) + metric('Investimentos', s.investment) + metric('Resultado previsto', s.result, 'featured') + '</div><p class="pf-s-note">Resultado = receitas − despesas − investimentos. Estimativa por vencimento; não representa saldo bancário conciliado.</p>' : '<p>Esta exportação não forneceu lançamentos estruturados. Consulte os valores no modo completo; totais não foram inferidos da imagem do gráfico.</p>'));
+    html += section('balances', '<h2>Saldos e bases de cálculo</h2>' + (m.balanceAvailable ? '<div class="pf-s-balance"><p><b>Por vencimento, no período:</b> abertura ' + money(m.opening) + ' · final ' + money(m.closing) + '.</p><p>Menor saldo por vencimento: <b>' + money(m.minimumScheduled?.balance) + '</b> em ' + br(m.minimumScheduled?.date) + '.</p><p><b>Próximos 30 dias, a partir do realizado:</b> menor saldo <b>' + money(m.minimum?.balance) + '</b> em ' + br(m.minimum?.date) + '.</p></div><p class="pf-s-note">Bases diferentes, não conciliadas com extrato. A projeção parte dos movimentos liquidados cadastrados até a referência e acrescenta os compromissos em aberto dos próximos 30 dias. Atrasados não são recebimentos presumidos.</p>' : '<p class="pf-s-note">Saldos inicial, final e trajetória: N/D. Este recorte de conteúdo não determina o caixa disponível. Os totais acima se referem somente aos filtros informados.</p>'));
+    function upcoming(title, a, extra) {
+      return '<h2>' + title + '</h2><p class="pf-s-note">Janela: ' + br(m.today) + ' a ' + br(m.futureLabel.split(' a ')[1]) + '; filtros de conteúdo mantidos.</p>' + (a.length ? '<table><thead><tr><th>Vencimento</th><th>Compromisso</th><th class="num">Valor</th></tr></thead><tbody>' + a.map(g => '<tr><td>' + br(g.date) + '</td><td>' + esc(g.count === 1 ? g.names[0] : g.count + ' lançamentos na data') + '</td><td class="num">' + money(g.total) + '</td></tr>').join('') + '</tbody></table>' : '<p class="pf-s-note">Nenhum compromisso cadastrado nessa janela.</p>') + (extra ? '<p class="pf-s-note">Mais ' + extra + ' data(s) de vencimento: consulte o modo completo.</p>' : '');
+    }
+    html += '<div class="pf-s-schedule">' + section('payments', upcoming('Próximas contas a pagar', m.payments, m.morePayments));
+    html += section('receipts', upcoming('Recebimentos previstos', m.receipts, m.moreReceipts)) + '</div>';
+    const alerts = [];
+    if (s?.overdueReceivable) alerts.push('Receitas vencidas no período: ' + money(s.overdueReceivable) + '.');
+    if (s?.pastReceivable) alerts.push('Receitas atrasadas de períodos anteriores: ' + money(s.pastReceivable) + '.');
+    if (s?.pastPayable) alerts.push('Saídas atrasadas de períodos anteriores: ' + money(s.pastPayable) + '.');
+    if (m.minimum && m.minimum.balance < 0) alerts.push('Déficit projetado, pela base realizada cadastrada: ' + money(-m.minimum.balance) + ' em ' + br(m.minimum.date) + '. Confirmar disponibilidade e recebimentos.');
+    if (m.receipts.length === 1 && m.receipts[0].count > 1) alerts.push('Os próximos recebimentos cadastrados estão concentrados em ' + br(m.receipts[0].date) + '.');
+    if (m.undated) alerts.push(m.undated + ' lançamento(s) sem vencimento válido; não incluídos nas trajetórias diárias.');
+    html += section('alerts', '<h2>Alertas</h2>' + (alerts.length ? '<ul>' + alerts.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>' : '<p class="pf-s-note">Nenhum alerta adicional identificado nos dados fornecidos.</p>')) + '</article>';
 
+    function stackChart() {
+      if (!s) return '<p>N/D — lançamentos não fornecidos.</p>';
+      const series = [[s.received, s.receivableOnTime, s.overdueReceivable], [s.paidExpense, s.due, s.overdueExpense]];
+      const lo = Math.min(0, ...series.map(v => v.filter(n => n < 0).reduce((a, n) => a + n, 0))), hi = Math.max(1, ...series.map(v => v.filter(n => n >= 0).reduce((a, n) => a + n, 0)));
+      const x = n => 75 + (n - lo) / (hi - lo) * 285, colors = ['#166534', '#92400e', '#b91c1c'];
+      let out = '<svg viewBox="0 0 390 150" role="img" aria-label="Receitas e despesas: liquidado, em aberto no prazo e vencido. Valores detalhados na tabela acessível."><line x1="' + x(0) + '" y1="15" x2="' + x(0) + '" y2="120" stroke="#64748b"/>';
+      series.forEach((parts, i) => { let pos = 0, neg = 0; out += '<text x="0" y="' + (43 + i * 57) + '" font-size="12">' + ['Receitas', 'Despesas'][i] + '</text>'; parts.forEach((v, k) => { const start = v >= 0 ? pos : neg; if (v >= 0) pos += v; else neg += v; out += '<rect x="' + Math.min(x(start), x(start + v)) + '" y="' + (23 + i * 57) + '" width="' + Math.abs(x(start + v) - x(start)) + '" height="25" fill="' + colors[k] + '"><title>' + esc(money(v)) + '</title></rect>'; }); out += '<text x="75" y="' + (64 + i * 57) + '" font-size="12">Total: ' + esc(money(parts.reduce((a, v) => a + v, 0))) + '</text>'; });
+      return out + '</svg><p class="pf-s-legend">Verde: liquidado · Âmbar: em aberto no prazo · Vermelho: vencido</p><details class="pf-s-accessible"><summary>Tabela dos dados do gráfico</summary><table><thead><tr><th>Tipo</th><th>Liquidado</th><th>No prazo</th><th>Vencido</th></tr></thead><tbody>' + series.map((a, i) => '<tr><td>' + ['Receitas', 'Despesas'][i] + '</td>' + a.map(v => '<td>' + money(v) + '</td>').join('') + '</tr>').join('') + '</tbody></table></details>';
+    }
+    function trajectory() {
+      if (!m.balanceAvailable || !m.projection.length) return '<p class="pf-s-note">N/D — o recorte não permite calcular disponibilidade de caixa.</p>';
+      const points = m.projection, min = Math.min(0, ...points.map(p => p.balance)), max = Math.max(0, ...points.map(p => p.balance)), span = max - min || 1;
+      const x = i => 65 + i / Math.max(1, points.length - 1) * 285, y = n => 125 - (n - min) / span * 100;
+      const pointsHTML = points.map((p, i) => x(i) + ',' + y(p.balance)).join(' ');
+      return '<svg viewBox="0 0 390 165" role="img" aria-label="Projeção de saldo a partir do realizado cadastrado. Menor saldo ' + esc(money(m.minimum.balance)) + ' em ' + br(m.minimum.date) + '"><text x="1" y="20" font-size="11">' + esc(money(max)) + '</text><text x="1" y="132" font-size="11">' + esc(money(min)) + '</text><line x1="65" y1="' + y(0) + '" x2="350" y2="' + y(0) + '" stroke="#94a3b8" stroke-dasharray="4 4"/><polyline points="' + pointsHTML + '" fill="none" stroke="#1d4ed8" stroke-width="2.5"/><text x="65" y="155" font-size="11">' + br(points[0].date) + '</text><text x="350" y="155" text-anchor="end" font-size="11">' + br(points.at(-1).date) + '</text></svg><p class="pf-s-note">Base realizada; mínimo ' + money(m.minimum.balance) + ' em ' + br(m.minimum.date) + '. Não conciliado.</p>';
+    }
+    const maxTop = Math.max(1, ...m.top.map(t => Math.abs(t.valor)));
+    const topHTML = m.top.length ? m.top.map(t => '<div class="pf-s-top-row"><div><b>' + esc(t.descricao) + '</b><span>' + br(t.vencimento) + '</span></div><div class="pf-s-track"><i style="width:' + Math.abs(t.valor) / maxTop * 100 + '%"></i></div><strong>' + money(t.valor) + '</strong></div>').join('') : '<p class="pf-s-note">Nenhuma despesa no recorte.</p>';
+    html += '<article class="pf-summary-page pf-summary-charts"><header class="pf-s-header"><h2>Gráficos do resumo</h2><p>' + br(m.start) + ' a ' + br(m.end) + ' · ' + esc(m.filters) + '</p></header><div class="pf-s-chart-grid">' + section('comparisonChart', '<h3>Receitas × despesas</h3>' + stackChart()) + section('balanceChart', '<h3>Trajetória dos próximos 30 dias</h3>' + trajectory()) + section('topChart', '<h3>Os cinco maiores lançamentos de despesa</h3><p class="pf-s-note">Lançamentos individuais do período; não agrupa categorias.</p>' + topHTML) + '</div><p class="pf-s-note">Valores e gráficos usam a mesma fotografia dos dados. Conteúdo detalhado disponível no modo completo.</p></article>';
+    return html;
+  }
+
+  function installReportSelection(prepared) {
+    function start() {
+      if (document.getElementById('pf-report-selection')) return;
+      document.body.removeAttribute('onload');
+      const content = document.createElement('div'); content.id = 'pf-report-content';
+      [...document.body.childNodes].forEach(node => content.append(node)); document.body.append(content);
+      // Scripts já executados não pertencem ao documento que será impresso.
+      content.querySelectorAll('script,noscript').forEach(node => node.remove());
+      content.querySelectorAll('button').forEach(button => { if (/print\(|imprimir|salvar.*pdf/i.test(button.getAttribute('onclick') || button.textContent)) button.remove(); });
+      const summary = document.createElement('main'); summary.id = 'pf-report-summary'; summary.innerHTML = prepared.html; document.body.append(summary);
+      const items = [], occurrences = new Map();
+      function add(label, nodes, kind) { label = label.trim().replace(/\s+/g, ' '); const key = kind + ':' + label, count = occurrences.get(key) || 0; occurrences.set(key, count + 1); items.push({ label, nodes, kind, key: key + ':' + count, checked: true }); }
+      [...content.querySelectorAll('h2,h3')].reverse().forEach(heading => { if (heading.closest('table')) return; const section = document.createElement('div'); heading.before(section); const level = Number(heading.tagName.slice(1)); let node = heading; while (node) { if (node !== heading && (/^H[123]$/.test(node.nodeName) || node.dataset?.pfHeading) && Number(node.dataset?.pfHeading || node.nodeName.slice(1)) <= level) break; const next = node.nextSibling; section.append(node); node = next; } section.dataset.pfHeading = level; });
+      content.querySelectorAll('[data-pf-heading],.kpi,.grafico,.bloco,.resumo,.grafico-print-bloco,.pf-chart-card').forEach(node => { const label = node.querySelector('h2,h3,h4,.rotulo,.grafico-titulo,.bloco-titulo')?.textContent; if (label) add(label, [node], 'Conteúdo'); });
+      content.querySelectorAll('table').forEach((table, index) => { const title = table.closest('[data-pf-heading],.bloco')?.querySelector('h2,h3,.bloco-titulo')?.textContent || 'Tabela ' + (index + 1); add(title, [table.closest('.bloco,.tablewrap') || table], 'Tabela'); [...(table.tHead?.rows[0]?.cells || [])].forEach((header, column) => { if (header.colSpan !== 1) return; const cells = [...table.rows].flatMap(row => { let offset = 0; return [...row.cells].filter(cell => { const match = offset === column && cell.colSpan === 1; offset += cell.colSpan; return match; }); }); add(title + ' — ' + header.textContent, cells, 'Campo'); }); });
+      content.querySelectorAll('.meta,.rodape').forEach(node => add(node.classList.contains('meta') ? 'Dados de emissão' : 'Rodapé', [node], 'Campo'));
+      if (!items.length) add('Conteúdo do relatório', [...content.children], 'Conteúdo');
+      const panel = document.createElement('section'); panel.id = 'pf-report-selection';
+      panel.innerHTML = '<h2>Como deseja gerar o relatório?</h2><p>Escolha o modo antes de personalizar o conteúdo. Os dois modos usam os mesmos dados e filtros desta exportação.</p><div class="pf-mode-actions" role="group" aria-label="Modo do relatório"><button type="button" data-mode="summary" aria-pressed="true">Relatório resumido</button><button type="button" data-mode="full" aria-pressed="false">Relatório completo</button></div><details id="pf-summary-custom"><summary>Personalizar resumo</summary><div class="pf-options" id="pf-summary-options"></div></details><div id="pf-full-custom" hidden><h3>Incluir no relatório completo</h3><div class="pf-actions"><button type="button" data-all="1">Selecionar tudo</button><button type="button" data-all="0">Desmarcar tudo</button></div><div class="pf-options" id="pf-full-options"></div></div><div class="pf-page-controls"><label>Papel <select id="pf-paper"><option>A4</option></select></label><label>Orientação <select id="pf-orientation"><option value="portrait">Retrato</option><option value="landscape">Paisagem</option></select></label><label>Margem <select id="pf-margin"><option value="12">12 mm</option><option value="16">16 mm</option><option value="20">20 mm</option></select></label></div><label class="pf-option"><input type="checkbox" id="pf-remember"> Salvar preferências deste modo para este relatório</label><div class="pf-actions"><button type="button" id="pf-preview">Pré-visualizar</button><button type="button" id="pf-pdf" disabled>Gerar PDF</button><button type="button" id="pf-print" disabled>Imprimir</button></div><p role="status" aria-live="polite" id="pf-status"></p>';
+      document.body.prepend(panel);
+      const style = document.createElement('style'); style.textContent = prepared.css; document.head.append(style);
+      const pageStyle = document.createElement('style'); document.head.append(pageStyle);
+      const status = panel.querySelector('#pf-status'), remember = panel.querySelector('#pf-remember');
+      const summaryLabels = { indicators: 'Visão geral', balances: 'Saldos e bases', payments: 'Próximas contas a pagar', receipts: 'Recebimentos previstos', alerts: 'Alertas', comparisonChart: 'Gráfico Receitas × despesas', balanceChart: 'Gráfico de saldo projetado', topChart: 'Cinco maiores despesas' };
+      const summaryItems = [...summary.querySelectorAll('[data-summary]')].map(node => ({ key: node.dataset.summary, label: summaryLabels[node.dataset.summary], nodes: [node], checked: true }));
+      function choices(list, target) { list.forEach(item => { const label = document.createElement('label'); label.className = 'pf-option'; const input = document.createElement('input'); input.type = 'checkbox'; input.checked = true; label.append(input, document.createTextNode((item.kind ? item.kind + ': ' : '') + item.label)); target.append(label); item.input = input; input.onchange = () => { item.checked = input.checked; update(false); }; }); }
+      choices(items, panel.querySelector('#pf-full-options')); choices(summaryItems, panel.querySelector('#pf-summary-options'));
+      let mode = 'summary';
+      let preferenceStorage; try { if (!prepared.model.demo) preferenceStorage = (window.opener || window).PFReportPreferences?.(); } catch (_) {}
+      const key = () => 'pf-report-selection-v2:' + document.title + ':' + mode;
+      function save() { if (!preferenceStorage) return; try { if (remember.checked) preferenceStorage.setItem(key(), JSON.stringify(Object.fromEntries((mode === 'summary' ? summaryItems : items).map(item => [item.key, item.checked])))); else preferenceStorage.removeItem(key()); } catch (_) { status.textContent += ' Preferências não puderam ser salvas.'; } }
+      function restore() { remember.checked = false; try { const saved = JSON.parse(preferenceStorage?.getItem(key()) || 'null'); if (saved) { remember.checked = true; (mode === 'summary' ? summaryItems : items).forEach(item => item.input.checked = item.checked = saved[item.key] !== false); } } catch (_) {} }
+      function update(preview) {
+        content.querySelectorAll('.pf-report-excluded').forEach(n => n.classList.remove('pf-report-excluded'));
+        items.filter(i => !i.checked).forEach(i => i.nodes.forEach(n => n.classList.add('pf-report-excluded')));
+        summaryItems.forEach(i => i.nodes.forEach(n => n.hidden = !i.checked));
+        const any = mode === 'summary' ? summaryItems.some(i => i.checked) : items.some(i => i.checked && i.kind !== 'Campo' && i.nodes.some(n => !n.closest('.pf-report-excluded')));
+        content.hidden = !preview || mode !== 'full' || !any; summary.hidden = !preview || mode !== 'summary' || !any;
+        summary.querySelector('.pf-summary-charts').hidden = !summaryItems.some(i => /Chart$/.test(i.key) && i.checked);
+        document.body.dataset.pfReportMode = mode;
+        pageStyle.textContent = '@page{size:A4 ' + panel.querySelector('#pf-orientation').value + ';margin:' + panel.querySelector('#pf-margin').value + 'mm}';
+        panel.querySelector('#pf-pdf').disabled = panel.querySelector('#pf-print').disabled = !preview || !any;
+        status.textContent = !any ? 'Selecione ao menos um conteúdo.' : preview ? (mode === 'summary' ? 'Resumo preparado. Duas páginas são a meta com a configuração padrão; confirme na prévia de impressão.' : 'Relatório completo preparado com as seleções atuais.') + ' Gerar PDF abre a impressão do Chrome: escolha Salvar como PDF. Confira papel, orientação e margens na janela do navegador.' : 'Clique em Pré-visualizar para conferir o modo escolhido.';
+        save();
+      }
+      panel.querySelectorAll('[data-mode]').forEach(button => button.onclick = () => { save(); mode = button.dataset.mode; panel.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode))); panel.querySelector('#pf-full-custom').hidden = mode !== 'full'; panel.querySelector('#pf-summary-custom').hidden = mode !== 'summary'; panel.querySelector('#pf-orientation').value = mode === 'summary' ? 'portrait' : 'landscape'; restore(); update(false); });
+      panel.querySelectorAll('[data-all]').forEach(button => button.onclick = () => { items.forEach(i => i.input.checked = i.checked = button.dataset.all === '1'); update(false); });
+      panel.querySelectorAll('select').forEach(select => select.onchange = () => update(false));
+      remember.onchange = () => update(false);
+      panel.querySelector('#pf-preview').onclick = () => update(true);
+      let images = [];
+      function freezeCanvases() { const target = mode === 'summary' ? summary : content; target.querySelectorAll('canvas').forEach(canvas => { try { const image = document.createElement('img'); image.src = canvas.toDataURL('image/png'); image.style.cssText = 'max-width:100%;height:auto'; image.alt = canvas.getAttribute('aria-label') || 'Gráfico do relatório'; canvas.replaceWith(image); images.push([canvas, image]); } catch (_) { status.textContent = 'Um gráfico não pôde ser convertido. Confira sua prévia antes de salvar.'; } }); }
+      window.addEventListener('beforeprint', () => { update(true); freezeCanvases(); });
+      window.addEventListener('afterprint', () => { images.forEach(([canvas, image]) => image.replaceWith(canvas)); images = []; });
+      panel.querySelector('#pf-pdf').onclick = panel.querySelector('#pf-print').onclick = () => { update(true); window.print(); };
+      window.PFReportPreview = { model: prepared.model, mode: () => mode };
+      restore(); update(false);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
+  }
+
+  const css = `
+html body #pf-report-content[hidden],html body #pf-report-summary[hidden],html body #pf-report-selection [hidden],html body #pf-report-summary [hidden],html body .pf-report-excluded{display:none!important}#pf-report-summary .pf-s-schedule{display:grid;grid-template-columns:1fr 1fr;gap:16px}#pf-report-summary .pf-s-schedule section{min-width:0}@media screen and (max-width:650px){#pf-report-summary .pf-s-schedule{grid-template-columns:1fr}}@media print{#pf-report-summary .pf-s-schedule{grid-template-columns:1fr 1fr}#pf-report-summary .pf-s-schedule th,#pf-report-summary .pf-s-schedule td{padding:4px;font-size:11px}}
+html body #pf-report-selection{box-sizing:border-box;max-width:1000px;margin:16px auto;padding:22px;background:#fff;color:#17212b;border:1px solid #94a3b8;border-radius:12px;font:14px/1.5 Arial,sans-serif}#pf-report-selection h2{font-size:22px;margin:0 0 8px}#pf-report-selection h3{font-size:16px}#pf-report-selection button,#pf-report-selection select{font:inherit;min-height:42px;padding:9px 13px;border:1px solid #64748b;border-radius:7px;background:#fff;color:#17212b;cursor:pointer}#pf-report-selection button[aria-pressed=true]{background:#203c64;color:white;border-color:#203c64}#pf-report-selection button:disabled{opacity:.5;cursor:default}#pf-report-selection :focus-visible{outline:3px solid #1d4ed8;outline-offset:2px}.pf-mode-actions,.pf-actions,.pf-page-controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.pf-page-controls label{display:flex;align-items:center;gap:6px}.pf-options{display:grid;grid-template-columns:1fr 1fr;gap:5px;max-height:45vh;overflow:auto;margin:12px 0}.pf-option{display:flex;align-items:center;gap:9px;min-height:40px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.pf-option input{width:19px;height:19px;flex-shrink:0}#pf-summary-custom>summary{cursor:pointer;padding:10px 0;font-weight:600}html body .pf-report-excluded{display:none!important}html body #pf-report-summary[hidden],html body #pf-report-content[hidden],#pf-report-selection [hidden],#pf-report-summary [hidden]{display:none!important}
+html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px auto;background:#fff;color:#17212b;font:13px/1.45 Arial,sans-serif;padding:0}#pf-report-summary .pf-summary-page{box-sizing:border-box;padding:24px;background:#fff;margin:0 0 20px;border:1px solid #cbd5e1;box-shadow:0 3px 12px #17212b0a}#pf-report-summary .pf-s-header{position:static!important;display:block!important;padding:0 0 12px!important;margin:0 0 14px!important;background:white!important;color:#17212b!important;border-bottom:2px solid #203c64}#pf-report-summary h1{font-size:23px;line-height:1.25;margin:5px 0 8px}#pf-report-summary h2{font-size:16px;line-height:1.35;margin:14px 0 7px;color:#203c64}#pf-report-summary h3{font-size:15px;margin:0 0 9px}#pf-report-summary p{margin:5px 0}#pf-report-summary .pf-s-eyebrow{font-size:11px;font-weight:700;letter-spacing:.8px;color:#526176}#pf-report-summary .pf-s-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}#pf-report-summary .pf-s-metric{padding:10px 12px;border:1px solid #cbd5e1;border-radius:7px;min-width:0}#pf-report-summary .pf-s-metric span{display:block;font-size:11px;color:#526176}#pf-report-summary .pf-s-metric strong{display:block;margin-top:5px;font-size:20px;line-height:1.2;font-variant-numeric:tabular-nums}#pf-report-summary .positive strong{color:#166534}#pf-report-summary .warning strong{color:#92400e}#pf-report-summary .negative strong{color:#b91c1c}#pf-report-summary .featured{background:#eff6ff;border-color:#1d4ed8}#pf-report-summary .pf-s-note{font-size:11px;color:#526176;line-height:1.5}#pf-report-summary .pf-s-balance{padding:8px 12px;background:#f3f5f7;border:1px solid #dbe2ea;border-radius:7px}#pf-report-summary table{width:100%;min-width:0;border-collapse:collapse;font-size:12px;table-layout:auto}#pf-report-summary th{background:#eef2f6;color:#17212b}#pf-report-summary th,#pf-report-summary td{padding:6px 8px;border-bottom:1px solid #dbe2ea;text-align:left}#pf-report-summary .num{text-align:right;white-space:nowrap}#pf-report-summary ul{padding-left:18px;margin:6px 0}#pf-report-summary li{margin:3px 0;font-size:12px}#pf-report-summary .pf-s-chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#pf-report-summary [data-summary=topChart]{grid-column:1/-1}#pf-report-summary .pf-s-chart-grid section{min-width:0;border:1px solid #cbd5e1;border-radius:8px;padding:12px}#pf-report-summary svg{display:block;width:100%;height:auto;color:#17212b}#pf-report-summary svg text{fill:#17212b;font-family:Arial,sans-serif}#pf-report-summary .pf-s-legend{font-size:11px;color:#526176}#pf-report-summary .pf-s-accessible{font-size:11px;margin-top:8px}#pf-report-summary .pf-s-top-row{display:grid;grid-template-columns:minmax(120px,1.4fr) minmax(70px,1fr) auto;gap:10px;align-items:center;margin:12px 0;font-size:12px}#pf-report-summary .pf-s-top-row span{display:block;font-size:11px;color:#526176}#pf-report-summary .pf-s-track{display:block;height:12px;background:#eef2f6;border-radius:4px;overflow:hidden}#pf-report-summary .pf-s-track i{display:block;height:100%;background:#b91c1c}#pf-report-summary .pf-s-top-row strong{white-space:nowrap}html body #pf-report-content script{display:none!important}
+@media(max-width:650px){.pf-options{grid-template-columns:1fr}#pf-report-selection{margin:8px!important;padding:14px!important}#pf-report-summary .pf-summary-page{padding:16px}#pf-report-summary .pf-s-metrics{grid-template-columns:1fr 1fr}#pf-report-summary .pf-s-chart-grid{grid-template-columns:1fr}#pf-report-summary .pf-s-metric strong{font-size:18px}}
+@media print{html body #pf-report-selection{display:none!important}html body #pf-report-summary{max-width:none!important;margin:0!important;font-size:10pt!important}html body #pf-report-summary .pf-summary-page{margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;break-before:auto;break-after:auto}html body #pf-report-summary .pf-summary-charts{break-before:page!important}#pf-report-summary h1{font-size:18pt}#pf-report-summary h2{font-size:12pt;break-after:avoid}#pf-report-summary .pf-s-metric strong{font-size:15pt}#pf-report-summary .pf-s-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}#pf-report-summary .pf-s-chart-grid{grid-template-columns:1fr 1fr}#pf-report-summary .pf-s-chart-grid section{break-inside:avoid}#pf-report-summary .pf-s-accessible{display:none}#pf-report-summary section{break-inside:auto}html body[data-pf-report-mode=summary] #pf-report-content,html body[data-pf-report-mode=full] #pf-report-summary{display:none!important}body{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+`;
+  function appContext(overrides) {
+    overrides = overrides || {};
+    const get = id => typeof document !== 'undefined' ? document.getElementById(id)?.value || '' : '';
+    let rows, base;
+    try { if (typeof getFilteredTransactions === 'function') { rows = getFilteredTransactions(); base = getFilteredTransactions({ ignorarPeriodo: true, ignorarAtrasados: true }); } } catch (_) {}
+    const filtered = [['filtroTipo', ['', 'Todos']], ['filtroRubrica', ['', 'Todas']], ['filtroSubItem', ['', 'Todos']], ['desktop-person', ['', 'Todas']]].some(([key, all]) => !all.includes(get(key))) || !!get('filtroDescricao') || !!get('filtroBuscaRubrica') || !!get('filtroBuscaSubItem');
+    let quick = false; try { quick = !!window.PFQuickCards?.status?.().active; } catch (_) {}
+    const desktop = window.PFDesktopApproved?.reportContext?.() || {};
+    const dateField = id => /^\d{4}-\d{2}-\d{2}$/.test(get(id)) ? get(id) : undefined;
+    const result = { rows, base, start: dateField('filtroDataInicio'), end: dateField('filtroDataFim'), today: typeof obterDataLocalISO === 'function' ? obterDataLocalISO() : undefined, filters: typeof window.PFCashFlow?.filters === 'function' ? window.PFCashFlow.filters() : 'Filtros atuais', balanceAvailable: !filtered && !quick, ...desktop, ...overrides };
+    if (typeof result.filters !== 'string') result.filters = String(result.filters);
+    return result;
+  }
+  const safeJSON = value => JSON.stringify(value).replace(/</g, () => String.fromCharCode(92) + 'u003c').replace(/\u2028/g, () => String.fromCharCode(92) + 'u2028').replace(/\u2029/g, () => String.fromCharCode(92) + 'u2029');
+  function prepare(context) { const model = financialModel(context); return { model, html: summaryHTML(model), css }; }
+  function scriptText(prepared) { return '(' + installReportSelection.toString() + ')(' + safeJSON(prepared) + ');'; }
+  let pending = null;
+  const api = {
+    model: financialModel, summaryHTML, prepare, css, context: appContext,
+    setContext(context) { pending = context; },
+    decorate(html, context) {
+      if (html.includes('id="pf-report-selection-bootstrap"')) return html;
+      html = html.replace(/ onload="setTimeout\(function\(\)\{window.focus\(\);window.print\(\);\},350\)"/g, '');
+      const prepared = prepare(context || pending || appContext()); pending = null;
+      const script = '<script id="pf-report-selection-bootstrap">' + scriptText(prepared).replace(/<\/script/gi, '<\\/script') + '<' + '/script>';
+      const point = html.toLowerCase().lastIndexOf('</body>');
+      return point < 0 ? html + script : html.slice(0, point) + script + html.slice(point);
+    },
+    install(target, context) {
+      const prepared = prepare(context || target.pfReportSnapshot || pending || appContext()); pending = null;
+      target.eval(scriptText(prepared));
+    }
+  };
+  window.PFReportSelection = api;
+})();
+
+window.PFReportPreferences=()=>window.pfdLocal||window.localStorage;
 // Older distribution builds print charts directly. Export an isolated snapshot instead.
 for (const name of ['salvarGraficosPDF','imprimirGraficos']) {
  if (typeof window[name] === 'function' && window[name].name !== 'gExport') window[name] = function() {
@@ -10991,6 +11105,7 @@ for (const name of ['salvarGraficosPDF','imprimirGraficos']) {
   copy.style.cssText='display:block;position:static;overflow:visible';
   const popup=window.open('','_blank');if(!popup){alert('Permita uma nova aba para visualizar o relatório.');return;}
   const css=[...document.querySelectorAll('style')].map(n=>n.outerHTML).join('');
+  window.PFReportSelection.setContext(window.PFReportSelection.context({kind:'graficos',title:'Relatório de gráficos',rows:typeof pfLancamentosFiltrados!=='undefined'?pfLancamentosFiltrados:undefined,base:[],start:document.getElementById('graficoDataInicio')?.value,end:document.getElementById('graficoDataFim')?.value,balanceAvailable:false,filters:'Filtros aplicados na janela de gráficos'}));
   popup.document.write(window.PFReportSelection.decorate('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório de gráficos</title>'+css+'</head><body>'+copy.outerHTML+'</body></html>'));popup.document.close();
  };
 }
@@ -15577,7 +15692,7 @@ function bootFinancialLanguage(catalogue, options) {
   return command+(category?' na categoria '+category[1]:'');
  }
  const api={getLanguage:()=>language,translate,canonical,originalText,question:uiQuestion,setLanguage,
-  decorate(html){const script='<script id="pf-global-language-report">('+bootFinancialLanguage.toString()+')('+JSON.stringify(catalogue).replace(/</g,'\\u003c')+','+JSON.stringify({language,noMenu:true})+');<'+'/script>';return html.includes('id="pf-global-language-report"')?html:html.replace('</body>',script+'</body>');}
+  decorate(html){const script='<script id="pf-global-language-report">('+bootFinancialLanguage.toString()+')('+JSON.stringify(catalogue).replace(/</g,'\\u003c')+','+JSON.stringify({language,noMenu:true})+');<'+'/script>';return html.includes('id="pf-global-language-report"')?html:(()=>{const at=html.toLowerCase().lastIndexOf('</body>');return at<0?html+script:html.slice(0,at)+script+html.slice(at)})();}
  };
  window.PFI18n=api;
  function excluded(element){
@@ -15729,7 +15844,7 @@ function bootCurrency(options={}){
  function setCurrency(c){if(!codes.includes(c)||options.snapshot)return;sequence++;busy=false;selected=c;updateCharts();window.dispatchEvent(new Event('pf-currency-change'));try{store?.setItem(key,c);}catch(_){}apply();if(c!=='BRL')load();}
  function requireSnapshot(){const s=snapshot();if(s.currency!=='BRL'&&!valid(s.quote,s.currency)){alert('Aguarde uma cotação válida ou selecione BRL antes de gerar o relatório.');throw Error('Cotação indisponível.');}return JSON.parse(JSON.stringify(s));}
  function decorate(html,s=requireSnapshot()){
-  const code='('+bootCurrency.toString()+')('+JSON.stringify({snapshot:s,locale:locale()}).replace(/</g,'\\u003c')+');';return html.replace(/<\/body>/i,'<script>'+code+'<\/script></body>');
+  const code='('+bootCurrency.toString()+')('+JSON.stringify({snapshot:s,locale:locale()}).replace(/</g,'\\u003c')+');';const script='<script>'+code.replace(/<\/script/gi,'<\\/script')+'<'+'/script>',at=html.toLowerCase().lastIndexOf('</body>');return at<0?html+script:html.slice(0,at)+script+html.slice(at);
  }
  const api={installView:target=>{const s=requireSnapshot();if(target.PFCurrency)target.PFCurrency.setSnapshot(s);else target.eval('('+bootCurrency.toString()+')('+JSON.stringify({snapshot:s,locale:locale()})+')');},setSnapshot:s=>{if(!options.snapshot)return;options.snapshot=s;selected=s.currency;quotes={};if(s.quote)quotes[selected]=s.quote;const n=document.querySelector('[data-pf-currency-note]');if(n)n.textContent=note(s);apply();},getCurrency:()=>selected,snapshot:requireSnapshot,value,format,valid,originalText,setCurrency,refresh:load,decorate,note};window.PFCurrency=api;
  function install(){
@@ -16000,240 +16115,6 @@ html body.dark-mode #modal #formLancamento > div:last-child {
     border-color: #475569 !important;
     box-shadow: 0 -6px 12px rgba(0, 0, 0, .12) !important;
 }
-</style>
-
-<style id="pf-modo-claro-legibilidade">
-/* Primeira etapa do modo claro: paleta e legibilidade, sem mudar os cálculos. */
-@media screen and (min-width: 901px) {
-  html body:not(.dark-mode):not(.auth-pendente) {
-    background: #f3f5f7 !important;
-    color: #17212b !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo {
-    color: #17212b;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  html body:not(.dark-mode) #appConteudo section#painelGerencial {
-    background: #ffffff !important;
-    border-color: #cbd5e1 !important;
-    color: #17212b !important;
-    box-shadow: 0 3px 14px rgba(23, 33, 43, .05) !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo section#painelGerencial > div:first-child h2 {
-    color: #17212b !important;
-    font-size: 22px !important;
-    line-height: 1.35;
-  }
-
-  html body:not(.dark-mode) #appConteudo #painelGerencial #periodoPainelGerencial {
-    color: #5b6573 !important;
-    font-size: 14px !important;
-    line-height: 1.5;
-  }
-
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial > div {
-    background: #ffffff !important;
-    border-color: #cbd5e1 !important;
-    color: #17212b !important;
-    padding: 18px !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial > div > p:first-child {
-    color: #5b6573 !important;
-    font-size: 13px !important;
-    line-height: 1.45;
-    font-weight: 700 !important;
-    letter-spacing: .3px !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial > div > p:last-child {
-    color: #17212b !important;
-    font-size: 28px !important;
-    line-height: 1.25;
-    font-variant-numeric: tabular-nums;
-  }
-
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgReceitas { color: #1e40af !important; }
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgRecebido { color: #166534 !important; }
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgAVencer { color: #92400e !important; }
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgVencido { color: #b91c1c !important; }
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgInvestimentos { color: #6b21a8 !important; }
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgSaldo { color: #17212b !important; }
-
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial > div:has(#pgSaldo) {
-    background: #eff6ff !important;
-    border-color: #1d4ed8 !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo #painelResumoGerencial #pgSituacao {
-    color: #17212b !important;
-    font-size: 22px !important;
-    line-height: 1.4;
-  }
-
-  html body:not(.dark-mode) #appConteudo #pgSemaforo #desktop-situation-risk {
-    color: #5b6573 !important;
-    font-size: 13px !important;
-    line-height: 1.5;
-  }
-
-  html body:not(.dark-mode) #appConteudo #painelGerencial #pfPainelRodape {
-    background: #f3f5f7 !important;
-    border-color: #cbd5e1 !important;
-    color: #17212b !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo #painelGerencial #desktop-paid-progress {
-    color: #17212b !important;
-    font-size: 14px !important;
-    line-height: 1.5;
-  }
-
-  html body:not(.dark-mode) #appConteudo #pfPainelAcoes button,
-  html body:not(.dark-mode) #appConteudo #clean-flow-toggle,
-  html body:not(.dark-mode) #appConteudo #clean-month-analysis button {
-    color: #17212b !important;
-    background: #ffffff !important;
-    border-color: #64748b !important;
-    font-size: 14px !important;
-    line-height: 1.4;
-    min-height: 40px;
-  }
-
-  html body:not(.dark-mode) #appConteudo #clean-flow-details,
-  html body:not(.dark-mode) #appConteudo #clean-flow-details > div,
-  html body:not(.dark-mode) #appConteudo #clean-month-analysis,
-  html body:not(.dark-mode) #appConteudo #clean-analysis-content,
-  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper {
-    background: #ffffff !important;
-    color: #17212b !important;
-    border-color: #cbd5e1 !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo #fc-toolbar,
-  html body:not(.dark-mode) #appConteudo #desktop-flow-tools,
-  html body:not(.dark-mode) #appConteudo #desktop-selection,
-  html body:not(.dark-mode) #appConteudo #desktop-visible-totals {
-    color: #17212b !important;
-    font-size: 14px !important;
-    line-height: 1.55;
-  }
-
-  html body:not(.dark-mode) #appConteudo #fc-toolbar small,
-  html body:not(.dark-mode) #appConteudo #clean-month-analysis p {
-    color: #5b6573 !important;
-    font-size: 13px !important;
-    line-height: 1.55;
-  }
-
-  html body:not(.dark-mode) #appConteudo #clean-month-analysis h3 {
-    color: #17212b !important;
-    font-size: 17px !important;
-    line-height: 1.4;
-  }
-
-  html body:not(.dark-mode) #appConteudo #clean-month-analysis .pfce-legend {
-    color: #17212b !important;
-    font-size: 13px !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo .pf-filtros-titulo,
-  html body:not(.dark-mode) #appConteudo .pf-filtro-item label,
-  html body:not(.dark-mode) #appConteudo #desktop-person-label {
-    color: #17212b !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    line-height: 1.45;
-  }
-
-  html body:not(.dark-mode) #appConteudo .pf-filtros-painel,
-  html body:not(.dark-mode) #appConteudo .pf-filtros-cabecalho {
-    color: #17212b !important;
-    background: #ffffff !important;
-    border-color: #cbd5e1 !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo .pf-filtro-item input,
-  html body:not(.dark-mode) #appConteudo .pf-filtro-item select,
-  html body:not(.dark-mode) #appConteudo #desktop-person,
-  html body:not(.dark-mode) #appConteudo #fc-group,
-  html body:not(.dark-mode) #appConteudo #clean-month-analysis select {
-    color: #17212b !important;
-    background: #ffffff !important;
-    border-color: #64748b !important;
-    font-size: 14px !important;
-    line-height: 1.4;
-    min-height: 40px;
-  }
-
-  html body:not(.dark-mode) #appConteudo .pf-filtro-item input::placeholder {
-    color: #5b6573 !important;
-    opacity: 1;
-  }
-
-  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper table {
-    min-width: 1280px !important;
-    font-size: 13px !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper th,
-  html body:not(.dark-mode) #appConteudo #clean-flow-details th {
-    color: #17212b !important;
-    background: #eef2f6 !important;
-    border-color: #cbd5e1 !important;
-    font-size: 13px !important;
-    line-height: 1.5 !important;
-    padding: 12px 8px !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper td,
-  html body:not(.dark-mode) #appConteudo #clean-flow-details td {
-    color: #17212b !important;
-    background: #ffffff !important;
-    border-color: #dbe2ea !important;
-    font-size: 13px !important;
-    line-height: 1.55 !important;
-    padding: 12px 8px !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper tbody tr:nth-child(even) td,
-  html body:not(.dark-mode) #appConteudo #clean-flow-details tbody tr:nth-child(even) td {
-    background: #f8fafc !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper .desktop-item-filter {
-    font-size: 13px !important;
-    line-height: 1.5;
-  }
-
-  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper .desktop-observation-cell,
-  html body:not(.dark-mode) #appConteudo #tabelaLancamentosWrapper .desktop-delay {
-    color: #5b6573 !important;
-    font-size: 12px !important;
-    line-height: 1.5 !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo #clean-flow-details td:nth-child(n+2) {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
-
-  html body:not(.dark-mode) #appConteudo #desktop-flow-curve text {
-    fill: #5b6573 !important;
-    font-size: 12px !important;
-  }
-
-  html body:not(.dark-mode) #appConteudo :is(input, select, button, a):focus-visible {
-    outline: 2px solid #1d4ed8 !important;
-    outline-offset: 2px;
-  }
-}
-
 </style>
 </body>
 </html>

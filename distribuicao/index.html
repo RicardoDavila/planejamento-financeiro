@@ -4520,7 +4520,7 @@ function bootFinancialLanguage(catalogue, options) {
   return command+(category?' na categoria '+category[1]:'');
  }
  const api={getLanguage:()=>language,translate,canonical,originalText,question:uiQuestion,setLanguage,
-  decorate(html){const script='<script id="pf-global-language-report">('+bootFinancialLanguage.toString()+')('+JSON.stringify(catalogue).replace(/</g,'\\u003c')+','+JSON.stringify({language,noMenu:true})+');<'+'/script>';return html.includes('id="pf-global-language-report"')?html:html.replace('</body>',script+'</body>');}
+  decorate(html){const script='<script id="pf-global-language-report">('+bootFinancialLanguage.toString()+')('+JSON.stringify(catalogue).replace(/</g,'\\u003c')+','+JSON.stringify({language,noMenu:true})+');<'+'/script>';return html.includes('id="pf-global-language-report"')?html:(()=>{const at=html.toLowerCase().lastIndexOf('</body>');return at<0?html+script:html.slice(0,at)+script+html.slice(at)})();}
  };
  window.PFI18n=api;
  function excluded(element){
