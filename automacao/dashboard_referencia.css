@@ -103,4 +103,6 @@ html body.pf-dashboard-shell #pfDashboardPerson select option:checked{background
 @media screen and (min-width:901px){html body.pf-dashboard-shell #pfDashboardHeader h2{display:flex!important;align-items:center;gap:10px}#pfDashboardProjectIcon{display:block;width:28px;height:28px;object-fit:contain;flex:none}}
 
 #pfDashboardIdentity #pfLanguageButton,#pfDashboardIdentity #pfCurrencyButton{min-height:38px;padding:9px 12px;border-radius:7px;font:600 11.5px 'JetBrains Mono',monospace;white-space:nowrap;cursor:pointer}
+
+html body.pf-dashboard-shell #pfDashboardIdentity #pfIaLaunch{position:static!important;inset:auto!important;display:inline-flex!important;align-items:center;min-height:38px;margin:0!important;padding:9px 12px!important;border:1px solid var(--dash-line)!important;border-radius:7px!important;font:600 11.5px 'JetBrains Mono',monospace!important;white-space:nowrap}
 }

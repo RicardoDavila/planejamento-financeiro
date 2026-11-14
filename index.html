@@ -8125,7 +8125,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V5.1.3';
+ const CURRENT_VERSION='V5.1.4';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -17760,6 +17760,8 @@ html body.pf-dashboard-shell #pfDashboardPerson select option:checked{background
 @media screen and (min-width:901px){html body.pf-dashboard-shell #pfDashboardHeader h2{display:flex!important;align-items:center;gap:10px}#pfDashboardProjectIcon{display:block;width:28px;height:28px;object-fit:contain;flex:none}}
 
 #pfDashboardIdentity #pfLanguageButton,#pfDashboardIdentity #pfCurrencyButton{min-height:38px;padding:9px 12px;border-radius:7px;font:600 11.5px 'JetBrains Mono',monospace;white-space:nowrap;cursor:pointer}
+
+html body.pf-dashboard-shell #pfDashboardIdentity #pfIaLaunch{position:static!important;inset:auto!important;display:inline-flex!important;align-items:center;min-height:38px;margin:0!important;padding:9px 12px!important;border:1px solid var(--dash-line)!important;border-radius:7px!important;font:600 11.5px 'JetBrains Mono',monospace!important;white-space:nowrap}
 }</style>
 <script id="pf-dashboard-script">/* pf-desktop-only-v511 */
 (function(){if(typeof matchMedia==='function'&&matchMedia('(max-width:900px), (pointer:coarse)').matches)return;
@@ -17782,6 +17784,8 @@ function install(){
  const toolbarPlace=document.createElement('div');toolbarPlace.id='pfDashboardToolbarPlace';home.querySelector('.pf-dash-grid')?.before(toolbarPlace);toolbarPlace.append(toolbar);
  const greeting=$('pf495Greeting');if(greeting)$('pfDashboardUser').append(greeting);
  const exit=$('pfSairBarraTopo');if(exit)$('pfDashboardIdentity').append(exit);const periodChip=document.createElement('span');periodChip.id='pfDashboardPeriod';$('pfDashboardIdentity').append(periodChip);const syncPeriod=()=>{const period=$('clean-month')?.textContent?.trim()||'';periodChip.textContent=period;periodChip.hidden=!period;$('pfDashboardSource').textContent='Base financeira'+(period?' · '+period:' · Período selecionado no painel');};syncPeriod();if($('clean-month'))new MutationObserver(syncPeriod).observe($('clean-month'),{childList:true,characterData:true,subtree:true});
+ // Restaurar o acesso ao assistente original no cabeçalho persistente.
+ const assistant=$('pfIaLaunch');if(assistant){assistant.title='Assistente financeiro — cálculos locais e Gemini online';$('pfDashboardIdentity').append(assistant);}
  const personLabel=$('desktop-person-label');if(personLabel)person.append(personLabel);
  const originalActions=$('clean-top-actions');
  const theme=$('reference-theme'),notice=originalActions?Array.from(originalActions.querySelectorAll('button')).find(b=>b!==theme&&b.id!=='pf-dois-monitores'&&b.id!=='pf-cloud-status'):null;

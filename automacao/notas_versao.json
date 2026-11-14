@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Restaura seletores de Português, English e Español e de Real, dólar e euro no cabeçalho do computador.",
-    "Moedas estrangeiras são apenas consulta visual a partir do Real original. Voltar a BRL restaura o texto original, sem reconversão.",
-    "Mantém dados, autenticação, sincronização, verde neon da nuvem e modo celular."
+    "Restaura o botão Assistente financeiro no cabeçalho do computador, acessível nas páginas do projeto.",
+    "Reutiliza o assistente original: cálculos locais e opção Gemini online com autorização de envio.",
+    "Preserva idiomas, moedas de consulta, dados, autenticação e modo celular."
   ],
   "distribuicao": [
-    "Restaura seletores de Português, English e Español e de Real, dólar e euro no cabeçalho do computador.",
-    "Moedas estrangeiras são apenas consulta visual a partir do Real original. Voltar a BRL restaura o texto original, sem reconversão.",
-    "Mantém dados, autenticação, sincronização, verde neon da nuvem e modo celular."
+    "Restaura o botão Assistente financeiro no cabeçalho do computador, acessível nas páginas do projeto.",
+    "Reutiliza o assistente original: cálculos locais e opção Gemini online com autorização de envio.",
+    "Preserva idiomas, moedas de consulta, dados, autenticação e modo celular."
   ]
 }
