@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Corrige reinicializações da Análise Financeira ao receber notificações de autenticação da mesma conta.",
-    "Preserva filtros e formulários durante renovação de sessão; troca de conta e saída continuam limpando os dados da página.",
-    "Mantém o assistente financeiro, idiomas, moedas de consulta e modo celular."
+    "Dois Monitores permite escolher entre as oito áreas do projeto e abrir a escolhida em uma segunda janela.",
+    "A segunda janela usa o aplicativo e a autenticação originais; arraste-a para o segundo monitor.",
+    "Mantém o modo celular e as proteções de acesso às áreas."
   ],
   "distribuicao": [
-    "Corrige reinicializações da Análise Financeira ao receber notificações de autenticação da mesma conta.",
-    "Preserva filtros e formulários durante renovação de sessão; troca de conta e saída continuam limpando os dados da página.",
-    "Mantém o assistente financeiro, idiomas, moedas de consulta e modo celular."
+    "Dois Monitores permite escolher entre as oito áreas do projeto e abrir a escolhida em uma segunda janela.",
+    "A segunda janela usa o aplicativo e a autenticação originais; arraste-a para o segundo monitor.",
+    "Mantém o modo celular e as proteções de acesso às áreas."
   ]
 }

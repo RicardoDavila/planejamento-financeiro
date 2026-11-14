@@ -240,6 +240,17 @@
       "#F8FAFC",
       "#A7B4C7",
       "html body:not(.dark-mode)"
+    ],
+    "pf-second-screen-script": [
+      "pf-secondary",
+      "function secondaryURL",
+      "data-second-view",
+      "function authorized",
+      "window.open"
+    ],
+    "pf-second-screen-style": [
+      "#pfSecondScreenDialog",
+      ".pf-second-grid"
     ]
   },
   "bloco_relatorios": "pf-report-selection-module",

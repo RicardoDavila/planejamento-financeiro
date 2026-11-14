@@ -1,0 +1,13 @@
+/* pf-desktop-only-v511 */
+@media (min-width:901px) and (pointer:fine){
+#pfSecondScreenDialog{width:780px;max-width:calc(100vw - 40px);max-height:calc(100dvh - 40px);overflow:auto;padding:24px;border:1px solid var(--pf16-accent);border-radius:16px;background:var(--pf16-card);color:var(--pf16-ink);font-family:'Space Grotesk',system-ui,sans-serif;box-shadow:0 24px 90px #000a}
+#pfSecondScreenDialog::backdrop{background:#000c;backdrop-filter:blur(4px)}
+#pfSecondScreenDialog header{display:flex;align-items:center;justify-content:space-between;gap:16px;background:transparent;color:inherit}
+#pfSecondScreenDialog h2{margin:0;font-size:22px}
+#pfSecondScreenDialog p{line-height:1.6;color:var(--pf16-muted)}
+#pfSecondScreenDialog .pf-second-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0}
+#pfSecondScreenDialog .pf-area-card{display:flex;align-items:center;gap:14px;min-height:88px;padding:16px;text-align:left;border:1px solid var(--pf16-border);border-radius:12px;background:var(--pf16-field);color:var(--pf16-ink);cursor:pointer}
+#pfSecondScreenDialog .pf-area-card>span{font-size:26px}
+#pfSecondScreenDialog button{padding:10px 14px;border:1px solid var(--pf16-border);border-radius:8px;background:var(--pf16-field);color:var(--pf16-accent);cursor:pointer;font:600 13px 'JetBrains Mono',monospace}
+#pfSecondScreenDialog footer{display:flex;justify-content:flex-end}
+}
