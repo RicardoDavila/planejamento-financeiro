@@ -246,7 +246,8 @@
       "function secondaryURL",
       "data-second-view",
       "function authorized",
-      "window.open"
+      "window.open",
+      "PFSecondScreenSession"
     ],
     "pf-second-screen-style": [
       "#pfSecondScreenDialog",

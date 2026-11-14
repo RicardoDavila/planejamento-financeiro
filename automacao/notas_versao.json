@@ -1,12 +1,12 @@
 {
   "pessoal": [
     "Dois Monitores permite escolher entre as oito áreas do projeto e abrir a escolhida em uma segunda janela.",
-    "A segunda janela usa o aplicativo e a autenticação originais; arraste-a para o segundo monitor.",
+    "A segunda tela reconhece a autorização viva da janela principal, sem repetir a senha. Aberturas independentes mantêm a proteção original.",
     "Mantém o modo celular e as proteções de acesso às áreas."
   ],
   "distribuicao": [
     "Dois Monitores permite escolher entre as oito áreas do projeto e abrir a escolhida em uma segunda janela.",
-    "A segunda janela usa o aplicativo e a autenticação originais; arraste-a para o segundo monitor.",
+    "A segunda tela reconhece a autorização viva da janela principal, sem repetir a senha. Aberturas independentes mantêm a proteção original.",
     "Mantém o modo celular e as proteções de acesso às áreas."
   ]
 }
