@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Mudança layout e estrutura: novo painel para computador, com as etapas 01 a 21 aprovadas.",
-    "Dashboard Pessoal, Análise Financeira e relatórios PDF/impressão com filtros e detalhamento.",
-    "Modo celular preservado. Dados existentes continuam pelo carregamento e sincronização do aplicativo; nenhum banco acompanha esta atualização."
+    "Corrige o destaque verde neon do botão Nuvem Online quando o estado original confirma a sincronização.",
+    "Preserva os estados de falha, sincronizando e desconectado; não altera dados ou autenticação.",
+    "Idiomas e moedas ficam para a próxima etapa; modo celular preservado."
   ],
   "distribuicao": [
-    "Mudança layout e estrutura: novo painel para computador, com as etapas 01 a 21 aprovadas.",
-    "Dashboard Pessoal, Análise Financeira e relatórios PDF/impressão com filtros e detalhamento.",
-    "Modo celular preservado. Dados existentes continuam pelo carregamento e sincronização do aplicativo; nenhum banco acompanha esta atualização."
+    "Corrige o destaque verde neon do botão Nuvem Online quando o estado original confirma a sincronização.",
+    "Preserva os estados de falha, sincronizando e desconectado; não altera dados ou autenticação.",
+    "Idiomas e moedas ficam para a próxima etapa; modo celular preservado."
   ]
 }

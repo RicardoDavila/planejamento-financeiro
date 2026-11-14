@@ -69,6 +69,14 @@ function buttons(){for(const b of document.querySelectorAll('button,input[type="
  if(b.matches('.pf-dash-card,.pf-area-card,.pdp-kpi,.pa-metric,.pfgo-metric,.pa-click,.dashboard-v40-card'))continue;
  const label=b.textContent||b.value||b.getAttribute('aria-label')||b.title||'',meta=(b.getAttribute('onclick')||'')+' '+(b.getAttribute('aria-label')||'')+' '+b.title;
  if(b.closest('table th')||b.closest('table td')&&!/editar|excluir|apagar|edit|delete/.test(fold(meta+' '+label)))continue;
+ // O estado vem do indicador original de sincronização; a paleta não altera a conexão.
+ if(b.id==='pf-cloud-status'&&b.classList.contains('pf-cloud-online')&&!b.disabled&&b.getAttribute('aria-disabled')!=='true'){
+  const neon=document.body.classList.contains('dark-mode')?'#00FF87':'#15803D';
+  mark(b,'pf16Action','cloudOnline');mark(b,'pf16Active','true');
+  for(const node of [b,...b.querySelectorAll('span,strong,small,b,p,label,i')])set(node,'color','var(--pf16-button-hover-ink,'+neon+')');
+  set(b,'background-color','rgba(0,255,135,.12)');set(b,'border-color','var(--pf16-hover-border,'+neon+')');
+  set(b,'box-shadow','var(--pf16-hover-shadow,0 0 12px rgba(0,255,135,.4))');set(b,'font-weight','700');set(b,'background-image','none');continue;
+ }
  const classified=actionKind(label,meta),kind=classified==='danger'&&b.closest('table td')?'dangerIcon':classified,active=isActive(b)||kind==='advanced'&&b.getAttribute('aria-expanded')==='true';let scheme=active?(activeStyles[kind]||['ink','selected','accent']):styles[kind];
  if(kind==='danger'&&/excluir selecao/.test(fold(label))&&!document.querySelector('#tabelaCorpo input[type=checkbox]:checked'))scheme=['muted','transparent','line'];
  if(b.disabled||b.getAttribute('aria-disabled')==='true'||kind==='month'&&(b.dataset.hasData==='false'||b.dataset.hasRecords==='false'))scheme=['disabled','transparent','line'];
