@@ -7981,7 +7981,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V5.1.2';
+ const CURRENT_VERSION='V5.1.3';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -11113,7 +11113,7 @@ body.pf-mobile-layout.dark-mode #pm-app>#clean-month-analysis.layout-mobile-char
   const badge=$('statusNuvemBadge'),cloud=badge?.closest('button'),actions=$('clean-top-actions');
   if(!cloud||!actions)return;
   cloud.id='pf-cloud-status';actions.append(cloud);
-  const update=()=>cloud.classList.toggle('pf-cloud-online',badge.textContent.trim()==='Online');
+  const update=()=>cloud.classList.toggle('pf-cloud-online',(window.PFI18n?.canonical?.(badge.textContent)||badge.textContent).trim()==='Online');
   new MutationObserver(update).observe(badge,{childList:true,characterData:true,subtree:true});update();
  }
  function authorized(){
@@ -11934,7 +11934,7 @@ html body #pfIaDialog :focus-visible{outline:3px solid #4338ca!important;outline
 <script id="pf-global-language">
 /* Global UI language. Financial values, stored codes and user records stay canonical. */
 (()=>{
-const catalogue=[["Resultado, composição e caixa • filtros independentes; pessoa inicial herdada do painel", "Results, composition and cash flow • independent filters; initial person type inherited from the dashboard", "Resultado, composición y caja • filtros independientes; tipo de persona inicial heredado del panel"], ["Resumo atualizado com os dados atuais do aplicativo.", "Summary updated with the current app data.", "Resumen actualizado con los datos actuales de la aplicación."], ["Atenção: o saldo previsto do período está negativo.", "Warning: the planned balance for the period is negative.", "Atención: el saldo previsto del período es negativo."], ["Saldos acumulados N/D para filtros de conteúdo. Limpe os filtros para avaliar o caixa.", "Cumulative balances are N/A with content filters. Clear the filters to assess cash flow.", "Saldos acumulados N/D con filtros de contenido. Borra los filtros para evaluar la caja."], ["Verde: receitas · Rosa: saídas (despesas e investimentos). Percentual = (mês atual − anterior) ÷ |anterior| × 100. N/D para base zero, mês parcial ou histórico insuficiente; não há linha ligando intervalos sem base.", "Green: income · Pink: outflows (expenses and investments). Percentage = (current month − previous month) ÷ |previous month| × 100. N/A for a zero baseline, partial month or insufficient history; intervals without a baseline are not connected by a line.", "Verde: ingresos · Rosa: salidas (gastos e inversiones). Porcentaje = (mes actual − anterior) ÷ |anterior| × 100. N/D para base cero, mes parcial o historial insuficiente; no se conectan intervalos sin base."],
+const catalogue=[["Painel Financeiro", "Financial Panel", "Panel financiero"], ["Dashboard Pessoal", "Personal Dashboard", "Panel personal"], ["Análise Financeira", "Financial Analysis", "Análisis financiero"], ["Escolha uma área para começar.", "Choose an area to get started.", "Elige un área para comenzar."], ["Voltar Página Inicial", "Back to Home", "Volver al inicio"], ["Ir para Painel de Lançamentos", "Go to Transactions", "Ir al panel de movimientos"], ["Ir para Cadastro", "Go to Registration", "Ir a registros"], ["Painel de Lançamentos", "Transactions Panel", "Panel de movimientos"], ["Ações e Ferramentas", "Actions and Tools", "Acciones y herramientas"], ["Ajuda e Informações", "Help and Information", "Ayuda e información"], ["Relatórios", "Reports", "Informes"], ["Resumo executivo do período", "Executive summary for the period", "Resumen ejecutivo del período"], ["Receita recebida", "Income received", "Ingresos recibidos"], ["Despesa paga", "Expenses paid", "Gastos pagados"], ["Resultado do período", "Period result", "Resultado del período"], ["Taxa de poupança", "Savings rate", "Tasa de ahorro"], ["Concentração de renda", "Income concentration", "Concentración de ingresos"], ["Reserva de emergência", "Emergency reserve", "Reserva de emergencia"], ["Patrimônio líquido", "Net worth", "Patrimonio neto"], ["Filtros avançados", "Advanced filters", "Filtros avanzados"], ["Expandir / recolher filtros", "Expand / collapse filters", "Expandir / contraer filtros"], ["Ano completo", "Full year", "Año completo"], ["Como está sua vida financeira, o que mudou e qual é o próximo passo?", "How are your finances, what changed and what is the next step?", "¿Cómo están tus finanzas, qué cambió y cuál es el próximo paso?"],["Resultado, composição e caixa • filtros independentes; pessoa inicial herdada do painel", "Results, composition and cash flow • independent filters; initial person type inherited from the dashboard", "Resultado, composición y caja • filtros independientes; tipo de persona inicial heredado del panel"], ["Resumo atualizado com os dados atuais do aplicativo.", "Summary updated with the current app data.", "Resumen actualizado con los datos actuales de la aplicación."], ["Atenção: o saldo previsto do período está negativo.", "Warning: the planned balance for the period is negative.", "Atención: el saldo previsto del período es negativo."], ["Saldos acumulados N/D para filtros de conteúdo. Limpe os filtros para avaliar o caixa.", "Cumulative balances are N/A with content filters. Clear the filters to assess cash flow.", "Saldos acumulados N/D con filtros de contenido. Borra los filtros para evaluar la caja."], ["Verde: receitas · Rosa: saídas (despesas e investimentos). Percentual = (mês atual − anterior) ÷ |anterior| × 100. N/D para base zero, mês parcial ou histórico insuficiente; não há linha ligando intervalos sem base.", "Green: income · Pink: outflows (expenses and investments). Percentage = (current month − previous month) ÷ |previous month| × 100. N/A for a zero baseline, partial month or insufficient history; intervals without a baseline are not connected by a line.", "Verde: ingresos · Rosa: salidas (gastos e inversiones). Porcentaje = (mes actual − anterior) ÷ |anterior| × 100. N/D para base cero, mes parcial o historial insuficiente; no se conectan intervalos sin base."],
 [
 "Idioma",
 "Language",
@@ -16390,6 +16390,7 @@ function bootFinancialLanguage(catalogue, options) {
   const raw=String(value??'');if(target==='pt-BR')return raw;
   const leading=raw.match(/^\s*/)[0],trailing=raw.match(/\s*$/)[0],n=normalize(raw);if(!n)return raw;
   const index=target==='en'?1:2;
+  const dated=n.match(/^([^\p{L}\p{N}]*)(Dashboard Pessoal)(\s*—\s*\d{4})$/u);if(dated)return leading+dated[1]+(target==='en'?'Personal Dashboard':'Panel personal')+dated[3]+trailing;
   let row=bySource.get(n.toLowerCase());
   if(row){let result=row[index];if(n===n.toLocaleUpperCase('pt-BR')&&/[a-zà-ÿ]/i.test(n))result=result.toLocaleUpperCase(locales[target]);return leading+result+trailing;}
   if(n.endsWith(':')){const label=bySource.get(n.slice(0,-1).trim().toLowerCase());if(label)return leading+label[index]+':'+trailing;}
@@ -16483,6 +16484,7 @@ function bootFinancialLanguage(catalogue, options) {
  function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(apply);}
  function closeMenu(focus=false){if(!menu)return;menu.hidden=true;trigger?.setAttribute('aria-expanded','false');if(focus)trigger?.focus();}
  function openMenu(){
+  const currency=document.getElementById('pfCurrencyMenu');if(currency)currency.hidden=true;document.getElementById('pfCurrencyButton')?.setAttribute('aria-expanded','false');
   const other=document.getElementById('desktop-dropdown');if(other)other.hidden=true;
   const r=trigger.getBoundingClientRect();menu.style.left=Math.max(8,Math.min(r.left,window.innerWidth-240))+'px';menu.style.top=(r.bottom+5)+'px';
   const template=document.getElementById('desktop-dropdown');if(template){const style=getComputedStyle(template);for(const property of ['backgroundColor','color','borderColor','borderRadius','boxShadow','fontFamily'])menu.style[property]=style[property];}
@@ -16490,7 +16492,7 @@ function bootFinancialLanguage(catalogue, options) {
  }
  function ensureMenu(){
   if(options.noMenu)return;
-  const normal=document.getElementById('pfMenuTopo'),mobile=document.querySelector('#pm-app .bar'),host=normal?.getClientRects().length?normal:mobile||normal;if(!host)return;
+  const normal=document.getElementById('pfDashboardIdentity')||document.getElementById('pfMenuTopo'),mobile=document.querySelector('#pm-app .bar'),host=normal?.getClientRects().length?normal:mobile||normal;if(!host)return;
   if(!trigger){
    trigger=document.createElement('button');trigger.id='pfLanguageButton';trigger.type='button';trigger.className='pf-menu-categoria';trigger.setAttribute('aria-haspopup','menu');trigger.setAttribute('aria-controls','pfLanguageMenu');trigger.setAttribute('aria-expanded','false');trigger.setAttribute('data-pf-i18n-skip','');trigger.setAttribute('data-pfce-ui','true');
    menu=document.createElement('div');menu.id='pfLanguageMenu';menu.hidden=true;menu.setAttribute('role','menu');menu.setAttribute('data-pfce-ui','true');document.body.append(menu);
@@ -16553,7 +16555,13 @@ function bootCurrency(options={}){
   const q=context.quote;return 'Consulta em '+context.currency+' · Base: BRL (R$) · 1 '+context.currency+' = R$ '+q.brlPerUnit.toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:6})+' · BCB PTAX, venda/fechamento: '+q.sourceTimestamp+' (Brasília) · Consulta: '+new Date(q.fetchedAt).toLocaleString(locale())+'.';
  }
  function eligible(parent){
-  if(parent.closest('input,textarea,select,button,script,style,[contenteditable],#pfCurrencyMenu,#pfCurrencyButton,[data-pf-currency-note]'))return false;
+  if(parent.closest('input,textarea,select,script,style,[contenteditable],#pfCurrencyMenu,#pfCurrencyButton,#pfLanguageMenu,#pfLanguageButton,[data-pf-currency-note]'))return false;
+  const desktopView=parent.closest('#pfPersonalDashboard,#pfAnalysisPage,#pfGraphicsPage,#pf-entries-panel');
+  if(desktopView){
+   if(parent.closest('[data-auto-cell="descricao"],[data-auto-cell="observacao"],.pf-auto-menu,#pf-auto-popup,.desktop-item-menu'))return false;
+   return true;
+  }
+  if(parent.closest('button'))return false;
   if(options.snapshot)return !parent.closest('[data-pf-report-controls]');
   return !!parent.closest('#pgReceitas,#pgRecebido,#pgDespesas,#pgAVencer,#pgVencido,#pgInvestimentos,#pgSaldo,.desktop-balance-grid strong,#cardPrevReceita,#cardRecRecebidas,#cardDespesas,#cardPendente,#cardInvestimento,#cardSaldo,.g-metric .number,.analysis-amount,.pf-heat-value,.pf-bar-row strong,.pfce-alt,.g-chart,.chart,.lcm-value,.lcm-valor,.dashboard-v40-grid,#dashboardV40Alerta,#tabelaLancamentosWrapper td.text-right,#desktopGraphics .num');
  }
@@ -16575,7 +16583,7 @@ function bootCurrency(options={}){
  }
  function updateCharts(){if(typeof Chart!=='undefined')for(const chart of Object.values(Chart.instances||{}))chart.update('none');}
  const schedule=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(()=>{scheduled=false;apply();place();});}};
- function place(){if(!button)return;const language=document.getElementById('pfLanguageButton');if(language?.parentElement){if(language.nextElementSibling!==button)language.after(button);return;}const normal=document.getElementById('pfMenuTopo'),mobile=document.querySelector('#pm-app .bar'),host=normal?.getClientRects().length?normal:mobile||normal;if(host&&button.parentElement!==host)host.append(button);}
+ function place(){if(!button)return;const language=document.getElementById('pfLanguageButton');if(language?.parentElement){if(language.nextElementSibling!==button)language.after(button);return;}const normal=document.getElementById('pfDashboardIdentity')||document.getElementById('pfMenuTopo'),mobile=document.querySelector('#pm-app .bar'),host=normal?.getClientRects().length?normal:mobile||normal;if(host&&button.parentElement!==host)host.append(button);}
  function close(){if(menu)menu.hidden=true;button?.setAttribute('aria-expanded','false');}
  function addMenu(){
   button=document.createElement('button');button.id='pfCurrencyButton';button.setAttribute('data-pf-i18n-skip','');button.setAttribute('data-pfce-ui','true');button.setAttribute('aria-controls','pfCurrencyMenu');button.type='button';button.className='pf-menu-categoria';button.setAttribute('aria-haspopup','menu');button.setAttribute('aria-expanded','false');
@@ -16583,7 +16591,7 @@ function bootCurrency(options={}){
   codes.forEach(c=>{const b=document.createElement('button');b.type='button';b.textContent=({BRL:'Real brasileiro (BRL — R$)',USD:'US Dollar (USD — US$)',EUR:'Euro (EUR — €)'})[c];b.setAttribute('role','menuitemradio');b.dataset.currency=c;b.style.cssText='display:block;width:100%;padding:12px;text-align:left;background:transparent;color:inherit;border:0;cursor:pointer';b.onclick=()=>{setCurrency(c);close();};menu.append(b);});
   const status=document.createElement('p');status.id='pfCurrencyStatus';status.style.cssText='font-size:12px;line-height:1.5;padding:8px';menu.append(status);
   const refresh=document.createElement('button');refresh.type='button';refresh.textContent='Atualizar cotação / Refresh / Actualizar';refresh.onclick=()=>load();menu.append(refresh);document.body.append(menu);const style=document.createElement('style');style.id='pf-global-currency-style';style.textContent='#pfCurrencyButton{display:inline-flex!important;align-items:center;white-space:nowrap;flex-shrink:0}#pfCurrencyMenu[hidden]{display:none!important}#pfCurrencyMenu button{min-height:44px;font:inherit}#pfCurrencyMenu button:focus-visible{outline:2px solid #818cf8}#pfCurrencyMenu button[aria-checked="true"]:after{content:" ✓"}@media print{#pfCurrencyMenu,#pfCurrencyButton{display:none!important}}';document.head.append(style);place();
-  button.onclick=()=>{if(!menu.hidden){close();return;}const r=button.getBoundingClientRect(),sample=document.getElementById('desktop-dropdown');if(sample){const s=getComputedStyle(sample);menu.style.background=s.backgroundColor;menu.style.color=s.color;}
+  button.onclick=()=>{const languageMenu=document.getElementById('pfLanguageMenu');if(languageMenu)languageMenu.hidden=true;document.getElementById('pfLanguageButton')?.setAttribute('aria-expanded','false');if(!menu.hidden){close();return;}const r=button.getBoundingClientRect(),sample=document.getElementById('desktop-dropdown');if(sample){const s=getComputedStyle(sample);menu.style.background=s.backgroundColor;menu.style.color=s.color;}
    menu.style.left=Math.max(8,Math.min(r.left,innerWidth-326))+'px';menu.style.top=(r.bottom+5)+'px';menu.hidden=false;button.setAttribute('aria-expanded','true');for(const b of menu.querySelectorAll('[data-currency]'))b.setAttribute('aria-checked',String(b.dataset.currency===selected));menu.querySelector('button').focus();};
   document.addEventListener('click',e=>{if(!menu.contains(e.target)&&!button.contains(e.target))close();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden){close();button.focus();}if(!menu.hidden&&['ArrowDown','ArrowUp'].includes(e.key)){e.preventDefault();const items=[...menu.querySelectorAll('button')],i=items.indexOf(document.activeElement);items[(i+(e.key==='ArrowDown'?1:items.length-1))%items.length].focus();}});window.addEventListener('resize',close);
  }
@@ -17661,7 +17669,7 @@ html body.pf-dashboard-shell #appConteudo{max-width:1360px!important;width:100%!
 #pfDashboardHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:0 0 22px;margin:0 0 24px;border-bottom:1px solid var(--dash-line);background:transparent!important;color:var(--dash-ink)}
 #pfDashboardHeader h2{font:700 20px 'Space Grotesk','DM Sans',Arial,sans-serif;margin:0 0 6px}
 #pfDashboardSource{font:13px 'Space Grotesk','DM Sans',Arial,sans-serif;color:var(--dash-muted);margin:0}
-#pfDashboardIdentity{display:flex;align-items:center;gap:12px}
+#pfDashboardIdentity{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:12px}
 #pfDashboardAvatar{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--dash-accent);border-radius:50%;color:var(--dash-accent);background:rgba(0,229,255,.12);font:14px 'JetBrains Mono',monospace}
 html body.pf-dashboard-shell #pfDashboardUser #pf495Greeting{padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;display:block!important;min-width:0!important}
 html body.pf-dashboard-shell #pfDashboardUser #pf495Greeting>div{display:flex!important;align-items:center;gap:12px}
@@ -17717,6 +17725,7 @@ html body.pf-dashboard-shell #pfDashboardPerson select option:checked{background
 
 @media screen and (min-width:901px){html body.pf-dashboard-shell #pfDashboardHeader h2{display:flex!important;align-items:center;gap:10px}#pfDashboardProjectIcon{display:block;width:28px;height:28px;object-fit:contain;flex:none}}
 
+#pfDashboardIdentity #pfLanguageButton,#pfDashboardIdentity #pfCurrencyButton{min-height:38px;padding:9px 12px;border-radius:7px;font:600 11.5px 'JetBrains Mono',monospace;white-space:nowrap;cursor:pointer}
 }</style>
 <script id="pf-dashboard-script">/* pf-desktop-only-v511 */
 (function(){if(typeof matchMedia==='function'&&matchMedia('(max-width:900px), (pointer:coarse)').matches)return;
@@ -19039,7 +19048,7 @@ function mark(n,key,value){if(n?.dataset&&n.dataset[key]!==value)n.dataset[key]=
 function tree(node,key='ink'){ink(node,key);for(const child of node?.querySelectorAll('span,strong,small,b,p,label,i')||[])ink(child,key);}
 function isActive(n){return n.matches('[aria-pressed="true"],[aria-selected="true"],[aria-current="page"]')||[...n.classList].some(c=>['active','selected','is-active','pdp-active','pa-active'].includes(c));}
 const cards='.pf-dash-card,.pf-area-card,.pdp-card,.pdp-kpi,.pa-card,.pa-metric,.pfgo-card,.pfgo-metric,.fc-card,.g-metric,.dashboard-v40-card,.pdpx-audit article,.clean-profile-card,.desktop-balance-grid>div,.pf-help-modal-card,.pf-help-manuals a,.pf-auto-menu,.desktop-item-menu,.bg-white,.bg-gray-50,.bg-gray-100,.bg-slate-50,.bg-slate-100,.bg-gray-800,.bg-slate-800';
-const panels='#painelGerencial,#clean-periodbar,#clean-month-analysis,#pf-entries-panel,#pfAreaCardsPage,#pfCadastroEditor,#pf-bank-audit,#pfDashboardToolbar,.pdp-period,.pdp-filters,.pdp-advanced,.pfgo-period,.pfgo-filter-actions,.pa-filters,.panel,.pf-chart-card,.clean-menu-group,.analysis-card';
+const panels='#pfLanguageMenu,#pfCurrencyMenu,#painelGerencial,#clean-periodbar,#clean-month-analysis,#pf-entries-panel,#pfAreaCardsPage,#pfCadastroEditor,#pf-bank-audit,#pfDashboardToolbar,.pdp-period,.pdp-filters,.pdp-advanced,.pfgo-period,.pfgo-filter-actions,.pa-filters,.panel,.pf-chart-card,.clean-menu-group,.analysis-card';
 function surfaces(){
  bg(document.body,'bg');ink(document.body);
  for(const n of document.querySelectorAll(cards)){bg(n);border(n);ink(n);set(n,'box-shadow','var(--pf16-hover-shadow,none)');mark(n,'pf16Surface','card');}

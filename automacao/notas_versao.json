@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Corrige o destaque verde neon do botão Nuvem Online quando o estado original confirma a sincronização.",
-    "Preserva os estados de falha, sincronizando e desconectado; não altera dados ou autenticação.",
-    "Idiomas e moedas ficam para a próxima etapa; modo celular preservado."
+    "Restaura seletores de Português, English e Español e de Real, dólar e euro no cabeçalho do computador.",
+    "Moedas estrangeiras são apenas consulta visual a partir do Real original. Voltar a BRL restaura o texto original, sem reconversão.",
+    "Mantém dados, autenticação, sincronização, verde neon da nuvem e modo celular."
   ],
   "distribuicao": [
-    "Corrige o destaque verde neon do botão Nuvem Online quando o estado original confirma a sincronização.",
-    "Preserva os estados de falha, sincronizando e desconectado; não altera dados ou autenticação.",
-    "Idiomas e moedas ficam para a próxima etapa; modo celular preservado."
+    "Restaura seletores de Português, English e Español e de Real, dólar e euro no cabeçalho do computador.",
+    "Moedas estrangeiras são apenas consulta visual a partir do Real original. Voltar a BRL restaura o texto original, sem reconversão.",
+    "Mantém dados, autenticação, sincronização, verde neon da nuvem e modo celular."
   ]
 }

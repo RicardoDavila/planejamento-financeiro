@@ -9,7 +9,7 @@
   const badge=$('statusNuvemBadge'),cloud=badge?.closest('button'),actions=$('clean-top-actions');
   if(!cloud||!actions)return;
   cloud.id='pf-cloud-status';actions.append(cloud);
-  const update=()=>cloud.classList.toggle('pf-cloud-online',badge.textContent.trim()==='Online');
+  const update=()=>cloud.classList.toggle('pf-cloud-online',(window.PFI18n?.canonical?.(badge.textContent)||badge.textContent).trim()==='Online');
   new MutationObserver(update).observe(badge,{childList:true,characterData:true,subtree:true});update();
  }
  function authorized(){

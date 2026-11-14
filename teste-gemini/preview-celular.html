@@ -166,7 +166,7 @@ function mark(n,key,value){if(n?.dataset&&n.dataset[key]!==value)n.dataset[key]=
 function tree(node,key='ink'){ink(node,key);for(const child of node?.querySelectorAll('span,strong,small,b,p,label,i')||[])ink(child,key);}
 function isActive(n){return n.matches('[aria-pressed="true"],[aria-selected="true"],[aria-current="page"]')||[...n.classList].some(c=>['active','selected','is-active','pdp-active','pa-active'].includes(c));}
 const cards='.pf-dash-card,.pf-area-card,.pdp-card,.pdp-kpi,.pa-card,.pa-metric,.pfgo-card,.pfgo-metric,.fc-card,.g-metric,.dashboard-v40-card,.pdpx-audit article,.clean-profile-card,.desktop-balance-grid>div,.pf-help-modal-card,.pf-help-manuals a,.pf-auto-menu,.desktop-item-menu,.bg-white,.bg-gray-50,.bg-gray-100,.bg-slate-50,.bg-slate-100,.bg-gray-800,.bg-slate-800';
-const panels='#painelGerencial,#clean-periodbar,#clean-month-analysis,#pf-entries-panel,#pfAreaCardsPage,#pfCadastroEditor,#pf-bank-audit,#pfDashboardToolbar,.pdp-period,.pdp-filters,.pdp-advanced,.pfgo-period,.pfgo-filter-actions,.pa-filters,.panel,.pf-chart-card,.clean-menu-group,.analysis-card';
+const panels='#pfLanguageMenu,#pfCurrencyMenu,#painelGerencial,#clean-periodbar,#clean-month-analysis,#pf-entries-panel,#pfAreaCardsPage,#pfCadastroEditor,#pf-bank-audit,#pfDashboardToolbar,.pdp-period,.pdp-filters,.pdp-advanced,.pfgo-period,.pfgo-filter-actions,.pa-filters,.panel,.pf-chart-card,.clean-menu-group,.analysis-card';
 function surfaces(){
  bg(document.body,'bg');ink(document.body);
  for(const n of document.querySelectorAll(cards)){bg(n);border(n);ink(n);set(n,'box-shadow','var(--pf16-hover-shadow,none)');mark(n,'pf16Surface','card');}

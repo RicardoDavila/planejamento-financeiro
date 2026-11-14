@@ -142,6 +142,7 @@ def build(output, version):
                 shutil.copy2(gemini_source/name,gemini_target/name)
             (gemini_target/'index.html').write_text(aplicar_idiomas(read(gemini_target/'index.html'),container=True),encoding='utf-8')
             (gemini_target/'app.html').write_text(aplicar_dashboard(aplicar_notas_pessoais(aplicar_dimensoes(aplicar_modo_claro(aplicar_moedas(aplicar_idiomas(read(gemini_target/'app.html'))))))),encoding='utf-8')
+            (gemini_target/'app.html').write_text(re.sub(r"const CURRENT_VERSION='V[0-9.]+';","const CURRENT_VERSION='"+version+"';",read(gemini_target/'app.html')),encoding='utf-8')
             (gemini_target/'graficos.html').write_text(aplicar_idiomas(read(gemini_target/'graficos.html'),graficos=True),encoding='utf-8')
             check_scripts(read(gemini_target/'app.html'),dist)
 

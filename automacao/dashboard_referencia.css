@@ -46,7 +46,7 @@ html body.pf-dashboard-shell #appConteudo{max-width:1360px!important;width:100%!
 #pfDashboardHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:0 0 22px;margin:0 0 24px;border-bottom:1px solid var(--dash-line);background:transparent!important;color:var(--dash-ink)}
 #pfDashboardHeader h2{font:700 20px 'Space Grotesk','DM Sans',Arial,sans-serif;margin:0 0 6px}
 #pfDashboardSource{font:13px 'Space Grotesk','DM Sans',Arial,sans-serif;color:var(--dash-muted);margin:0}
-#pfDashboardIdentity{display:flex;align-items:center;gap:12px}
+#pfDashboardIdentity{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:12px}
 #pfDashboardAvatar{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--dash-accent);border-radius:50%;color:var(--dash-accent);background:rgba(0,229,255,.12);font:14px 'JetBrains Mono',monospace}
 html body.pf-dashboard-shell #pfDashboardUser #pf495Greeting{padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;display:block!important;min-width:0!important}
 html body.pf-dashboard-shell #pfDashboardUser #pf495Greeting>div{display:flex!important;align-items:center;gap:12px}
@@ -102,4 +102,5 @@ html body.pf-dashboard-shell #pfDashboardPerson select option:checked{background
 
 @media screen and (min-width:901px){html body.pf-dashboard-shell #pfDashboardHeader h2{display:flex!important;align-items:center;gap:10px}#pfDashboardProjectIcon{display:block;width:28px;height:28px;object-fit:contain;flex:none}}
 
+#pfDashboardIdentity #pfLanguageButton,#pfDashboardIdentity #pfCurrencyButton{min-height:38px;padding:9px 12px;border-radius:7px;font:600 11.5px 'JetBrains Mono',monospace;white-space:nowrap;cursor:pointer}
 }

@@ -19,7 +19,13 @@ function bootCurrency(options={}){
   const q=context.quote;return 'Consulta em '+context.currency+' · Base: BRL (R$) · 1 '+context.currency+' = R$ '+q.brlPerUnit.toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:6})+' · BCB PTAX, venda/fechamento: '+q.sourceTimestamp+' (Brasília) · Consulta: '+new Date(q.fetchedAt).toLocaleString(locale())+'.';
  }
  function eligible(parent){
-  if(parent.closest('input,textarea,select,button,script,style,[contenteditable],#pfCurrencyMenu,#pfCurrencyButton,[data-pf-currency-note]'))return false;
+  if(parent.closest('input,textarea,select,script,style,[contenteditable],#pfCurrencyMenu,#pfCurrencyButton,#pfLanguageMenu,#pfLanguageButton,[data-pf-currency-note]'))return false;
+  const desktopView=parent.closest('#pfPersonalDashboard,#pfAnalysisPage,#pfGraphicsPage,#pf-entries-panel');
+  if(desktopView){
+   if(parent.closest('[data-auto-cell="descricao"],[data-auto-cell="observacao"],.pf-auto-menu,#pf-auto-popup,.desktop-item-menu'))return false;
+   return true;
+  }
+  if(parent.closest('button'))return false;
   if(options.snapshot)return !parent.closest('[data-pf-report-controls]');
   return !!parent.closest('#pgReceitas,#pgRecebido,#pgDespesas,#pgAVencer,#pgVencido,#pgInvestimentos,#pgSaldo,.desktop-balance-grid strong,#cardPrevReceita,#cardRecRecebidas,#cardDespesas,#cardPendente,#cardInvestimento,#cardSaldo,.g-metric .number,.analysis-amount,.pf-heat-value,.pf-bar-row strong,.pfce-alt,.g-chart,.chart,.lcm-value,.lcm-valor,.dashboard-v40-grid,#dashboardV40Alerta,#tabelaLancamentosWrapper td.text-right,#desktopGraphics .num');
  }
@@ -41,7 +47,7 @@ function bootCurrency(options={}){
  }
  function updateCharts(){if(typeof Chart!=='undefined')for(const chart of Object.values(Chart.instances||{}))chart.update('none');}
  const schedule=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(()=>{scheduled=false;apply();place();});}};
- function place(){if(!button)return;const language=document.getElementById('pfLanguageButton');if(language?.parentElement){if(language.nextElementSibling!==button)language.after(button);return;}const normal=document.getElementById('pfMenuTopo'),mobile=document.querySelector('#pm-app .bar'),host=normal?.getClientRects().length?normal:mobile||normal;if(host&&button.parentElement!==host)host.append(button);}
+ function place(){if(!button)return;const language=document.getElementById('pfLanguageButton');if(language?.parentElement){if(language.nextElementSibling!==button)language.after(button);return;}const normal=document.getElementById('pfDashboardIdentity')||document.getElementById('pfMenuTopo'),mobile=document.querySelector('#pm-app .bar'),host=normal?.getClientRects().length?normal:mobile||normal;if(host&&button.parentElement!==host)host.append(button);}
  function close(){if(menu)menu.hidden=true;button?.setAttribute('aria-expanded','false');}
  function addMenu(){
   button=document.createElement('button');button.id='pfCurrencyButton';button.setAttribute('data-pf-i18n-skip','');button.setAttribute('data-pfce-ui','true');button.setAttribute('aria-controls','pfCurrencyMenu');button.type='button';button.className='pf-menu-categoria';button.setAttribute('aria-haspopup','menu');button.setAttribute('aria-expanded','false');
@@ -49,7 +55,7 @@ function bootCurrency(options={}){
   codes.forEach(c=>{const b=document.createElement('button');b.type='button';b.textContent=({BRL:'Real brasileiro (BRL — R$)',USD:'US Dollar (USD — US$)',EUR:'Euro (EUR — €)'})[c];b.setAttribute('role','menuitemradio');b.dataset.currency=c;b.style.cssText='display:block;width:100%;padding:12px;text-align:left;background:transparent;color:inherit;border:0;cursor:pointer';b.onclick=()=>{setCurrency(c);close();};menu.append(b);});
   const status=document.createElement('p');status.id='pfCurrencyStatus';status.style.cssText='font-size:12px;line-height:1.5;padding:8px';menu.append(status);
   const refresh=document.createElement('button');refresh.type='button';refresh.textContent='Atualizar cotação / Refresh / Actualizar';refresh.onclick=()=>load();menu.append(refresh);document.body.append(menu);const style=document.createElement('style');style.id='pf-global-currency-style';style.textContent='#pfCurrencyButton{display:inline-flex!important;align-items:center;white-space:nowrap;flex-shrink:0}#pfCurrencyMenu[hidden]{display:none!important}#pfCurrencyMenu button{min-height:44px;font:inherit}#pfCurrencyMenu button:focus-visible{outline:2px solid #818cf8}#pfCurrencyMenu button[aria-checked="true"]:after{content:" ✓"}@media print{#pfCurrencyMenu,#pfCurrencyButton{display:none!important}}';document.head.append(style);place();
-  button.onclick=()=>{if(!menu.hidden){close();return;}const r=button.getBoundingClientRect(),sample=document.getElementById('desktop-dropdown');if(sample){const s=getComputedStyle(sample);menu.style.background=s.backgroundColor;menu.style.color=s.color;}
+  button.onclick=()=>{const languageMenu=document.getElementById('pfLanguageMenu');if(languageMenu)languageMenu.hidden=true;document.getElementById('pfLanguageButton')?.setAttribute('aria-expanded','false');if(!menu.hidden){close();return;}const r=button.getBoundingClientRect(),sample=document.getElementById('desktop-dropdown');if(sample){const s=getComputedStyle(sample);menu.style.background=s.backgroundColor;menu.style.color=s.color;}
    menu.style.left=Math.max(8,Math.min(r.left,innerWidth-326))+'px';menu.style.top=(r.bottom+5)+'px';menu.hidden=false;button.setAttribute('aria-expanded','true');for(const b of menu.querySelectorAll('[data-currency]'))b.setAttribute('aria-checked',String(b.dataset.currency===selected));menu.querySelector('button').focus();};
   document.addEventListener('click',e=>{if(!menu.contains(e.target)&&!button.contains(e.target))close();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden){close();button.focus();}if(!menu.hidden&&['ArrowDown','ArrowUp'].includes(e.key)){e.preventDefault();const items=[...menu.querySelectorAll('button')],i=items.indexOf(document.activeElement);items[(i+(e.key==='ArrowDown'?1:items.length-1))%items.length].focus();}});window.addEventListener('resize',close);
  }
