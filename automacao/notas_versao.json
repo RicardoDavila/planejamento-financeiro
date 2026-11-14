@@ -1,11 +1,13 @@
 {
   "pessoal": [
     "Restaura o botão Assistente financeiro no cabeçalho do computador, acessível nas páginas do projeto.",
+    "Melhora o contraste do assistente no modo escuro: fundos sólidos, textos claros, campos legíveis e separação da página ao fundo.",
     "Reutiliza o assistente original: cálculos locais e opção Gemini online com autorização de envio.",
     "Preserva idiomas, moedas de consulta, dados, autenticação e modo celular."
   ],
   "distribuicao": [
     "Restaura o botão Assistente financeiro no cabeçalho do computador, acessível nas páginas do projeto.",
+    "Melhora o contraste do assistente no modo escuro: fundos sólidos, textos claros, campos legíveis e separação da página ao fundo.",
     "Reutiliza o assistente original: cálculos locais e opção Gemini online com autorização de envio.",
     "Preserva idiomas, moedas de consulta, dados, autenticação e modo celular."
   ]

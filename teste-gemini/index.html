@@ -4731,6 +4731,34 @@ html body *{--pf16-hover-border:initial;--pf16-hover-shadow:initial}
 html body :is(button,[role="button"],input[type="button"],input[type="submit"],input[type="reset"],a.pf-help-primary,.pf-help-manuals a,[data-pf16-surface="card"],.pf-dash-card,.pf-area-card,.pdp-kpi,.pa-metric,.pfgo-metric,.pa-click,.panel,[class~="card"],[class*="-card"],.fc-card,.g-metric,.dashboard-v40-card):is(:hover,:focus-visible){--pf16-hover-border:#22D3EE;--pf16-hover-shadow:0 0 0 1px #22D3EE,0 0 14px #22D3EE80;outline:1px solid #22D3EE!important;outline-offset:1px!important;box-shadow:0 0 0 1px #22D3EE,0 0 14px #22D3EE80!important}
 }
 
+
+/* Etapa 24 revisão 02: contraste integral do assistente no computador. */
+@media screen{
+html body.dark-mode #pfIaDialog{background:#181B21!important;color:#F8FAFC!important;border:2px solid #22D3EE!important;border-radius:18px;box-shadow:0 0 0 1px #22d3ee55,0 24px 90px #000e!important;color-scheme:dark;font-family:'Space Grotesk',system-ui,sans-serif!important;opacity:1}
+html body.dark-mode #pfIaDialog::backdrop{background:rgba(0,0,0,.82)!important;backdrop-filter:blur(5px)}
+html body.dark-mode #pfIaDialog :is(.ia-shell,.ia-controls,.ia-chips,.ia-footer){background:#181B21!important;background-image:none!important;color:#F8FAFC!important;border-color:#334155!important}
+html body.dark-mode #pfIaDialog header{background:#102630!important;background-image:none!important;color:#F8FAFC!important;border-bottom:1px solid #22D3EE!important}
+html body.dark-mode #pfIaDialog :is(h2,h3,h4,label,strong){color:#F8FAFC!important;font-family:inherit!important}
+html body.dark-mode #pfIaDialog :is(p,li,.ia-period-summary,.ia-question-help,#pfIaStatus,.ia-basis,.ia-response-source,small){color:#CBD5E1!important;opacity:1!important}
+html body.dark-mode #pfIaDialog header p{color:#67E8F9!important}
+html body.dark-mode #pfIaDialog .ia-notice{background:#102630!important;color:#CFFAFE!important;border-color:#0891B2!important}
+html body.dark-mode #pfIaDialog #pfIaConsent{background:#2B2110!important;color:#FEF3C7!important;border-block:1px solid #A16207!important}
+html body.dark-mode #pfIaDialog #pfIaConsent label{color:#FEF3C7!important}
+html body.dark-mode #pfIaDialog :is(.ia-welcome,#pfIaMessages article:not(.user)){background:#101319!important;color:#F8FAFC!important;border-color:#475569!important}
+html body.dark-mode #pfIaDialog #pfIaMessages{background:#0B0E13!important;scrollbar-color:#64748B #101319}
+html body.dark-mode #pfIaDialog #pfIaMessages article.user{background:#102630!important;color:#F8FAFC!important;border:1px solid #0891B2!important}
+html body.dark-mode #pfIaDialog :is(input,select,textarea){background:#101319!important;color:#F8FAFC!important;border-color:#64748B!important;font-family:inherit!important}
+html body.dark-mode #pfIaDialog input::placeholder{color:#A7B4C7!important;opacity:1!important}
+html body.dark-mode #pfIaDialog :is(.ia-chips button,.ia-examples button,#pfIaClear,#pfIaClose){background:#202731!important;color:#67E8F9!important;border:1px solid #0891B2!important}
+html body.dark-mode #pfIaDialog #pfIaSend{background:#22D3EE!important;color:#04131A!important;border:1px solid #67E8F9!important}
+html body.dark-mode #pfIaDialog :is(.ia-records th,.ia-records td){background:#101319!important;color:#F8FAFC!important;border-color:#475569!important}
+html body.dark-mode #pfIaDialog .ia-records th{background:#202731!important;color:#67E8F9!important}
+html body.dark-mode #pfIaDialog :focus-visible{outline:2px solid #67E8F9!important;outline-offset:3px}
+}
+@media screen{
+html body.dark-mode #pfIaDialog #pfIaQuestion{background:#101319!important;color:#F8FAFC!important;border-color:#64748B!important}
+html body.dark-mode #pfIaDialog #pfIaQuestion::placeholder{color:#A7B4C7!important;opacity:1!important}
+}
 }</style>
 <script id="pf-project-theme-script">/* pf-desktop-only-v511 */
 (function(){if(typeof matchMedia==='function'&&matchMedia('(max-width:900px), (pointer:coarse)').matches)return;
