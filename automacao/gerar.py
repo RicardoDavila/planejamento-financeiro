@@ -15,6 +15,13 @@ import argparse, hashlib, json, os, pathlib, re, shutil, subprocess, tempfile
 from html.parser import HTMLParser
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
+def versao_publicacao():
+    """Versão declarada do projeto; não depende da contagem de execuções do GitHub."""
+    value = json.loads(read(ROOT/'automacao/versao_publicacao.json')).get('version')
+    if not isinstance(value,str) or not re.fullmatch(r'V[0-9]+(?:\.[0-9]+){2}',value):
+        raise ValueError('Informe uma versão válida em automacao/versao_publicacao.json.')
+    return value
+
 def normalize(text):
     text = text.replace('\r\n', '\n').lstrip('\ufeff')
     text = text.replace('localStorage', 'pfdLocal').replace('sessionStorage', 'pfdSession')
@@ -151,6 +158,6 @@ def build(output, version):
 if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--output',type=pathlib.Path,default=ROOT/'build/site')
-    parser.add_argument('--version',default='V4.12.'+str(2+int(os.environ.get('GITHUB_RUN_NUMBER','1'))))
+    parser.add_argument('--version',default=versao_publicacao())
     args=parser.parse_args()
     build(args.output,args.version)
