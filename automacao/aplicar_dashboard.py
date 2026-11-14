@@ -10,7 +10,22 @@ def aplicar_botoes(html):
         head,tail=html.rsplit('</body>',1)
         html=head+'<'+tag+' id="'+ident+'">'+(ROOT/'automacao'/file).read_text(encoding='utf-8')+'</'+tag+'>\n</body>'+tail
     return html
+def aplicar_segunda_tela_boot(html):
+    head=re.search(r'<head\b[^>]*>',html,re.I)
+    body=re.search(r'<body\b',html,re.I)
+    if not head or (body and head.start()>body.start()):
+        return html
+    # A transição deve existir no head, antes de o formulário de senha ser pintado.
+    for tag,file,ident in [('style','segunda_tela_boot.css','pf-second-screen-boot-style'),('script','segunda_tela_boot.js','pf-second-screen-boot-script')]:
+        html=re.sub(r'<'+tag+r' id="'+ident+r'">[\s\S]*?</'+tag+'>\n?','',html)
+        block='<'+tag+' id="'+ident+'">'+(ROOT/'automacao'/file).read_text(encoding='utf-8')+'</'+tag+'>\n'
+        # Depois do charset, preservando a declaração UTF-8 no início do arquivo.
+        anchor=r'(<meta\b[^>]*charset[^>]*>)' if re.search(r'<meta\b[^>]*charset[^>]*>',html,re.I) else r'(<head\b[^>]*>)'
+        html=re.sub(anchor,lambda m:m.group(1)+block,html,count=1,flags=re.I)
+    return html
+
 def aplicar_dashboard(html):
+    html=aplicar_segunda_tela_boot(html)
     if 'function adicionarNovaRubricaPrompt' in html:
         html=aplicar_cadastro_aparencia(html)
     for tag,name in [('style','dashboard_referencia.css'),('script','dashboard_referencia.js'),('style-personal','dashboard_pessoal.css'),('script-review','dashboard_revisao.js'),('script-source','dashboard_fonte.js'),('script-personal','dashboard_pessoal.js'),('script-inline','dashboard_interacoes.js')]:

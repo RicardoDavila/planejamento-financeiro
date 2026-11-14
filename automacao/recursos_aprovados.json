@@ -247,11 +247,23 @@
       "data-second-view",
       "function authorized",
       "window.open",
-      "PFSecondScreenSession"
+      "PFSecondScreenSession",
+      "pf-secondary-request",
+      "pf-secondary-session",
+      "pf-secondary-channel"
     ],
     "pf-second-screen-style": [
       "#pfSecondScreenDialog",
       ".pf-second-grid"
+    ],
+    "pf-second-screen-boot-script": [
+      "pf-secondary-pending",
+      "PFSecondScreenLoading",
+      "4000"
+    ],
+    "pf-second-screen-boot-style": [
+      "Abrindo segunda tela",
+      "visibility:hidden"
     ]
   },
   "bloco_relatorios": "pf-report-selection-module",

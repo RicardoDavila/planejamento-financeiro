@@ -1,0 +1,6 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');const code=fs.readFileSync(__dirname+'/segunda_tela_boot.js','utf8');
+function run({key='analysis',opener=true,mobile=false}={}){const classes=new Set();let timeout;const env={URL,location:{href:'https://example.invalid/index.html?pf-secondary='+key},window:{opener:opener?{closed:false}:null},matchMedia:()=>({matches:mobile}),document:{documentElement:{classList:{add:k=>classes.add(k),remove:k=>classes.delete(k)}}},setTimeout(fn,ms){assert.equal(ms,4000);timeout=fn;return 1},clearTimeout(){}};vm.runInNewContext(code,env);return{classes,env,expire:()=>timeout?.()};}
+const child=run();assert(child.classes.has('pf-secondary-pending'));assert.equal(child.env.protecaoAutenticada,undefined);child.env.window.PFSecondScreenLoading.finish();assert(!child.classes.size);
+const expired=run();expired.expire();assert(!expired.classes.size,'falha de autenticação deve voltar à entrada normal');
+for(const opts of [{opener:false},{mobile:true},{key:'invalid'}])assert(!run(opts).classes.size);
+console.log('PASS: transição anterior à pintura, fim após escolha, timeout sem conceder acesso e abertura independente/celular intactos.');

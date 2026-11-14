@@ -1,10 +1,14 @@
 {
   "pessoal": [
+    "Corrige o reconhecimento de sessão entre janelas de arquivos locais usando mensagens vinculadas à janela e a um canal aleatório, sem copiar senha ou tokens.",
+    "Evita o aparecimento momentâneo da tela de senha na segunda janela: mostra Abrindo segunda tela durante a verificação da sessão.",
     "Dois Monitores permite escolher entre as oito áreas do projeto e abrir a escolhida em uma segunda janela.",
     "A segunda tela reconhece a autorização viva da janela principal, sem repetir a senha. Aberturas independentes mantêm a proteção original.",
     "Mantém o modo celular e as proteções de acesso às áreas."
   ],
   "distribuicao": [
+    "Corrige o reconhecimento de sessão entre janelas de arquivos locais usando mensagens vinculadas à janela e a um canal aleatório, sem copiar senha ou tokens.",
+    "Evita o aparecimento momentâneo da tela de senha na segunda janela: mostra Abrindo segunda tela durante a verificação da sessão.",
     "Dois Monitores permite escolher entre as oito áreas do projeto e abrir a escolhida em uma segunda janela.",
     "A segunda tela reconhece a autorização viva da janela principal, sem repetir a senha. Aberturas independentes mantêm a proteção original.",
     "Mantém o modo celular e as proteções de acesso às áreas."

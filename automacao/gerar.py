@@ -1,4 +1,4 @@
-from aplicar_dashboard import aplicar_dashboard, aplicar_botoes
+from aplicar_dashboard import aplicar_dashboard, aplicar_botoes, aplicar_segunda_tela_boot
 """Gera as duas versões públicas sem ler bancos, sessões ou senhas de usuários."""
 from correcao_distribuicao import corrigir_distribuicao
 from correcao_sincronizacao import corrigir_sincronizacao
@@ -51,6 +51,10 @@ def validate_distribution_entry(html):
 
 def generate(source, config, version):
     source = normalize(aplicar_dashboard(aplicar_notas_pessoais(aplicar_dimensoes(aplicar_modo_claro(aplicar_moedas(aplicar_idiomas(source)))))))
+    # A adaptação de acesso confere o head histórico byte a byte. A transição
+    # visual é reaplicada após os patches, sem alterar ou dispensar essas guardas.
+    for tag,ident in [('script','pf-second-screen-boot-script'),('style','pf-second-screen-boot-style')]:
+        source=re.sub(r'<'+tag+r' id="'+ident+r'">[\s\S]*?</'+tag+'>\n?','',source)
     if not re.search(r'const dadosPadraoCompletos\s*=\s*\[\s*\]\s*;', source):
         raise ValueError('Publicação bloqueada: a base embutida precisa estar vazia. Não publique lançamentos pessoais no HTML.')
     for region in config['protectedRegions']:
@@ -74,7 +78,7 @@ def generate(source, config, version):
     for required in ['<script src="./isolamento.js"></script>', 'window.parent.pfdConfirmPassword(senha)', 'window.parent.pfdUser', 'pfdLocal.getItem', 'user_id=eq.', "setTimeout(() => { if(typeof window.pfCheckUpdates"]:
         if required not in source:
             raise ValueError('Verificação de distribuição falhou: '+required)
-    return source
+    return aplicar_segunda_tela_boot(source)
 
 class InlineScripts(HTMLParser):
     def __init__(self):
