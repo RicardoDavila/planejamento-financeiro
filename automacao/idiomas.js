@@ -4519,6 +4519,11 @@ function bootFinancialLanguage(catalogue, options) {
   return !!element.closest('script,style,noscript,textarea,[contenteditable="true"],[data-pf-i18n-skip],#pfLanguageMenu,#pfLanguageButton,#pf493Actions,#pfMobileMaisPanel,#pfHelpMenu .pf-help-dropdown,.analysis-bars,.pf-bar-row,.pf-heat-cell,.pfce-alt,.pfce-bars,.pfce-detail tbody,.pfce-points,#pfDozeMeses,.grafico-area,svg text,.lcm-value,.lcm-valor,[data-g-item-field],[data-pf-dynamic-value]');
  }
  function applyNode(node){
+  // Etapa 19: status Pago não deve virar o substantivo Pagamento por colisão PT/ES.
+  const statusParent=node.parentElement;
+  if(statusParent?.closest('#tabelaCorpo td[data-auto-cell="status"],#pf-auto-popup[data-pf-filter-field="status"]')&&/^(?:pagamento|pago|paid|pagado|payment)$/i.test(normalize(node.data))){
+   const next=translate('Pago');if(next!==node.data){statusParent.dataset.pfceUi='true';node.data=next;}textRecords.set(node,{source:'Pago',last:next});return;
+  }
   const parent=node.parentElement;const chartText=parent?.closest('svg text,#pfDozeMeses,.grafico-area');const chartSource=textRecords.get(node);const original=chartSource&&node.data===chartSource.last?chartSource.source:node.data;if(chartText&&/^(?:N\/D|-?[\d.,]+ mil|(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\. de \d{2,4})$/.test(original.trim())){const next=translate(original);node.data=next;textRecords.set(node,{source:original,last:next});return;}if(excluded(parent)||!normalize(node.data))return;
   const option=parent.closest('option');if(option){const select=option.parentElement;if(/rubric|categor|subitem|descri|conta|nome/i.test(select?.id||'')&&!/^(?:Todos?|Todas?|Todas as Rubricas|Todos os Sub[- ]Itens)$/i.test(normalize(node.data)))return;if(!option.hasAttribute('value'))option.setAttribute('value',option.value);}
   const old=textRecords.get(node),source=old&&node.data===old.last?old.source:canonical(node.data),next=translate(source);

@@ -1,0 +1,9 @@
+/* pf-desktop-only-v511 */
+@media (min-width:901px) and (pointer:fine) {
+/* Etapa 08: fundo de seleção compatível com texto azul/ciano. */
+html body.dark-mode button.pf-white-light-bg,html body.dark-mode [role=button].pf-white-light-bg{background:#26323c!important;border-color:#467080!important}
+html body.pf-dashboard-shell.dark-mode #pfDashboardNavigation button[aria-current=page],html body.pf-dashboard-shell.dark-mode #pf-entries-types button.active,html body.pf-dashboard-shell.dark-mode #clean-periodbar button[aria-pressed=true],html body.pf-dashboard-shell.dark-mode #pfPersonalDashboard .pdp-period button.active,html body.pf-dashboard-shell.dark-mode #pfPersonalDashboard button.pdp-primary{background:#005a6a!important;border-color:#00e5ff!important}
+html body.dark-mode #pf-bank-audit{color:var(--dash-ink,#e8edf2);background:var(--dash-card,#181b21);border-color:var(--dash-line,#35515b)}
+#pf-bank-audit{margin:14px 0;padding:14px;border:1px solid #cad6dd;border-radius:9px;font:12px/1.6 'Space Grotesk',Arial,sans-serif}#pf-bank-audit summary{cursor:pointer;font-weight:700}#pf-bank-audit input{display:block;margin:8px 0;max-width:100%}#pf-bank-audit-result{white-space:pre-wrap;font-variant-numeric:tabular-nums}
+
+}

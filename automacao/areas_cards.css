@@ -1,0 +1,27 @@
+/* pf-desktop-only-v511 */
+@media (min-width:901px) and (pointer:fine) {
+/* Etapa 14: páginas de ferramentas, segurança e ajuda, sem menu lateral. */
+#pfAreaCardsPage{--area-bg:#fff;--area-ink:#17212b;--area-description:#007d91;--area-line:#d3dee7;max-width:1360px;margin:0 auto;padding:0 0 36px;font-family:'Space Grotesk','DM Sans',Arial,sans-serif;color:var(--area-ink)}
+body.dark-mode #pfAreaCardsPage{--area-bg:#181b21;--area-ink:#fff;--area-description:#00e5ff;--area-line:rgba(0,229,255,.2)}
+#pfAreaCardsPage[hidden]{display:none!important}
+#pfAreaCardsPage nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 28px}
+#pfAreaCardsPage nav button{background:var(--area-bg);border:1px solid var(--area-line);border-radius:8px;padding:11px 15px;cursor:pointer;font:600 12px 'JetBrains Mono',monospace;color:var(--area-description)}
+#pfAreaCardsPage header{margin-bottom:24px;background:transparent;border:0;padding:0}
+#pfAreaCardsPage h1{font-size:28px;line-height:1.3;font-weight:800;color:var(--area-ink);margin:0 0 8px;outline:none}
+#pfAreaCardsPage header p,#pfAreaCardsPage .pf-area-empty{font-size:14px;line-height:1.6;color:var(--area-description)}
+.pf-area-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+#pfAreaCardsPage .pf-area-card{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-height:180px;width:100%;padding:24px 22px;text-align:left;border:1px solid var(--area-line);border-radius:14px;background:var(--area-bg)!important;font:inherit;cursor:pointer;box-sizing:border-box;transition:border-color .15s,box-shadow .15s}
+#pfAreaCardsPage .pf-area-icon{font-family:'Segoe UI Emoji','Apple Color Emoji',sans-serif;font-size:29px;line-height:1.2;margin-bottom:6px}
+#pfAreaCardsPage .pf-area-card strong{font-size:16px;line-height:1.4;font-weight:700;color:var(--area-ink)}
+#pfAreaCardsPage .pf-area-description{font-size:12.5px;line-height:1.6;color:var(--area-description)}
+#pfAreaCardsPage button:hover,#pfAreaCardsPage button:focus-visible{border-color:var(--area-description);box-shadow:0 0 10px #00e5ff26;outline:2px solid transparent;outline-offset:3px}
+#pfAreaCardsPage button:disabled{opacity:.5;cursor:not-allowed}
+body.pf-area-open #layout-workspace,body.pf-area-open #pfDashboardNavigation,body.pf-area-open #pfMenuLateral,body.pf-area-open #pfMenuCortina,body.pf-area-open #desktop-dropdown{display:none!important}
+body.auth-pendente #pfAreaCardsPage{display:none!important}
+@media(max-width:1100px){.pf-area-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){#pfAreaCardsPage{padding:20px 16px 90px}.pf-area-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#pfAreaCardsPage .pf-area-card{min-height:170px;padding:20px 16px}}
+@media(max-width:480px){.pf-area-grid{grid-template-columns:minmax(0,1fr)}#pfAreaCardsPage .pf-area-card{min-height:150px}#pfAreaCardsPage h1{font-size:24px}}
+@media(prefers-reduced-motion:reduce){#pfAreaCardsPage .pf-area-card{transition:none}}
+@media print{#pfAreaCardsPage{display:none!important}}
+
+}

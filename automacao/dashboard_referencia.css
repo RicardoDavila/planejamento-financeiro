@@ -1,0 +1,105 @@
+/* pf-desktop-only-v511 */
+@media (min-width:901px) and (pointer:fine) {
+/* Dashboard: camada visual; os componentes e cálculos originais permanecem ativos. */
+@media screen and (min-width:901px){
+body.pf-dashboard-shell{--dash-bg:#f3f5f7;--dash-card:#fff;--dash-ink:#17212b;--dash-muted:#5b6573;--dash-line:#d3dee7;--dash-accent:#007d91;font-family:'Space Grotesk','DM Sans',system-ui,sans-serif!important;background:var(--dash-bg)!important;color:var(--dash-ink)!important}
+body.pf-dashboard-shell.dark-mode{--dash-bg:#0a0c10;--dash-card:#181b21;--dash-ink:#e8edf2;--dash-muted:#a4aebb;--dash-line:rgba(0,229,255,.2);--dash-accent:#00e5ff}
+body.pf-dashboard-shell #pfSaasSidebar{display:none!important}
+body.pf-dashboard-shell{padding-left:0!important;margin-left:0!important}
+#pfDashboardHome,#pfDashboardNavigation{max-width:1360px;margin:26px auto;padding:0 24px;box-sizing:border-box}
+#pfDashboardHome h1{font-size:32px;font-weight:800;margin:0 0 8px;color:var(--dash-ink)}
+#pfDashboardHome p{color:var(--dash-muted);font-size:14px;line-height:1.6}
+.pf-dash-eyebrow{font:11px 'JetBrains Mono',monospace;letter-spacing:2px;color:var(--dash-accent);text-transform:uppercase;margin-bottom:12px}
+.pf-dash-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:28px}
+.pf-dash-card{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:9px;padding:25px 22px;min-height:180px;background:var(--dash-card);color:var(--dash-ink);border:1px solid var(--dash-line);border-radius:14px;cursor:pointer;transition:transform .15s,border-color .15s;font:inherit}
+.pf-dash-card:hover{transform:translateY(-3px);border-color:var(--dash-accent)}
+.pf-dash-card:focus-visible,#pfDashboardNavigation button:focus-visible{outline:2px solid var(--dash-accent);outline-offset:4px}
+.pf-dash-icon{font-size:28px;line-height:1.4}.pf-dash-card strong{font-size:16px}.pf-dash-card span:last-child{font-size:12px;color:var(--dash-muted);line-height:1.6}
+#pfDashboardNavigation{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#pfDashboardNavigation button{padding:9px 14px;border:1px solid var(--dash-line);border-radius:7px;background:var(--dash-card);color:var(--dash-accent);font:12px 'JetBrains Mono',monospace;cursor:pointer}
+#pfDashboardNavigation button[aria-current=page]{background:var(--dash-accent);color:var(--dash-bg)}
+body.pf-dashboard-shell #layout-workspace{max-width:1360px;margin:0 auto!important}
+body.pf-dashboard-shell[data-pf-dash-view=home] #layout-workspace{display:none!important}
+body.pf-dashboard-shell[data-pf-dash-view=entries] #painelGerencial,body.pf-dashboard-shell[data-pf-dash-view=entries] #layout-right{display:none!important}
+body.pf-dashboard-shell[data-pf-dash-view=dashboard] .pf-dash-entries{display:none!important}
+body.pf-dashboard-shell[data-pf-dash-view=entries] #layout-workspace{grid-template-columns:minmax(0,1fr)!important}
+body.pf-dashboard-shell #painelGerencial,body.pf-dashboard-shell #clean-periodbar,body.pf-dashboard-shell #clean-month-analysis{background:var(--dash-card)!important;border:1px solid var(--dash-line)!important;border-radius:12px!important;color:var(--dash-ink)!important}
+body.pf-dashboard-shell #painelResumoGerencial>div{background:var(--dash-card)!important;border:1px solid var(--dash-line);border-radius:12px;padding:20px!important}
+body.pf-dashboard-shell #painelResumoGerencial>div>p:first-child{font:10px 'JetBrains Mono',monospace!important;letter-spacing:1.4px;color:var(--dash-muted)!important}
+body.pf-dashboard-shell #painelResumoGerencial>div>p:nth-child(2){font:700 22px 'JetBrains Mono',monospace!important;font-variant-numeric:tabular-nums}
+body.pf-dashboard-shell.dark-mode #pgReceitas,body.pf-dashboard-shell.dark-mode #pgRecebido{color:#00ff87!important}
+body.pf-dashboard-shell.dark-mode #pgDespesas,body.pf-dashboard-shell.dark-mode #pgVencido{color:#ff4d6a!important}
+body.pf-dashboard-shell.dark-mode #pgAVencer{color:#ffd166!important}
+body.pf-dashboard-shell.dark-mode #pgInvestimentos{color:#00e5ff!important}
+body.pf-dashboard-shell.dark-mode #desktopGraphics{--green:#00ff87;--red:#ff4d6a;--blue:#00e5ff;--purple:#00e5ff;--soft:#1e222a;--line:rgba(0,229,255,.2);background:#181b21!important}
+@media(max-width:1100px){.pf-dash-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+}
+@media(prefers-reduced-motion:reduce){.pf-dash-card{transition:none;transform:none!important}}
+@media print{#pfDashboardHome,#pfDashboardNavigation{display:none!important}}
+
+/* Capa conforme o HTML de referência: cabeçalho livre, sem barra de menus. */
+@media screen and (min-width:901px){
+html body.pf-dashboard-shell{padding-top:0!important;--pf-layout-top:0px!important;font-family:'Space Grotesk','DM Sans',Arial,sans-serif!important}
+html body.pf-dashboard-shell.dark-mode{--dash-bg:#0A0C10;--dash-card:#181B21;--dash-ink:#E8EDF2;--dash-muted:#8A95A3;--dash-line:rgba(0,229,255,.14);--dash-accent:#00E5FF;background:#0A0C10!important}
+html body.pf-dashboard-shell #pfMenuTopo,html body.pf-dashboard-shell #reference-header,html body.pf-dashboard-shell #appConteudo>header:not(#pfDashboardHeader){display:none!important}
+html body.pf-dashboard-shell #appConteudo{max-width:1360px!important;width:100%!important;margin:0 auto!important;padding:28px 24px 60px!important}
+#pfDashboardHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:0 0 22px;margin:0 0 24px;border-bottom:1px solid var(--dash-line);background:transparent!important;color:var(--dash-ink)}
+#pfDashboardHeader h2{font:700 20px 'Space Grotesk','DM Sans',Arial,sans-serif;margin:0 0 6px}
+#pfDashboardSource{font:13px 'Space Grotesk','DM Sans',Arial,sans-serif;color:var(--dash-muted);margin:0}
+#pfDashboardIdentity{display:flex;align-items:center;gap:12px}
+#pfDashboardAvatar{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--dash-accent);border-radius:50%;color:var(--dash-accent);background:rgba(0,229,255,.12);font:14px 'JetBrains Mono',monospace}
+html body.pf-dashboard-shell #pfDashboardUser #pf495Greeting{padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;display:block!important;min-width:0!important}
+html body.pf-dashboard-shell #pfDashboardUser #pf495Greeting>div{display:flex!important;align-items:center;gap:12px}
+html body.pf-dashboard-shell #pfDashboardUser #pf495GreetingTitle{font:700 14px 'Space Grotesk','DM Sans',Arial,sans-serif!important;color:var(--dash-ink)!important;white-space:nowrap}
+#pfDashboardUser #pf495Greeting>p,#pfDashboardUser #pfGreetingControls{display:none!important}
+html body.pf-dashboard-shell #pfDashboardUser #pf495PerfilBadge{font:10px 'JetBrains Mono',monospace!important;letter-spacing:.6px;text-transform:uppercase;background:rgba(0,229,255,.08)!important;color:var(--dash-accent)!important;border:1px solid var(--dash-accent)!important;border-radius:20px!important;padding:6px 10px!important}
+html body.pf-dashboard-shell #pfSairBarraTopo{display:inline-flex!important;align-items:center;gap:5px;background:var(--dash-card)!important;color:var(--dash-muted)!important;border:1px solid var(--dash-line)!important;border-radius:7px!important;padding:9px 14px!important;font:12px 'JetBrains Mono',monospace!important;box-shadow:none!important;margin:0!important}
+#pfDashboardPerson{display:flex;justify-content:flex-end;min-height:38px;margin-bottom:22px}
+html body.pf-dashboard-shell #pfDashboardPerson #desktop-person-label{display:flex!important;align-items:center;gap:12px;margin:0!important;color:var(--dash-muted)!important;font:11px 'JetBrains Mono',monospace!important;letter-spacing:1px;text-transform:uppercase}
+html body.pf-dashboard-shell #pfDashboardPerson select{width:190px;background:var(--dash-card)!important;border:1px solid var(--dash-line)!important;color:var(--dash-ink)!important;border-radius:7px!important;padding:8px 12px!important;font:12px 'Space Grotesk','DM Sans',Arial,sans-serif!important}
+html body.pf-dashboard-shell #pfDashboardHome{padding:0!important;margin:0!important;max-width:none}
+html body.pf-dashboard-shell #pfDashboardHome h1{font:800 28px 'Space Grotesk','DM Sans',Arial,sans-serif!important;margin:0 0 6px!important}
+html body.pf-dashboard-shell #pfDashboardHome>p{font:14px 'Space Grotesk','DM Sans',Arial,sans-serif!important;margin:0 0 20px!important;color:var(--dash-muted)}
+#pfDashboardToolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 20px}
+html body.pf-dashboard-shell #pfDashboardToolbar>button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px!important;margin:0!important;padding:9px 14px!important;font:600 11.5px 'JetBrains Mono',monospace!important;border:1px solid var(--dash-line)!important;border-radius:7px!important;background:var(--dash-card)!important;color:var(--dash-ink)!important;box-shadow:none!important;text-transform:none!important;letter-spacing:0!important;cursor:pointer;white-space:nowrap}
+html body.pf-dashboard-shell #pfDashboardToolbar>button[hidden]{display:none!important}
+html body.pf-dashboard-shell #pfDashboardToolbar #pf-cloud-status.pf-cloud-online{color:#00FF87!important;border-color:#00FF87!important;background:rgba(0,255,135,.1)!important;box-shadow:0 0 12px rgba(0,255,135,.15)!important}
+#pfDashboardToolbar #pfNotasBadge:not(:empty){background:#FF4D6A;color:white;border-radius:20px;padding:2px 6px}
+html body.pf-dashboard-shell .pf-dash-grid{margin-top:0;gap:20px}
+html body.pf-dashboard-shell .pf-dash-card{padding:26px 22px;min-height:174px;gap:0;background:var(--dash-card)!important;border-color:var(--dash-line)!important;color:var(--dash-ink)!important;font-family:'Space Grotesk','DM Sans',Arial,sans-serif!important}
+.pf-dash-icon{font-size:30px;margin-bottom:12px}.pf-dash-card strong{font-size:16px;margin-bottom:6px;font-weight:700}.pf-dash-card span:last-child{font-size:12.5px;line-height:1.5}
+html body.pf-dashboard-shell .pf-dash-card:hover,html body.pf-dashboard-shell .pf-dash-card:focus-visible{border-color:var(--dash-accent)!important}
+#pfDashboardNavigation[hidden]{display:none!important}
+#pfDashboardNavigation{padding:0;margin:0 0 20px}
+body.pf-dashboard-shell[data-pf-dash-view=home] #pfRodapeMercado,body.pf-dashboard-shell[data-pf-dash-view=home] #pf-market-footer{display:none!important}
+}
+@media print{#pfDashboardHeader,#pfDashboardPerson,#pfDashboardToolbar{display:none!important}}
+
+@media screen and (min-width:901px){
+#pfDashboardToolbar #pf-dois-monitores::before{content:'🖥️';font-size:17px}
+#pfDashboardToolbar #reference-theme::first-letter{color:#FFD166}
+#pfDashboardNoticeCount:not([hidden]){display:inline-grid;place-items:center;background:#FF4D6A;color:#fff;border-radius:50%;min-width:20px;height:20px;padding:0 4px;font:700 10px 'JetBrains Mono',monospace}
+#pfDashboardNoticeCount[hidden]{display:none}
+body.pf-dashboard-shell[data-pf-dash-view=home] #pfIndicadores,body.pf-dashboard-shell[data-pf-dash-view=home] #pfMostrarIndicadores{display:none!important}
+}
+
+@media screen and (min-width:901px){#pfDashboardIdentity{flex-wrap:wrap;max-width:550px;justify-content:flex-end}#pfDashboardPeriod{margin-left:auto;font:11px 'JetBrains Mono',monospace;background:rgba(0,229,255,.12);color:var(--dash-accent);border:1px solid var(--dash-line);border-radius:6px;padding:4px 10px}#pfDashboardPeriod[hidden]{display:none!important}}
+@media screen and (min-width:901px){html body.pf-dashboard-shell #pfDashboardHeader{justify-content:space-between!important;align-items:flex-start!important;flex-wrap:nowrap!important}html body.pf-dashboard-shell #pfDashboardIdentity{margin-left:auto!important}}
+/* Ajustes da referência: ícones, realce de interação e lista de pessoa. */
+@media screen and (min-width:901px){
+html body.pf-dashboard-shell #pfDashboardToolbar>button{color:var(--dash-muted)!important;font-size:12px!important;font-weight:400!important;gap:8px!important;border-radius:8px!important;transition:border-color .15s,color .15s,background .15s,box-shadow .15s}
+html body.pf-dashboard-shell #pfDashboardToolbar #pf-cloud-status.pf-cloud-online{color:#00FF87!important;background:rgba(0,255,135,.12)!important;box-shadow:0 0 12px rgba(0,255,135,.25)!important;font-weight:700!important}
+html body.pf-dashboard-shell #pfDashboardToolbar .pf-dash-cloud-icon{font-family:'Segoe UI Emoji','Apple Color Emoji',sans-serif!important;font-style:normal!important;font-weight:400!important;color:#fff!important;opacity:1!important}
+html body.pf-dashboard-shell #pfDashboardToolbar .pf-dash-cloud-icon::before{content:none!important}
+html body.pf-dashboard-shell #pfDashboardToolbar>button:hover,html body.pf-dashboard-shell #pfDashboardToolbar>button:focus-visible,html body.pf-dashboard-shell #pfDashboardToolbar #pf-cloud-status.pf-cloud-online:hover,html body.pf-dashboard-shell #pfDashboardToolbar #pf-cloud-status.pf-cloud-online:focus-visible,html body.pf-dashboard-shell #pfDashboardNavigation button:hover,html body.pf-dashboard-shell #pfDashboardNavigation button:focus-visible{border-color:var(--dash-accent)!important;color:var(--dash-accent)!important;box-shadow:0 0 10px rgba(0,229,255,.22)!important;outline:none!important}
+html body.pf-dashboard-shell #pfSairBarraTopo:hover,html body.pf-dashboard-shell #pfSairBarraTopo:focus-visible{border-color:#FF4D6A!important;color:#FF4D6A!important;background:rgba(255,77,106,.1)!important;box-shadow:0 0 10px rgba(255,77,106,.18)!important;outline:none!important}
+html body.pf-dashboard-shell #pfDashboardPerson select{color-scheme:light;font-family:'JetBrains Mono',monospace!important;transition:border-color .15s,box-shadow .15s}
+html body.pf-dashboard-shell.dark-mode #pfDashboardPerson select{color-scheme:dark}
+html body.pf-dashboard-shell #pfDashboardPerson select option,html body.pf-dashboard-shell #pfDashboardPerson select optgroup{background:var(--dash-card)!important;color:var(--dash-ink)!important}
+html body.pf-dashboard-shell #pfDashboardPerson select:hover,html body.pf-dashboard-shell #pfDashboardPerson select:focus-visible{border-color:var(--dash-accent)!important;box-shadow:0 0 10px rgba(0,229,255,.22)!important;outline:none!important}
+html body.pf-dashboard-shell #pfDashboardPerson select option:checked{background:#0098e5!important;color:#fff!important}
+}
+
+@media screen and (min-width:901px){html body.pf-dashboard-shell #pfDashboardHeader h2{display:flex!important;align-items:center;gap:10px}#pfDashboardProjectIcon{display:block;width:28px;height:28px;object-fit:contain;flex:none}}
+
+}

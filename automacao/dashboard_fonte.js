@@ -1,0 +1,20 @@
+/* pf-desktop-only-v511 */
+(function(){if(typeof matchMedia==='function'&&matchMedia('(max-width:900px), (pointer:coarse)').matches)return;
+/* Leitura local para análise: não grava nem sincroniza o banco financeiro. */
+(()=>{'use strict';
+const key=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+function csv(text){text=String(text).replace(/^\uFEFF/,'');const first=text.split(/\r?\n/,1)[0],delimiter=(first.match(/;/g)||[]).length>(first.match(/,/g)||[]).length?';':',';const lines=[];let row=[],value='',quoted=false;
+ for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){value+='"';i++}else quoted=!quoted}else if(c===delimiter&&!quoted){row.push(value);value=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(value);if(row.some(v=>v!==''))lines.push(row);row=[];value=''}else value+=c}
+ if(quoted)throw Error('CSV com aspas não fechadas.');row.push(value);if(row.some(v=>v!==''))lines.push(row);const header=lines.shift()||[];return lines.map(r=>Object.fromEntries(header.map((h,i)=>[h,r[i]??''])));
+}
+function date(value){if(value==null||value==='')return '';if(value instanceof Date)return isNaN(value)?'':value.toISOString().slice(0,10);if(typeof value==='number'){const d=new Date(Date.UTC(1899,11,30)+Math.floor(value)*86400000);return d.toISOString().slice(0,10)}const s=String(value).trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):s}
+function amount(value){if(typeof value==='number')return value;let s=String(value??'').replace(/[R$\s\u00a0]/g,'');if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');return s===''?NaN:Number(s)}
+function normalize(raw){if(!raw.length)throw Error('Arquivo sem lançamentos.');const headers=new Set(Object.keys(raw[0]).map(key));if(!headers.has('tipo')||!headers.has('valor')||(!headers.has('vencimento')&&!headers.has('dtvcto')))throw Error('Cabeçalhos não reconhecidos. Use o CSV ou XLSX de lançamentos do projeto.');
+ return raw.map((row,i)=>{const r=Object.fromEntries(Object.entries(row).map(([k,v])=>[key(k),v])),get=(...names)=>{for(const n of names)if(r[n]!=null&&r[n]!=='')return r[n];return ''};const type=String(get('tipo')).trim(),tipo=({receita:'Receita',despesa:'Despesa',investimento:'Investimentos',investimentos:'Investimentos'})[key(type)];if(!tipo)throw Error('Tipo não reconhecido na linha '+(i+2)+'.');const valor=amount(get('valor'));if(!Number.isFinite(valor))throw Error('Valor inválido na linha '+(i+2)+'.');const categoria=String(get('rubrica','categoria')),explicit=String(get('tipopessoa','pessoa')).trim(),status=String(get('status')).trim();return{id:get('iditem','id')||undefined,tipo,valor,categoria,subItem:String(get('subitem')),descricao:String(get('descricao')),vencimento:date(get('dtvcto','vencimento')),dataPg:date(get('dtpg','datapagamento','datapg')),status:({pago:'Pago',recebido:'Recebido',vencido:'Vencido',naorecebido:'Não Recebido',avencer:'A Vencer',pendente:'Pendente'})[key(status)]||status,observacao:String(get('observacao')),tipoPessoa:['PF','PJ','Não classificado'].includes(explicit)?explicit:key(categoria)==='empresa'?'PJ':'PF',tipoPessoaManual:!!explicit}});
+}
+function coverage(rows,year){return Array.from({length:12},(_,i)=>{const month=year+'-'+String(i+1).padStart(2,'0');return{month,count:rows.filter(t=>String(t.vencimento||'').startsWith(month)).length}})}
+async function read(file){if(/\.csv$/i.test(file.name))return normalize(csv(await file.text()));if(!/\.xlsx$/i.test(file.name))throw Error('Selecione um arquivo CSV ou XLSX.');if(!window.XLSX)throw Error('O leitor de Excel não está disponível. Utilize o CSV equivalente ou aguarde o carregamento do leitor.');const book=window.XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true});const name=book.SheetNames.find(n=>key(n)==='lancamentosdb')||book.SheetNames[0];return normalize(window.XLSX.utils.sheet_to_json(book.Sheets[name],{defval:''}));}
+window.PFAnalysisFile={csv,normalize,coverage,read};
+})();
+
+})();

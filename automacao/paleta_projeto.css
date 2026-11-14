@@ -1,0 +1,43 @@
+/* pf-desktop-only-v511 */
+@media (min-width:901px) and (pointer:fine) {
+/* Etapa 16: documentos de referência do usuário. Modo claro adaptado com aprovação. */
+@media screen{
+html body:not(.dark-mode){--pf16-editOrange:#C2410C;--pf16-bg:#F4F7FB;--pf16-card:#FFFFFF;--pf16-selected:#E8F0FC;--pf16-border:#2563EB;--pf16-accent:#0E7490;--pf16-ink:#0F172A;--pf16-muted:#475569;--pf16-line:#CBD5E1;--pf16-field:#F8FAFC;--pf16-blue:#1D4ED8;--pf16-blueBg:#EFF6FF;--pf16-blueActive:#1E40AF;--pf16-cyanBg:#ECFEFF;--pf16-cyanLine:#0891B2;--pf16-green:#166534;--pf16-greenBg:#DCFCE7;--pf16-greenLine:#86EFAC;--pf16-greenSolid:#166534;--pf16-onGreen:#F0FDF4;--pf16-red:#BE123C;--pf16-redBg:#FFF1F2;--pf16-redLine:#FDA4AF;--pf16-redSolid:#BE123C;--pf16-onRed:#FFF1F2;--pf16-amber:#92400E;--pf16-amberBg:#FFFBEB;--pf16-amberLine:#FCD34D;--pf16-amberSolid:#92400E;--pf16-onAmber:#FFFBEB;--pf16-purple:#6D28D9;--pf16-purpleBg:#F5F3FF;--pf16-purpleLine:#A78BFA;--pf16-purpleSolid:#5B21B6;--pf16-onPurple:#FFFFFF;--pf16-primary:#0E7490;--pf16-primaryInk:#FFFFFF;--pf16-primaryHover:#155E75;--pf16-solidBlue:#2563EB;--pf16-onBlue:#FFFFFF;--pf16-disabled:#64748B;--pf16-hover:#E2E8F0;}
+html body.dark-mode{--pf16-editOrange:#FB923C;--pf18-contour:rgba(0,229,255,.22);--pf16-bg:#000000;--pf16-card:#181B21;--pf16-selected:#202731;--pf16-border:rgba(0,229,255,.22);--pf16-accent:#22D3EE;--pf16-ink:#F8FAFC;--pf16-muted:#A7B4C7;--pf16-line:rgba(0,229,255,.14);--pf16-field:#101319;--pf16-blue:#60A5FA;--pf16-blueBg:#111E35;--pf16-blueActive:#BFDBFE;--pf16-cyanBg:#102630;--pf16-cyanLine:#0891B2;--pf16-green:#4ADE80;--pf16-greenBg:#10251B;--pf16-greenLine:#166534;--pf16-greenSolid:#166534;--pf16-onGreen:#F0FDF4;--pf16-red:#FB7185;--pf16-redBg:#2B1118;--pf16-redLine:#BE123C;--pf16-redSolid:#BE123C;--pf16-onRed:#FFF1F2;--pf16-amber:#FBBF24;--pf16-amberBg:#2B2110;--pf16-amberLine:#A16207;--pf16-amberSolid:#A16207;--pf16-onAmber:#FFFBEB;--pf16-purple:#C4B5FD;--pf16-purpleBg:#211B35;--pf16-purpleLine:#7C3AED;--pf16-purpleSolid:#5B21B6;--pf16-onPurple:#F8FAFC;--pf16-primary:#22D3EE;--pf16-primaryInk:#04131A;--pf16-primaryHover:#67E8F9;--pf16-solidBlue:#2563EB;--pf16-onBlue:#F8FAFC;--pf16-disabled:#64748B;--pf16-hover:#1B2636;}
+html body,html body *{--dash-bg:var(--pf16-bg)!important;--dash-card:var(--pf16-card)!important;--dash-ink:var(--pf16-ink)!important;--dash-muted:var(--pf16-muted)!important;--dash-line:var(--pf16-border)!important;--dash-accent:var(--pf16-accent)!important;--pa-bg:var(--pf16-bg)!important;--pa-card:var(--pf16-card)!important;--pa-ink:var(--pf16-ink)!important;--pa-muted:var(--pf16-muted)!important;--pa-line:var(--pf16-line)!important;--pa-cyan:var(--pf16-accent)!important;--area-bg:var(--pf16-card)!important;--area-ink:var(--pf16-ink)!important;--area-description:var(--pf16-muted)!important;--area-line:var(--pf16-border)!important;--help-bg:var(--pf16-card)!important;--help-field:var(--pf16-field)!important;--help-ink:var(--pf16-ink)!important;--help-description:var(--pf16-muted)!important;--help-line:var(--pf16-border)!important;--bg:var(--pf16-bg)!important;--card:var(--pf16-card)!important;--soft:var(--pf16-selected)!important;--text:var(--pf16-ink)!important;--muted:var(--pf16-muted)!important;--line:var(--pf16-line)!important;--line-2:var(--pf16-line)!important;--green:var(--pf16-green)!important;--red:var(--pf16-red)!important;--blue:var(--pf16-blue)!important;--purple:var(--pf16-purple)!important;--cyan:var(--pf16-accent)!important;--ink:var(--pf16-ink)!important;--navy:var(--pf16-card)!important;--navy-2:var(--pf16-selected)!important;--text-muted:var(--pf16-muted)!important;--border:var(--pf16-border)!important;}
+html body{background:var(--pf16-bg)!important;color:var(--pf16-ink)!important}
+html body input,html body select,html body textarea{color-scheme:light}
+html body.dark-mode input,html body.dark-mode select,html body.dark-mode textarea{color-scheme:dark}
+html body input::placeholder,html body textarea::placeholder{color:var(--pf16-disabled)!important;opacity:1}
+html body :is(button,a,input,select,textarea,summary,[tabindex]):focus-visible{outline:2px solid var(--pf16-accent)!important;outline-offset:3px!important}
+html body [data-pf16-action]{--pf16-button-hover-bg:initial;--pf16-button-hover-ink:initial}
+html body [data-pf16-action="month"][data-pf16-active="false"]:not(:disabled):hover{--pf16-button-hover-bg:var(--pf16-selected);--pf16-button-hover-ink:var(--pf16-ink)}
+html body [data-pf16-action]:not(:disabled):hover{box-shadow:0 0 0 1px var(--pf16-accent)!important;filter:brightness(1.08)}
+html body [data-pf16-action="dangerIcon"]:not(:disabled):hover{--pf16-button-hover-bg:var(--pf16-redBg)}
+html body [data-pf16-action="exit"]:hover,html body [data-pf16-action="clear"]:hover{--pf16-button-hover-bg:var(--pf16-hover);--pf16-button-hover-ink:var(--pf16-ink);box-shadow:none!important}
+html body [data-pf16-action="primary"]:not(:disabled):hover{--pf16-button-hover-bg:var(--pf16-primaryHover)}
+html body [data-pf16-surface="card"]:is(button,a):hover{border-color:var(--pf16-accent)!important}
+html body [data-pf16-status]:not(td){border-style:solid;border-width:1px;border-radius:6px}
+html body [data-pf16-status="overdue"]::before{content:"⚠ ";font-family:Arial,sans-serif}
+html body span[data-pf16-status]{padding:2px 7px}
+html body #tabelaLancamentosWrapper table{min-width:0!important;width:100%!important}
+html body #tabelaLancamentosWrapper :is(th,td){overflow-wrap:anywhere}
+html body table{background:var(--pf16-card)!important}
+html body table tbody tr:nth-child(even){background:var(--pf16-selected)!important}
+html body table tbody tr:hover{background:var(--pf16-hover)!important}
+html body :is(.pdp-period,.pfgo-period,.pa-period,#clean-periodbar){flex-wrap:nowrap!important;overflow-x:auto!important;scrollbar-width:thin;scrollbar-color:var(--pf16-accent) var(--pf16-card)}
+html body :is(.pdp-period,.pfgo-period,.pa-period,#clean-periodbar) button{flex-shrink:0}
+html body :is(#pfIndicadores,#pfMostrarIndicadores,#pfMenuTopo,#pfSaasSidebar,#pfMobileShell>header.bar){background:var(--pf16-card)!important;color:var(--pf16-muted)!important;border-color:var(--pf16-line)!important}
+html body :is(.pf-area-description,.pdp-note,.pa-note,.pfgo-note,#pfHelpModalBody p,#pfHelpModalBody li){color:var(--pf16-muted)!important}
+html body :is(.pdp-value,.pa-metric strong,.pfgo-metric strong,.g-metric .value,.dashboard-v40-card .val){color:var(--pf16-ink)!important}
+html body svg text{fill:var(--pf16-muted)!important}
+html body [data-pf16-action]:disabled{opacity:.55;cursor:not-allowed}
+}
+
+/* Etapa 16 revisão 02: brilho uniforme, inclusive Sair e ações destrutivas. */
+@media screen{
+html body *{--pf16-hover-border:initial;--pf16-hover-shadow:initial}
+html body :is(button,[role="button"],input[type="button"],input[type="submit"],input[type="reset"],a.pf-help-primary,.pf-help-manuals a,[data-pf16-surface="card"],.pf-dash-card,.pf-area-card,.pdp-kpi,.pa-metric,.pfgo-metric,.pa-click,.panel,[class~="card"],[class*="-card"],.fc-card,.g-metric,.dashboard-v40-card):is(:hover,:focus-visible){--pf16-hover-border:#22D3EE;--pf16-hover-shadow:0 0 0 1px #22D3EE,0 0 14px #22D3EE80;outline:1px solid #22D3EE!important;outline-offset:1px!important;box-shadow:0 0 0 1px #22D3EE,0 0 14px #22D3EE80!important}
+}
+
+}

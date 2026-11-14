@@ -1,0 +1,10 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),path=require('path'),code=fs.readFileSync(path.join(__dirname,'analise_financeira.js'),'utf8');
+const pick=(name,next)=>code.slice(code.indexOf('function '+name+'('),code.indexOf('function '+next+'(')).replace(/async\s*$/,'');
+let initial,listener,clears=0,refreshes=0;
+const context=vm.createContext({window:{},console,setTimeout:fn=>fn(),supabaseCliente:{auth:{onAuthStateChange:fn=>{listener=fn;return {data:{subscription:{unsubscribe(){}}}};},getSession:()=>new Promise(r=>initial=r)}}});
+vm.runInContext("let authClient=null,authSubscription=null,authReady=false,authOwner=null,authSerial=0,loadError='';function privateClear(){window.cleared=(window.cleared||0)+1}function sync(){window.refreshed=(window.refreshed||0)+1}function render(){}",context);
+vm.runInContext(pick('client','owner')+pick('owner','defaults').split('let skipCapture')[0],context);
+vm.runInContext(pick('bindAuth','loadPlan'),context);vm.runInContext('bindAuth()',context);assert.equal(vm.runInContext('owner()',context),null);
+listener('SIGNED_IN',{user:{id:'account-A'}});assert.equal(vm.runInContext('owner()',context),'account-A');
+initial({data:{session:{user:{id:'stale-account'}}}});
+Promise.resolve().then(()=>{assert.equal(vm.runInContext('owner()',context),'account-A');listener('SIGNED_IN',{user:{id:'account-B'}});assert.equal(vm.runInContext('owner()',context),'account-B');assert(context.window.cleared>=3);assert(code.includes('owner()===printOwner&&epoch===printEpoch'));assert(code.includes("failedOwner!==who"));assert(code.includes("skipCapture=true"));assert(code.includes("window.editarLancamento?.(found[0].id)"));console.log('PASS Guardas: identidade tardia não restaura conta anterior; troca limpa estado, impressão confere conta, erro de leitura não é sobrescrito.');}).catch(e=>{console.error(e);process.exitCode=1});

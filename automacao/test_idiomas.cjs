@@ -76,3 +76,15 @@ assert.equal(load('en').api.translate('Meta Selic: 13,75 % a.a. · referência 0
  const portuguese=load('pt-BR').api;assert.equal(portuguese.translate('nov. de 26'),'nov. de 26');assert.equal(portuguese.translate('13,5 mil'),'13,5 mil');
  console.log('PASS: saldo mínimo e próxima entrada, legenda completa, subtítulo, ordenação, relatório mensal, meses e escala.');
 }
+
+// Etapa 19: colisão Pago/Pagamento restrita à apresentação de status.
+{
+ for(const [lang,expected] of [['pt-BR','Pago'],['en','Paid'],['es','Pagado']]){
+  const env=load(lang);delete env.c.window.PFI18n;vm.runInContext(source.replace('const api={','const api={_node:applyNode,'),env.c);
+  const parent={dataset:{},closest:q=>q.includes('#tabelaCorpo')?{}:null};
+  const node={data:'Pagamento',parentElement:parent};env.c.window.PFI18n._node(node);assert.equal(node.data,expected);env.c.window.PFI18n._node(node);assert.equal(node.data,expected);
+  env.c.window.PFI18n.setLanguage('pt-BR',false);env.c.window.PFI18n._node(node);assert.equal(node.data,'Pago');
+ }
+ assert.equal(load('pt-BR').api.translate('Pagamento'),'Pagamento');
+ console.log('PASS: status Pago estável em PT/EN/ES, sem renomear o substantivo Pagamento fora da coluna.');
+}

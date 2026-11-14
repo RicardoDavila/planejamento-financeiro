@@ -1,3 +1,4 @@
+from aplicar_dashboard import aplicar_dashboard, aplicar_botoes
 """Gera as duas versões públicas sem ler bancos, sessões ou senhas de usuários."""
 from correcao_distribuicao import corrigir_distribuicao
 from correcao_sincronizacao import corrigir_sincronizacao
@@ -42,7 +43,7 @@ def validate_distribution_entry(html):
         raise ValueError('Publicação bloqueada: a tela de entrada da distribuição não carrega conta.js.')
 
 def generate(source, config, version):
-    source = normalize(aplicar_notas_pessoais(aplicar_dimensoes(aplicar_modo_claro(aplicar_moedas(aplicar_idiomas(source))))))
+    source = normalize(aplicar_dashboard(aplicar_notas_pessoais(aplicar_dimensoes(aplicar_modo_claro(aplicar_moedas(aplicar_idiomas(source)))))))
     if not re.search(r'const dadosPadraoCompletos\s*=\s*\[\s*\]\s*;', source):
         raise ValueError('Publicação bloqueada: a base embutida precisa estar vazia. Não publique lançamentos pessoais no HTML.')
     for region in config['protectedRegions']:
@@ -103,7 +104,7 @@ def build(output, version):
             if path.exists(): shutil.copy2(path,staging/name)
         pessoal=aplicar_notas_pessoais(aplicar_dimensoes(aplicar_modo_claro(corrigir_rodape(corrigir_atualizacoes(corrigir_sincronizacao(aplicar_moedas(aplicar_idiomas(read(ROOT/'index.html')))))))))
         pessoal=re.sub(r"const CURRENT_VERSION='V[0-9.]+';","const CURRENT_VERSION='"+version+"';",pessoal)
-        (staging/'index.html').write_text(pessoal,encoding='utf-8')
+        (staging/'index.html').write_text(aplicar_dashboard(pessoal),encoding='utf-8')
         (staging/'version.json').write_text(json.dumps({'version':version,'name':version,'channel':'pessoal','notes':notes['pessoal']},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         for worker_name in ['service-worker.js','sw.js']:
             worker_path=staging/worker_name
@@ -133,11 +134,14 @@ def build(output, version):
             for name in ['index.html','graficos.html','app.html','conta.js','isolamento.js','teste-guard.js','demonstracao.html','preview-celular.html','icon-192.png','icon-512.png']:
                 shutil.copy2(gemini_source/name,gemini_target/name)
             (gemini_target/'index.html').write_text(aplicar_idiomas(read(gemini_target/'index.html'),container=True),encoding='utf-8')
-            (gemini_target/'app.html').write_text(aplicar_notas_pessoais(aplicar_dimensoes(aplicar_modo_claro(aplicar_moedas(aplicar_idiomas(read(gemini_target/'app.html')))))),encoding='utf-8')
+            (gemini_target/'app.html').write_text(aplicar_dashboard(aplicar_notas_pessoais(aplicar_dimensoes(aplicar_modo_claro(aplicar_moedas(aplicar_idiomas(read(gemini_target/'app.html'))))))),encoding='utf-8')
             (gemini_target/'graficos.html').write_text(aplicar_idiomas(read(gemini_target/'graficos.html'),graficos=True),encoding='utf-8')
             check_scripts(read(gemini_target/'app.html'),dist)
 
         # Do not replace the published site if an approved feature disappeared.
+        # A aparência de botões inclui as páginas de entrada e HTMLs auxiliares.
+        for page in staging.rglob('*.html'):
+            page.write_text(aplicar_botoes(read(page)),encoding='utf-8')
         validate_tree(staging)
         # Nada é alterado no repositório nem em armazenamento do navegador.
         if output.exists() and any(output.iterdir()): raise ValueError('Escolha uma pasta de saída vazia.')

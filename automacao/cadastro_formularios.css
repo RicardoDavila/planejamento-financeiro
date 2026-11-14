@@ -1,0 +1,38 @@
+@media screen and (min-width:901px){
+/* pf-desktop-only-v511 */
+@media (pointer:fine) {
+@media screen and (min-width:901px){
+#pfCadastroEditor[hidden],#pfCadastroBack[hidden],#pfCadastroEntries[hidden],#pfCadastroRename[hidden]{display:none!important}
+/* O formulário saiu da camada modal: a trava legada não deve prender o documento. */
+html:has(>body.pf-dashboard-shell[data-pf-dash-view=cadastro][data-pf-cadastro-editor]){height:auto!important;max-height:none!important;overflow-y:auto!important}
+html body.pf-dashboard-shell[data-pf-dash-view=cadastro][data-pf-cadastro-editor]{height:auto!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior-y:auto!important}
+html body.pf-dashboard-shell[data-pf-dash-view=cadastro][data-pf-cadastro-editor] #appConteudo,
+html body.pf-dashboard-shell[data-pf-dash-view=cadastro][data-pf-cadastro-editor] #pfCadastroPage{height:auto!important;max-height:none!important;overflow:visible!important}
+#pfCadastroPage.pf-cadastro-editando>.pf-dash-grid{display:none!important}
+html body.pf-dashboard-shell[data-pf-dash-view=cadastro] #pfDashboardNavigation #pfCadastroBack:not([hidden]),
+html body.pf-dashboard-shell[data-pf-dash-view=cadastro] #pfDashboardNavigation #pfCadastroEntries:not([hidden]){display:inline-flex!important}
+#pfCadastroEditor{max-width:570px;width:100%;padding-bottom:30px}
+html body.pf-dashboard-shell #pfCadastroEditor .pf-cadastro-inline{position:static!important;inset:auto!important;display:block!important;background:transparent!important;padding:0!important;max-height:none!important;height:auto!important;overflow:visible!important;z-index:auto!important}
+html body.pf-dashboard-shell #pfCadastroEditor .pf-cadastro-inline.hidden,html body.pf-dashboard-shell #pfCadastroEditor .pf-cadastro-inline[hidden]{display:none!important}
+html body.pf-dashboard-shell #pfCadastroEditor #modal>div,html body.pf-dashboard-shell #pfCadastroEditor .gc-card,html body.pf-dashboard-shell #pfCadastroEditor .pf-cadastro-reference{background:var(--dash-card)!important;background-image:none!important;color:var(--dash-ink)!important;border:1px solid var(--dash-line)!important;border-radius:12px!important;padding:24px!important;width:100%!important;max-width:none!important;max-height:none!important;overflow:visible!important;box-shadow:none!important;font:14px/1.6 'Space Grotesk','DM Sans',Arial,sans-serif!important;box-sizing:border-box}
+html body.pf-dashboard-shell #pfCadastroEditor h2,html body.pf-dashboard-shell #pfCadastroEditor h3{font:700 19px/1.4 'Space Grotesk','DM Sans',Arial,sans-serif!important;color:var(--dash-ink)!important;margin:0 0 22px!important}
+html body.pf-dashboard-shell #pfCadastroEditor label{display:block!important;color:var(--dash-muted)!important;font:500 10px/1.6 'JetBrains Mono','Courier New',monospace!important;letter-spacing:1px;text-transform:uppercase;margin:0 0 6px!important}
+html body.pf-dashboard-shell #pfCadastroEditor input:not([type=checkbox]):not([type=hidden]),html body.pf-dashboard-shell #pfCadastroEditor select{display:block!important;width:100%!important;min-height:40px;padding:9px 12px!important;background:var(--dash-bg)!important;color:var(--dash-ink)!important;border:1px solid var(--dash-line)!important;border-radius:7px!important;font:13px 'Space Grotesk','DM Sans',Arial,sans-serif!important;box-sizing:border-box;outline:none}
+html body.pf-dashboard-shell.dark-mode #pfCadastroEditor input:not([type=checkbox]):not([type=hidden]),html body.pf-dashboard-shell.dark-mode #pfCadastroEditor select{background:#20262f!important;color-scheme:dark}
+html body.pf-dashboard-shell #pfCadastroEditor input:focus,html body.pf-dashboard-shell #pfCadastroEditor select:focus{border-color:var(--dash-accent)!important;box-shadow:0 0 0 2px rgba(0,229,255,.1)!important}
+html body.pf-dashboard-shell #pfCadastroEditor option{background:var(--dash-card)!important;color:var(--dash-ink)!important}
+html body.pf-dashboard-shell #pfCadastroEditor #formLancamento{display:grid!important;gap:16px!important}
+html body.pf-dashboard-shell #pfCadastroEditor #formLancamento .grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:16px!important}
+html body.pf-dashboard-shell #pfCadastroEditor #formLancamento>div{margin:0!important;border-color:var(--dash-line)!important}
+html body.pf-dashboard-shell #pfCadastroEditor button{background:transparent!important;color:var(--dash-ink)!important;border:1px solid var(--dash-line)!important;border-radius:7px!important;padding:9px 12px!important;font:11px 'JetBrains Mono','Courier New',monospace!important;box-shadow:none!important;cursor:pointer;margin:0}
+html body.pf-dashboard-shell #pfCadastroEditor button:hover,html body.pf-dashboard-shell #pfCadastroEditor button:focus-visible{border-color:var(--dash-accent)!important;outline:none!important}
+html body.pf-dashboard-shell #pfCadastroEditor button[type=submit]{background:#005a6a!important;border-color:var(--dash-accent)!important;color:#fff!important}
+#pfCadastroEditor .pf-cadastro-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:20px}
+#pfCadastroEditor .pf-cadastro-reference input{margin-bottom:18px}#pfCadastroEditor .gc-card>p{margin:10px 0 18px;color:var(--dash-muted)}#pfCadastroEditor .gc-card>label{margin-top:18px!important}#pfCadastroEditor .gc-card>button{margin:10px 6px 4px 0!important}
+#pfCadastroRename{margin-top:20px;padding-top:16px;border-top:1px solid var(--dash-line)}#pfCadastroFeedback{margin:14px 0;padding:12px;border:1px solid var(--dash-line);border-radius:8px;color:var(--dash-ink);background:var(--dash-card);font:13px/1.5 'Space Grotesk',Arial,sans-serif}
+#pfCadastroEditor input[type=checkbox]{width:16px;height:16px;accent-color:#00aabd;vertical-align:middle;margin-right:8px}
+html body.pf-dashboard-shell #pfCadastroEditor #formLancamento>div:last-child{position:static!important;bottom:auto!important;background:transparent!important;box-shadow:none!important}
+}
+
+}
+}

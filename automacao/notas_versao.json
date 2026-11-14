@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Corrige colisões dos identificadores dos cadastros e alinha as referências das importações e exportações.",
-    "Preserva os IDs dos lançamentos e leva o catálogo de referências no pacote de sincronização.",
-    "Melhora a validação da importação Excel; a atualização não inclui nem substitui os dados financeiros do usuário."
+    "Mudança layout e estrutura: novo painel para computador, com as etapas 01 a 21 aprovadas.",
+    "Dashboard Pessoal, Análise Financeira e relatórios PDF/impressão com filtros e detalhamento.",
+    "Modo celular preservado. Dados existentes continuam pelo carregamento e sincronização do aplicativo; nenhum banco acompanha esta atualização."
   ],
   "distribuicao": [
-    "Corrige colisões dos identificadores dos cadastros e alinha as referências das importações e exportações.",
-    "Preserva os IDs dos lançamentos e o isolamento de armazenamento por conta.",
-    "Leva o catálogo de referências no pacote de sincronização, mantendo compatibilidade com pacotes anteriores."
+    "Mudança layout e estrutura: novo painel para computador, com as etapas 01 a 21 aprovadas.",
+    "Dashboard Pessoal, Análise Financeira e relatórios PDF/impressão com filtros e detalhamento.",
+    "Modo celular preservado. Dados existentes continuam pelo carregamento e sincronização do aplicativo; nenhum banco acompanha esta atualização."
   ]
 }

@@ -1,0 +1,13 @@
+/* pf-desktop-only-v511 */
+@media (min-width:901px) and (pointer:fine) {
+#pf-auto-popup{position:fixed;z-index:10000;width:min(300px,calc(100vw - 16px));max-height:380px;overflow:auto;padding:12px;border:1px solid var(--dash-accent,#00e5ff);border-radius:9px;background:var(--dash-card,#202735);color:var(--dash-ink,#edf4fa);box-shadow:0 12px 36px #0006;font:12px/1.5 'Courier New',monospace}
+#pf-auto-popup[hidden],.pf-auto-options label[hidden],.pf-auto-table-note[hidden],#pf-auto-active-filters[hidden]{display:none!important}
+.pf-auto-heading,.pf-auto-actions{display:flex;align-items:center;justify-content:space-between;gap:6px}.pf-auto-options{max-height:210px;overflow:auto;margin:10px 0}.pf-auto-options label{display:flex;gap:8px;padding:5px;align-items:center;cursor:pointer}.pf-auto-options label:hover{background:#00e5ff18}
+#pf-auto-popup button,#pf-auto-active-filters button,.pf-auto-table-note button{font:inherit;padding:6px 8px;border:1px solid var(--dash-line,#526070);border-radius:5px;background:transparent;color:inherit;cursor:pointer}#pf-auto-popup button:hover,#pf-auto-active-filters button:hover{border-color:#00e5ff;color:#00e5ff}#pf-auto-popup input[type=search]{width:100%;margin-top:8px;padding:7px;background:transparent;color:inherit;border:1px solid var(--dash-line,#526070);border-radius:5px}#pf-auto-popup input[type=checkbox]{accent-color:#00cddd;width:14px;height:14px}
+[data-auto-header]{font:inherit!important;color:inherit!important;background:transparent!important;border:0!important;padding:0!important;cursor:pointer}[data-auto-header]:hover,[data-auto-header].pf-auto-active{color:var(--dash-accent,#00cddd)!important}[data-auto-cell]{cursor:pointer}[data-auto-cell]:hover{outline:1px solid var(--dash-accent,#00cddd);outline-offset:-2px;background:#00cddd0d}#pf-auto-active-filters,.pf-auto-table-note{padding:8px;display:flex;flex-wrap:wrap;gap:7px;font-size:12px}#formLancamento .pf-auto-dates{display:grid!important;grid-template-columns:1fr!important}#modal>div{max-height:94vh;overflow:auto}
+.pdp-kpi[data-pdp-metric]{cursor:pointer}.pdp-kpi[data-pdp-metric]:hover,.pdp-kpi[data-pdp-metric]:focus-visible{border-color:var(--dash-accent,#00e5ff);outline:1px solid var(--dash-accent,#00e5ff)}
+@media print{#pf-auto-popup,#pf-auto-active-filters,.pf-auto-table-note{display:none!important}}
+
+#formLancamento .pf-auto-dates label{display:block}#formLancamento .pf-auto-dates input{display:block;width:100%;box-sizing:border-box}
+
+}

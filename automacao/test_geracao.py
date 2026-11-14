@@ -65,7 +65,7 @@ const a=make('A'),b=make('B');a.pfdLocal.setItem('saldo','100');assert.equal(b.p
             expected=corrigir_rodape(corrigir_atualizacoes(corrigir_sincronizacao(gerar.read(gerar.ROOT/'index.html'))))
             import re
             expected=re.sub(r"const CURRENT_VERSION='V[0-9.]+';","const CURRENT_VERSION='V4.12.3';",expected)
-            self.assertEqual(gerar.read(output/'index.html'),expected)
+            self.assertEqual(gerar.read(output/'index.html'),gerar.aplicar_dashboard(expected))
             self.assertEqual(json.loads(gerar.read(output/'version.json'))['version'],'V4.12.3')
             self.assertEqual(json.loads(gerar.read(output/'distribuicao/version.json'))['version'],'V4.12.3')
             self.assertIn('pf-distribuicao-v4-12-3',gerar.read(output/'distribuicao/service-worker.js'))

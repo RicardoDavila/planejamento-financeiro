@@ -112,7 +112,7 @@
    found.auth.getSession().then(({data,error})=>{if(error)throw error;if(authSerial===start)switchOwner(data?.session?.user?.id||null);}).catch(e=>{if(authSerial===start){switchOwner(null);fail(e);}});
   }
   function mount(){
-   const normal=$('pfMenuTopo'),mobile=document.querySelector('#pfMobileShell > header.bar')||document.querySelector('#pm-app .bar'),mobileMode=document.body.classList.contains('pf-mobile-layout');const host=mobileMode?(mobile?.getClientRects().length?mobile:null):normal?.getClientRects().length?normal:mobile?.getClientRects().length?mobile:null;
+   const normal=$('pfDashboardToolbar')||$('pfMenuTopo'),mobile=document.querySelector('#pfMobileShell > header.bar')||document.querySelector('#pm-app .bar'),mobileMode=document.body.classList.contains('pf-mobile-layout');const host=mobileMode?(mobile?.getClientRects().length?mobile:null):normal?.getClientRects().length?normal:mobile?.getClientRects().length?mobile:null;
    let button=$('pfNotasBtn');if(!button&&host){button=document.createElement('button');button.type='button';button.id='pfNotasBtn';button.className='pf-menu-categoria';button.setAttribute('data-pf-i18n-skip','');button.setAttribute('aria-controls','pfNotas');button.innerHTML='📝 Notas <span id="pfNotasBadge"></span>';button.onclick=()=>panel.hidden?open():close();}
    if(button){button.hidden=!allowed()||!host;if(host&&button.parentElement!==host)host.append(button);button.setAttribute('aria-expanded',String(!panel.hidden));}
    const menu=$('pfMenuItens');let more=$('pfNotasMaisBtn');

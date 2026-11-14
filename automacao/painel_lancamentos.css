@@ -1,0 +1,67 @@
+/* pf-desktop-only-v511 */
+@media (min-width:901px) and (pointer:fine) {
+/* Paleta e fontes da capa, aplicadas ao painel inteiro de lançamentos. */
+/* Etapa 12: status sem alterar seu texto, regra ou valor financeiro. */
+html body.dark-mode.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper td[data-pf-entry-tone="paid"] .desktop-item-filter{background:rgba(0,222,153,.12)!important}
+html body.dark-mode.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper td[data-pf-entry-tone="pending"] .desktop-item-filter{background:rgba(255,209,102,.12)!important}
+html body.dark-mode.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper td[data-pf-entry-tone="overdue"] .desktop-item-filter{background:rgba(255,77,106,.13)!important}
+body #tabelaLancamentosWrapper td[data-pf-entry-tone] .desktop-item-filter{border-radius:14px!important;padding:3px 7px!important}
+@media screen and (min-width:901px){
+body.pf-dashboard-shell #pf-entries-cadastro{display:none}
+body.pf-dashboard-shell[data-pf-dash-view=entries] #pfDashboardNavigation button{display:none!important}
+body.pf-dashboard-shell[data-pf-dash-view=entries] #pfDashboardNavigation [data-dash-action=home],body.pf-dashboard-shell[data-pf-dash-view=entries] #pfDashboardNavigation #pf-entries-cadastro{display:inline-flex!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #layout-left{width:100%!important;background:transparent!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel{background:var(--dash-card)!important;color:var(--dash-ink)!important;border:1px solid var(--dash-line)!important;border-radius:14px!important;padding:22px!important;box-shadow:none!important;font-family:'Space Grotesk','DM Sans',Arial,sans-serif!important;overflow:visible!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel h2{color:var(--dash-ink)!important;font:700 20px 'Space Grotesk','DM Sans',Arial,sans-serif!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #clean-periodbar,html body.pf-dashboard-shell[data-pf-dash-view=entries] #pfInlineMainPeriods,html body.pf-dashboard-shell[data-pf-dash-view=entries] .filtros-rapidos-mobile{background:var(--dash-card)!important;color:var(--dash-ink)!important;border-color:var(--dash-line)!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #clean-periodbar>div:not(#pfInlineMainPeriods){display:none!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel button,html body.pf-dashboard-shell[data-pf-dash-view=entries] #clean-periodbar button,html body.pf-dashboard-shell[data-pf-dash-view=entries] #clean-periodbar select{background:transparent!important;color:var(--dash-muted)!important;border:1px solid var(--dash-line)!important;border-radius:7px!important;padding:8px 11px!important;font:500 11px 'JetBrains Mono','Courier New',monospace!important;box-shadow:none!important;cursor:pointer}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel button:hover,html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel button:focus-visible{border-color:var(--dash-accent)!important;color:var(--dash-accent)!important;outline:none}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-types button.active,html body.pf-dashboard-shell[data-pf-dash-view=entries] #clean-periodbar button.active,html body.pf-dashboard-shell[data-pf-dash-view=entries] #clean-periodbar button[aria-pressed=true]{background:var(--dash-accent)!important;color:var(--dash-bg)!important}
+#pf-entries-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-bottom:18px}#pf-entries-types{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}#pf-entries-summary{width:100%;margin:10px 0 0;font:600 12px/1.7 'JetBrains Mono','Courier New',monospace;white-space:pre-wrap}#pf-entries-filter-context{width:100%;font-size:11px;color:var(--dash-muted);margin:0}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel input,html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel select{background:var(--dash-card)!important;color:var(--dash-ink)!important;border:1px solid var(--dash-line)!important;border-radius:6px!important;color-scheme:dark;font-family:inherit!important}html body.pf-dashboard-shell:not(.dark-mode) #pf-entries-panel input,html body.pf-dashboard-shell:not(.dark-mode) #pf-entries-panel select{color-scheme:light}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel label,html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel small{color:var(--dash-muted)!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper{background:transparent!important;border:0!important;overflow-x:auto!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper table{min-width:0!important;width:100%!important;table-layout:fixed!important;background:transparent!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper thead,html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper tr,html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper th,html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper td{background:transparent!important;color:var(--dash-ink)!important;border-color:var(--dash-line)!important;white-space:normal!important;overflow-wrap:anywhere!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper th{font:600 9px/1.5 'JetBrains Mono','Courier New',monospace!important;text-transform:uppercase;letter-spacing:.5px;padding:10px 4px!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper td{font:500 12px/1.5 'Space Grotesk','DM Sans',Arial,sans-serif!important;padding:11px 5px!important;border-bottom:1px solid var(--dash-line)!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper tbody tr:nth-child(even),html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper tbody tr:nth-child(even) td{background:transparent!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper th button,html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper td .desktop-item-filter{border:0!important;background:transparent!important;padding:0!important;font:inherit!important;color:inherit!important;text-align:left;min-width:0!important;white-space:normal!important;overflow-wrap:anywhere!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaCorpo .pf-entry-income td:nth-last-child(4){color:#00c97a!important;font-family:'JetBrains Mono',monospace!important;font-weight:700!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaCorpo .pf-entry-paid button{background:rgba(0,255,135,.12)!important;color:#00c97a!important;border-radius:16px!important;padding:3px 7px!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaCorpo .pf-entry-pending button{background:rgba(255,209,102,.12)!important;color:#d4a42b!important;border-radius:16px!important;padding:3px 7px!important}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #desktop-selection-tools,html body.pf-dashboard-shell[data-pf-dash-view=entries] #desktop-visible-totals{color:var(--dash-ink)!important;background:transparent!important;font-family:inherit!important}
+}
+
+#pf-entries-coverage{width:100%;font:11px/1.7 'JetBrains Mono',monospace;color:var(--dash-muted);padding:10px;border:1px solid var(--dash-line);border-radius:7px}
+
+/* No Painel de Lançamentos, a página inteira rola em uma única barra externa. */
+@media screen and (min-width:901px){
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #layout-workspace,
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #layout-left,
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel,
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper{
+height:auto!important;max-height:none!important;overflow:visible!important;overscroll-behavior:auto!important;scrollbar-gutter:auto!important;
+}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #layout-left{position:static!important;top:auto!important;padding-right:0!important}
+}
+
+/* Os filtros avançados usam o mesmo fundo do painel, sem a faixa azul herdada. */
+@media screen and (min-width:901px){
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel .pf-filtros-painel,
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel #clean-all-filters,
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel .pf-filtros-cabecalho,
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel .pf-filtro-item,
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel #filtrosRapidosMobile{
+background:var(--dash-card)!important;background-image:none!important;color:var(--dash-ink)!important;border-color:var(--dash-line)!important;box-shadow:none!important;
+}
+html body.pf-dashboard-shell[data-pf-dash-view=entries] #pf-entries-panel select option{background:var(--dash-card)!important;color:var(--dash-ink)!important}
+}
+
+@media screen and (min-width:901px){
+#pfCadastroPage[hidden]{display:none!important}#pfCadastroPage{color:var(--dash-ink);padding:0 0 24px;font-family:'Space Grotesk','DM Sans',Arial,sans-serif}#pfCadastroPage h1{font-size:28px;font-weight:800;margin-bottom:6px}#pfCadastroPage>p{color:var(--dash-muted)}
+body.pf-dashboard-shell[data-pf-dash-view=cadastro] #layout-workspace{display:none!important}body.pf-dashboard-shell[data-pf-dash-view=cadastro] #pfDashboardNavigation button{display:none!important}body.pf-dashboard-shell[data-pf-dash-view=cadastro] #pfDashboardNavigation [data-dash-action=home]{display:inline-flex!important}
+}
+
+}

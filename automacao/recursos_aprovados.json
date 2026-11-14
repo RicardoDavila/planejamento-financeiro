@@ -1,21 +1,254 @@
 {
   "descricao": "Recursos aprovados que devem permanecer nas próximas versões; revisar este contrato quando uma mudança autorizada substituir um recurso.",
-  "aplicativos": ["index.html", "distribuicao/app.html", "teste-gemini/app.html"],
-  "graficos": ["graficos.html", "distribuicao/graficos.html", "teste-gemini/graficos.html"],
+  "aplicativos": [
+    "index.html",
+    "distribuicao/app.html",
+    "teste-gemini/app.html"
+  ],
+  "graficos": [
+    "graficos.html",
+    "distribuicao/graficos.html",
+    "teste-gemini/graficos.html"
+  ],
   "blocos_aplicativo": {
-    "pf-ajuste-painel-gerencial": ["#painelGerencial", "#periodoPainelGerencial", "#pgSemaforo"],
-    "pf-painel-contorno-e-espacamento": ["#pfPainelRodape", "#pfPainelAcoes"],
-    "pf-painel-rodape-espacado": ["pfPainelRodape"],
-    "pf-rolagem-coluna-dados": ["overflow-y"],
-    "pf-rodape-lancamento-modo-escuro": ["body.dark-mode", "#formLancamento"],
-    "pf-modo-claro-legibilidade": ["body:not(.dark-mode)", "#f3f5f7", "#17212b", "#5b6573"],
-    "pf-global-language": ["lastIndexOf('</body>')"],
-    "pf-global-currency": ["lastIndexOf('</body>')"],
-    "pf-dimensoes-colunas": ["#layout-left", "#layout-right", "min-width: 0 !important", "table-layout: fixed !important", "overflow-wrap: anywhere !important", "#clean-month-analysis .pfce-svg"],
-    "pf-notas-style": ["body.dark-mode #pfNotas", "@media print", "#pfNotas[hidden]"],
-    "pf-notas-core": ["indexedStore", "pf_notas_gravar_v3", "p_dono:who", "expectedToken"],
-    "pf-notas-ui": ["data-pf-i18n-skip", "data-pf-private", "PFNotas", "getClientRects", "#pfMobileShell > header.bar", "pfNotasMaisBtn", "diagnostico:"]
+    "pf-ajuste-painel-gerencial": [
+      "#painelGerencial",
+      "#periodoPainelGerencial",
+      "#pgSemaforo"
+    ],
+    "pf-painel-contorno-e-espacamento": [
+      "#pfPainelRodape",
+      "#pfPainelAcoes"
+    ],
+    "pf-painel-rodape-espacado": [
+      "pfPainelRodape"
+    ],
+    "pf-rolagem-coluna-dados": [
+      "overflow-y"
+    ],
+    "pf-rodape-lancamento-modo-escuro": [
+      "body.dark-mode",
+      "#formLancamento"
+    ],
+    "pf-modo-claro-legibilidade": [
+      "body:not(.dark-mode)",
+      "#f3f5f7",
+      "#17212b",
+      "#5b6573"
+    ],
+    "pf-global-language": [
+      "lastIndexOf('</body>')"
+    ],
+    "pf-global-currency": [
+      "lastIndexOf('</body>')"
+    ],
+    "pf-dimensoes-colunas": [
+      "#layout-left",
+      "#layout-right",
+      "min-width: 0 !important",
+      "table-layout: fixed !important",
+      "overflow-wrap: anywhere !important",
+      "#clean-month-analysis .pfce-svg"
+    ],
+    "pf-notas-style": [
+      "body.dark-mode #pfNotas",
+      "@media print",
+      "#pfNotas[hidden]"
+    ],
+    "pf-notas-core": [
+      "indexedStore",
+      "pf_notas_gravar_v3",
+      "p_dono:who",
+      "expectedToken"
+    ],
+    "pf-notas-ui": [
+      "data-pf-i18n-skip",
+      "data-pf-private",
+      "PFNotas",
+      "getClientRects",
+      "#pfMobileShell > header.bar",
+      "pfNotasMaisBtn",
+      "diagnostico:",
+      "pfDashboardToolbar"
+    ],
+    "pf-dashboard-style": [
+      "#pfDashboardHome",
+      "body.pf-dashboard-shell.dark-mode",
+      "@media print",
+      "#pfDashboardHeader",
+      "#pfDashboardToolbar",
+      "#pfDashboardNavigation[hidden]"
+    ],
+    "pf-dashboard-script": [
+      "PFDesktopApproved?.openGraphics",
+      "pfDashboardNavigation",
+      "window.openModal",
+      "pointer:coarse"
+    ],
+    "pf-dashboard-personal-script": [
+      "PFPersonalDashboard",
+      "function model(",
+      "function chart(",
+      "Valores protegidos",
+      "function printChart",
+      "data-pdp-point"
+    ],
+    "pf-dashboard-personal-style": [
+      "#pfPersonalDashboard[hidden]",
+      ".pdp-grid4",
+      ".pdp-svg",
+      "@media print"
+    ],
+    "pf-dashboard-review-script": [
+      "PFPersonalReview",
+      "function futureValue",
+      "Contas a receber",
+      "qualidade dos dados",
+      "Não informado é diferente de zero"
+    ],
+    "pf-dashboard-inline-script": [
+      "PFInlineDetails",
+      "PFCalendar",
+      "pf-inline-notices",
+      "compositionDialog",
+      "pfInlineChartPeriods"
+    ],
+    "pf-cadastro-forms-script": [
+      "PFCadastroForms",
+      "pfCadastroEditor",
+      "pfCadastroBack",
+      "pfCadastroEntries",
+      "pfCadastroRename",
+      "closeModalOriginal"
+    ],
+    "pf-cadastro-forms-style": [
+      "pf-cadastro-inline",
+      "[data-pf-cadastro-editor]",
+      "overflow-y:auto!important",
+      "var(--dash-card)",
+      "JetBrains Mono"
+    ],
+    "pf-graphics-overview-script": [
+      "PFGraphicsOverview",
+      "PFGraphicsMath",
+      "matchesAuto",
+      "data-go-advanced",
+      "data-go-pick",
+      "Compromissos fixos recorrentes"
+    ],
+    "pf-graphics-evolution-script": [
+      "PFGraphicsEvolution",
+      "revenueMonthly",
+      "expenseMonthly",
+      "revenueRubrics",
+      "expenseRubrics",
+      "incomeRows",
+      "expenseRows"
+    ],
+    "pf-graphics-overview-style": [
+      "pfgo-grid2",
+      "pfgo-week",
+      "var(--dash-card)",
+      "data-pf-dash-view=charts"
+    ],
+    "pf-dashboard-source-script": [
+      "PFAnalysisFile",
+      "function coverage",
+      "function normalize",
+      "arrayBuffer"
+    ],
+    "pf-analysis-core-script": [
+      "PFAnalysisMath",
+      "function cashFlow",
+      "function amortize",
+      "function validatePlan"
+    ],
+    "pf-planning-store-script": [
+      "PFPlanningStore",
+      "pf-planejamento-pessoal-v1",
+      "readwrite"
+    ],
+    "pf-analysis-page-script": [
+      "PFPersonalAnalysis",
+      "Filtros avançados",
+      "Salvar em PDF",
+      "Voltar Página Inicial"
+    ],
+    "pf-analysis-style": [
+      ".pa-svg polyline,.pa-svg polygon{pointer-events:none}",
+      "pf-analysis-open"
+    ],
+    "pf-white-buttons-script": [
+      "PFButtonAppearance",
+      "rgb(0, 229, 255)",
+      "rgb(0, 125, 145)",
+      "Voltar Página Inicial",
+      "createTreeWalker",
+      "#pfDashboardHome .pf-dash-card",
+      "rgb(255, 255, 255)",
+      "rgb(184, 194, 204)",
+      "#pfCadastroPage .pf-dash-card",
+      "function entryDataInk",
+      "pfEntryTone",
+      "rgb(0, 222, 153)",
+      "rgb(255, 77, 106)"
+    ],
+    "pf-semantic-palette-script": [
+      "PFSemanticPalette",
+      "function classify",
+      "function statusKind",
+      "cleanClone",
+      "beforeRefresh"
+    ],
+    "pf-semantic-palette-style": [
+      "body.dark-mode",
+      "--pf-investment:#57b6ff",
+      "--pf-other:#b49aff"
+    ],
+    "pf-area-cards-script": [
+      "PFAreaCards",
+      "ehAdministrador",
+      "stopImmediatePropagation",
+      "action.node.click()",
+      "Voltar Página Inicial",
+      "pf-area-card"
+    ],
+    "pf-area-cards-style": [
+      ".pf-area-grid",
+      "body.dark-mode #pfAreaCardsPage",
+      "body.pf-area-open #layout-workspace"
+    ],
+    "pf-help-appearance-style": [
+      "body.dark-mode #pfHelpModal",
+      "--help-bg:#181b21",
+      "--help-description:#00e5ff",
+      "Space Grotesk",
+      "JetBrains Mono",
+      "#pfPesquisaResultados article"
+    ],
+    "pf-project-theme-script": [
+      "PFProjectTheme",
+      "function actionKind",
+      "function statusKind",
+      "function cleanClone",
+      "function chartColors"
+    ],
+    "pf-project-theme-style": [
+      "#000000",
+      "#181B21",
+      "#22D3EE",
+      "#F8FAFC",
+      "#A7B4C7",
+      "html body:not(.dark-mode)"
+    ]
   },
   "bloco_relatorios": "pf-report-selection-module",
-  "recursos_relatorios": ["function financialModel", "function summaryHTML", "data-mode=\"summary\"", "data-mode=\"full\"", "pf-report-selection-bootstrap", "lastIndexOf('</body>')"]
+  "recursos_relatorios": [
+    "function financialModel",
+    "function summaryHTML",
+    "data-mode=\"summary\"",
+    "data-mode=\"full\"",
+    "pf-report-selection-bootstrap",
+    "lastIndexOf('</body>')"
+  ]
 }

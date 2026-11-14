@@ -1,0 +1,26 @@
+/* pf-desktop-only-v511 */
+(function(){if(typeof matchMedia==='function'&&matchMedia('(max-width:900px), (pointer:coarse)').matches)return;
+/* Gráficos e Evoluções: uma única origem para agregados e lançamentos dos pontos. */
+(()=>{'use strict';
+const sum=rows=>rows.reduce((n,t)=>n+Math.round(Number(t.valor)*100),0);
+function groups(rows){const map=new Map();for(const t of rows){const label=String(t.categoria||'Sem rubrica');if(!map.has(label))map.set(label,{label,value:0,rows:[]});const g=map.get(label);g.value+=Math.round(Number(t.valor)*100);g.rows.push(t);}return [...map.values()].sort((a,b)=>b.value-a.value||a.label.localeCompare(b.label));}
+function model(m,f){const date=t=>f.dateMode==='vencimento'?t.vencimento:/^\d{4}-\d{2}-\d{2}$/.test(t.dataPg||'')&&!isNaN(Date.parse(t.dataPg+'T12:00:00Z'))&&new Date(t.dataPg+'T12:00:00Z').toISOString().slice(0,10)===t.dataPg?t.dataPg:t.vencimento;
+ const monthly=m.monthly.map(k=>{const income=m.income.filter(t=>String(date(t)).startsWith(k.key)),expenses=m.expenses.filter(t=>String(date(t)).startsWith(k.key));return {key:k.key,label:k.label,income:sum(income),expense:sum(expenses),incomeRows:income,expenseRows:expenses,inScope:k.key>=f.from.slice(0,7)&&k.key<=f.to.slice(0,7)};});
+ return {monthly,income:groups(m.income),expense:groups(m.expenses),incomeRows:m.income,expenseRows:m.expenses,incomeTotal:sum(m.income),expenseTotal:sum(m.expenses),annual:f.from.endsWith('-01-01')&&f.to.endsWith('-12-31')&&!(f.auto||{}).month};
+}
+function ring(items,section,u){const total=items.reduce((n,v)=>n+v.value,0);if(!items.length||total<=0||items.some(v=>v.value<0))return '<p class="pfgo-note">Rosca indisponível sem composição positiva. Consulte os valores em barras.</p>'+u.bars(items,section);
+ const r=91,C=2*Math.PI*r;let offset=0;return '<svg class="pfgo-donut pfge-donut" viewBox="0 0 360 300" role="group" aria-label="Composição por rubrica">'+items.map(v=>{const part=v.value/total*C,svg='<circle cx="180" cy="145" r="'+r+'" fill="none" stroke="'+v.color+'" stroke-width="40" stroke-dasharray="'+part+' '+(C-part)+'" stroke-dashoffset="'+(-offset)+'" transform="rotate(-90 180 145)"'+u.hit(v.auto,section,v.label)+'/>';offset+=part;return svg;}).join('')+'<text x="180" y="145" text-anchor="middle" class="pfgo-center">'+u.esc(u.money(total))+'</text><text x="180" y="167" text-anchor="middle">total do período</text></svg>';}
+function render(m,f,u){const data=model(m,f),colors=['#00D7E8','#66DCB1','#BDCCF5','#FFD166','#B49AFF','#F277CD','#57B6FF'];
+ const configs=[{id:'revenueMonthly',title:'Evolução das receitas (mensal)',kind:'income',monthly:true,color:'#00DE99',defaultType:'areas',rows:data.incomeRows,total:data.incomeTotal},
+ {id:'expenseMonthly',title:'Evolução das despesas (mensal)',kind:'expense',monthly:true,color:'#FF8C42',defaultType:'colunas',rows:data.expenseRows,total:data.expenseTotal},
+ {id:'revenueRubrics',title:'Receitas por rubrica ('+(data.annual?'acumulado do ano':'acumulado no período')+')',kind:'income',monthly:false,color:'#00D7E8',defaultType:'rosca',rows:data.incomeRows,total:data.incomeTotal},
+ {id:'expenseRubrics',title:'Despesas por rubrica ('+(data.annual?'acumulado do ano':'acumulado no período')+')',kind:'expense',monthly:false,color:'#FF4D6A',defaultType:'colunas',rows:data.expenseRows,total:data.expenseTotal}];
+ return '<div class="pfgo-grid2 pfge-grid">'+configs.map(c=>{const mode=u.types[c.id]==='padrao'?c.defaultType:u.types[c.id],items=c.monthly?data.monthly.map(k=>({label:k.label,value:k.inScope?(c.kind==='income'?k.income:k.expense):null,color:c.color,auto:{month:k.key}})):data[c.kind].map((g,i)=>({label:g.label,value:g.value,color:c.kind==='income'?colors[i%colors.length]:c.color,auto:{rubric:g.label}}));
+ let graphic;if(!c.rows.length)graphic='<p class="pfgo-note pfge-empty">Sem registros para o período, base e filtros selecionados.</p>';else if(mode==='barras')graphic=u.bars(items.filter(v=>v.value!==null),c.id);else if(mode==='rosca')graphic=ring(items.filter(v=>v.value!==null),c.id,u);else graphic=u.plot([{label:c.title,color:c.color,values:items}],c.id,false,mode,true);
+ const legend=!c.monthly?'<div class="pfge-legend">'+items.map(v=>'<button'+u.hit(v.auto,c.id,v.label)+'><i style="background:'+v.color+'"></i><span>'+u.esc(v.label)+'</span><strong>'+u.money(v.value)+' · '+u.pct(c.total>0?v.value/c.total*100:null)+'</strong></button>').join('')+'</div>':'';
+ return '<section class="pfgo-card pfge-card" data-go-section="'+c.id+'"><h2>'+u.esc(c.title)+'</h2>'+u.controls(c.id)+graphic+legend+'<p class="pfgo-note pfge-total">Total: <strong>'+u.money(c.total)+'</strong> · '+c.rows.length+' lançamentos'+(!c.rows.length?' · Sem registros para esta base e filtros.':'')+'</p>'+u.detail(c.id,m)+'</section>';}).join('')+'</div><p class="pfgo-note">Os totais e os detalhes usam os mesmos lançamentos e filtros. Investimentos ficam fora das séries de despesas. Clique no mês para comparar receitas e despesas no mesmo recorte; clique na rubrica para filtrar os quatro gráficos. A base realizada considera recebidos e pagos; a previsão inclui pendências.</p>';
+}
+window.PFGraphicsEvolution={model,render};
+})();
+
+})();

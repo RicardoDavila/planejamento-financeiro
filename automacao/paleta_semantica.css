@@ -1,0 +1,14 @@
+/* pf-desktop-only-v511 */
+@media (min-width:901px) and (pointer:fine) {
+/* Apenas modo escuro e cores: não muda estrutura, eventos, filtros ou dados. */
+@media screen{
+body.dark-mode{--pf-income:#00de99;--pf-expense:#ff4d6a;--pf-investment:#57b6ff;--pf-overdue:#ff4d6a;--pf-today:#ffd166;--pf-upcoming:#57b6ff;--pf-other:#b49aff;--pf-description:#00e5ff}
+body.dark-mode [data-pf-dark-role=title]{color:#fff!important}
+body.dark-mode [data-pf-dark-role=description],body.dark-mode [data-pf-dark-role=header]{color:#00e5ff!important}
+body.dark-mode [data-pf-dark-role=table]{color:#fff!important}
+html body.dark-mode.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper td[data-pf-entry-tone=today] .desktop-item-filter{background:rgba(255,209,102,.12)!important}
+html body.dark-mode.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper td[data-pf-entry-tone=upcoming] .desktop-item-filter{background:rgba(87,182,255,.12)!important}
+html body.dark-mode.pf-dashboard-shell[data-pf-dash-view=entries] #tabelaLancamentosWrapper td[data-pf-entry-tone=neutral] .desktop-item-filter{background:rgba(180,154,255,.12)!important}
+}
+
+}

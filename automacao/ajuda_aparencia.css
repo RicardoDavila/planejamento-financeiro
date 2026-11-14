@@ -1,0 +1,24 @@
+/* pf-desktop-only-v511 */
+@media (min-width:901px) and (pointer:fine) {
+/* Etapa 15: mesma apresentação nas cinco janelas de Ajuda e Informações.
+   Somente a interface do leitor é estilizada; o conteúdo dos PDFs é preservado. */
+#pfHelpModal{--help-bg:#fff;--help-field:#f3f5f7;--help-ink:#17212b;--help-description:#007d91;--help-line:#d3dee7;font-family:'Space Grotesk','DM Sans',Arial,sans-serif!important}
+body.dark-mode #pfHelpModal{--help-bg:#181b21;--help-field:#0a0c10;--help-ink:#fff;--help-description:#00e5ff;--help-line:rgba(0,229,255,.22);background:rgba(10,12,16,.78)!important;color-scheme:dark}
+#pfHelpModal .pf-help-modal-card{background:var(--help-bg)!important;color:var(--help-ink)!important;border:1px solid var(--help-line)!important;border-radius:14px!important;font-family:inherit!important;box-shadow:0 24px 70px #0006}
+#pfHelpModal h2,#pfHelpModal h3,#pfHelpModal h4,#pfHelpModal label,#pfHelpModal strong{color:var(--help-ink)!important;font-family:'Space Grotesk','DM Sans',Arial,sans-serif!important}
+#pfHelpModal h2{font-weight:800!important;line-height:1.35}
+#pfHelpModalBody,#pfHelpModal p,#pfHelpModal li,#pfManualStatus,#pfPesquisaStatus{color:var(--help-description)!important;font-family:inherit!important;line-height:1.65}
+#pfHelpModal .pf-help-modal-icon{background:transparent!important;border:0!important;box-shadow:none!important}
+#pfHelpModal input,#pfHelpModal select,#pfHelpModal textarea{background:var(--help-field)!important;color:var(--help-ink)!important;border:1px solid var(--help-line)!important;border-radius:8px!important;font:14px 'Space Grotesk','DM Sans',Arial,sans-serif!important}
+#pfHelpModal input::placeholder,#pfHelpModal textarea::placeholder{color:#8a95a3!important;opacity:1}
+#pfHelpModal button,#pfHelpModal a.pf-help-primary,#pfHelpModal .pf-help-manuals a,#pfHelpModal [data-pf-manual-index]{background:var(--help-bg)!important;color:var(--help-description)!important;border:1px solid var(--help-line)!important;border-radius:8px!important;font:600 12px/1.5 'JetBrains Mono',monospace!important;text-decoration:none;transition:border-color .15s,box-shadow .15s}
+#pfHelpModal button:not(.pf-help-close),#pfHelpModal a.pf-help-primary{padding:10px 16px}
+#pfHelpModal button:hover,#pfHelpModal button:focus-visible,#pfHelpModal a:hover,#pfHelpModal a:focus-visible,#pfHelpModal input:focus-visible,#pfHelpModal select:focus-visible,#pfHelpModal textarea:focus-visible{border-color:var(--help-description)!important;box-shadow:0 0 10px #00e5ff26!important;outline:2px solid transparent;outline-offset:2px}
+#pfHelpModal button:disabled{opacity:.6;cursor:wait}
+#pfHelpModal .pf-help-close{font-size:24px!important;padding:0!important;line-height:1!important}
+#pfPesquisaResultados article{background:var(--help-field)!important;border-color:var(--help-line)!important}
+#pfHelpModalBody{scrollbar-color:var(--help-description) var(--help-bg)}
+#pfHelpModal .pf-help-pdf-frame{border-color:var(--help-line)!important}
+@media(prefers-reduced-motion:reduce){#pfHelpModal button,#pfHelpModal a{transition:none!important}}
+
+}
