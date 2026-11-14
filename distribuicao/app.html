@@ -7996,7 +7996,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V5.1.8';
+ const CURRENT_VERSION='V5.1.9';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -17718,7 +17718,7 @@ body.pf-dashboard-shell[data-pf-dash-view=home] #pfRodapeMercado,body.pf-dashboa
 #pfDashboardToolbar #reference-theme::first-letter{color:#FFD166}
 #pfDashboardNoticeCount:not([hidden]){display:inline-grid;place-items:center;background:#FF4D6A;color:#fff;border-radius:50%;min-width:20px;height:20px;padding:0 4px;font:700 10px 'JetBrains Mono',monospace}
 #pfDashboardNoticeCount[hidden]{display:none}
-body.pf-dashboard-shell[data-pf-dash-view=home] #pfIndicadores,body.pf-dashboard-shell[data-pf-dash-view=home] #pfMostrarIndicadores{display:none!important}
+
 }
 
 @media screen and (min-width:901px){#pfDashboardIdentity{flex-wrap:wrap;max-width:550px;justify-content:flex-end}#pfDashboardPeriod{margin-left:auto;font:11px 'JetBrains Mono',monospace;background:rgba(0,229,255,.12);color:var(--dash-accent);border:1px solid var(--dash-line);border-radius:6px;padding:4px 10px}#pfDashboardPeriod[hidden]{display:none!important}}
@@ -17814,7 +17814,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .pdp-chartbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--dash-line);padding-bottom:14px;margin-bottom:14px}.pdp-chartbar label{display:flex;align-items:center;gap:10px;font:10px 'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase}.pdp-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;margin-bottom:10px}.pdp-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}.pdp-svg{width:100%;height:auto;display:block;min-width:0}.pdp-svg text{fill:var(--dash-muted);font:11px 'JetBrains Mono',monospace}.pdp-gridline{stroke:var(--dash-line)}.pdp-zero{stroke:var(--dash-accent);stroke-dasharray:5 4;opacity:.6}.pdp-svg [data-pdp-point]{cursor:pointer}.pdp-svg [data-pdp-point]:hover,.pdp-svg [data-pdp-point]:focus{filter:brightness(1.3);stroke:var(--dash-ink);stroke-width:2;outline:none}
 .pdp-reserve{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:18px 0}.pdp-progress{height:14px;background:rgba(138,149,163,.16);border-radius:8px;overflow:hidden}.pdp-progress span{height:100%;display:block;background:linear-gradient(90deg,#FF4D6A,#00E5FF)}.pdp-footer{text-align:center;color:var(--dash-muted);font-size:11px;margin-top:28px}
 #pdp-detail{background:var(--dash-card,#fff);color:var(--dash-ink,#17212b);border:1px solid var(--dash-line,#cbd5e1);padding:24px;border-radius:12px;width:min(1100px,94vw);max-height:88vh;overflow:auto}#pdp-detail::backdrop{background:rgba(0,0,0,.65)}#pdp-detail h2{font-size:20px;margin:0 0 12px}#pdp-detail p{font-size:13px}.pdp-tablewrap{overflow:auto;max-height:60vh;margin:15px 0}.pdp-tablewrap table{width:100%;border-collapse:collapse;font-size:12px}.pdp-tablewrap th,.pdp-tablewrap td{padding:9px;text-align:left;border-bottom:1px solid var(--dash-line);overflow-wrap:anywhere}.pdp-tablewrap th{position:sticky;top:0;background:var(--dash-card)}
-@media screen and (min-width:901px){html body.pf-dashboard-shell[data-pf-dash-view=dashboard] #layout-workspace{display:none!important}html body.pf-dashboard-shell[data-pf-dash-view=dashboard] #pfDashboardNavigation>button:not([data-dash-action=home]){display:none!important}html body.pf-dashboard-shell[data-pf-dash-view=analysis] .pf-dash-entries{display:none!important}body.pf-dashboard-shell[data-pf-dash-view=dashboard] #pfIndicadores,body.pf-dashboard-shell[data-pf-dash-view=dashboard] #pfMostrarIndicadores{display:none!important}}
+@media screen and (min-width:901px){html body.pf-dashboard-shell[data-pf-dash-view=dashboard] #layout-workspace{display:none!important}html body.pf-dashboard-shell[data-pf-dash-view=dashboard] #pfDashboardNavigation>button:not([data-dash-action=home]){display:none!important}html body.pf-dashboard-shell[data-pf-dash-view=analysis] .pf-dash-entries{display:none!important}}
 @media(max-width:1100px){.pdp-grid4,.pdp-grid3{grid-template-columns:repeat(2,minmax(0,1fr))}.pdp-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pdp-chartbar{align-items:stretch}.pdp-chartbar .pdp-actions{justify-content:flex-start}}
 @media(max-width:600px){.pdp-grid4,.pdp-grid3,.pdp-filter-grid{grid-template-columns:1fr}.pdp-filter-foot{flex-direction:column;align-items:stretch}}
 @media print{#pfPersonalDashboard{display:block!important;color:#17212b!important;--dash-card:#fff;--dash-ink:#17212b;--dash-muted:#5b6573;--dash-line:#cbd5e1}.pdp-filter,.pdp-chartbar,.pdp-reserve,.pdp-period{display:none!important}.pdp-card{break-inside:avoid}.pdp-svg{max-height:650px}}

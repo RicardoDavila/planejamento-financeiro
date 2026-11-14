@@ -80,7 +80,7 @@ body.pf-dashboard-shell[data-pf-dash-view=home] #pfRodapeMercado,body.pf-dashboa
 #pfDashboardToolbar #reference-theme::first-letter{color:#FFD166}
 #pfDashboardNoticeCount:not([hidden]){display:inline-grid;place-items:center;background:#FF4D6A;color:#fff;border-radius:50%;min-width:20px;height:20px;padding:0 4px;font:700 10px 'JetBrains Mono',monospace}
 #pfDashboardNoticeCount[hidden]{display:none}
-body.pf-dashboard-shell[data-pf-dash-view=home] #pfIndicadores,body.pf-dashboard-shell[data-pf-dash-view=home] #pfMostrarIndicadores{display:none!important}
+
 }
 
 @media screen and (min-width:901px){#pfDashboardIdentity{flex-wrap:wrap;max-width:550px;justify-content:flex-end}#pfDashboardPeriod{margin-left:auto;font:11px 'JetBrains Mono',monospace;background:rgba(0,229,255,.12);color:var(--dash-accent);border:1px solid var(--dash-line);border-radius:6px;padding:4px 10px}#pfDashboardPeriod[hidden]{display:none!important}}
