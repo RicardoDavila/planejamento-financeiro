@@ -1,0 +1,13 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+const code=fs.readFileSync(__dirname+'/analise_financeira.js','utf8');
+const render=code.slice(code.indexOf('function render('),code.indexOf('function mount('));
+let writes=0,content='',dark=true,rows=[],date='2026-11-14';
+const root={set innerHTML(v){writes++;content=v},get innerHTML(){return content}};
+const env={root,opened:true,allowed:()=>true,revealed:()=>true,owner:()=> 'A',loadedOwner:'A',base:()=>rows,filter:{},plan:{},planRecord:{revision:1},details:null,scenario:{},flowType:'bars',wealthMode:'net',selectedDebt:'',message:'',dataSignature:'',signature:'',readStamp:'',document:{body:{className:'dark-mode',classList:{contains:()=>dark}}},today:()=>date,skipCapture:false,captureForms(){},restoreForms(){},selection:[],editRows:[],C:{model:()=>({})},cached:null,esc:String};
+for(const name of ['tools','filters','summary','cashSection','budgetSection','categories','wealth','debts','goalsSection','insights','savings','quality','planningForms'])env[name]=()=>'';
+vm.createContext(env);vm.runInContext(render,env);env.render();assert.equal(writes,1);
+for(let n=0;n<60;n++){env.document.body.className='dark-mode notification-'+n;env.render();}assert.equal(writes,1,'mudanças visuais não devem reconstruir a página');
+rows=[{valor:10}];env.render();assert.equal(writes,2,'lançamentos alterados devem atualizar');
+date='2026-11-15';env.render();assert.equal(writes,3,'virada do dia deve atualizar');
+dark=false;env.render();assert.equal(writes,4,'troca do tema deve atualizar');
+console.log('PASS: análise mantém o DOM em 60 sincronizações visuais, mas atualiza dados, data e tema.');
