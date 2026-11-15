@@ -22,9 +22,9 @@
   }});
   function project(){try{const url=client()?.supabaseUrl||(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:null);const host=new URL(url).hostname;return /^[a-z0-9-]+\.supabase\.co$/i.test(host)?host.split('.')[0]:'domínio personalizado';}catch(_){return 'não identificado';}}
   function fail(error){
-   const info=Core.diagnose(error);lastFailure={diagnostico:'notas-v3.1',codigo:info.code,etapa:info.phase,tipo:info.kind,projeto:project()};
+   const info=Core.diagnose(error);lastFailure={diagnostico:'notas-v3.2',codigo:info.code,etapa:info.phase,tipo:info.kind,alvo:info.target,projeto:project()};
    $('pfnDiagnosticText').textContent=JSON.stringify(lastFailure,null,2);diagnostic.hidden=false;
-   status(info.message+' Código: '+info.code+'.','error');
+   status(info.message+' Código: '+info.code+'.'+(info.target!=='não identificado'?' Origem: '+info.target+'.':''),'error');
   }
   const tags=text=>[...new Set((String(text).match(/#[\p{L}\d_-]+/gu)||[]).map(s=>s.toLocaleLowerCase('pt-BR')))];
   function reminder(text){const m=String(text).match(/@(\d{2})\/(\d{2})(?:\/(\d{4}))?/);if(!m)return null;const year=Number(m[3]||new Date().getFullYear()),month=Number(m[2])-1,day=Number(m[1]),date=new Date(year,month,day);return date.getFullYear()===year&&date.getMonth()===month&&date.getDate()===day?date:null;}
@@ -80,9 +80,17 @@
     await flush();if(at!==generation||!allowed())return;
     if(owner==='local'||!client()){status('Salvamento local neste navegador. Entre na nuvem para sincronizar.');return;}
     if(!navigator.onLine){status('Offline. As alterações salvas serão enviadas quando houver conexão.');return;}
-    busy=true;lastAttempt=Date.now();status('Sincronizando notas…');const result=await engine.sync(client());
+    busy=true;lastAttempt=Date.now();status('Sincronizando notas…');
+    let transport=client();
+    if(typeof SUPABASE_URL!=='undefined'&&typeof SUPABASE_PUBLISHABLE_KEY!=='undefined'&&typeof window.fetch==='function'){
+     transport=await Core.authenticatedClient({client:transport,url:SUPABASE_URL,publicKey:SUPABASE_PUBLISHABLE_KEY,owner,
+      getSession:async()=>{if(window.pfdClient){const {data,error}=await client().auth.getSession();if(error)throw error;return data?.session;}
+       if(typeof obterSessaoNuvem==='function')return obterSessaoNuvem();const {data,error}=await client().auth.getSession();if(error)throw error;return data?.session;},
+      fetch:window.fetch.bind(window),isCurrent:()=>at===generation&&owner===engine.owner()&&allowed()&&!changing});
+    }
+    if(at!==generation||!allowed())return;const result=await engine.sync(transport);
     if(at!==generation||!allowed())return;
-    status(result.conflicts?'Conflito detectado: o conteúdo foi preservado. Confira as cópias; exclusões concorrentes podem precisar de nova confirmação.':result.pending?'Salvo neste dispositivo; há notas aguardando envio.':'Notas sincronizadas às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));await refresh();if(result.pending)scheduleSync();
+    status(result.conflicts?'Conflito detectado: o conteúdo foi preservado. Confira as cópias; exclusões concorrentes podem precisar de nova confirmação.':result.pending?'Salvo neste dispositivo; há notas aguardando envio.':'Notas sincronizadas às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));lastFailure=null;diagnostic.hidden=true;$('pfnDiagnosticText').textContent='';await refresh();if(result.pending)scheduleSync();
    }catch(error){if(at===generation&&allowed())fail(error);}finally{if(at===generation)busy=false;}
   }
   async function migrate(){
@@ -155,7 +163,7 @@
    if(Date.now()-lastAttempt>=60000&&document.visibilityState==='visible')sync();
   },1000);
   let mounting=false;new MutationObserver(()=>{if(mounting)return;mounting=true;setTimeout(()=>{mounting=false;mount();},100);}).observe(document.body,{childList:true,subtree:true});
-  window.PFNotas={abrir:open,sync,conta:()=>engine.owner(),diagnostico:()=>lastFailure?{...lastFailure}:{diagnostico:'notas-v3.1',projeto:project(),situacao:'Nenhuma falha registrada'},estado:()=>({conta:engine.owner(),notas:rows.filter(n=>!n.deleted).length,pendentes:rows.filter(n=>n.dirty).length}),importarAntigas:()=>{asked.delete(engine.owner());return migrate();}};
+  window.PFNotas={abrir:open,sync,conta:()=>engine.owner(),diagnostico:()=>lastFailure?{...lastFailure}:{diagnostico:'notas-v3.2',projeto:project(),situacao:'Nenhuma falha registrada'},estado:()=>({conta:engine.owner(),notas:rows.filter(n=>!n.deleted).length,pendentes:rows.filter(n=>n.dirty).length}),importarAntigas:()=>{asked.delete(engine.owner());return migrate();}};
   mount();if(allowed())bindClient();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();

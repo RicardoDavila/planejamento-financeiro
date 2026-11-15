@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Dashboard Pessoal, Análise Financeira e páginas de gráficos passam a iniciar no mês vigente, como o Painel de Lançamentos.",
-    "O período inicial usa o calendário local do dispositivo. Outros meses e Ano completo continuam disponíveis; escolhas manuais não são redefinidas durante a navegação.",
-    "Preserva dados, cálculos, comparativos, rodapé, celular e a pendência separada da Etapa 26."
+    "Notas enviam o JWT da sessão autenticada explicitamente na leitura e na função de gravação, com validação remota da identidade e bloqueio de troca de conta.",
+    "Diagnóstico das Notas identifica a origem conhecida da recusa sem exibir conteúdo, credenciais ou identificadores de contas.",
+    "Preserva notas locais, conflitos, isolamento e dados financeiros. A correção exige conferência no servidor real; Etapa 26 continua pendente."
   ],
   "distribuicao": [
-    "Dashboard Pessoal, Análise Financeira e páginas de gráficos passam a iniciar no mês vigente, como o Painel de Lançamentos.",
-    "O período inicial usa o calendário local do dispositivo. Outros meses e Ano completo continuam disponíveis; escolhas manuais não são redefinidas durante a navegação.",
-    "Preserva dados, cálculos, comparativos, rodapé, celular e a pendência separada da Etapa 26."
+    "Notas enviam o JWT da sessão autenticada explicitamente na leitura e na função de gravação, com validação remota da identidade e bloqueio de troca de conta.",
+    "Diagnóstico das Notas identifica a origem conhecida da recusa sem exibir conteúdo, credenciais ou identificadores de contas.",
+    "Preserva notas locais, conflitos, isolamento e dados financeiros. A correção exige conferência no servidor real; Etapa 26 continua pendente."
   ]
 }

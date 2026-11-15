@@ -39,3 +39,9 @@ A importação de notas antigas no armazenamento local v1/v2 pede confirmação.
 ## Validação
 
 Há testes de persistência, concorrência, conflitos, falhas de gravação, troca de conta, reenvio sem duplicação e estado da interface. A inspeção visual final e o teste de isolamento em um Supabase real devem ser conferidos após a instalação. As verificações da publicação preservam também os recursos aprovados anteriormente.
+
+## Etapa 30 — sessão explícita nas Notas
+
+A leitura e a RPC de notas enviam explicitamente o JWT da sessão autenticada e a chave pública do mesmo projeto. A identidade é validada por getUser antes da sincronização; logout, sessão ausente, expirada ou conta diferente interrompem a operação. No aplicativo pessoal, usa a obtenção de sessão já existente na nuvem financeira; na distribuição, usa exclusivamente a conta fixa do contêiner. A RPC continua sendo o único caminho de escrita, com revisão do servidor e dono esperado. Nenhuma permissão anônima foi concedida.
+
+Diagnóstico notas-v3.2 mostra a origem conhecida de uma recusa (tabela, schema ou função), sem mensagem bruta, conteúdo ou token. As permissões SQL foram conferidas pelo usuário, mas o erro de leitura persistiu; a mudança de transporte ainda precisa de conferência real após publicar. Não afirmar que sincronizou com base apenas nos testes simulados.

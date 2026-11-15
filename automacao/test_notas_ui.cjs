@@ -30,8 +30,9 @@ function fixture(options={}){
  const top=new Node('header');top.id='pfMenuTopo';top.shown=!options.mobile;document.body.append(top);const shell=new Node('div');shell.id='pfMobileShell';const mobile=new Node('header');mobile.setAttribute('class','bar');const pm=new Node('main');pm.id='pm-app';shell.append(mobile,pm);mobile.shown=!!options.mobile;document.body.append(shell);document.body.classList.contains=k=>k==='pf-mobile-layout'&&mobile.shown;
  const menu=new Node('div');menu.id='pfMenuItens';document.body.append(menu);const menuClose=new Node('button');menuClose.id='pfMenuFechar';menuClose.onclick=()=>menu.hidden=true;document.body.append(menuClose);
  const memory=store(),window={PFNotasCore:Core,PFNotasConfig:{store:memory,isAllowed:()=>allowed,getClient:()=>options.client||null},addEventListener:(k,fn)=>events[k]=fn,localStorage:{getItem:()=>null}};
- const c={window,document,crypto:{randomUUID:()=>crypto.randomUUID()},navigator:{onLine:true},URL:{createObjectURL:b=>{lastBlob=b;return 'blob:teste'},revokeObjectURL(){}},Blob,console,Date,confirm:()=>false,BroadcastChannel:class{postMessage(){}},MutationObserver:class{observe(){}},setTimeout:(fn,ms)=>{const i=++serial;timeouts.set(i,{fn,ms});return i},clearTimeout:i=>timeouts.delete(i),setInterval:fn=>intervals.push(fn)};
- vm.createContext(c);vm.runInContext(ui,c);
+ Object.assign(window,options.window||{});
+ const c={window,document,crypto:{randomUUID:()=>crypto.randomUUID()},navigator:{onLine:true},URL:class extends URL{static createObjectURL(b){lastBlob=b;return 'blob:teste'}static revokeObjectURL(){}},Blob,console,Date,confirm:()=>false,BroadcastChannel:class{postMessage(){}},MutationObserver:class{observe(){}},setTimeout:(fn,ms)=>{const i=++serial;timeouts.set(i,{fn,ms});return i},clearTimeout:i=>timeouts.delete(i),setInterval:fn=>intervals.push(fn)};
+ Object.assign(c,options.globals||{});vm.createContext(c);vm.runInContext(ui,c);
  return {window,document,memory,top,mobile,menu,ids,timeouts,intervals,events,docEvents,get lastBlob(){return lastBlob},setAllowed:value=>allowed=value,async time(ms){const entries=[...timeouts].filter(([,t])=>t.ms===ms);for(const [id,t]of entries){timeouts.delete(id);t.fn()}await drain();await drain();},async ready(){await drain();await drain();}};
 }
 (async()=>{
@@ -50,5 +51,10 @@ function fixture(options={}){
  client.from=()=>({select(){return this},eq(){return this},order(){return this},range:async()=>({data:null,error:{code:'42501',message:'permission denied for table pf_notas_v3',details:'conteudo secreto da nota'}})});
  await f.window.PFNotas.sync();const info=f.window.PFNotas.diagnostico();assert.equal(info.codigo,'42501');assert.equal(info.etapa,'leitura');assert.equal(info.tipo,'permissao');assert.equal(f.ids.get('pfnDiagnostic').hidden,false);assert(!f.ids.get('pfnState').textContent.includes('instale o SQL'));assert(!JSON.stringify(info).includes(B));assert(!JSON.stringify(info).includes('secreto'));
  console.log('PASS notas UI: erro de permissão não é tratado como SQL ausente; diagnóstico não inclui conteúdo, credenciais ou ID da conta.');
+ const calls=[];client.supabaseUrl='https://example.supabase.co';client.auth.getUser=async token=>{assert.equal(token,'jwt-da-sessao-financeira');return {data:{user:{id:B}}};};
+ f=fixture({client,globals:{SUPABASE_URL:'https://example.supabase.co',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_ficticia',obterSessaoNuvem:async()=>({user:{id:B},access_token:'jwt-da-sessao-financeira'})},window:{fetch:async(url,opts)=>{calls.push({url,opts});return {ok:true,status:200,json:async()=>[]};}}});
+ resolveSession({data:{session:{user:{id:B},access_token:'sessao-sdk-antiga'}}});await f.ready();await f.window.PFNotas.sync();assert(calls.length);assert(calls.every(c=>c.opts.headers.Authorization==='Bearer jwt-da-sessao-financeira'));assert(f.ids.get('pfnState').textContent.includes('sincronizadas'));assert.equal(f.ids.get('pfnDiagnostic').hidden,true);
+ console.log('PASS notas UI: usa sessão financeira autenticada explícita em lugar da leitura SDK recusada.');
+
 })().catch(e=>{console.error(e);process.exitCode=1});
 

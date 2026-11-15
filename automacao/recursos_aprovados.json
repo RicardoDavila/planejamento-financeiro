@@ -59,7 +59,10 @@
       "indexedStore",
       "pf_notas_gravar_v3",
       "p_dono:who",
-      "expectedToken"
+      "expectedToken",
+      "authenticatedClient",
+      "client.auth.getUser(session.access_token)",
+      "Authorization:'Bearer '+session.access_token"
     ],
     "pf-notas-ui": [
       "data-pf-i18n-skip",
@@ -69,7 +72,9 @@
       "#pfMobileShell > header.bar",
       "pfNotasMaisBtn",
       "diagnostico:",
-      "pfDashboardToolbar"
+      "pfDashboardToolbar",
+      "Core.authenticatedClient",
+      "notas-v3.2"
     ],
     "pf-dashboard-style": [
       "#pfDashboardHome",

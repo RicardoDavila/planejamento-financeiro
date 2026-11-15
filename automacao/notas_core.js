@@ -8,7 +8,7 @@
  const titleCopy=s=>(String(s||'Sem título').slice(0,179)+' (cópia de conflito)').slice(0,200);
  function diagnose(error){
   const candidate=String(error?.code||''),code=/^[A-Z0-9_]{1,32}$/.test(candidate)?candidate:'SEM_CODIGO';
-  const text=String(error?.message||''),phase=error?.pfNotasPhase==='leitura'?'leitura':error?.pfNotasPhase==='gravacao'?'gravação':'local';
+  const text=String(error?.message||''),phase=error?.pfNotasPhase==='leitura'?'leitura':error?.pfNotasPhase==='gravacao'?'gravação':error?.pfNotasPhase==='autenticacao'?'autenticação':'local';
   let kind='desconhecido',message='Não foi possível concluir a operação. As notas pendentes continuam neste dispositivo.';
   if(code==='42501'){kind='permissao';message='O servidor recusou o acesso às notas. Precisamos conferir as permissões da conta; isso não significa que o SQL esteja ausente.';}
   else if(['PGRST301','PGRST302','401'].includes(code)||error?.status===401){kind='sessao';message='A sessão da nuvem não foi aceita. Entre novamente na mesma conta para sincronizar as notas pendentes.';}
@@ -19,9 +19,58 @@
   else if(/failed to fetch|networkerror|network request failed|load failed/i.test(text)){kind='rede';message='Não foi possível alcançar a nuvem. Confira a conexão; as notas pendentes foram mantidas.';}
   else if(code==='40001'){kind='revisao';message='A base da nota precisa ser atualizada. A alteração local continua pendente; tente sincronizar novamente.';}
   else if(/quota|armazenamento|storage|indexeddb/i.test(text)){kind='armazenamento';message='Não foi possível confirmar o salvamento neste dispositivo. Mantenha o editor aberto e exporte o rascunho.';}
-  return {code,phase,kind,message};
+  let target='não identificado';
+  if(code==='42501'){
+   if(/permission denied for (?:table|relation) ["']?pf_notas_v3(?:["']|\b)/i.test(text))target='tabela de notas';
+   else if(/permission denied for schema ["']?public(?:["']|\b)/i.test(text))target='schema public';
+   else if(/permission denied for schema ["']?auth(?:["']|\b)/i.test(text))target='schema auth';
+   else if(/permission denied for function ["']?pf_notas_gravar_v3(?:["']|\b)/i.test(text))target='função de gravação das notas';
+   else if(/permission denied for function ["']?uid(?:["']|\b)/i.test(text))target='função de identificação da conta';
+   else if(/row.level security/i.test(text))target='política de isolamento';
+   else if(/permission denied for (?:table|relation|function|schema)/i.test(text))target='outra dependência do servidor';
+  }
+  return {code,phase,kind,message,target};
  }
  function remoteError(error,phase){const result=new Error(String(error?.message||'Falha na sincronização das notas.'));result.code=error?.code;result.status=error?.status;result.pfNotasPhase=phase;return result;}
+ // Notas usam o JWT da conta validada, inclusive na contingência da sessão financeira.
+ // Nenhuma requisição anônima, nenhuma mudança de RLS e nenhuma gravação direta na tabela.
+ async function authenticatedClient(options){
+  const {client,getSession,fetch:send,owner,isCurrent}=options;
+  const sessionError=()=>remoteError({code:'401',message:'A sessão das notas não corresponde à conta conectada.'},'autenticacao');
+  const valid=()=>isCurrent()&&UUID.test(owner);
+  const base=new URL(options.url);
+  if(base.protocol!=='https:'||base.username||base.password||base.search||base.hash||base.pathname!=='/'||
+     !options.publicKey||!valid())throw sessionError();
+  if(client.supabaseUrl&&new URL(client.supabaseUrl).origin!==base.origin)throw sessionError();
+  const session=await getSession();
+  if(!valid()||!session?.access_token||session.user?.id!==owner||
+     (session.expires_at&&Number(session.expires_at)<=Date.now()/1000))throw sessionError();
+  const verified=await client.auth.getUser(session.access_token);
+  if(!valid()||verified.error||verified.data?.user?.id!==owner)throw sessionError();
+  const request=async(path,method='GET',payload)=>{
+   if(!valid()||(session.expires_at&&Number(session.expires_at)<=Date.now()/1000))throw sessionError();
+   const response=await send(new URL(path,base).href,{method,cache:'no-store',credentials:'omit',redirect:'error',
+    headers:{apikey:options.publicKey,Authorization:'Bearer '+session.access_token,Accept:'application/json',
+     ...(method==='POST'?{'Content-Type':'application/json'}:{})},
+    ...(method==='POST'?{body:JSON.stringify(payload)}:{})});
+   if(!valid())throw sessionError();
+   let data;try{data=await response.json();}catch(_){return {data:null,error:{code:String(response.status),message:'Resposta inválida do serviço de notas.'}};}
+   if(!response.ok)return {data:null,error:{code:data?.code||String(response.status),message:typeof data?.message==='string'?data.message:'Falha no serviço de notas.'}};
+   return {data,error:null};
+  };
+  return {
+   from(table){
+    if(table!=='pf_notas_v3')throw Error('Consulta fora das notas bloqueada.');
+    const q=new URLSearchParams();
+    const query={select(fields){if(fields!=='id,user_id,titulo,texto,cor,fixa,deleted,versao,mutacao,updated_at')throw Error('Campos de notas inválidos.');q.set('select',fields);return query;},
+     eq(field,value){if(field!=='user_id'||value!==owner)throw sessionError();q.set(field,'eq.'+owner);return query;},
+     order(field){if(field!=='id')throw Error('Ordenação de notas inválida.');q.set('order','id.asc');return query;},
+     range(first,last){if(!Number.isSafeInteger(first)||first<0||last!==first+499||!q.has('user_id'))throw Error('Página de notas inválida.');q.set('offset',String(first));q.set('limit','500');return request('/rest/v1/pf_notas_v3?'+q);}};
+    return query;
+   },
+   rpc(name,payload){if(name!=='pf_notas_gravar_v3'||payload.p_dono!==owner)throw sessionError();return request('/rest/v1/rpc/pf_notas_gravar_v3','POST',payload);}
+  };
+ }
  function fields(n){
   const titulo=String(n.titulo??''),texto=String(n.texto??'');
   if(titulo.length>200||texto.length>100000)throw Error('Título ou texto excedeu o limite da nota.');
@@ -169,7 +218,7 @@
    }
   };
  }
- const api={create,indexedStore,colors:COLORS,fields,diagnose};
+ const api={create,indexedStore,colors:COLORS,fields,diagnose,authenticatedClient};
  if(typeof window!=='undefined')window.PFNotasCore=api;
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })();

@@ -7996,7 +7996,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V5.1.11';
+ const CURRENT_VERSION='V5.1.12';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -17302,7 +17302,7 @@ body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-a
  const titleCopy=s=>(String(s||'Sem título').slice(0,179)+' (cópia de conflito)').slice(0,200);
  function diagnose(error){
   const candidate=String(error?.code||''),code=/^[A-Z0-9_]{1,32}$/.test(candidate)?candidate:'SEM_CODIGO';
-  const text=String(error?.message||''),phase=error?.pfNotasPhase==='leitura'?'leitura':error?.pfNotasPhase==='gravacao'?'gravação':'local';
+  const text=String(error?.message||''),phase=error?.pfNotasPhase==='leitura'?'leitura':error?.pfNotasPhase==='gravacao'?'gravação':error?.pfNotasPhase==='autenticacao'?'autenticação':'local';
   let kind='desconhecido',message='Não foi possível concluir a operação. As notas pendentes continuam neste dispositivo.';
   if(code==='42501'){kind='permissao';message='O servidor recusou o acesso às notas. Precisamos conferir as permissões da conta; isso não significa que o SQL esteja ausente.';}
   else if(['PGRST301','PGRST302','401'].includes(code)||error?.status===401){kind='sessao';message='A sessão da nuvem não foi aceita. Entre novamente na mesma conta para sincronizar as notas pendentes.';}
@@ -17313,9 +17313,58 @@ body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-a
   else if(/failed to fetch|networkerror|network request failed|load failed/i.test(text)){kind='rede';message='Não foi possível alcançar a nuvem. Confira a conexão; as notas pendentes foram mantidas.';}
   else if(code==='40001'){kind='revisao';message='A base da nota precisa ser atualizada. A alteração local continua pendente; tente sincronizar novamente.';}
   else if(/quota|armazenamento|storage|indexeddb/i.test(text)){kind='armazenamento';message='Não foi possível confirmar o salvamento neste dispositivo. Mantenha o editor aberto e exporte o rascunho.';}
-  return {code,phase,kind,message};
+  let target='não identificado';
+  if(code==='42501'){
+   if(/permission denied for (?:table|relation) ["']?pf_notas_v3(?:["']|\b)/i.test(text))target='tabela de notas';
+   else if(/permission denied for schema ["']?public(?:["']|\b)/i.test(text))target='schema public';
+   else if(/permission denied for schema ["']?auth(?:["']|\b)/i.test(text))target='schema auth';
+   else if(/permission denied for function ["']?pf_notas_gravar_v3(?:["']|\b)/i.test(text))target='função de gravação das notas';
+   else if(/permission denied for function ["']?uid(?:["']|\b)/i.test(text))target='função de identificação da conta';
+   else if(/row.level security/i.test(text))target='política de isolamento';
+   else if(/permission denied for (?:table|relation|function|schema)/i.test(text))target='outra dependência do servidor';
+  }
+  return {code,phase,kind,message,target};
  }
  function remoteError(error,phase){const result=new Error(String(error?.message||'Falha na sincronização das notas.'));result.code=error?.code;result.status=error?.status;result.pfNotasPhase=phase;return result;}
+ // Notas usam o JWT da conta validada, inclusive na contingência da sessão financeira.
+ // Nenhuma requisição anônima, nenhuma mudança de RLS e nenhuma gravação direta na tabela.
+ async function authenticatedClient(options){
+  const {client,getSession,fetch:send,owner,isCurrent}=options;
+  const sessionError=()=>remoteError({code:'401',message:'A sessão das notas não corresponde à conta conectada.'},'autenticacao');
+  const valid=()=>isCurrent()&&UUID.test(owner);
+  const base=new URL(options.url);
+  if(base.protocol!=='https:'||base.username||base.password||base.search||base.hash||base.pathname!=='/'||
+     !options.publicKey||!valid())throw sessionError();
+  if(client.supabaseUrl&&new URL(client.supabaseUrl).origin!==base.origin)throw sessionError();
+  const session=await getSession();
+  if(!valid()||!session?.access_token||session.user?.id!==owner||
+     (session.expires_at&&Number(session.expires_at)<=Date.now()/1000))throw sessionError();
+  const verified=await client.auth.getUser(session.access_token);
+  if(!valid()||verified.error||verified.data?.user?.id!==owner)throw sessionError();
+  const request=async(path,method='GET',payload)=>{
+   if(!valid()||(session.expires_at&&Number(session.expires_at)<=Date.now()/1000))throw sessionError();
+   const response=await send(new URL(path,base).href,{method,cache:'no-store',credentials:'omit',redirect:'error',
+    headers:{apikey:options.publicKey,Authorization:'Bearer '+session.access_token,Accept:'application/json',
+     ...(method==='POST'?{'Content-Type':'application/json'}:{})},
+    ...(method==='POST'?{body:JSON.stringify(payload)}:{})});
+   if(!valid())throw sessionError();
+   let data;try{data=await response.json();}catch(_){return {data:null,error:{code:String(response.status),message:'Resposta inválida do serviço de notas.'}};}
+   if(!response.ok)return {data:null,error:{code:data?.code||String(response.status),message:typeof data?.message==='string'?data.message:'Falha no serviço de notas.'}};
+   return {data,error:null};
+  };
+  return {
+   from(table){
+    if(table!=='pf_notas_v3')throw Error('Consulta fora das notas bloqueada.');
+    const q=new URLSearchParams();
+    const query={select(fields){if(fields!=='id,user_id,titulo,texto,cor,fixa,deleted,versao,mutacao,updated_at')throw Error('Campos de notas inválidos.');q.set('select',fields);return query;},
+     eq(field,value){if(field!=='user_id'||value!==owner)throw sessionError();q.set(field,'eq.'+owner);return query;},
+     order(field){if(field!=='id')throw Error('Ordenação de notas inválida.');q.set('order','id.asc');return query;},
+     range(first,last){if(!Number.isSafeInteger(first)||first<0||last!==first+499||!q.has('user_id'))throw Error('Página de notas inválida.');q.set('offset',String(first));q.set('limit','500');return request('/rest/v1/pf_notas_v3?'+q);}};
+    return query;
+   },
+   rpc(name,payload){if(name!=='pf_notas_gravar_v3'||payload.p_dono!==owner)throw sessionError();return request('/rest/v1/rpc/pf_notas_gravar_v3','POST',payload);}
+  };
+ }
  function fields(n){
   const titulo=String(n.titulo??''),texto=String(n.texto??'');
   if(titulo.length>200||texto.length>100000)throw Error('Título ou texto excedeu o limite da nota.');
@@ -17463,7 +17512,7 @@ body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-a
    }
   };
  }
- const api={create,indexedStore,colors:COLORS,fields,diagnose};
+ const api={create,indexedStore,colors:COLORS,fields,diagnose,authenticatedClient};
  if(typeof window!=='undefined')window.PFNotasCore=api;
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })();
@@ -17494,9 +17543,9 @@ body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-a
   }});
   function project(){try{const url=client()?.supabaseUrl||(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:null);const host=new URL(url).hostname;return /^[a-z0-9-]+\.supabase\.co$/i.test(host)?host.split('.')[0]:'domínio personalizado';}catch(_){return 'não identificado';}}
   function fail(error){
-   const info=Core.diagnose(error);lastFailure={diagnostico:'notas-v3.1',codigo:info.code,etapa:info.phase,tipo:info.kind,projeto:project()};
+   const info=Core.diagnose(error);lastFailure={diagnostico:'notas-v3.2',codigo:info.code,etapa:info.phase,tipo:info.kind,alvo:info.target,projeto:project()};
    $('pfnDiagnosticText').textContent=JSON.stringify(lastFailure,null,2);diagnostic.hidden=false;
-   status(info.message+' Código: '+info.code+'.','error');
+   status(info.message+' Código: '+info.code+'.'+(info.target!=='não identificado'?' Origem: '+info.target+'.':''),'error');
   }
   const tags=text=>[...new Set((String(text).match(/#[\p{L}\d_-]+/gu)||[]).map(s=>s.toLocaleLowerCase('pt-BR')))];
   function reminder(text){const m=String(text).match(/@(\d{2})\/(\d{2})(?:\/(\d{4}))?/);if(!m)return null;const year=Number(m[3]||new Date().getFullYear()),month=Number(m[2])-1,day=Number(m[1]),date=new Date(year,month,day);return date.getFullYear()===year&&date.getMonth()===month&&date.getDate()===day?date:null;}
@@ -17552,9 +17601,17 @@ body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-a
     await flush();if(at!==generation||!allowed())return;
     if(owner==='local'||!client()){status('Salvamento local neste navegador. Entre na nuvem para sincronizar.');return;}
     if(!navigator.onLine){status('Offline. As alterações salvas serão enviadas quando houver conexão.');return;}
-    busy=true;lastAttempt=Date.now();status('Sincronizando notas…');const result=await engine.sync(client());
+    busy=true;lastAttempt=Date.now();status('Sincronizando notas…');
+    let transport=client();
+    if(typeof SUPABASE_URL!=='undefined'&&typeof SUPABASE_PUBLISHABLE_KEY!=='undefined'&&typeof window.fetch==='function'){
+     transport=await Core.authenticatedClient({client:transport,url:SUPABASE_URL,publicKey:SUPABASE_PUBLISHABLE_KEY,owner,
+      getSession:async()=>{if(window.pfdClient){const {data,error}=await client().auth.getSession();if(error)throw error;return data?.session;}
+       if(typeof obterSessaoNuvem==='function')return obterSessaoNuvem();const {data,error}=await client().auth.getSession();if(error)throw error;return data?.session;},
+      fetch:window.fetch.bind(window),isCurrent:()=>at===generation&&owner===engine.owner()&&allowed()&&!changing});
+    }
+    if(at!==generation||!allowed())return;const result=await engine.sync(transport);
     if(at!==generation||!allowed())return;
-    status(result.conflicts?'Conflito detectado: o conteúdo foi preservado. Confira as cópias; exclusões concorrentes podem precisar de nova confirmação.':result.pending?'Salvo neste dispositivo; há notas aguardando envio.':'Notas sincronizadas às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));await refresh();if(result.pending)scheduleSync();
+    status(result.conflicts?'Conflito detectado: o conteúdo foi preservado. Confira as cópias; exclusões concorrentes podem precisar de nova confirmação.':result.pending?'Salvo neste dispositivo; há notas aguardando envio.':'Notas sincronizadas às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));lastFailure=null;diagnostic.hidden=true;$('pfnDiagnosticText').textContent='';await refresh();if(result.pending)scheduleSync();
    }catch(error){if(at===generation&&allowed())fail(error);}finally{if(at===generation)busy=false;}
   }
   async function migrate(){
@@ -17627,7 +17684,7 @@ body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-a
    if(Date.now()-lastAttempt>=60000&&document.visibilityState==='visible')sync();
   },1000);
   let mounting=false;new MutationObserver(()=>{if(mounting)return;mounting=true;setTimeout(()=>{mounting=false;mount();},100);}).observe(document.body,{childList:true,subtree:true});
-  window.PFNotas={abrir:open,sync,conta:()=>engine.owner(),diagnostico:()=>lastFailure?{...lastFailure}:{diagnostico:'notas-v3.1',projeto:project(),situacao:'Nenhuma falha registrada'},estado:()=>({conta:engine.owner(),notas:rows.filter(n=>!n.deleted).length,pendentes:rows.filter(n=>n.dirty).length}),importarAntigas:()=>{asked.delete(engine.owner());return migrate();}};
+  window.PFNotas={abrir:open,sync,conta:()=>engine.owner(),diagnostico:()=>lastFailure?{...lastFailure}:{diagnostico:'notas-v3.2',projeto:project(),situacao:'Nenhuma falha registrada'},estado:()=>({conta:engine.owner(),notas:rows.filter(n=>!n.deleted).length,pendentes:rows.filter(n=>n.dirty).length}),importarAntigas:()=>{asked.delete(engine.owner());return migrate();}};
   mount();if(allowed())bindClient();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
