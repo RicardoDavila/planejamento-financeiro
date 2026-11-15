@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Adiciona análises comparativas na Visão Geral e em Gráficos e Evoluções: receitas ou despesas entre dois meses e Receitas × Despesas.",
-    "Seletores de mês de referência e tipo de gráfico: Padrão, Barras, Colunas, Linhas, Áreas e Rosca; detalhes, PDF e impressão.",
-    "Preserva os filtros e gráficos existentes, a faixa de mercado e o celular. A Etapa 26 continua pendente."
+    "Dashboard Pessoal, Análise Financeira e páginas de gráficos passam a iniciar no mês vigente, como o Painel de Lançamentos.",
+    "O período inicial usa o calendário local do dispositivo. Outros meses e Ano completo continuam disponíveis; escolhas manuais não são redefinidas durante a navegação.",
+    "Preserva dados, cálculos, comparativos, rodapé, celular e a pendência separada da Etapa 26."
   ],
   "distribuicao": [
-    "Adiciona análises comparativas na Visão Geral e em Gráficos e Evoluções: receitas ou despesas entre dois meses e Receitas × Despesas.",
-    "Seletores de mês de referência e tipo de gráfico: Padrão, Barras, Colunas, Linhas, Áreas e Rosca; detalhes, PDF e impressão.",
-    "Preserva os filtros e gráficos existentes, a faixa de mercado e o celular. A Etapa 26 continua pendente."
+    "Dashboard Pessoal, Análise Financeira e páginas de gráficos passam a iniciar no mês vigente, como o Painel de Lançamentos.",
+    "O período inicial usa o calendário local do dispositivo. Outros meses e Ano completo continuam disponíveis; escolhas manuais não são redefinidas durante a navegação.",
+    "Preserva dados, cálculos, comparativos, rodapé, celular e a pendência separada da Etapa 26."
   ]
 }

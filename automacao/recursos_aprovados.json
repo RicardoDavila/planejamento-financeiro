@@ -91,7 +91,8 @@
       "function chart(",
       "Valores protegidos",
       "function printChart",
-      "data-pdp-point"
+      "data-pdp-point",
+      "from:month+'-01',to:end"
     ],
     "pf-dashboard-personal-style": [
       "#pfPersonalDashboard[hidden]",
@@ -134,7 +135,8 @@
       "matchesAuto",
       "data-go-advanced",
       "data-go-pick",
-      "Compromissos fixos recorrentes"
+      "Compromissos fixos recorrentes",
+      "defaults(Number(today().slice(0,4)),true)"
     ],
     "pf-graphics-evolution-script": [
       "PFGraphicsEvolution",
@@ -172,7 +174,8 @@
       "PFPersonalAnalysis",
       "Filtros avançados",
       "Salvar em PDF",
-      "Voltar Página Inicial"
+      "Voltar Página Inicial",
+      "defaults(Number(today().slice(0,4)),true)"
     ],
     "pf-analysis-style": [
       ".pa-svg polyline,.pa-svg polygon{pointer-events:none}",
