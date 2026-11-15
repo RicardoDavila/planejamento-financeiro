@@ -3,7 +3,17 @@ import re
 from cadastro_aparencia import aplicar_cadastro_aparencia
 ROOT=Path(__file__).resolve().parents[1]
 
+def aplicar_percentuais(html):
+    head=re.search(r'<head\b',html,re.I);body=re.search(r'<body\b',html,re.I)
+    if not head or (body and head.start()>body.start()): return html
+    for tag,file,ident in [('style','graficos_percentuais.css','pf-chart-percent-style'),('script','graficos_percentuais.js','pf-chart-percent-script')]:
+        html=re.sub(r'<'+tag+r' id="'+ident+r'">[\s\S]*?</'+tag+'>\n?','',html)
+        block='<'+tag+' id="'+ident+'">'+(ROOT/'automacao'/file).read_text(encoding='utf-8-sig')+'</'+tag+'>\n'
+        html=re.sub(r'(<meta\b[^>]*charset[^>]*>)',lambda m:m.group(1)+block,html,count=1,flags=re.I) if re.search(r'<meta\b[^>]*charset',html,re.I) else re.sub(r'(<head\b[^>]*>)',lambda m:m.group(1)+block,html,count=1,flags=re.I)
+    return html
+
 def aplicar_botoes(html):
+    html=aplicar_percentuais(html)
     if '</body>' not in html: return html
     for tag,file,ident in [('style','paleta_semantica.css','pf-semantic-palette-style'),('script','paleta_semantica.js','pf-semantic-palette-script'),('style','botoes_brancos.css','pf-white-buttons-style'),('style','paleta_projeto.css','pf-project-theme-style'),('script','paleta_projeto.js','pf-project-theme-script'),('script','botoes_brancos.js','pf-white-buttons-script')]:
         html=re.sub(r'<'+tag+r' id="'+ident+r'">[\s\S]*?</'+tag+'>\n?','',html)

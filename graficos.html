@@ -1,4 +1,77 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none';"><title>Gráficos · Planejamento Financeiro</title><style>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><script id="pf-chart-percent-script">/* Percentuais de gráficos: leitura pura, sem acesso a banco, autenticação ou rede. */
+(()=>{'use strict';
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct=v=>v==null?'—':v.toLocaleString('pt-BR',{maximumFractionDigits:2})+'%';
+const palette=['#00DE99','#FF4D6A','#00D7E8','#FFD166','#B49AFF','#FF8C42'];
+function monthKey(value){
+ const s=String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ if(/^\d{4}-(0[1-9]|1[0-2])$/.test(s))return s;
+ const m=s.match(/^(jan(?:eiro|uary)?|fev(?:ereiro)?|feb(?:ruary|rero)?|mar(?:co|ch|zo)?|abr(?:il)?|apr(?:il)?|mai(?:o)?|may(?:o)?|jun(?:ho|e|io)?|jul(?:ho|y|io)?|ago(?:sto)?|aug(?:ust)?|set(?:embro)?|sep(?:tember|tiembre)?|out(?:ubro)?|oct(?:ober|ubre)?|nov(?:embro|ember|iembre)?|dez(?:embro)?|dec(?:ember)?|dic(?:iembre)?)[.\s/\-]+(?:de\s+)?(\d{4}|\d{2})$/);
+ if(!m)return null;const index={jan:1,fev:2,feb:2,mar:3,abr:4,apr:4,mai:5,may:5,jun:6,jul:7,ago:8,aug:8,set:9,sep:9,out:10,oct:10,nov:11,dez:12,dec:12,dic:12}[m[1].slice(0,3)];return (m[2].length===2?'20':'')+m[2]+'-'+String(index).padStart(2,'0');
+}
+const ordinal=k=>k.startsWith('@')?Number(k.slice(1)):Number(k.slice(0,4))*12+Number(k.slice(5));
+const display=k=>k.startsWith('@')?'Mês '+k.slice(1):k;
+const pointKey=v=>Number.isSafeInteger(v.period)&&v.period>0?'@'+v.period:monthKey(v.month||v.key||v.auto?.month||v.label);
+function variation(values,keys){return values.map((v,i)=>{
+ const label=display(keys[i]),prev=values[i-1];let reason=i===0?'Primeiro mês: sem comparação':v==null||prev==null?'Valor não informado':ordinal(keys[i])-ordinal(keys[i-1])!==1?'Mês anterior fora do recorte':prev===0?'Percentual não calculável — mês anterior igual a zero':null;
+ const value=reason?null:(v-prev)/prev*100;if(value!==null&&!Number.isFinite(value))reason='Percentual fora do limite numérico';
+ const delta=v-prev,direction=reason?'':delta>0?'Aumento':delta<0?'Diminuição':'Estabilidade';
+ return {label,value:reason?null:value,direction,reason};
+});}
+function monthly(series){
+ if(!series.length)return null;const keys=series[0].values.map(pointKey);
+ if(!keys.length||keys.some(k=>!k)||new Set(keys).size!==keys.length)return null;
+ if(series.some(s=>s.values.length!==keys.length||s.values.some((v,i)=>pointKey(v)!==keys[i])))return null;
+ return series.map((s,j)=>({label:s.label,color:s.color||palette[j%palette.length],keys,points:variation(s.values.map(v=>typeof v.value==='number'&&Number.isFinite(v.value)?v.value:null),keys)}));
+}
+function renderLines(data,{W=1100,H=300,L=85,R=20,T=24,B=42,x,scale=1}={}){
+ const all=data.flatMap(s=>s.points.map(v=>v.value).filter(v=>v!==null)),lo=Math.min(0,...all),hi=Math.max(0,...all),span=hi-lo||1,min=lo===hi?-1:lo,max=lo===hi?1:hi;
+ const y=v=>T+(max-v)/(max-min)*(H-T-B),right=(W-R)*scale+10,xx=x||((i)=>scale*(L+(i+.5)*(W-L-R)/data[0].keys.length));
+ let svg='<g class="pfpct-axis" data-pf-percent="true"><text x="'+right+'" y="'+Math.max(12,T-10)+'">Variação (%)</text><line x1="'+right+'" x2="'+right+'" y1="'+T+'" y2="'+(H-B)+'" stroke="currentColor" opacity=".5"/>';
+ for(let i=0;i<5;i++){const v=min+(max-min)*i/4;svg+='<text x="'+(right+6)+'" y="'+(y(v)+4)+'">'+esc(pct(v))+'</text>';}
+ for(const s of data){let run=[];const flush=()=>{if(run.length>1)svg+='<polyline points="'+run.join(' ')+'" fill="none" stroke="'+esc(s.color)+'" stroke-width="2.5" stroke-dasharray="7 5" pointer-events="none"/>';run=[];};
+  s.points.forEach((p,i)=>{if(p.value===null){flush();return;}run.push(xx(i)+','+y(p.value));const title=s.label+' · '+p.label+' · '+p.direction+' · '+pct(p.value);svg+='<circle class="pfpct-point" tabindex="0" role="img" aria-label="'+esc(title)+'" cx="'+xx(i)+'" cy="'+y(p.value)+'" r="4.5" fill="var(--dash-card,var(--pa-card,#17202c))" stroke="'+esc(s.color)+'" stroke-width="2"><title>'+esc(title)+'</title></circle>';});flush();
+ }return svg+'</g>';
+}
+function enhance(html,series,options={}){
+ const data=monthly(series);if(!data)return html;
+ const legend='<div class="pfpct-legend" data-pf-percent="true">'+data.map(s=>'<span><i style="border-color:'+esc(s.color)+'"></i>'+esc(s.label)+' · variação mensal</span>').join('')+'</div>';
+ let graphic=html;const g=options.geometry;
+ if(g&&options.cartesian!==false&&/<svg\b/.test(html)){
+  const scale=(g.W-135)/(g.W-g.R),overlay=renderLines(data,{...g,scale});
+  graphic=html.replace(/(<svg\b[^>]*>)([\s\S]*?)(<\/svg>)/,(_,start,inner,end)=>start+'<g transform="scale('+scale+' 1)">'+inner+'</g>'+overlay+end);
+ }else{
+  const W=1100,H=250,L=85,R=135,T=30,B=35,n=data[0].keys.length;
+  graphic+='<svg class="pfpct-svg" style="width:100%;height:auto" viewBox="0 0 1100 250" role="group" aria-label="Variação percentual mensal — escala própria">'+data[0].keys.map((k,i)=>'<text x="'+(L+(i+.5)*(W-L-R)/n)+'" y="240" text-anchor="middle">'+k+'</text>').join('')+renderLines(data,{W,H,L,R:20,T,B,scale:(W-135)/(W-20),x:i=>L+(i+.5)*(W-L-R)/n})+'</svg>';
+ }
+ const rows=data.flatMap(s=>s.points.map(p=>'<tr><td>'+esc(s.label)+'</td><td>'+p.label+'</td><td>'+esc(pct(p.value))+'</td><td>'+esc(p.reason||p.direction)+'</td></tr>')).join('');
+ return graphic+legend+'<p class="pfpct-note" data-pf-percent="true">Linha pontilhada: variação relativa ao mês anterior, na escala percentual à direita. Primeiro mês e base anterior zero não geram ponto; lacunas não são ligadas. Períodos parciais podem não ser equivalentes. Zeros seguem os valores exibidos, inclusive meses sem registros; não comprovam mês completo. Em séries percentuais, a variação é relativa, não em pontos percentuais.</p><details class="pfpct-data" data-pf-percent="true"><summary>Variação mensal — valores e casos não calculáveis</summary><div class="pfpct-scroll"><table><thead><tr><th>Indicador</th><th>Mês</th><th>Variação</th><th>Leitura</th></tr></thead><tbody>'+rows+'</tbody></table></div></details>';
+}
+const validDay=d=>/^\d{4}-\d{2}-\d{2}$/.test(d||'')&&Number.isFinite(Date.parse(d+'T12:00:00Z'))&&new Date(d+'T12:00:00Z').toISOString().slice(0,10)===d;
+function shares(rows,options={}){
+ const groups=new Map(),totals=new Map();
+ for(const t of rows||[]){if(!['Receita','Despesa'].includes(t.tipo)||!Number.isFinite(Number(t.valor)))continue;
+  const date=options.dateMode==='vencimento'?t.vencimento:validDay(t.dataPg)?t.dataPg:t.vencimento;
+  if(!validDay(date))continue;
+  const month=date.slice(0,7),rubric=String(t.categoria||'Sem rubrica'),sub=String(t.subItem||'Sem subitem'),value=Math.round(Number(t.valor)*100),scope=JSON.stringify([month,t.tipo]);
+  totals.set(scope,(totals.get(scope)||0)+value);
+  for(const child of [false,true]){const key=JSON.stringify([month,t.tipo,rubric,child?sub:null]);const g=groups.get(key)||{month,type:t.tipo,rubric,sub:child?sub:null,value:0,scope};g.value+=value;groups.set(key,g);}
+ }
+ return [...groups.values()].map(g=>({...g,total:totals.get(g.scope),percent:totals.get(g.scope)===0||!Number.isSafeInteger(totals.get(g.scope))||!Number.isSafeInteger(g.value)?null:g.value/totals.get(g.scope)*100})).sort((a,b)=>a.month.localeCompare(b.month)||a.type.localeCompare(b.type)||a.rubric.localeCompare(b.rubric)||(a.sub===null?-1:b.sub===null?1:a.sub.localeCompare(b.sub)));
+}
+function participation(rows,options={}){
+ const data=shares(rows,options);if(!data.length)return '';
+ const money=v=>(v/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+ return '<details class="pfpct-shares" data-pf-percent="true"'+(options.open?' open':'')+'><summary>Participação mensal de rubricas e subitens</summary><p class="pfpct-note">Rubrica ou subitem ÷ total do mesmo mês e tipo no recorte filtrado. Receitas e despesas têm totais separados; subitens também usam o total do tipo, não o da rubrica. Total mensal zero: percentual não exibido. Não some rubricas e seus subitens, pois representam os mesmos lançamentos.</p><div class="pfpct-scroll"><table><thead><tr><th>Mês</th><th>Tipo</th><th>Rubrica / subitem</th><th>Valor · participação no mês</th><th>Total mensal do tipo</th></tr></thead><tbody>'+data.map(v=>'<tr><td>'+v.month+'</td><td>'+v.type+'</td><td>'+esc(v.rubric)+(v.sub===null?'':' / '+esc(v.sub))+'</td><td>'+esc(money(v.value))+(v.percent===null?'':' · '+esc(pct(v.percent)))+'</td><td>'+esc(money(v.total))+'</td></tr>').join('')+'</tbody></table></div></details>';
+}
+const api={monthKey,variation,monthly,enhance,shares,participation};if(typeof window!=='undefined')window.PFChartPercentages=api;if(typeof module!=='undefined')module.exports=api;
+})();
+</script>
+<style id="pf-chart-percent-style">.pfpct-svg{width:100%;height:auto;max-height:360px;overflow:visible}.pfpct-axis text,.pfpct-svg text{fill:var(--dash-muted,var(--pa-muted,#9caebf));font:12px system-ui}.pfpct-point:focus{outline:none;stroke-width:4}.pfpct-legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;margin:8px 0;color:var(--dash-ink,var(--pa-ink,inherit))}.pfpct-legend span{display:inline-flex;align-items:center;gap:6px}.pfpct-legend i{display:inline-block;width:24px;border-top:2px dashed}.pfpct-note{font-size:12px;line-height:1.5;color:var(--dash-muted,var(--pa-muted,#9caebf))}.pfpct-data,.pfpct-shares{padding:10px 0;margin:8px 0;color:inherit}.pfpct-data summary,.pfpct-shares summary{cursor:pointer;color:var(--dash-accent,#00b8d1);font-weight:600}.pfpct-scroll{overflow:auto;max-height:340px}.pfpct-scroll table{width:100%;border-collapse:collapse;font-size:12px}.pfpct-scroll th,.pfpct-scroll td{padding:8px;text-align:left;border-bottom:1px solid var(--dash-line,#48566b)}.pfpct-scroll th{color:var(--dash-accent,#00b8d1)}@media print{.pfpct-scroll{max-height:none;overflow:visible}.pfpct-data,.pfpct-shares{break-inside:auto}.pfpct-note,.pfpct-axis text,.pfpct-svg text{color:#475569;fill:#475569}.pfpct-point{fill:#fff}.pfpct-scroll th{color:#007d91}}
+
+.pfpct-shares td:nth-child(1),.pfpct-shares td:nth-child(2),.pfpct-shares td:nth-child(4),.pfpct-shares td:nth-child(5){white-space:nowrap;word-break:normal}.pfpct-shares td:nth-child(3){word-break:normal;overflow-wrap:anywhere}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none';"><title>Gráficos · Planejamento Financeiro</title><style>
  *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#f3f5f9;color:#243247}header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#14263d;color:white;padding:12px 18px}header strong{margin-right:auto;font-size:14px}header small{font-size:11px}header button{font:500 12px system-ui;min-height:36px;padding:8px 12px;border:1px solid #43536b;border-radius:8px;background:#243650;color:#f1f5fc;cursor:pointer}main{padding:18px;max-width:1600px;margin:auto}.analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.analysis-grid[hidden]{display:none}.analysis-grid>section{min-width:0;padding:20px;background:#fff;border:1px solid #e0e6ef;border-radius:12px}h2{font-size:15px;font-weight:650;margin:0 0 18px}.analysis-bars{display:grid;gap:14px}.analysis-row{display:grid;grid-template-columns:minmax(70px,110px) 1fr 100px;gap:10px;align-items:center;font-size:12px}.analysis-track{height:9px;background:#f1f3f8;border-radius:5px;overflow:hidden;display:block}.analysis-fill{display:block;height:100%;background:#5146cc;border-radius:5px}.analysis-amount{text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}.analysis-revenue .analysis-fill{background:#16734b}.analysis-expense .analysis-fill{background:#bd2b20}.analysis-rubric summary{cursor:pointer}.analysis-description-bars{margin:10px 0 0 12px}.analysis-description-row{margin-bottom:8px}body.dark-mode{background:#101a28;color:#dce4f0}body.dark-mode .analysis-grid>section{background:#1c293b;border-color:#344158}body.dark-mode .analysis-track{background:#2d3a50}body.dark-mode .analysis-revenue .analysis-fill{background:#6ee7b7}body.dark-mode .analysis-expense .analysis-fill{background:#fca5a5}@media(max-width:760px){.analysis-grid{grid-template-columns:minmax(0,1fr)}.analysis-row{grid-template-columns:minmax(60px,.8fr) 1fr auto}}
  .pfce-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0;font:12px/1.5 system-ui;color:#334155}
 .pfce-tools label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -379,6 +452,12 @@ html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px a
    if(!state.hidden){state.oldDisplay=state.displayNode.style.getPropertyValue('display')?{value:state.displayNode.style.getPropertyValue('display'),priority:state.displayNode.style.getPropertyPriority('display')}:null;state.hidden=true;}
    state.displayNode.style.setProperty('display','none','important');state.alt.hidden=false;
   }
+  function percentages(state){
+   if(!state.percent)return;const m=state.model,P=window.PFChartPercentages;
+   if(!m||!P||protectedState(state)){state.percent.innerHTML='';return;}
+   const series=m.percentSeries||m.series.map(s=>({label:s.label,color:s.color,values:s.values.map((value,i)=>({month:m.monthKeys?.[i],label:m.labels[i],value}))}));
+   state.percent.innerHTML=P.enhance('',series,{cartesian:false})+(/rubrica|categoria|descri/i.test(m.title)?P.participation(m.records||[],{dateMode:payload?'vencimento':contexts.monthly&&state.source.closest('#clean-month-analysis')?'vencimento':'vencimento',open:true}):'');
+  }
   function draw(state){
    const raw=state.model;if(!raw)return;const m={...raw,series:raw.series.map(s=>({...s,color:color(s.color)}))};
    state.alt.replaceChildren();state.message.textContent='';restore(state);
@@ -424,8 +503,8 @@ html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px a
    const legend=element('div',undefined,'pfce-legend');for(const s of m.series){const item=element('span'),swatch=element('span',undefined,'pfce-swatch');swatch.style.background=s.color;item.append(swatch,document.createTextNode(s.label));legend.append(item);}state.alt.append(legend);
   }
   function refreshState(state,m){
-   if(!state.source.isConnected){state.tools.remove();state.alt.remove();state.message.remove();state.detail.remove();state.points.remove();states.delete(state.source);return;}
-   if(protectedState(state)){restore(state);state.tools.hidden=true;state.detail.hidden=true;state.points.hidden=true;state.model=null;state.selection=null;state.version='';return;}
+   if(!state.source.isConnected){state.tools.remove();state.alt.remove();state.message.remove();state.detail.remove();state.points.remove();state.percent?.remove();states.delete(state.source);return;}
+   if(protectedState(state)){restore(state);state.tools.hidden=true;state.detail.hidden=true;state.points.hidden=true;state.model=null;state.selection=null;state.version='';if(state.percent)state.percent.innerHTML='';return;}
    state.tools.hidden=false;
    const version=JSON.stringify([m.title,m.labels,m.series,m.additive,m.additiveSeries,m.groupBy,m.records||[],document.body.classList.contains('dark-mode')]);
    state.model=m;
@@ -435,7 +514,7 @@ html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px a
    state.select.setAttribute('aria-label',m.title+' — tipo de gráfico');
    for(const [select,text]of [[state.seriesSelect,'Série'],[state.xSelect,'Eixo X'],[state.ySelect,'Eixo Y']]){const value=select.value;select.replaceChildren(...m.series.map((s,i)=>{const o=element('option',s.label);o.value=String(i);return o;}));select.value=value!==''&&Number(value)<m.series.length?value:'0';select.setAttribute('aria-label',m.title+' — '+text);}
    if(state.ySelect.value===state.xSelect.value&&m.series.length>1)state.ySelect.value='1';
-   draw(state);
+   draw(state);percentages(state);
    if(state.selection){
     const p=D.points(m).find(p=>JSON.stringify([p.label,p.series])===state.selectionIdentity),description=state.descriptionSelection;state.selection=null;
     if(p)detail(state,p,undefined,true);
@@ -457,8 +536,9 @@ html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px a
     select.value=initialMode;
     state={source,displayNode:anchor,tools,alt,message,detail:panel,points:pointList,mode:initialMode,seriesLabel,seriesSelect,xLabel,xSelect,yLabel,ySelect,select,selection:null,id:++serial};states.set(source,state);
     if(!payload&&source.closest('#clean-month-analysis'))for(const label of ['Salvar em PDF','Imprimir']){const button=element('button',label);button.type='button';button.style.minHeight='44px';button.onclick=()=>exportMonthlyChart(source);tools.append(button);}
-    select.onchange=()=>{state.mode=select.value;state.selection=null;panel.hidden=true;pointList.hidden=true;draw(state);if(state.mode==='default'&&options.chart)options.chart()?.resize();};
-    for(const s of [seriesSelect,xSelect,ySelect])s.onchange=()=>{state.selection=null;panel.hidden=true;draw(state);};
+    state.percent=element('div',undefined,'pfpct-explorer');state.percent.dataset.pfceUi='true';message.after(state.percent);
+    select.onchange=()=>{state.mode=select.value;state.selection=null;panel.hidden=true;pointList.hidden=true;draw(state);percentages(state);if(state.mode==='default'&&options.chart)options.chart()?.resize();};
+    for(const s of [seriesSelect,xSelect,ySelect])s.onchange=()=>{state.selection=null;panel.hidden=true;draw(state);percentages(state);};
     listButton.onclick=()=>{if(protectedState(state)||!state.model)return;pointList.hidden=!pointList.hidden;pointList.replaceChildren();if(pointList.hidden)return;for(const p of D.points(state.model)){const b=element('button',p.label+' · '+p.series+' · '+money(p.value));b.type='button';b.onclick=()=>detail(state,p);pointList.append(b);}};
     if(options.chart)source.addEventListener('click',event=>{if(state.mode!=='default'||!state.model)return;const chart=options.chart();const hit=chart?.getElementsAtEventForMode(event,'nearest',{intersect:true},true)?.[0];if(hit){const j=state.model.series.findIndex(s=>s.sourceIndex===hit.datasetIndex),p=D.points(state.model).find(p=>p.j===j&&p.i===hit.index);if(p)detail(state,p);}});
     source.addEventListener('click',event=>{
@@ -477,7 +557,7 @@ html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px a
    const source=document.getElementById(id);if(!source)return;
    const selector=options.selector||'.pf-bar-row',nodes=[...source.querySelectorAll(selector)],labels=nodes.map(n=>options.label?.(n)||n.querySelector('span')?.getAttribute('title')||n.querySelector('span')?.textContent||n.textContent),values=nodes.map(n=>options.value?.(n)??D.number(baseText(n.querySelector('strong,.analysis-amount'))));
    const m=D.model(title,labels,[{label:options.series||'Valor',values,color:options.color||'#047857'}],(j,i)=>options.resolve?options.resolve(labels[i],i):rows.filter(r=>(r.categoria||'Outros')===labels[i]),options.additive!==false);
-   m.records=rows;
+   m.records=rows;m.monthKeys=options.monthKeys;
    mount(source,m,{mark:()=>bindRows(source,selector),hit:target=>{const node=target.closest(selector);return node&&source.contains(node)?{j:0,i:nodes.indexOf(node)}:null;}});
   }
   function rootModels(){
@@ -486,7 +566,7 @@ html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px a
     monthlyExportTools();
     const rows=D.rows(monthly.rows),all=D.rows(window.PFQuickCards?window.PFQuickCards.apply(monthly.allRows):monthly.allRows),ref=String(monthly.chosen||new Date().toISOString()).slice(0,7).split('-').map(Number),months=Array.from({length:6},(_,i)=>D.month(ref[0],ref[1]-6+i));
     for(const [id,type,key,color]of [['clean-revenue-history-bars','Receita','revenueHistory','#047857'],['clean-history-bars','Despesa','expenseHistory','#bd2b20']]){
-     domBars(id,type==='Receita'?'Evolução das Receitas':'Evolução das Despesas',all,{selector:'.analysis-row',color,resolve:(label,i)=>all.filter(r=>r.tipo===type&&r.vencimento.startsWith(months[i]?.key||'invalid'))});
+     domBars(id,type==='Receita'?'Evolução das Receitas':'Evolução das Despesas',all,{selector:'.analysis-row',color,monthKeys:months.map(m=>m.key),resolve:(label,i)=>all.filter(r=>r.tipo===type&&r.vencimento.startsWith(months[i]?.key||'invalid'))});
     }
     for(const [id,type,color]of [['clean-revenue-category-bars','Receita','#047857'],['clean-category-bars','Despesa','#bd2b20']]){
      const source=document.getElementById(id);if(!source)continue;
@@ -516,7 +596,7 @@ html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px a
      const months=Array.from({length:12},(_,i)=>D.month(d.getFullYear(),d.getMonth()-11+i)).filter(m=>(!from||m.key>=from.slice(0,7))&&(!to||m.key<=to.slice(0,7))&&arr.some(r=>['Receita','Despesa'].includes(r.tipo)&&r.vencimento.startsWith(m.key)));
      const bars=[...source.querySelectorAll('[title^="Receitas "],[title^="Despesas "]')],types=document.getElementById('graficoTipo')?.value||'Todos';
      const series=['Receita','Despesa'].filter(type=>types==='Todos'||types===type).map(type=>({label:type,color:type==='Receita'?'#047857':'#bd2b20',values:months.map(month=>arr.filter(r=>r.tipo===type&&r.vencimento.startsWith(month.key)).reduce((sum,r)=>sum+r.valor,0))}));
-     const m=D.model('Histórico no recorte — meses com lançamentos',months.map(m=>m.label),series,(j,i)=>arr.filter(r=>r.tipo===series[j]?.label&&r.vencimento.startsWith(months[i]?.key)));m.records=arr;
+     const m=D.model('Histórico no recorte — meses com lançamentos',months.map(m=>m.label),series,(j,i)=>arr.filter(r=>r.tipo===series[j]?.label&&r.vencimento.startsWith(months[i]?.key)));m.records=arr;m.monthKeys=months.map(m=>m.key);
      mount(source,m,{mark:()=>bindRows(source,'[title^="Receitas "],[title^="Despesas "]'),hit:target=>{const node=target.closest('[title^="Receitas "],[title^="Despesas "]');const key=node?.closest('[data-pf-month]')?.getAttribute('data-pf-month');const i=months.findIndex(m=>m.key===key),index=bars.indexOf(node);return i<0||index<0?null:{i,j:series.findIndex(s=>s.label===(index%2?'Despesa':'Receita'))};}});
     }
    }
@@ -567,7 +647,7 @@ html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px a
       if(key==='recebidas')arr=arr.filter(r=>!['Não Recebido','A Vencer','Pendente','Vencido'].includes(r.status));
       if(key==='pagas')arr=arr.filter(r=>['Pago','Paga','Recebido','Recebida','Liquidado','Liquidada'].includes(r.status));
       if(key==='vencer')arr=arr.filter(r=>['A Vencer','Pendente','Não Recebido','Vencido'].includes(r.status));return arr;
-     });m.records=rows;
+     });m.records=rows;m.monthKeys=months.map(m=>m.key);
      if(source)mount(source,m,{mark:()=>bindRows(source,'.pf-report-series'),hit:target=>{const nodes=[...source.querySelectorAll('.pf-report-series')],index=nodes.indexOf(target.closest('.pf-report-series'));return index<0?null:{i:Math.floor(index/series.length),j:index%series.length};}});
     }
     if(charts[1]){
@@ -588,7 +668,7 @@ html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px a
        if(projected)return [...base.filter(r=>(r.dataPg||r.status==='Pago'||r.status==='Recebido')&&(r.dataPg||r.vencimento)&&(r.dataPg||r.vencimento)<=m.today),...future.filter(r=>r.vencimento<=p.date)];
        let end=p.date;if(m.group==='semana'&&!p.initial){const d=new Date(end+'T12:00:00');d.setDate(d.getDate()+6);end=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}if(m.group==='mes'&&!p.initial){const d=new Date(end+'T12:00:00'),last=new Date(d.getFullYear(),d.getMonth()+1,0);end=last.getFullYear()+'-'+String(last.getMonth()+1).padStart(2,'0')+'-'+String(last.getDate()).padStart(2,'0');}
        return base.filter(r=>r.vencimento&&(p.initial?r.vencimento<p.date:r.vencimento<=end&&(!m.end||r.vencimento<=m.end)));
-      },false);model.records=projected?future:base;
+      },false);model.records=projected?future:base;if(!projected&&m.group==='mes')model.percentSeries=[{label:'Saldo',color:'#2563eb',values:points.filter(p=>!p.initial).map(p=>({month:p.date?.slice(0,7),label:dateLabel(p.date||''),value:p.balance/100}))}];
       mount(source,model,{mark:()=>bindRows(source,'svg circle'),hit:target=>{const index=[...source.querySelectorAll('svg circle')].indexOf(target.closest('circle'));return index<0?null:{j:0,i:index};}});
      }else if(title==='Receitas × saídas por semana'){
       const buckets=new Map();for(const day of m.daily){const date=new Date(day.date+'T12:00:00');date.setDate(date.getDate()-((date.getDay()+6)%7));const key=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0'),b=buckets.get(key)||{key,r:0,d:0};b.r+=day.r;b.d+=day.d;buckets.set(key,b);}const entries=[...buckets.values()];
@@ -634,6 +714,7 @@ html body #pf-report-summary{box-sizing:border-box;max-width:820px;margin:18px a
    // Only transaction fields are embedded; never auth/session objects.
    const safe={kind:payload.kind,rows:api.data.rows(payload.rows),base:api.data.rows(payload.base),months:payload.months,series:payload.series,descriptions:payload.descriptions};
    if(payload.model)safe.model={...payload.model,rows:api.data.rows(payload.model.rows),future:api.data.rows(payload.model.future),paid:undefined,overdue:undefined,allOverdue:undefined,largest:undefined};
+   for(const id of ['pf-chart-percent-style','pf-chart-percent-script']){const original=document.getElementById(id);if(original&&!report.getElementById(id))report.head.append(original.cloneNode(true));}
    const script=report.createElement('script');script.id='pf-chart-explorer-runtime';
    script.textContent='window.PFChartExplorer=('+boot.toString()+')('+chartData.toString()+','+JSON.stringify(safe).replace(/</g,()=>String.fromCharCode(92)+'u003c').replace(/\u2028/g,()=>String.fromCharCode(92)+'u2028').replace(/\u2029/g,()=>String.fromCharCode(92)+'u2029')+');';report.body.append(script);
   }

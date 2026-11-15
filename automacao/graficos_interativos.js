@@ -130,6 +130,12 @@
    if(!state.hidden){state.oldDisplay=state.displayNode.style.getPropertyValue('display')?{value:state.displayNode.style.getPropertyValue('display'),priority:state.displayNode.style.getPropertyPriority('display')}:null;state.hidden=true;}
    state.displayNode.style.setProperty('display','none','important');state.alt.hidden=false;
   }
+  function percentages(state){
+   if(!state.percent)return;const m=state.model,P=window.PFChartPercentages;
+   if(!m||!P||protectedState(state)){state.percent.innerHTML='';return;}
+   const series=m.percentSeries||m.series.map(s=>({label:s.label,color:s.color,values:s.values.map((value,i)=>({month:m.monthKeys?.[i],label:m.labels[i],value}))}));
+   state.percent.innerHTML=P.enhance('',series,{cartesian:false})+(/rubrica|categoria|descri/i.test(m.title)?P.participation(m.records||[],{dateMode:payload?'vencimento':contexts.monthly&&state.source.closest('#clean-month-analysis')?'vencimento':'vencimento',open:true}):'');
+  }
   function draw(state){
    const raw=state.model;if(!raw)return;const m={...raw,series:raw.series.map(s=>({...s,color:color(s.color)}))};
    state.alt.replaceChildren();state.message.textContent='';restore(state);
@@ -175,8 +181,8 @@
    const legend=element('div',undefined,'pfce-legend');for(const s of m.series){const item=element('span'),swatch=element('span',undefined,'pfce-swatch');swatch.style.background=s.color;item.append(swatch,document.createTextNode(s.label));legend.append(item);}state.alt.append(legend);
   }
   function refreshState(state,m){
-   if(!state.source.isConnected){state.tools.remove();state.alt.remove();state.message.remove();state.detail.remove();state.points.remove();states.delete(state.source);return;}
-   if(protectedState(state)){restore(state);state.tools.hidden=true;state.detail.hidden=true;state.points.hidden=true;state.model=null;state.selection=null;state.version='';return;}
+   if(!state.source.isConnected){state.tools.remove();state.alt.remove();state.message.remove();state.detail.remove();state.points.remove();state.percent?.remove();states.delete(state.source);return;}
+   if(protectedState(state)){restore(state);state.tools.hidden=true;state.detail.hidden=true;state.points.hidden=true;state.model=null;state.selection=null;state.version='';if(state.percent)state.percent.innerHTML='';return;}
    state.tools.hidden=false;
    const version=JSON.stringify([m.title,m.labels,m.series,m.additive,m.additiveSeries,m.groupBy,m.records||[],document.body.classList.contains('dark-mode')]);
    state.model=m;
@@ -186,7 +192,7 @@
    state.select.setAttribute('aria-label',m.title+' — tipo de gráfico');
    for(const [select,text]of [[state.seriesSelect,'Série'],[state.xSelect,'Eixo X'],[state.ySelect,'Eixo Y']]){const value=select.value;select.replaceChildren(...m.series.map((s,i)=>{const o=element('option',s.label);o.value=String(i);return o;}));select.value=value!==''&&Number(value)<m.series.length?value:'0';select.setAttribute('aria-label',m.title+' — '+text);}
    if(state.ySelect.value===state.xSelect.value&&m.series.length>1)state.ySelect.value='1';
-   draw(state);
+   draw(state);percentages(state);
    if(state.selection){
     const p=D.points(m).find(p=>JSON.stringify([p.label,p.series])===state.selectionIdentity),description=state.descriptionSelection;state.selection=null;
     if(p)detail(state,p,undefined,true);
@@ -208,8 +214,9 @@
     select.value=initialMode;
     state={source,displayNode:anchor,tools,alt,message,detail:panel,points:pointList,mode:initialMode,seriesLabel,seriesSelect,xLabel,xSelect,yLabel,ySelect,select,selection:null,id:++serial};states.set(source,state);
     if(!payload&&source.closest('#clean-month-analysis'))for(const label of ['Salvar em PDF','Imprimir']){const button=element('button',label);button.type='button';button.style.minHeight='44px';button.onclick=()=>exportMonthlyChart(source);tools.append(button);}
-    select.onchange=()=>{state.mode=select.value;state.selection=null;panel.hidden=true;pointList.hidden=true;draw(state);if(state.mode==='default'&&options.chart)options.chart()?.resize();};
-    for(const s of [seriesSelect,xSelect,ySelect])s.onchange=()=>{state.selection=null;panel.hidden=true;draw(state);};
+    state.percent=element('div',undefined,'pfpct-explorer');state.percent.dataset.pfceUi='true';message.after(state.percent);
+    select.onchange=()=>{state.mode=select.value;state.selection=null;panel.hidden=true;pointList.hidden=true;draw(state);percentages(state);if(state.mode==='default'&&options.chart)options.chart()?.resize();};
+    for(const s of [seriesSelect,xSelect,ySelect])s.onchange=()=>{state.selection=null;panel.hidden=true;draw(state);percentages(state);};
     listButton.onclick=()=>{if(protectedState(state)||!state.model)return;pointList.hidden=!pointList.hidden;pointList.replaceChildren();if(pointList.hidden)return;for(const p of D.points(state.model)){const b=element('button',p.label+' · '+p.series+' · '+money(p.value));b.type='button';b.onclick=()=>detail(state,p);pointList.append(b);}};
     if(options.chart)source.addEventListener('click',event=>{if(state.mode!=='default'||!state.model)return;const chart=options.chart();const hit=chart?.getElementsAtEventForMode(event,'nearest',{intersect:true},true)?.[0];if(hit){const j=state.model.series.findIndex(s=>s.sourceIndex===hit.datasetIndex),p=D.points(state.model).find(p=>p.j===j&&p.i===hit.index);if(p)detail(state,p);}});
     source.addEventListener('click',event=>{
@@ -228,7 +235,7 @@
    const source=document.getElementById(id);if(!source)return;
    const selector=options.selector||'.pf-bar-row',nodes=[...source.querySelectorAll(selector)],labels=nodes.map(n=>options.label?.(n)||n.querySelector('span')?.getAttribute('title')||n.querySelector('span')?.textContent||n.textContent),values=nodes.map(n=>options.value?.(n)??D.number(baseText(n.querySelector('strong,.analysis-amount'))));
    const m=D.model(title,labels,[{label:options.series||'Valor',values,color:options.color||'#047857'}],(j,i)=>options.resolve?options.resolve(labels[i],i):rows.filter(r=>(r.categoria||'Outros')===labels[i]),options.additive!==false);
-   m.records=rows;
+   m.records=rows;m.monthKeys=options.monthKeys;
    mount(source,m,{mark:()=>bindRows(source,selector),hit:target=>{const node=target.closest(selector);return node&&source.contains(node)?{j:0,i:nodes.indexOf(node)}:null;}});
   }
   function rootModels(){
@@ -237,7 +244,7 @@
     monthlyExportTools();
     const rows=D.rows(monthly.rows),all=D.rows(window.PFQuickCards?window.PFQuickCards.apply(monthly.allRows):monthly.allRows),ref=String(monthly.chosen||new Date().toISOString()).slice(0,7).split('-').map(Number),months=Array.from({length:6},(_,i)=>D.month(ref[0],ref[1]-6+i));
     for(const [id,type,key,color]of [['clean-revenue-history-bars','Receita','revenueHistory','#047857'],['clean-history-bars','Despesa','expenseHistory','#bd2b20']]){
-     domBars(id,type==='Receita'?'Evolução das Receitas':'Evolução das Despesas',all,{selector:'.analysis-row',color,resolve:(label,i)=>all.filter(r=>r.tipo===type&&r.vencimento.startsWith(months[i]?.key||'invalid'))});
+     domBars(id,type==='Receita'?'Evolução das Receitas':'Evolução das Despesas',all,{selector:'.analysis-row',color,monthKeys:months.map(m=>m.key),resolve:(label,i)=>all.filter(r=>r.tipo===type&&r.vencimento.startsWith(months[i]?.key||'invalid'))});
     }
     for(const [id,type,color]of [['clean-revenue-category-bars','Receita','#047857'],['clean-category-bars','Despesa','#bd2b20']]){
      const source=document.getElementById(id);if(!source)continue;
@@ -267,7 +274,7 @@
      const months=Array.from({length:12},(_,i)=>D.month(d.getFullYear(),d.getMonth()-11+i)).filter(m=>(!from||m.key>=from.slice(0,7))&&(!to||m.key<=to.slice(0,7))&&arr.some(r=>['Receita','Despesa'].includes(r.tipo)&&r.vencimento.startsWith(m.key)));
      const bars=[...source.querySelectorAll('[title^="Receitas "],[title^="Despesas "]')],types=document.getElementById('graficoTipo')?.value||'Todos';
      const series=['Receita','Despesa'].filter(type=>types==='Todos'||types===type).map(type=>({label:type,color:type==='Receita'?'#047857':'#bd2b20',values:months.map(month=>arr.filter(r=>r.tipo===type&&r.vencimento.startsWith(month.key)).reduce((sum,r)=>sum+r.valor,0))}));
-     const m=D.model('Histórico no recorte — meses com lançamentos',months.map(m=>m.label),series,(j,i)=>arr.filter(r=>r.tipo===series[j]?.label&&r.vencimento.startsWith(months[i]?.key)));m.records=arr;
+     const m=D.model('Histórico no recorte — meses com lançamentos',months.map(m=>m.label),series,(j,i)=>arr.filter(r=>r.tipo===series[j]?.label&&r.vencimento.startsWith(months[i]?.key)));m.records=arr;m.monthKeys=months.map(m=>m.key);
      mount(source,m,{mark:()=>bindRows(source,'[title^="Receitas "],[title^="Despesas "]'),hit:target=>{const node=target.closest('[title^="Receitas "],[title^="Despesas "]');const key=node?.closest('[data-pf-month]')?.getAttribute('data-pf-month');const i=months.findIndex(m=>m.key===key),index=bars.indexOf(node);return i<0||index<0?null:{i,j:series.findIndex(s=>s.label===(index%2?'Despesa':'Receita'))};}});
     }
    }
@@ -318,7 +325,7 @@
       if(key==='recebidas')arr=arr.filter(r=>!['Não Recebido','A Vencer','Pendente','Vencido'].includes(r.status));
       if(key==='pagas')arr=arr.filter(r=>['Pago','Paga','Recebido','Recebida','Liquidado','Liquidada'].includes(r.status));
       if(key==='vencer')arr=arr.filter(r=>['A Vencer','Pendente','Não Recebido','Vencido'].includes(r.status));return arr;
-     });m.records=rows;
+     });m.records=rows;m.monthKeys=months.map(m=>m.key);
      if(source)mount(source,m,{mark:()=>bindRows(source,'.pf-report-series'),hit:target=>{const nodes=[...source.querySelectorAll('.pf-report-series')],index=nodes.indexOf(target.closest('.pf-report-series'));return index<0?null:{i:Math.floor(index/series.length),j:index%series.length};}});
     }
     if(charts[1]){
@@ -339,7 +346,7 @@
        if(projected)return [...base.filter(r=>(r.dataPg||r.status==='Pago'||r.status==='Recebido')&&(r.dataPg||r.vencimento)&&(r.dataPg||r.vencimento)<=m.today),...future.filter(r=>r.vencimento<=p.date)];
        let end=p.date;if(m.group==='semana'&&!p.initial){const d=new Date(end+'T12:00:00');d.setDate(d.getDate()+6);end=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}if(m.group==='mes'&&!p.initial){const d=new Date(end+'T12:00:00'),last=new Date(d.getFullYear(),d.getMonth()+1,0);end=last.getFullYear()+'-'+String(last.getMonth()+1).padStart(2,'0')+'-'+String(last.getDate()).padStart(2,'0');}
        return base.filter(r=>r.vencimento&&(p.initial?r.vencimento<p.date:r.vencimento<=end&&(!m.end||r.vencimento<=m.end)));
-      },false);model.records=projected?future:base;
+      },false);model.records=projected?future:base;if(!projected&&m.group==='mes')model.percentSeries=[{label:'Saldo',color:'#2563eb',values:points.filter(p=>!p.initial).map(p=>({month:p.date?.slice(0,7),label:dateLabel(p.date||''),value:p.balance/100}))}];
       mount(source,model,{mark:()=>bindRows(source,'svg circle'),hit:target=>{const index=[...source.querySelectorAll('svg circle')].indexOf(target.closest('circle'));return index<0?null:{j:0,i:index};}});
      }else if(title==='Receitas × saídas por semana'){
       const buckets=new Map();for(const day of m.daily){const date=new Date(day.date+'T12:00:00');date.setDate(date.getDate()-((date.getDay()+6)%7));const key=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0'),b=buckets.get(key)||{key,r:0,d:0};b.r+=day.r;b.d+=day.d;buckets.set(key,b);}const entries=[...buckets.values()];
@@ -385,6 +392,7 @@
    // Only transaction fields are embedded; never auth/session objects.
    const safe={kind:payload.kind,rows:api.data.rows(payload.rows),base:api.data.rows(payload.base),months:payload.months,series:payload.series,descriptions:payload.descriptions};
    if(payload.model)safe.model={...payload.model,rows:api.data.rows(payload.model.rows),future:api.data.rows(payload.model.future),paid:undefined,overdue:undefined,allOverdue:undefined,largest:undefined};
+   for(const id of ['pf-chart-percent-style','pf-chart-percent-script']){const original=document.getElementById(id);if(original&&!report.getElementById(id))report.head.append(original.cloneNode(true));}
    const script=report.createElement('script');script.id='pf-chart-explorer-runtime';
    script.textContent='window.PFChartExplorer=('+boot.toString()+')('+chartData.toString()+','+JSON.stringify(safe).replace(/</g,()=>String.fromCharCode(92)+'u003c').replace(/\u2028/g,()=>String.fromCharCode(92)+'u2028').replace(/\u2029/g,()=>String.fromCharCode(92)+'u2029')+');';report.body.append(script);
   }

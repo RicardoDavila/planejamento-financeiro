@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Notas da distribuição passam pelo provedor protegido de sessão do contêiner, preservando a recuperação de sessão e a conta fixa.",
-    "Mantém JWT explícito, validação remota da identidade, isolamento entre contas e preservação de notas pendentes.",
-    "Correção testada com sessão antiga do SDK e sessão válida do contêiner. A conferência no usuário distribuído real permanece necessária."
+    "Gráficos mensais recebem linha pontilhada de variação por indicador e escala percentual separada dos valores; primeiro mês, lacunas e base zero não geram ligação inválida.",
+    "Rubricas e subitens mostram sua participação mês a mês no total de receitas ou despesas do mesmo recorte, sem misturar os tipos e sem percentual com total zero.",
+    "Preserva filtros, seletores, detalhes, impressão/PDF e dados financeiros; mantém a correção das Notas e a pendência separada da Etapa 26."
   ],
   "distribuicao": [
-    "Notas da distribuição passam pelo provedor protegido de sessão do contêiner, preservando a recuperação de sessão e a conta fixa.",
-    "Mantém JWT explícito, validação remota da identidade, isolamento entre contas e preservação de notas pendentes.",
-    "Correção testada com sessão antiga do SDK e sessão válida do contêiner. A conferência no usuário distribuído real permanece necessária."
+    "Gráficos mensais recebem linha pontilhada de variação por indicador e escala percentual separada dos valores; primeiro mês, lacunas e base zero não geram ligação inválida.",
+    "Rubricas e subitens mostram sua participação mês a mês no total de receitas ou despesas do mesmo recorte, sem misturar os tipos e sem percentual com total zero.",
+    "Preserva filtros, seletores, detalhes, impressão/PDF e dados financeiros; mantém a correção das Notas e a pendência separada da Etapa 26."
   ]
 }

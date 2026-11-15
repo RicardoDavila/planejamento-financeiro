@@ -280,6 +280,19 @@
       "pfgo-compare-month",
       "data-go-section=\"comparison\"",
       "comparisonType"
+    ],
+    "pf-chart-percent-script": [
+      "function variation",
+      "function participation",
+      "Primeiro mês: sem comparação",
+      "mês anterior igual a zero",
+      "stroke-dasharray",
+      "PFChartPercentages"
+    ],
+    "pf-chart-percent-style": [
+      ".pfpct-axis",
+      ".pfpct-shares",
+      "@media print"
     ]
   },
   "bloco_relatorios": "pf-report-selection-module",

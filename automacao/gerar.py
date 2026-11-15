@@ -53,7 +53,7 @@ def generate(source, config, version):
     source = normalize(aplicar_dashboard(aplicar_notas_pessoais(aplicar_dimensoes(aplicar_modo_claro(aplicar_moedas(aplicar_idiomas(source)))))))
     # A adaptação de acesso confere o head histórico byte a byte. A transição
     # visual é reaplicada após os patches, sem alterar ou dispensar essas guardas.
-    for tag,ident in [('script','pf-second-screen-boot-script'),('style','pf-second-screen-boot-style')]:
+    for tag,ident in [('script','pf-second-screen-boot-script'),('style','pf-second-screen-boot-style'),('script','pf-chart-percent-script'),('style','pf-chart-percent-style')]:
         source=re.sub(r'<'+tag+r' id="'+ident+r'">[\s\S]*?</'+tag+'>\n?','',source)
     if not re.search(r'const dadosPadraoCompletos\s*=\s*\[\s*\]\s*;', source):
         raise ValueError('Publicação bloqueada: a base embutida precisa estar vazia. Não publique lançamentos pessoais no HTML.')
