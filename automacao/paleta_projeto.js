@@ -34,7 +34,13 @@ function actionKind(text,meta=''){
 function statusKind(text){const t=fold(text);if(/vencid|atrasad|overdue/.test(t))return 'overdue';if(/nao recebid|a receber|receita prevista|unreceived/.test(t))return 'receivable';if(/recebid|received/.test(t))return 'received';if(/^(pago|paga|pagamento|quitad|liquidad|concluid|paid|feito)/.test(t))return 'paid';if(/pendente|a vencer|hoje|pending/.test(t))return 'pending';return null;}
 const styles={neutral:['muted','card','line'],exit:['muted','transparent','line'],nav:['blue','blueBg','border'],cadastro:['accent','cyanBg','cyanLine'],analysis:['purple','purpleBg','purpleLine'],primary:['primaryInk','primary','primary'],saveBlue:['onBlue','solidBlue','solidBlue'],pdf:['onBlue','solidBlue','blue'],print:['muted','card','line'],positive:['green','greenBg','greenLine'],danger:['red','redBg','redLine'],dangerIcon:['red','transparent','redLine'],clear:['muted','transparent','line'],edit:['accent','transparent','cyanLine'],advanced:['blue','blueBg','border'],incomeFilter:['green','greenBg','greenLine'],expenseFilter:['red','redBg','redLine'],pendingFilter:['amber','amberBg','amberLine'],allFilter:['muted','card','line'],annual:['purple','purpleBg','purpleLine'],month:['muted','card','line']};
 const activeStyles={incomeFilter:['onGreen','greenSolid','greenLine'],expenseFilter:['onRed','redSolid','redLine'],pendingFilter:['onAmber','amberSolid','amberLine'],allFilter:['ink','selected','accent'],annual:['onPurple','purpleSolid','accent'],month:['primaryInk','primary','primaryHover'],advanced:['blueActive','selected','blue']};
-if(typeof module!=='undefined'&&module.exports)module.exports={actionKind,statusKind,styles,activeStyles};
+function lightScheme(scheme,kind,active,dark,disabled=false){
+ if(dark||disabled)return scheme;
+ if(['primary','saveBlue','pdf'].includes(kind))return ['onBlue','solidBlue','solidBlue'];
+ if(active)return ['blueActive','selected','solidBlue'];
+ return [scheme[0],'secondary','secondaryLine'];
+}
+if(typeof module!=='undefined'&&module.exports)module.exports={actionKind,statusKind,styles,activeStyles,lightScheme};
 if(typeof document==='undefined')return;
 const touched=new Map();let running=false;
 function set(node,property,value){if(!node?.style)return;if(!touched.has(node))touched.set(node,new Set());touched.get(node).add(property);if(node.style.getPropertyValue(property)!==value||node.style.getPropertyPriority(property)!=='important')node.style.setProperty(property,value,'important');}
@@ -48,11 +54,11 @@ const cards='.pf-dash-card,.pf-area-card,.pdp-card,.pdp-kpi,.pa-card,.pa-metric,
 const panels='#pfLanguageMenu,#pfCurrencyMenu,#painelGerencial,#clean-periodbar,#clean-month-analysis,#pf-entries-panel,#pfAreaCardsPage,#pfCadastroEditor,#pf-bank-audit,#pfDashboardToolbar,.pdp-period,.pdp-filters,.pdp-advanced,.pfgo-period,.pfgo-filter-actions,.pa-filters,.panel,.pf-chart-card,.clean-menu-group,.analysis-card';
 function surfaces(){
  bg(document.body,'bg');ink(document.body);
- for(const n of document.querySelectorAll(cards)){bg(n);border(n);ink(n);set(n,'box-shadow','var(--pf16-hover-shadow,none)');mark(n,'pf16Surface','card');}
+ for(const n of document.querySelectorAll(cards)){bg(n);border(n);ink(n);set(n,'box-shadow',document.body.classList.contains('dark-mode')?'var(--pf16-hover-shadow,none)':'var(--pf16-hover-shadow,var(--pf32-card-shadow))');mark(n,'pf16Surface','card');}
  for(const n of document.querySelectorAll(panels)){bg(n);border(n);ink(n);}
  for(const n of document.querySelectorAll('dialog,[role="dialog"],.modal-content,.modal-card,.cal45-card,.pf-help-modal-card,[id^="modal"]>div,#modalConfiguracaoNuvem>div,#modalRelatorioMensalMobile>div,#modalLancamento>div')){bg(n);border(n);ink(n);mark(n,'pf16Surface','dialog');}
  for(const n of document.querySelectorAll('#pfPersonalDashboard,#pfAnalysisPage,#pfGraphicsPage,#pfCadastroPage,#appConteudo')){set(n,'background-color','transparent');ink(n);}
- if(document.body.classList.contains('dark-mode'))set(document.getElementById('pfAreaCardsPage'),'background-color','transparent');
+ set(document.getElementById('pfAreaCardsPage'),'background-color','transparent');
  for(const n of document.querySelectorAll('h1,h2,h3,h4,h5,h6,label,.pdp-label,.pa-section-head,.pfgo-section,.lbl,.label,.pf-area-card strong,.pf-dash-card strong'))ink(n);
  for(const n of document.querySelectorAll('.pdp-note,.pa-note,.pfgo-note,.pf-area-description,.pf-dash-card>span:last-child,#pfAreaCardsDescription,#pfDashboardSource,#pfHelpModalBody p,#pfHelpModalBody li,.fc-card small,.pdpx-audit article p,small'))ink(n,'muted');
  for(const n of document.querySelectorAll('.pdp-label,.pa-metric>span:first-child,.pfgo-metric>small:first-child,.g-metric .label,.dashboard-v40-card .lbl'))tree(n);
@@ -81,6 +87,7 @@ function buttons(){for(const b of document.querySelectorAll('button,input[type="
  if(kind==='danger'&&/excluir selecao/.test(fold(label))&&!document.querySelector('#tabelaCorpo input[type=checkbox]:checked'))scheme=['muted','transparent','line'];
  if(b.disabled||b.getAttribute('aria-disabled')==='true'||kind==='month'&&(b.dataset.hasData==='false'||b.dataset.hasRecords==='false'))scheme=['disabled','transparent','line'];
  set(b,'box-shadow','var(--pf16-hover-shadow,none)');if(kind==='edit'&&b.closest('#tabelaLancamentosWrapper td')&&!b.disabled&&b.getAttribute('aria-disabled')!=='true')scheme=['editOrange',scheme[1],scheme[2]];
+ scheme=lightScheme(scheme,kind,active,document.body.classList.contains('dark-mode'),b.disabled||b.getAttribute('aria-disabled')==='true'||kind==='month'&&(b.dataset.hasData==='false'||b.dataset.hasRecords==='false'));
  mark(b,'pf16Action',kind);mark(b,'pf16Active',String(active));for(const node of [b,...b.querySelectorAll('span,strong,small,b,p,label,i')])set(node,'color','var(--pf16-button-hover-ink,var(--pf16-'+scheme[0]+'))');set(b,'background-color','var(--pf16-button-hover-bg,'+(scheme[1]==='transparent'?'transparent':'var(--pf16-'+scheme[1]+')')+')');border(b,scheme[2]);
  // Tirar gradientes legados que encobriam a nova cor sólida, sem alterar tamanho/posição.
  set(b,'background-image','none');

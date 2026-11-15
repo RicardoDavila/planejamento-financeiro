@@ -248,7 +248,11 @@
       "#22D3EE",
       "#F8FAFC",
       "#A7B4C7",
-      "html body:not(.dark-mode)"
+      "html body:not(.dark-mode)",
+      "--pf16-bg:#F5F7FA",
+      "--pf16-border:#E2E8F0",
+      "--pf32-card-shadow",
+      "--pf16-secondary:#F8FAFC"
     ],
     "pf-second-screen-script": [
       "pf-secondary",

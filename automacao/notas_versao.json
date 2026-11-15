@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Gráficos mensais recebem linha pontilhada de variação por indicador e escala percentual separada dos valores; primeiro mês, lacunas e base zero não geram ligação inválida.",
-    "Rubricas e subitens mostram sua participação mês a mês no total de receitas ou despesas do mesmo recorte, sem misturar os tipos e sem percentual com total zero.",
-    "Preserva filtros, seletores, detalhes, impressão/PDF e dados financeiros; mantém a correção das Notas e a pendência separada da Etapa 26."
+    "Modo claro com fundo #F5F7FA, cards brancos, bordas #E2E8F0 e sombra discreta.",
+    "Botões secundários #F8FAFC com borda #D7DEE8; principais azuis #2563EB com texto branco. Seleções e destaque continuam identificáveis.",
+    "Modo escuro, dados, filtros, gráficos, notas e funções existentes preservados."
   ],
   "distribuicao": [
-    "Gráficos mensais recebem linha pontilhada de variação por indicador e escala percentual separada dos valores; primeiro mês, lacunas e base zero não geram ligação inválida.",
-    "Rubricas e subitens mostram sua participação mês a mês no total de receitas ou despesas do mesmo recorte, sem misturar os tipos e sem percentual com total zero.",
-    "Preserva filtros, seletores, detalhes, impressão/PDF e dados financeiros; mantém a correção das Notas e a pendência separada da Etapa 26."
+    "Modo claro com fundo #F5F7FA, cards brancos, bordas #E2E8F0 e sombra discreta.",
+    "Botões secundários #F8FAFC com borda #D7DEE8; principais azuis #2563EB com texto branco. Seleções e destaque continuam identificáveis.",
+    "Modo escuro, dados, filtros, gráficos, notas e funções existentes preservados."
   ]
 }
