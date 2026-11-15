@@ -5,7 +5,7 @@ class VersaoPublicacaoTests(unittest.TestCase):
   old=os.environ.get('GITHUB_RUN_NUMBER')
   try:
    os.environ['GITHUB_RUN_NUMBER']='103'
-   self.assertEqual(gerar.versao_publicacao(),'V5.1.15')
+   self.assertEqual(gerar.versao_publicacao(),'V5.1.16')
    self.assertNotIn("default='V4.12.'",(gerar.ROOT/'automacao/gerar.py').read_text(encoding='utf-8'))
   finally:
    if old is None:os.environ.pop('GITHUB_RUN_NUMBER',None)
@@ -15,6 +15,6 @@ class VersaoPublicacaoTests(unittest.TestCase):
    out=pathlib.Path(tmp)/'site'
    subprocess.run(['python',str(gerar.ROOT/'automacao/gerar.py'),'--output',str(out)],env={**os.environ,'GITHUB_RUN_NUMBER':'103'},check=True)
    for name in ['version.json','distribuicao/version.json']:
-    self.assertEqual(json.loads((out/name).read_text(encoding='utf-8'))['version'],'V5.1.15')
+    self.assertEqual(json.loads((out/name).read_text(encoding='utf-8'))['version'],'V5.1.16')
    for name in ['index.html','distribuicao/app.html','teste-gemini/app.html']:
-    html=(out/name).read_text(encoding='utf-8');self.assertIn("const CURRENT_VERSION='V5.1.15';",html);self.assertIn("'+CURRENT_VERSION+'",html)
+    html=(out/name).read_text(encoding='utf-8');self.assertIn("const CURRENT_VERSION='V5.1.16';",html);self.assertIn("'+CURRENT_VERSION+'",html)

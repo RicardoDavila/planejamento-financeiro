@@ -1,4 +1,4 @@
-import pathlib,subprocess,unittest,re
+import pathlib,subprocess,unittest,re,hashlib,json
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 class LightPalette32Tests(unittest.TestCase):
  def test_schemes_preserve_dark_and_semantic_actions(self):
@@ -11,7 +11,8 @@ assert.deepEqual(p.lightScheme(p.styles.danger,'danger',false,false),['red','sec
 assert.deepEqual(p.lightScheme(p.styles.month,'month',true,false),['blueActive','selected','solidBlue']);
 """],cwd=ROOT,check=True)
  def test_existing_dark_css_unchanged(self):
-  previous=ROOT.parents[1]/'etapa-31-percentuais/projeto/automacao/paleta_projeto.css'
-  old=previous.read_text(encoding='utf-8');new=(ROOT/'automacao/paleta_projeto.css').read_text(encoding='utf-8')
+  # Referência das regras escuras da Etapa 31 aprovada, sem depender de pastas locais.
+  new=(ROOT/'automacao/paleta_projeto.css').read_text(encoding='utf-8')
   rule=r'html body\.dark-mode[^{}]*\{[^{}]*\}'
-  self.assertEqual(re.findall(rule,old),re.findall(rule,new))
+  actual=hashlib.sha256(json.dumps(re.findall(rule,new),ensure_ascii=True,separators=(',',':')).encode()).hexdigest()
+  self.assertEqual(actual,'03430c263b8a61b6fef7f542490018b4cd2868bffa462b12c4ce2a2c9b95e75c')

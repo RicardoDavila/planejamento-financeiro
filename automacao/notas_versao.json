@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Modo claro com fundo #F5F7FA, cards brancos, bordas #E2E8F0 e sombra discreta.",
-    "Botões secundários #F8FAFC com borda #D7DEE8; principais azuis #2563EB com texto branco. Seleções e destaque continuam identificáveis.",
-    "Modo escuro, dados, filtros, gráficos, notas e funções existentes preservados."
+    "Mantém a paleta aprovada para avaliação na Etapa 32: alterações apenas no modo claro.",
+    "Corrige a validação do modo escuro no GitHub Actions: o teste usa uma referência de integridade local ao repositório, sem depender das pastas históricas de etapas.",
+    "Dados, filtros, gráficos, Notas e regras do modo escuro preservados."
   ],
   "distribuicao": [
-    "Modo claro com fundo #F5F7FA, cards brancos, bordas #E2E8F0 e sombra discreta.",
-    "Botões secundários #F8FAFC com borda #D7DEE8; principais azuis #2563EB com texto branco. Seleções e destaque continuam identificáveis.",
-    "Modo escuro, dados, filtros, gráficos, notas e funções existentes preservados."
+    "Mantém a paleta aprovada para avaliação na Etapa 32: alterações apenas no modo claro.",
+    "Corrige a validação do modo escuro no GitHub Actions: o teste usa uma referência de integridade local ao repositório, sem depender das pastas históricas de etapas.",
+    "Dados, filtros, gráficos, Notas e regras do modo escuro preservados."
   ]
 }
