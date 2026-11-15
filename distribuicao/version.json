@@ -1,6 +1,6 @@
 {
-  "version": "V5.1.9",
-  "name": "V5.1.9",
+  "version": "V5.1.10",
+  "name": "V5.1.10",
   "channel": "distribuicao",
   "notes": [
     "Corrige colisões dos identificadores dos cadastros e alinha as referências das importações e exportações.",

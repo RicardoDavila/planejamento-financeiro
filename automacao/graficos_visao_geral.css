@@ -39,4 +39,6 @@ body.dark-mode #pfGraphicsPage input,body.dark-mode #pfGraphicsPage select{color
 @media(max-width:1150px){.pfgo-grid4{grid-template-columns:repeat(2,minmax(0,1fr))}.pfgo-grid2{grid-template-columns:1fr}.pfgo-period{gap:5px}.pfgo-period button{padding:7px!important}.pfgo-week{gap:5px}}
 @media print{#pfGraphicsPage{max-width:none;padding:0}.pfgo-card{break-inside:avoid}.pfgo-filter-actions,.pfgo-chartbar,#pfgo-advanced{display:none!important}.pfgo-svg{max-height:145mm}.pfgo-tablewrap{overflow:visible!important}}
 
+
+.pfgo-comparison-legend{display:flex;gap:20px;flex-wrap:wrap;margin:14px 0;font-size:12px}.pfgo-comparison-legend>span{display:inline-flex;align-items:center;gap:7px}.pfgo-comparison-legend i{display:inline-block;width:10px;height:10px;border-radius:3px}.pfgo-comparison>h2{margin-top:0}.pfgo-comparison .pfgo-chartbar{flex-wrap:wrap}.pfgo-comparison .pfgo-chartbar label{max-width:100%;min-width:0}.pfgo-comparison .pfgo-chartbar select{max-width:100%}
 }

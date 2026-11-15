@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Restaura a faixa de informações de mercado no rodapé da Página Inicial e do Dashboard.",
-    "Preserva indicadores, datas de referência, movimento, Pausar/Continuar e Ocultar/Mostrar.",
-    "A Etapa 26 permanece pendente de validação; esta atualização não declara resolvido o problema da segunda tela."
+    "Adiciona análises comparativas na Visão Geral e em Gráficos e Evoluções: receitas ou despesas entre dois meses e Receitas × Despesas.",
+    "Seletores de mês de referência e tipo de gráfico: Padrão, Barras, Colunas, Linhas, Áreas e Rosca; detalhes, PDF e impressão.",
+    "Preserva os filtros e gráficos existentes, a faixa de mercado e o celular. A Etapa 26 continua pendente."
   ],
   "distribuicao": [
-    "Restaura a faixa de informações de mercado no rodapé da Página Inicial e do Dashboard.",
-    "Preserva indicadores, datas de referência, movimento, Pausar/Continuar e Ocultar/Mostrar.",
-    "A Etapa 26 permanece pendente de validação; esta atualização não declara resolvido o problema da segunda tela."
+    "Adiciona análises comparativas na Visão Geral e em Gráficos e Evoluções: receitas ou despesas entre dois meses e Receitas × Despesas.",
+    "Seletores de mês de referência e tipo de gráfico: Padrão, Barras, Colunas, Linhas, Áreas e Rosca; detalhes, PDF e impressão.",
+    "Preserva os filtros e gráficos existentes, a faixa de mercado e o celular. A Etapa 26 continua pendente."
   ]
 }
