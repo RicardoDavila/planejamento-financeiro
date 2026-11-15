@@ -74,7 +74,8 @@
       "diagnostico:",
       "pfDashboardToolbar",
       "Core.authenticatedClient",
-      "notas-v3.2"
+      "notas-v3.3",
+      "getSession:async()=>{if(typeof obterSessaoNuvem==='function')return obterSessaoNuvem();"
     ],
     "pf-dashboard-style": [
       "#pfDashboardHome",

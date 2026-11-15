@@ -8140,7 +8140,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V5.1.12';
+ const CURRENT_VERSION='V5.1.13';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -17577,7 +17577,7 @@ body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-a
   }});
   function project(){try{const url=client()?.supabaseUrl||(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:null);const host=new URL(url).hostname;return /^[a-z0-9-]+\.supabase\.co$/i.test(host)?host.split('.')[0]:'domínio personalizado';}catch(_){return 'não identificado';}}
   function fail(error){
-   const info=Core.diagnose(error);lastFailure={diagnostico:'notas-v3.2',codigo:info.code,etapa:info.phase,tipo:info.kind,alvo:info.target,projeto:project()};
+   const info=Core.diagnose(error);lastFailure={diagnostico:'notas-v3.3',codigo:info.code,etapa:info.phase,tipo:info.kind,alvo:info.target,projeto:project()};
    $('pfnDiagnosticText').textContent=JSON.stringify(lastFailure,null,2);diagnostic.hidden=false;
    status(info.message+' Código: '+info.code+'.'+(info.target!=='não identificado'?' Origem: '+info.target+'.':''),'error');
   }
@@ -17639,8 +17639,8 @@ body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-a
     let transport=client();
     if(typeof SUPABASE_URL!=='undefined'&&typeof SUPABASE_PUBLISHABLE_KEY!=='undefined'&&typeof window.fetch==='function'){
      transport=await Core.authenticatedClient({client:transport,url:SUPABASE_URL,publicKey:SUPABASE_PUBLISHABLE_KEY,owner,
-      getSession:async()=>{if(window.pfdClient){const {data,error}=await client().auth.getSession();if(error)throw error;return data?.session;}
-       if(typeof obterSessaoNuvem==='function')return obterSessaoNuvem();const {data,error}=await client().auth.getSession();if(error)throw error;return data?.session;},
+      getSession:async()=>{if(typeof obterSessaoNuvem==='function')return obterSessaoNuvem();
+       const {data,error}=await client().auth.getSession();if(error)throw error;return data?.session;},
       fetch:window.fetch.bind(window),isCurrent:()=>at===generation&&owner===engine.owner()&&allowed()&&!changing});
     }
     if(at!==generation||!allowed())return;const result=await engine.sync(transport);
@@ -17718,7 +17718,7 @@ body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-a
    if(Date.now()-lastAttempt>=60000&&document.visibilityState==='visible')sync();
   },1000);
   let mounting=false;new MutationObserver(()=>{if(mounting)return;mounting=true;setTimeout(()=>{mounting=false;mount();},100);}).observe(document.body,{childList:true,subtree:true});
-  window.PFNotas={abrir:open,sync,conta:()=>engine.owner(),diagnostico:()=>lastFailure?{...lastFailure}:{diagnostico:'notas-v3.2',projeto:project(),situacao:'Nenhuma falha registrada'},estado:()=>({conta:engine.owner(),notas:rows.filter(n=>!n.deleted).length,pendentes:rows.filter(n=>n.dirty).length}),importarAntigas:()=>{asked.delete(engine.owner());return migrate();}};
+  window.PFNotas={abrir:open,sync,conta:()=>engine.owner(),diagnostico:()=>lastFailure?{...lastFailure}:{diagnostico:'notas-v3.3',projeto:project(),situacao:'Nenhuma falha registrada'},estado:()=>({conta:engine.owner(),notas:rows.filter(n=>!n.deleted).length,pendentes:rows.filter(n=>n.dirty).length}),importarAntigas:()=>{asked.delete(engine.owner());return migrate();}};
   mount();if(allowed())bindClient();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();

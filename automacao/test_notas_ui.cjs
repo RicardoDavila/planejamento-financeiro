@@ -55,6 +55,12 @@ function fixture(options={}){
  f=fixture({client,globals:{SUPABASE_URL:'https://example.supabase.co',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_ficticia',obterSessaoNuvem:async()=>({user:{id:B},access_token:'jwt-da-sessao-financeira'})},window:{fetch:async(url,opts)=>{calls.push({url,opts});return {ok:true,status:200,json:async()=>[]};}}});
  resolveSession({data:{session:{user:{id:B},access_token:'sessao-sdk-antiga'}}});await f.ready();await f.window.PFNotas.sync();assert(calls.length);assert(calls.every(c=>c.opts.headers.Authorization==='Bearer jwt-da-sessao-financeira'));assert(f.ids.get('pfnState').textContent.includes('sincronizadas'));assert.equal(f.ids.get('pfnDiagnostic').hidden,true);
  console.log('PASS notas UI: usa sessão financeira autenticada explícita em lugar da leitura SDK recusada.');
+ // Distribuição: o contêiner recupera uma sessão válida, embora o SDK isolado esteja antigo.
+ let containerCalls=0;const distributedCalls=[];client.auth.getSession=async()=>({data:{session:{user:{id:B},access_token:'sdk-expirado',expires_at:1}}});
+ f=fixture({client,globals:{SUPABASE_URL:'https://example.supabase.co',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_ficticia',obterSessaoNuvem:async()=>{containerCalls++;return {user:{id:B},access_token:'jwt-da-sessao-financeira',expires_at:Date.now()/1000+3600};}},window:{pfdClient:client,fetch:async(url,opts)=>{distributedCalls.push({url,opts});return {ok:true,status:200,json:async()=>[]};}}});
+ await f.ready();await f.window.PFNotas.sync();assert(containerCalls>0,'Deve usar o provedor protegido do contêiner');assert(distributedCalls.length);assert(distributedCalls.every(c=>c.opts.headers.Authorization==='Bearer jwt-da-sessao-financeira'));assert(f.ids.get('pfnState').textContent.includes('sincronizadas'));
+ console.log('PASS notas UI: distribuição usa recuperação do contêiner, mantendo dono fixo e JWT atual.');
+
 
 })().catch(e=>{console.error(e);process.exitCode=1});
 

@@ -45,3 +45,7 @@ Há testes de persistência, concorrência, conflitos, falhas de gravação, tro
 A leitura e a RPC de notas enviam explicitamente o JWT da sessão autenticada e a chave pública do mesmo projeto. A identidade é validada por getUser antes da sincronização; logout, sessão ausente, expirada ou conta diferente interrompem a operação. No aplicativo pessoal, usa a obtenção de sessão já existente na nuvem financeira; na distribuição, usa exclusivamente a conta fixa do contêiner. A RPC continua sendo o único caminho de escrita, com revisão do servidor e dono esperado. Nenhuma permissão anônima foi concedida.
 
 Diagnóstico notas-v3.2 mostra a origem conhecida de uma recusa (tabela, schema ou função), sem mensagem bruta, conteúdo ou token. As permissões SQL foram conferidas pelo usuário, mas o erro de leitura persistiu; a mudança de transporte ainda precisa de conferência real após publicar. Não afirmar que sincronizou com base apenas nos testes simulados.
+
+### Etapa 30 — revisão 03
+
+Na distribuição, a sessão passa pelo obterSessaoNuvem original do aplicativo, que solicita pfdGetSession ao contêiner e verifica a conta fixa antes e depois da recuperação. Não consulta a sessão pessoal nem transfere notas entre usuários. O diagnóstico passa a notas-v3.3. O caminho direto do SDK que ignorava essa recuperação foi removido. O sucesso da revisão 02 na conta principal foi mostrado pelo usuário; a revisão 03 exige novo teste no usuário distribuído.

@@ -1,12 +1,12 @@
 {
   "pessoal": [
-    "Notas enviam o JWT da sessão autenticada explicitamente na leitura e na função de gravação, com validação remota da identidade e bloqueio de troca de conta.",
-    "Diagnóstico das Notas identifica a origem conhecida da recusa sem exibir conteúdo, credenciais ou identificadores de contas.",
-    "Preserva notas locais, conflitos, isolamento e dados financeiros. A correção exige conferência no servidor real; Etapa 26 continua pendente."
+    "Notas da distribuição passam pelo provedor protegido de sessão do contêiner, preservando a recuperação de sessão e a conta fixa.",
+    "Mantém JWT explícito, validação remota da identidade, isolamento entre contas e preservação de notas pendentes.",
+    "Correção testada com sessão antiga do SDK e sessão válida do contêiner. A conferência no usuário distribuído real permanece necessária."
   ],
   "distribuicao": [
-    "Notas enviam o JWT da sessão autenticada explicitamente na leitura e na função de gravação, com validação remota da identidade e bloqueio de troca de conta.",
-    "Diagnóstico das Notas identifica a origem conhecida da recusa sem exibir conteúdo, credenciais ou identificadores de contas.",
-    "Preserva notas locais, conflitos, isolamento e dados financeiros. A correção exige conferência no servidor real; Etapa 26 continua pendente."
+    "Notas da distribuição passam pelo provedor protegido de sessão do contêiner, preservando a recuperação de sessão e a conta fixa.",
+    "Mantém JWT explícito, validação remota da identidade, isolamento entre contas e preservação de notas pendentes.",
+    "Correção testada com sessão antiga do SDK e sessão válida do contêiner. A conferência no usuário distribuído real permanece necessária."
   ]
 }
