@@ -1,12 +1,10 @@
 {
   "pessoal": [
-    "Etapa 34: diferencia cards por página no modo escuro e aplica fundos suaves por finalidade dos indicadores no modo claro.",
-    "Destaca áreas internas de gráficos, preservando séries, escalas, filtros, dados, hover, foco e enquadramento aprovado.",
-    "Traduções e novos indicadores do Painel de Lançamentos permanecem para as próximas etapas."
+    "Etapa 35: amplia as traduções da interface para inglês e espanhol, incluindo mensagens, gráficos, simuladores e relatórios.",
+    "Preserva nomes e textos cadastrados, valores, filtros, cores e dados financeiros ao trocar o idioma."
   ],
   "distribuicao": [
-    "Etapa 34: diferencia cards por página no modo escuro e aplica fundos suaves por finalidade dos indicadores no modo claro.",
-    "Destaca áreas internas de gráficos, preservando séries, escalas, filtros, dados, hover, foco e enquadramento aprovado.",
-    "Traduções e novos indicadores do Painel de Lançamentos permanecem para as próximas etapas."
+    "Etapa 35: amplia as traduções da interface para inglês e espanhol, incluindo mensagens, gráficos, simuladores e relatórios.",
+    "Preserva nomes e textos cadastrados, valores, filtros, cores e dados financeiros ao trocar o idioma."
   ]
 }

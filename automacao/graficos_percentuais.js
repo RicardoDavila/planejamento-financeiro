@@ -22,7 +22,7 @@ function monthly(series){
  if(!series.length)return null;const keys=series[0].values.map(pointKey);
  if(!keys.length||keys.some(k=>!k)||new Set(keys).size!==keys.length)return null;
  if(series.some(s=>s.values.length!==keys.length||s.values.some((v,i)=>pointKey(v)!==keys[i])))return null;
- return series.map((s,j)=>({label:s.label,color:s.color||palette[j%palette.length],keys,points:variation(s.values.map(v=>typeof v.value==='number'&&Number.isFinite(v.value)?v.value:null),keys)}));
+ return series.map((s,j)=>({label:s.label,userLabel:!!s.userLabel,color:s.color||palette[j%palette.length],keys,points:variation(s.values.map(v=>typeof v.value==='number'&&Number.isFinite(v.value)?v.value:null),keys)}));
 }
 function renderLines(data,{W=1100,H=300,L=85,R=20,T=24,B=42,x,scale=1}={}){
  const all=data.flatMap(s=>s.points.map(v=>v.value).filter(v=>v!==null)),lo=Math.min(0,...all),hi=Math.max(0,...all),span=hi-lo||1,min=lo===hi?-1:lo,max=lo===hi?1:hi;
@@ -30,12 +30,12 @@ function renderLines(data,{W=1100,H=300,L=85,R=20,T=24,B=42,x,scale=1}={}){
  let svg='<g class="pfpct-axis" data-pf-percent="true"><text x="'+right+'" y="'+Math.max(12,T-10)+'">Variação (%)</text><line x1="'+right+'" x2="'+right+'" y1="'+T+'" y2="'+(H-B)+'" stroke="currentColor" opacity=".5"/>';
  for(let i=0;i<5;i++){const v=min+(max-min)*i/4;svg+='<text x="'+(right+6)+'" y="'+(y(v)+4)+'">'+esc(pct(v))+'</text>';}
  for(const s of data){let run=[];const flush=()=>{if(run.length>1)svg+='<polyline points="'+run.join(' ')+'" fill="none" stroke="'+esc(s.color)+'" stroke-width="2.5" stroke-dasharray="7 5" pointer-events="none"/>';run=[];};
-  s.points.forEach((p,i)=>{if(p.value===null){flush();return;}run.push(xx(i)+','+y(p.value));const title=s.label+' · '+p.label+' · '+p.direction+' · '+pct(p.value);svg+='<circle class="pfpct-point" tabindex="0" role="img" aria-label="'+esc(title)+'" cx="'+xx(i)+'" cy="'+y(p.value)+'" r="4.5" fill="var(--dash-card,var(--pa-card,#17202c))" stroke="'+esc(s.color)+'" stroke-width="2"><title>'+esc(title)+'</title></circle>';});flush();
+  s.points.forEach((p,i)=>{if(p.value===null){flush();return;}run.push(xx(i)+','+y(p.value));const title=s.label+' · '+p.label+' · '+p.direction+' · '+pct(p.value);svg+='<circle class="pfpct-point" tabindex="0" role="img" aria-label="'+esc(title)+'"'+(s.userLabel?' data-pf-user-series':'')+' cx="'+xx(i)+'" cy="'+y(p.value)+'" r="4.5" fill="var(--dash-card,var(--pa-card,#17202c))" stroke="'+esc(s.color)+'" stroke-width="2"><title>'+esc(title)+'</title></circle>';});flush();
  }return svg+'</g>';
 }
 function enhance(html,series,options={}){
  const data=monthly(series);if(!data)return html;
- const legend='<div class="pfpct-legend" data-pf-percent="true">'+data.map(s=>'<span><i style="border-color:'+esc(s.color)+'"></i>'+esc(s.label)+' · variação mensal</span>').join('')+'</div>';
+ const legend='<div class="pfpct-legend" data-pf-percent="true">'+data.map(s=>'<span><i style="border-color:'+esc(s.color)+'"></i><span'+(s.userLabel?' data-pf-i18n-skip':'')+'>'+esc(s.label)+'</span> · <span>variação mensal</span></span>').join('')+'</div>';
  let graphic=html;const g=options.geometry;
  if(g&&options.cartesian!==false&&/<svg\b/.test(html)){
   const scale=(g.W-135)/(g.W-g.R),overlay=renderLines(data,{...g,scale});
@@ -44,7 +44,7 @@ function enhance(html,series,options={}){
   const W=1100,H=250,L=85,R=135,T=30,B=35,n=data[0].keys.length;
   graphic+='<svg class="pfpct-svg" style="width:100%;height:auto" viewBox="0 0 1100 250" role="group" aria-label="Variação percentual mensal — escala própria">'+data[0].keys.map((k,i)=>'<text x="'+(L+(i+.5)*(W-L-R)/n)+'" y="240" text-anchor="middle">'+k+'</text>').join('')+renderLines(data,{W,H,L,R:20,T,B,scale:(W-135)/(W-20),x:i=>L+(i+.5)*(W-L-R)/n})+'</svg>';
  }
- const rows=data.flatMap(s=>s.points.map(p=>'<tr><td>'+esc(s.label)+'</td><td>'+p.label+'</td><td>'+esc(pct(p.value))+'</td><td>'+esc(p.reason||p.direction)+'</td></tr>')).join('');
+ const rows=data.flatMap(s=>s.points.map(p=>'<tr><td'+(s.userLabel?' data-pf-i18n-skip':'')+'>'+esc(s.label)+'</td><td>'+p.label+'</td><td>'+esc(pct(p.value))+'</td><td>'+esc(p.reason||p.direction)+'</td></tr>')).join('');
  return graphic+legend+'<p class="pfpct-note" data-pf-percent="true">Linha pontilhada: variação relativa ao mês anterior, na escala percentual à direita. Primeiro mês e base anterior zero não geram ponto; lacunas não são ligadas. Períodos parciais podem não ser equivalentes. Zeros seguem os valores exibidos, inclusive meses sem registros; não comprovam mês completo. Em séries percentuais, a variação é relativa, não em pontos percentuais.</p><details class="pfpct-data" data-pf-percent="true"><summary>Variação mensal — valores e casos não calculáveis</summary><div class="pfpct-scroll"><table><thead><tr><th>Indicador</th><th>Mês</th><th>Variação</th><th>Leitura</th></tr></thead><tbody>'+rows+'</tbody></table></div></details>';
 }
 const validDay=d=>/^\d{4}-\d{2}-\d{2}$/.test(d||'')&&Number.isFinite(Date.parse(d+'T12:00:00Z'))&&new Date(d+'T12:00:00Z').toISOString().slice(0,10)===d;

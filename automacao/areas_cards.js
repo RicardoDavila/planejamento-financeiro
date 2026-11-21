@@ -36,7 +36,7 @@ function authorized(){try{window.pfdAssert?.();return typeof protecaoAutenticada
 function source(def){const [key,,,,kind]=def;
  if(kind==='id')return $(key);
  const originals=[...document.querySelectorAll('#pf493Actions button,#pfMobileMaisPanel .pf-mobile-mais-grid button')];
- if(kind==='text')return originals.find(n=>n.textContent.includes(key));
+ if(kind==='text')return originals.find(n=>(window.PFI18n?.originalText(n)||n.textContent).includes(key));
  return originals.find(n=>(n.getAttribute('onclick')||'').includes(key))||[...document.querySelectorAll('[onclick]')].find(n=>(n.getAttribute('onclick')||'').includes(key));
 }
 function actions(category){const config=definitions[category];

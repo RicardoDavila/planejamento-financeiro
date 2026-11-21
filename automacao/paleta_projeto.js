@@ -73,7 +73,7 @@ function surfaces(){
 function buttons(){for(const b of document.querySelectorAll('button,input[type="button"],input[type="submit"],input[type="reset"],a.pf-help-primary,.pf-help-manuals a')){
  if(b.closest('table th,table td')&&!b.matches('button,input'))continue;
  if(b.matches('.pf-dash-card,.pf-area-card,.pdp-kpi,.pa-metric,.pfgo-metric,.pa-click,.dashboard-v40-card'))continue;
- const label=b.textContent||b.value||b.getAttribute('aria-label')||b.title||'',meta=(b.getAttribute('onclick')||'')+' '+(b.getAttribute('aria-label')||'')+' '+b.title;
+ const label=(typeof window!=='undefined'&&window.PFI18n?.originalText(b))||b.textContent||b.value||b.getAttribute('aria-label')||b.title||'',meta=(b.getAttribute('onclick')||'')+' '+(b.getAttribute('aria-label')||'')+' '+b.title;
  if(b.closest('table th')||b.closest('table td')&&!/editar|excluir|apagar|edit|delete/.test(fold(meta+' '+label)))continue;
  // O estado vem do indicador original de sincronização; a paleta não altera a conexão.
  if(b.id==='pf-cloud-status'&&b.classList.contains('pf-cloud-online')&&!b.disabled&&b.getAttribute('aria-disabled')!=='true'){
@@ -93,7 +93,7 @@ function buttons(){for(const b of document.querySelectorAll('button,input[type="
  set(b,'background-image','none');
 }}
 function statuses(){for(const n of document.querySelectorAll('td[data-auto-cell="status"],.status-badge,.status-tag,.badge,.tag,.status,[data-status],.pf-entry-paid,.pf-entry-pending')){
- if(n.matches('tr'))continue;const text=n.textContent.trim();if(text.length>55)continue;const kind=statusKind(text);if(!kind)continue;
+ if(n.matches('tr'))continue;const text=(window.PFI18n?.originalText(n)||n.textContent).trim();if(text.length>55)continue;const kind=statusKind(text);if(!kind)continue;
  const target=n.matches('td')?(n.querySelector('span,button')||n):n;
  const tone={paid:'green',overdue:'red',pending:'amber',received:'accent',receivable:'blue'}[kind];
  tree(target,tone);if(!target.matches('td')){bg(target,tone==='accent'?'cyanBg':tone+'Bg');border(target,tone==='accent'?'cyanLine':tone==='blue'?'border':tone+'Line');}mark(target,'pf16Status',kind);
@@ -104,7 +104,7 @@ function chartColors(){
  const colors=dark?['#4ade80','#fb7185','#22d3ee','#60a5fa','#c4b5fd','#fbbf24']:['#15803d','#be123c','#0e7490','#1d4ed8','#7c3aed','#b45309'];
  const ChartClass=typeof Chart!=='undefined'?Chart:window.Chart;
  for(const c of Object.values(ChartClass?.instances||{})){let changed=false;
-  (c.data?.datasets||[]).forEach((d,i)=>{const label=fold(d.label),color=/despes|gasto|saida/.test(label)?colors[1]:/receit|renda|entrada/.test(label)?colors[0]:/saldo|resultado/.test(label)?colors[2]:/invest|aporte/.test(label)?colors[3]:colors[i%colors.length];
+  (c.data?.datasets||[]).forEach((d,i)=>{const label=fold(window.PFI18n?.canonical(d.label)||d.label),color=/despes|gasto|saida/.test(label)?colors[1]:/receit|renda|entrada/.test(label)?colors[0]:/saldo|resultado/.test(label)?colors[2]:/invest|aporte/.test(label)?colors[3]:colors[i%colors.length];
    const multi=Array.isArray(d.backgroundColor),next=multi?d.backgroundColor.map((_,k)=>colors[k%colors.length]):color;
    if(JSON.stringify(d.borderColor)!==JSON.stringify(multi?next:color)){d.borderColor=multi?next:color;changed=true;}
    const fill=multi?next:((d.type||c.config?.type)==='line'?color+'40':color);if(JSON.stringify(d.backgroundColor)!==JSON.stringify(fill)){d.backgroundColor=fill;changed=true;}

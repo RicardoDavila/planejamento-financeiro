@@ -22,7 +22,7 @@ function monthly(series){
  if(!series.length)return null;const keys=series[0].values.map(pointKey);
  if(!keys.length||keys.some(k=>!k)||new Set(keys).size!==keys.length)return null;
  if(series.some(s=>s.values.length!==keys.length||s.values.some((v,i)=>pointKey(v)!==keys[i])))return null;
- return series.map((s,j)=>({label:s.label,color:s.color||palette[j%palette.length],keys,points:variation(s.values.map(v=>typeof v.value==='number'&&Number.isFinite(v.value)?v.value:null),keys)}));
+ return series.map((s,j)=>({label:s.label,userLabel:!!s.userLabel,color:s.color||palette[j%palette.length],keys,points:variation(s.values.map(v=>typeof v.value==='number'&&Number.isFinite(v.value)?v.value:null),keys)}));
 }
 function renderLines(data,{W=1100,H=300,L=85,R=20,T=24,B=42,x,scale=1}={}){
  const all=data.flatMap(s=>s.points.map(v=>v.value).filter(v=>v!==null)),lo=Math.min(0,...all),hi=Math.max(0,...all),span=hi-lo||1,min=lo===hi?-1:lo,max=lo===hi?1:hi;
@@ -30,12 +30,12 @@ function renderLines(data,{W=1100,H=300,L=85,R=20,T=24,B=42,x,scale=1}={}){
  let svg='<g class="pfpct-axis" data-pf-percent="true"><text x="'+right+'" y="'+Math.max(12,T-10)+'">Variação (%)</text><line x1="'+right+'" x2="'+right+'" y1="'+T+'" y2="'+(H-B)+'" stroke="currentColor" opacity=".5"/>';
  for(let i=0;i<5;i++){const v=min+(max-min)*i/4;svg+='<text x="'+(right+6)+'" y="'+(y(v)+4)+'">'+esc(pct(v))+'</text>';}
  for(const s of data){let run=[];const flush=()=>{if(run.length>1)svg+='<polyline points="'+run.join(' ')+'" fill="none" stroke="'+esc(s.color)+'" stroke-width="2.5" stroke-dasharray="7 5" pointer-events="none"/>';run=[];};
-  s.points.forEach((p,i)=>{if(p.value===null){flush();return;}run.push(xx(i)+','+y(p.value));const title=s.label+' · '+p.label+' · '+p.direction+' · '+pct(p.value);svg+='<circle class="pfpct-point" tabindex="0" role="img" aria-label="'+esc(title)+'" cx="'+xx(i)+'" cy="'+y(p.value)+'" r="4.5" fill="var(--dash-card,var(--pa-card,#17202c))" stroke="'+esc(s.color)+'" stroke-width="2"><title>'+esc(title)+'</title></circle>';});flush();
+  s.points.forEach((p,i)=>{if(p.value===null){flush();return;}run.push(xx(i)+','+y(p.value));const title=s.label+' · '+p.label+' · '+p.direction+' · '+pct(p.value);svg+='<circle class="pfpct-point" tabindex="0" role="img" aria-label="'+esc(title)+'"'+(s.userLabel?' data-pf-user-series':'')+' cx="'+xx(i)+'" cy="'+y(p.value)+'" r="4.5" fill="var(--dash-card,var(--pa-card,#17202c))" stroke="'+esc(s.color)+'" stroke-width="2"><title>'+esc(title)+'</title></circle>';});flush();
  }return svg+'</g>';
 }
 function enhance(html,series,options={}){
  const data=monthly(series);if(!data)return html;
- const legend='<div class="pfpct-legend" data-pf-percent="true">'+data.map(s=>'<span><i style="border-color:'+esc(s.color)+'"></i>'+esc(s.label)+' · variação mensal</span>').join('')+'</div>';
+ const legend='<div class="pfpct-legend" data-pf-percent="true">'+data.map(s=>'<span><i style="border-color:'+esc(s.color)+'"></i><span'+(s.userLabel?' data-pf-i18n-skip':'')+'>'+esc(s.label)+'</span> · <span>variação mensal</span></span>').join('')+'</div>';
  let graphic=html;const g=options.geometry;
  if(g&&options.cartesian!==false&&/<svg\b/.test(html)){
   const scale=(g.W-135)/(g.W-g.R),overlay=renderLines(data,{...g,scale});
@@ -44,7 +44,7 @@ function enhance(html,series,options={}){
   const W=1100,H=250,L=85,R=135,T=30,B=35,n=data[0].keys.length;
   graphic+='<svg class="pfpct-svg" style="width:100%;height:auto" viewBox="0 0 1100 250" role="group" aria-label="Variação percentual mensal — escala própria">'+data[0].keys.map((k,i)=>'<text x="'+(L+(i+.5)*(W-L-R)/n)+'" y="240" text-anchor="middle">'+k+'</text>').join('')+renderLines(data,{W,H,L,R:20,T,B,scale:(W-135)/(W-20),x:i=>L+(i+.5)*(W-L-R)/n})+'</svg>';
  }
- const rows=data.flatMap(s=>s.points.map(p=>'<tr><td>'+esc(s.label)+'</td><td>'+p.label+'</td><td>'+esc(pct(p.value))+'</td><td>'+esc(p.reason||p.direction)+'</td></tr>')).join('');
+ const rows=data.flatMap(s=>s.points.map(p=>'<tr><td'+(s.userLabel?' data-pf-i18n-skip':'')+'>'+esc(s.label)+'</td><td>'+p.label+'</td><td>'+esc(pct(p.value))+'</td><td>'+esc(p.reason||p.direction)+'</td></tr>')).join('');
  return graphic+legend+'<p class="pfpct-note" data-pf-percent="true">Linha pontilhada: variação relativa ao mês anterior, na escala percentual à direita. Primeiro mês e base anterior zero não geram ponto; lacunas não são ligadas. Períodos parciais podem não ser equivalentes. Zeros seguem os valores exibidos, inclusive meses sem registros; não comprovam mês completo. Em séries percentuais, a variação é relativa, não em pontos percentuais.</p><details class="pfpct-data" data-pf-percent="true"><summary>Variação mensal — valores e casos não calculáveis</summary><div class="pfpct-scroll"><table><thead><tr><th>Indicador</th><th>Mês</th><th>Variação</th><th>Leitura</th></tr></thead><tbody>'+rows+'</tbody></table></div></details>';
 }
 const validDay=d=>/^\d{4}-\d{2}-\d{2}$/.test(d||'')&&Number.isFinite(Date.parse(d+'T12:00:00Z'))&&new Date(d+'T12:00:00Z').toISOString().slice(0,10)===d;
@@ -792,9 +792,10 @@ function categoryBreakdownBars(entries,descriptions,format,escape,expanded=new S
  const originalText=node=>{if(!node)return '';if(node.nodeType===3){const saved=records.get(node);return saved&&node.data===saved.last?saved.source:node.data;}return [...(node.childNodes||[])].map(originalText).join('');};
  window.PFI18n={getLanguage:()=>language,canonical:value=>parentApi()?.canonical(value)||value,originalText,translate:(value,target=language)=>parentApi()?.translate(value,target)||value};
  const translate=value=>parentApi()?.translate(value,language)||value;
- const skip=element=>!element||!!element.closest('script,style,.analysis-bars,.pfce-alt,.pfce-bars,.pfce-detail tbody,.pfce-points,svg text,tbody,input,textarea');
+ const skip=element=>!element||(parentApi()?.shouldSkip?parentApi().shouldSkip(element):!!element.closest('script,style,[data-pf-i18n-skip],.analysis-rubric,.pfce-alt,.pfce-bars,.pfce-detail tbody,.pfce-points,svg text,tbody,input,textarea'));
+ const svgUI=(parent,text)=>parent?.closest('svg text')&&(/^(?:N\/D|-?[\d.,]+ mil|(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)(?:\. de |\/)\d{2,4})$/.test(text.trim())||parent.closest('.pfpct-axis,.pfgo-donut'));
  function observe(){observer.observe(document.body,{subtree:true,childList:true,characterData:true});}
- function apply(){scheduled=false;observer?.disconnect();let changed=false;try{const previousLanguage=language;language=parentApi()?.getLanguage()||'pt-BR';changed=language!==previousLanguage;document.documentElement.lang=language;const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode()){const parent=node.parentElement;if(skip(parent)||!node.data.trim())continue;const previous=records.get(node),source=previous&&node.data===previous.last?previous.source:parentApi()?.canonical(node.data)||node.data;if(parent.tagName==='OPTION'&&!parent.hasAttribute('value'))parent.setAttribute('value',parent.value);const next=translate(source);if(node.data!==next){parent.dataset.pfceUi='true';node.data=next;}records.set(node,{source,last:next});}for(const element of document.querySelectorAll('[title],[aria-label]')){if(skip(element))continue;let saved=attributeRecords.get(element);if(!saved){saved={};attributeRecords.set(element,saved);}for(const name of ['title','aria-label']){const value=element.getAttribute(name);if(!value)continue;const previous=saved[name],source=previous&&value===previous.last?previous.source:value,next=translate(source);if(value!==next)element.setAttribute(name,next);saved[name]={source,last:next};}}}finally{observe();}if(changed)window.PFChartExplorer?.refresh?.();}
+ function apply(){scheduled=false;observer?.disconnect();let changed=false;try{const previousLanguage=language;language=parentApi()?.getLanguage()||'pt-BR';changed=language!==previousLanguage;document.documentElement.lang=language;const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode()){const parent=node.parentElement;if(!node.data.trim())continue;const previous=records.get(node),source=previous&&node.data===previous.last?previous.source:parentApi()?.canonical(node.data)||node.data;if(skip(parent)&&!svgUI(parent,source))continue;if(parent.tagName==='OPTION'&&!parent.hasAttribute('value'))parent.setAttribute('value',parent.value);const next=parent.closest('svg title')&&source.includes(' · ')?parentApi()?.caption?.(source)||translate(source):translate(source);if(node.data!==next){parent.dataset.pfceUi='true';node.data=next;}records.set(node,{source,last:next});}for(const element of document.querySelectorAll('[title],[aria-label]')){if(skip(element)&&!element.closest('svg'))continue;let saved=attributeRecords.get(element);if(!saved){saved={};attributeRecords.set(element,saved);}for(const name of ['title','aria-label']){const value=element.getAttribute(name);if(!value)continue;const previous=saved[name],source=previous&&value===previous.last?previous.source:value,next=element.closest('svg')&&source.includes(' · ')?parentApi()?.caption?.(source)||translate(source):translate(source);if(value!==next)element.setAttribute(name,next);saved[name]={source,last:next};}}}finally{observe();}if(changed)window.PFChartExplorer?.refresh?.();}
  function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(apply);}
  function install(){observer=new MutationObserver(schedule);apply();try{if(window.opener){window.opener.addEventListener('pf-language-change',schedule);window.addEventListener('pagehide',()=>{try{window.opener.removeEventListener('pf-language-change',schedule);}catch(_){}},{once:true});}}catch(_){} }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
@@ -1033,7 +1034,7 @@ function surfaces(){
 function buttons(){for(const b of document.querySelectorAll('button,input[type="button"],input[type="submit"],input[type="reset"],a.pf-help-primary,.pf-help-manuals a')){
  if(b.closest('table th,table td')&&!b.matches('button,input'))continue;
  if(b.matches('.pf-dash-card,.pf-area-card,.pdp-kpi,.pa-metric,.pfgo-metric,.pa-click,.dashboard-v40-card'))continue;
- const label=b.textContent||b.value||b.getAttribute('aria-label')||b.title||'',meta=(b.getAttribute('onclick')||'')+' '+(b.getAttribute('aria-label')||'')+' '+b.title;
+ const label=(typeof window!=='undefined'&&window.PFI18n?.originalText(b))||b.textContent||b.value||b.getAttribute('aria-label')||b.title||'',meta=(b.getAttribute('onclick')||'')+' '+(b.getAttribute('aria-label')||'')+' '+b.title;
  if(b.closest('table th')||b.closest('table td')&&!/editar|excluir|apagar|edit|delete/.test(fold(meta+' '+label)))continue;
  // O estado vem do indicador original de sincronização; a paleta não altera a conexão.
  if(b.id==='pf-cloud-status'&&b.classList.contains('pf-cloud-online')&&!b.disabled&&b.getAttribute('aria-disabled')!=='true'){
@@ -1053,7 +1054,7 @@ function buttons(){for(const b of document.querySelectorAll('button,input[type="
  set(b,'background-image','none');
 }}
 function statuses(){for(const n of document.querySelectorAll('td[data-auto-cell="status"],.status-badge,.status-tag,.badge,.tag,.status,[data-status],.pf-entry-paid,.pf-entry-pending')){
- if(n.matches('tr'))continue;const text=n.textContent.trim();if(text.length>55)continue;const kind=statusKind(text);if(!kind)continue;
+ if(n.matches('tr'))continue;const text=(window.PFI18n?.originalText(n)||n.textContent).trim();if(text.length>55)continue;const kind=statusKind(text);if(!kind)continue;
  const target=n.matches('td')?(n.querySelector('span,button')||n):n;
  const tone={paid:'green',overdue:'red',pending:'amber',received:'accent',receivable:'blue'}[kind];
  tree(target,tone);if(!target.matches('td')){bg(target,tone==='accent'?'cyanBg':tone+'Bg');border(target,tone==='accent'?'cyanLine':tone==='blue'?'border':tone+'Line');}mark(target,'pf16Status',kind);
@@ -1064,7 +1065,7 @@ function chartColors(){
  const colors=dark?['#4ade80','#fb7185','#22d3ee','#60a5fa','#c4b5fd','#fbbf24']:['#15803d','#be123c','#0e7490','#1d4ed8','#7c3aed','#b45309'];
  const ChartClass=typeof Chart!=='undefined'?Chart:window.Chart;
  for(const c of Object.values(ChartClass?.instances||{})){let changed=false;
-  (c.data?.datasets||[]).forEach((d,i)=>{const label=fold(d.label),color=/despes|gasto|saida/.test(label)?colors[1]:/receit|renda|entrada/.test(label)?colors[0]:/saldo|resultado/.test(label)?colors[2]:/invest|aporte/.test(label)?colors[3]:colors[i%colors.length];
+  (c.data?.datasets||[]).forEach((d,i)=>{const label=fold(window.PFI18n?.canonical(d.label)||d.label),color=/despes|gasto|saida/.test(label)?colors[1]:/receit|renda|entrada/.test(label)?colors[0]:/saldo|resultado/.test(label)?colors[2]:/invest|aporte/.test(label)?colors[3]:colors[i%colors.length];
    const multi=Array.isArray(d.backgroundColor),next=multi?d.backgroundColor.map((_,k)=>colors[k%colors.length]):color;
    if(JSON.stringify(d.borderColor)!==JSON.stringify(multi?next:color)){d.borderColor=multi?next:color;changed=true;}
    const fill=multi?next:((d.type||c.config?.type)==='line'?color+'40':color);if(JSON.stringify(d.backgroundColor)!==JSON.stringify(fill)){d.backgroundColor=fill;changed=true;}
@@ -1145,8 +1146,8 @@ function refresh(){
  for(const card of document.querySelectorAll('.pdp-kpi,.pa-metric,.pfgo-metric,.pa-click,.dashboard-v40-card,.g-metric,.fc-card,.desktop-balance-grid>div')){
   const value=card.querySelector('.pdp-value,.val,.value,.number,strong');
   const title=card.querySelector('.pdp-label,.lbl,.label,h3,h4,small,:scope>span');
-  const direct=[...card.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join(' ').trim();
-  decorate(card,direct||title?.textContent||'',value);
+  const direct=[...card.childNodes].filter(n=>n.nodeType===3).map(n=>window.PFI18n?.originalText(n)||n.textContent).join(' ').trim();
+  decorate(card,direct||(window.PFI18n?.originalText(title)||title?.textContent)||'',value);
  }
  const native={pgReceitas:'Receitas',pgRecebido:'Receita recebida',pgDespesas:'Despesas',pgInvestimentos:'Investimentos',pgAVencer:'A vencer',pgVencido:'Vencido',pgSaldo:'Saldo',cardPrevReceita:'Receitas previstas',cardRecRecebidas:'Receita recebida',cardDespesas:'Despesas',cardInvestimento:'Investimentos',cardSaldo:'Saldo',cardPendente:'Pendências'};
  for(const [id,label]of Object.entries(native)){const value=document.getElementById(id);if(value)decorate(value.parentElement,label,value);}
@@ -1154,7 +1155,7 @@ function refresh(){
   if(value.closest('table')||value.parentElement?.closest('[data-pf34-kind]'))continue;
   if(!value.matches('[data-pf-dark-role="value"],.analysis-amount')&&!/(?:R\$|US\$|[$€]|\d[\d.,]*\s*%|N\/D|Nao informad|Não informad)/i.test(value.textContent))continue;
   const card=value.parentElement,title=card?.querySelector('.pdp-label,.lbl,.label,.analysis-rubric,h2,h3,h4,small,p');
-  const label=value.closest('.analysis-revenue')?'Receitas':value.closest('.analysis-expense')?'Despesas':title?.textContent||'';
+  const label=value.closest('.analysis-revenue')?'Receitas':value.closest('.analysis-expense')?'Despesas':(window.PFI18n?.originalText(title)||title?.textContent)||'';
   mark(value,'pf34Kind',kind(label,value.textContent));mark(value,'pf34Value','true');mark(value,'pf34FinanceKind',window.PFSemanticPalette?.classify(label)||'other');
  }
 }

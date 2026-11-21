@@ -20,8 +20,8 @@ function refresh(){
  for(const card of document.querySelectorAll('.pdp-kpi,.pa-metric,.pfgo-metric,.pa-click,.dashboard-v40-card,.g-metric,.fc-card,.desktop-balance-grid>div')){
   const value=card.querySelector('.pdp-value,.val,.value,.number,strong');
   const title=card.querySelector('.pdp-label,.lbl,.label,h3,h4,small,:scope>span');
-  const direct=[...card.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join(' ').trim();
-  decorate(card,direct||title?.textContent||'',value);
+  const direct=[...card.childNodes].filter(n=>n.nodeType===3).map(n=>window.PFI18n?.originalText(n)||n.textContent).join(' ').trim();
+  decorate(card,direct||(window.PFI18n?.originalText(title)||title?.textContent)||'',value);
  }
  const native={pgReceitas:'Receitas',pgRecebido:'Receita recebida',pgDespesas:'Despesas',pgInvestimentos:'Investimentos',pgAVencer:'A vencer',pgVencido:'Vencido',pgSaldo:'Saldo',cardPrevReceita:'Receitas previstas',cardRecRecebidas:'Receita recebida',cardDespesas:'Despesas',cardInvestimento:'Investimentos',cardSaldo:'Saldo',cardPendente:'Pendências'};
  for(const [id,label]of Object.entries(native)){const value=document.getElementById(id);if(value)decorate(value.parentElement,label,value);}
@@ -29,7 +29,7 @@ function refresh(){
   if(value.closest('table')||value.parentElement?.closest('[data-pf34-kind]'))continue;
   if(!value.matches('[data-pf-dark-role="value"],.analysis-amount')&&!/(?:R\$|US\$|[$€]|\d[\d.,]*\s*%|N\/D|Nao informad|Não informad)/i.test(value.textContent))continue;
   const card=value.parentElement,title=card?.querySelector('.pdp-label,.lbl,.label,.analysis-rubric,h2,h3,h4,small,p');
-  const label=value.closest('.analysis-revenue')?'Receitas':value.closest('.analysis-expense')?'Despesas':title?.textContent||'';
+  const label=value.closest('.analysis-revenue')?'Receitas':value.closest('.analysis-expense')?'Despesas':(window.PFI18n?.originalText(title)||title?.textContent)||'';
   mark(value,'pf34Kind',kind(label,value.textContent));mark(value,'pf34Value','true');mark(value,'pf34FinanceKind',window.PFSemanticPalette?.classify(label)||'other');
  }
 }

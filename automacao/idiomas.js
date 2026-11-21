@@ -4382,6 +4382,6943 @@ const catalogue=[["Painel Financeiro", "Financial Panel", "Panel financiero"], [
 "último dato guardado; consulta no disponible"
 ]
 ];
+/* Etapa 35: textos completos dos módulos e mensagens recentes. */
+catalogue.push(...[
+ [
+  "para o envio automático do código, informe também os dados do serviço EmailJS abaixo. Eles podem ser deixados em branco somente se a recuperação por e-mail for configurada posteriormente.",
+  "To send the code automatically, enter the EmailJS service details below. Leave them blank only if email recovery will be configured later.",
+  "Para enviar el código automáticamente, introduce los datos del servicio EmailJS. Déjalos en blanco solo si la recuperación por correo se configurará más adelante."
+ ],
+ [
+  "O template OTP do EmailJS deve aceitar: email, passcode e time. O sistema também envia to_email, verification_code, app_name e expires_in para compatibilidade.",
+  "The EmailJS OTP template must accept email, passcode and time. The app also sends to_email, verification_code, app_name and expires_in for compatibility.",
+  "La plantilla OTP de EmailJS debe aceptar email, passcode y time. La aplicación también envía to_email, verification_code, app_name y expires_in por compatibilidad."
+ ],
+ [
+  "A senha de acesso do aplicativo continua independente. A conta acima é usada somente para identificar seu banco na nuvem e permitir que computador e celular compartilhem os mesmos dados.",
+  "The app access password remains independent. This account only identifies your cloud database and lets your computer and phone share the same data.",
+  "La contraseña de acceso a la aplicación sigue siendo independiente. Esta cuenta solo identifica tu base en la nube y permite compartir los mismos datos entre ordenador y móvil."
+ ],
+ [
+  "Variação mensal — valores e casos não calculáveis",
+  "Monthly change — values and non-calculable cases",
+  "Variación mensual: valores y casos no calculables"
+ ],
+ [
+  "Variação",
+  "Change",
+  "Variación"
+ ],
+ [
+  "Participação mensal de rubricas e subitens",
+  "Monthly share by category and subcategory",
+  "Participación mensual por categoría y subcategoría"
+ ],
+ [
+  "Total mensal do tipo",
+  "Monthly total for the type",
+  "Total mensual del tipo"
+ ],
+ [
+  "Total da despesa",
+  "Total expenses",
+  "Gasto total"
+ ],
+ [
+  "Composição financeira do período mensal com nomes das séries",
+  "Monthly financial breakdown with series names",
+  "Composición financiera mensual con nombres de las series"
+ ],
+ [
+  "Despesas detalhadas por Descrição filtrada",
+  "Expenses detailed by filtered description",
+  "Gastos detallados por descripción filtrada"
+ ],
+ [
+  "▦ Data de emissão",
+  "▦ Issue date",
+  "▦ Fecha de emisión"
+ ],
+ [
+  "para um futuro mais seguro.",
+  "for a more secure future.",
+  "para un futuro más seguro."
+ ],
+ [
+  "Total de despesas pendentes",
+  "Total unpaid expenses",
+  "Total de gastos pendientes"
+ ],
+ [
+  "Nenhuma receita prevista no mês selecionado.",
+  "No planned income in the selected month.",
+  "No hay ingresos previstos en el mes seleccionado."
+ ],
+ [
+  "Total de despesas pagas",
+  "Total paid expenses",
+  "Total de gastos pagados"
+ ],
+ [
+  "Não foi possível abrir o relatório. Tente novamente.",
+  "Could not open the report. Try again.",
+  "No se pudo abrir el informe. Inténtalo de nuevo."
+ ],
+ [
+  "aplicação financeira",
+  "financial investment",
+  "inversión financiera"
+ ],
+ [
+  "Seu último backup registrado neste dispositivo foi há",
+  "Your last backup on this device was",
+  "Tu última copia de seguridad en este dispositivo fue hace"
+ ],
+ [
+  "dias. É importante fazer um novo backup e guardar o arquivo em local seguro.",
+  "days ago. Create a new backup and keep the file in a safe place.",
+  "días. Crea una nueva copia y guarda el archivo en un lugar seguro."
+ ],
+ [
+  "início aberto",
+  "open start date",
+  "fecha inicial abierta"
+ ],
+ [
+  "Verde: receitas · Vermelho: despesas. N/D: mês fora do recorte selecionado, não representa movimento zero. Sem lançamentos: nenhum registro no filtro. Totais respeitam o período, inclusive meses parciais.",
+  "Green: income · Red: expenses. N/A: month outside the selected period, not zero activity. No transactions: no records match the filter. Totals respect the period, including partial months.",
+  "Verde: ingresos · Rojo: gastos. N/D: mes fuera del período seleccionado; no significa movimiento cero. Sin movimientos: ningún registro coincide con el filtro. Los totales respetan el período, incluidos meses parciales."
+ ],
+ [
+  "Saldo inicial disponível: não informado. Saldo bancário final e necessidade efetiva de caixa não são calculados sem conciliação. Alerta restrito aos filtros selecionados.",
+  "Available opening balance: not provided. Final bank balance and actual cash needs cannot be calculated without reconciliation. Alert limited to the selected filters.",
+  "Saldo inicial disponible: no informado. El saldo bancario final y las necesidades reales de caja no se calculan sin conciliación. Aviso limitado a los filtros seleccionados."
+ ],
+ [
+  "Digite sua dúvida. A pesquisa apresenta trechos dos manuais V4.10.10, com a página de origem. Recursos adicionados depois dessa versão podem não estar documentados.",
+  "Enter your question. Search returns excerpts from the V4.10.10 manuals with their source page. Features added later may not be documented.",
+  "Escribe tu pregunta. La búsqueda presenta extractos de los manuales V4.10.10 con su página de origen. Las funciones posteriores pueden no estar documentadas."
+ ],
+ [
+  "Olá,",
+  "Hello,",
+  "Hola,"
+ ],
+ [
+  "Todos os períodos",
+  "All periods",
+  "Todos los períodos"
+ ],
+ [
+  "Sem vencimento",
+  "No due date",
+  "Sin vencimiento"
+ ],
+ [
+  "lançamento(s)",
+  "transaction(s)",
+  "movimiento(s)"
+ ],
+ [
+  "Conexão e sincronização com a nuvem",
+  "Cloud connection and synchronization",
+  "Conexión y sincronización con la nube"
+ ],
+ [
+  "documento(s) exigem atenção",
+  "document(s) need attention",
+  "documento(s) requieren atención"
+ ],
+ [
+  "Acesso permitido somente para Administrador.",
+  "Access restricted to administrators.",
+  "Acceso permitido solo a administradores."
+ ],
+ [
+  "A conta da nuvem mudou. Refaça a sincronização na conta atual.",
+  "The cloud account changed. Synchronize again using the current account.",
+  "La cuenta de la nube cambió. Sincroniza de nuevo con la cuenta actual."
+ ],
+ [
+  "Sessão expirada. Entre novamente na conta da nuvem. Seus dados locais foram preservados.",
+  "Session expired. Sign in to your cloud account again. Your local data was preserved.",
+  "Sesión caducada. Vuelve a entrar en tu cuenta de la nube. Tus datos locales se conservaron."
+ ],
+ [
+  "A conta da nuvem mudou. Refaça a sincronização.",
+  "The cloud account changed. Synchronize again.",
+  "La cuenta de la nube cambió. Sincroniza de nuevo."
+ ],
+ [
+  "Sessão expirada",
+  "Session expired",
+  "Sesión caducada"
+ ],
+ [
+  "A sessão renovada não está válida.",
+  "The renewed session is not valid.",
+  "La sesión renovada no es válida."
+ ],
+ [
+  "A conta da nuvem mudou. A sincronização foi interrompida para preservar seus dados.",
+  "The cloud account changed. Synchronization stopped to preserve your data.",
+  "La cuenta de la nube cambió. Se detuvo la sincronización para conservar tus datos."
+ ],
+ [
+  "A sessão não foi aceita. Entre novamente na conta da nuvem. Seus dados locais foram preservados.",
+  "The session was rejected. Sign in to your cloud account again. Your local data was preserved.",
+  "La sesión fue rechazada. Vuelve a entrar en tu cuenta de la nube. Tus datos locales se conservaron."
+ ],
+ [
+  "Sem dados.",
+  "No data.",
+  "Sin datos."
+ ],
+ [
+  "A ponte usa os registros atuais, sem presumir a origem de diferenças por coincidência de valores. O ajuste de datas contempla liquidações com data efetiva diferente do vencimento e registros sem vencimento. Atrasados não são reagendados automaticamente.",
+  "The bridge uses current records without inferring the source of differences from matching amounts. Date adjustments include settlements dated differently from their due date and records without a due date. Overdue items are not automatically rescheduled.",
+  "El puente usa los registros actuales sin deducir el origen de diferencias por coincidencia de importes. El ajuste de fechas incluye liquidaciones con fecha distinta al vencimiento y registros sin vencimiento. Los atrasados no se reprograman automáticamente."
+ ],
+ [
+  "Orçamento, conciliação bancária, natureza fixa/variável e recorrência não são inferidos. Cenários alternativos dependem de premissas explícitas.",
+  "Budgets, bank reconciliation, fixed/variable classifications and recurrence are not inferred. Alternative scenarios require explicit assumptions.",
+  "No se deducen presupuestos, conciliación bancaria, naturaleza fija o variable ni recurrencia. Los escenarios alternativos requieren supuestos explícitos."
+ ],
+ [
+  "A abertura soma lançamentos anteriores nos mesmos filtros. O resultado do período não inclui essa abertura. Os saldos não representam disponibilidade bancária conciliada.",
+  "The opening balance sums earlier transactions with the same filters. The period result excludes this opening balance. Balances do not represent reconciled bank funds.",
+  "El saldo inicial suma movimientos anteriores con los mismos filtros. El resultado del período excluye ese saldo inicial. Los saldos no representan fondos bancarios conciliados."
+ ],
+ [
+  "Previsto, realizado e em aberto",
+  "Planned, settled and outstanding",
+  "Previsto, liquidado y pendiente"
+ ],
+ [
+  "Semanas começam na segunda-feira. Valores positivos têm sinal + e negativos, sinal -. As projeções não incluem movimentações não cadastradas.",
+  "Weeks start on Monday. Positive values show + and negative values show -. Projections exclude transactions that have not been entered.",
+  "Las semanas empiezan el lunes. Los valores positivos muestran + y los negativos, -. Las proyecciones excluyen movimientos no registrados."
+ ],
+ [
+  "A biblioteca de Excel ainda não carregou. Tente novamente com conexão ou exporte em CSV.",
+  "The Excel library has not loaded yet. Retry with a connection or export as CSV.",
+  "La biblioteca de Excel aún no se ha cargado. Reintenta con conexión o exporta en CSV."
+ ],
+ [
+  "Desbloqueie o painel gerencial para gerar o relatório.",
+  "Unlock the management panel to generate the report.",
+  "Desbloquea el panel de gestión para generar el informe."
+ ],
+ [
+  "Revise o período: a data inicial é posterior à final.",
+  "Check the period: the start date is after the end date.",
+  "Revisa el período: la fecha inicial es posterior a la final."
+ ],
+ [
+  "Permita a abertura de uma nova aba para visualizar o relatório.",
+  "Allow a new tab to view the report.",
+  "Permite una nueva pestaña para ver el informe."
+ ],
+ [
+  "Relatório de Fluxo de Caixa Período:",
+  "Cash Flow Report — Period:",
+  "Informe de flujo de caja — Período:"
+ ],
+ [
+  "Salve o PDF ou exporte a planilha e anexe ao e-mail antes de enviar.",
+  "Save the PDF or export the spreadsheet and attach it to the email before sending.",
+  "Guarda el PDF o exporta la hoja y adjúntala al correo antes de enviarlo."
+ ],
+ [
+  "Use Mostrar resumo e desbloqueie o painel para consultar o fluxo de caixa.",
+  "Use Show summary and unlock the panel to view cash flow.",
+  "Usa Mostrar resumen y desbloquea el panel para consultar el flujo de caja."
+ ],
+ [
+  "saldo previsto do periodo",
+  "planned period balance",
+  "saldo previsto del período"
+ ],
+ [
+  "receitas por rubrica (clique na barra para abrir lancamentos)",
+  "income by category (click a bar to view transactions)",
+  "ingresos por categoría (pulsa una barra para ver movimientos)"
+ ],
+ [
+  "despesas por rubricas (clique na barra para abrir lancamentos)",
+  "expenses by category (click a bar to view transactions)",
+  "gastos por categoría (pulsa una barra para ver movimientos)"
+ ],
+ [
+  "total de receitas previstas",
+  "total planned income",
+  "total de ingresos previstos"
+ ],
+ [
+  "total de saidas",
+  "total outflows",
+  "total de salidas"
+ ],
+ [
+  "saldo do periodo",
+  "period balance",
+  "saldo del período"
+ ],
+ [
+  "total da despesa no periodo",
+  "total expenses in the period",
+  "gasto total del período"
+ ],
+ [
+  "taxa de poupanca prevista",
+  "planned savings rate",
+  "tasa de ahorro prevista"
+ ],
+ [
+  "mapa de calor — despesas por dia do mes",
+  "heat map — expenses by day of the month",
+  "mapa de calor — gastos por día del mes"
+ ],
+ [
+  "lancamentos do recorte (detalhamento)",
+  "transactions in this selection (details)",
+  "movimientos de esta selección (detalle)"
+ ],
+ [
+  "distribuicao por rubrica",
+  "breakdown by category",
+  "distribución por categoría"
+ ],
+ [
+  "receitas por rubrica e descricoes",
+  "income by category and description",
+  "ingresos por categoría y descripción"
+ ],
+ [
+  "evolucao do saldo acumulado",
+  "cumulative balance over time",
+  "evolución del saldo acumulado"
+ ],
+ [
+  "evolucao do saldo projetado",
+  "projected balance over time",
+  "evolución del saldo proyectado"
+ ],
+ [
+  "Filtrar por",
+  "Filter by",
+  "Filtrar por"
+ ],
+ [
+  "CLASSIFICAÇÃO",
+  "CLASSIFICATION",
+  "CLASIFICACIÓN"
+ ],
+ [
+  "lançamento(s): EMPRESA como PJ e demais rubricas como PF, preservando classificações escolhidas.",
+  "transaction(s): EMPRESA as PJ and other categories as PF, preserving manual classifications.",
+  "movimiento(s): EMPRESA como PJ y las demás categorías como PF, conservando las clasificaciones manuales."
+ ],
+ [
+  "Não foi possível gravar a classificação inicial. Tente novamente após conferir o armazenamento.",
+  "Could not save the initial classification. Check storage and try again.",
+  "No se pudo guardar la clasificación inicial. Revisa el almacenamiento e inténtalo de nuevo."
+ ],
+ [
+  "Confirme a senha de acesso",
+  "Confirm the access password",
+  "Confirma la contraseña de acceso"
+ ],
+ [
+  "Mostrar painel e análise",
+  "Show panel and analysis",
+  "Mostrar panel y análisis"
+ ],
+ [
+  "Saldo acumulado por vencimento",
+  "Cumulative balance by due date",
+  "Saldo acumulado por vencimiento"
+ ],
+ [
+  "Valor mínimo",
+  "Minimum amount",
+  "Importe mínimo"
+ ],
+ [
+  "Valor máximo",
+  "Maximum amount",
+  "Importe máximo"
+ ],
+ [
+  "Saídas (valor absoluto)",
+  "Outflows (absolute amount)",
+  "Salidas (importe absoluto)"
+ ],
+ [
+  "Compara meses completos e mantém os filtros de conteúdo. Não transforma ausência de histórico em zero. Variação percentual só pode ser calculada com bases comparáveis e base anterior diferente de zero.",
+  "Compares full months and keeps content filters. Missing history is not treated as zero. Percentage change requires comparable periods and a nonzero previous baseline.",
+  "Compara meses completos y conserva los filtros de contenido. La ausencia de historial no se trata como cero. La variación porcentual requiere períodos comparables y una base anterior distinta de cero."
+ ],
+ [
+  "Receitas × saídas cadastradas",
+  "Income × recorded outflows",
+  "Ingresos × salidas registradas"
+ ],
+ [
+  "Saídas cadastradas",
+  "Recorded outflows",
+  "Salidas registradas"
+ ],
+ [
+  "registros de",
+  "records out of",
+  "registros de"
+ ],
+ [
+  "· Página",
+  "· Page",
+  "· Página"
+ ],
+ [
+  "Sem vencimento.",
+  "No due date.",
+  "Sin vencimiento."
+ ],
+ [
+  "· Tipo de pessoa:",
+  "· Person type:",
+  "· Tipo de persona:"
+ ],
+ [
+  "Consulta dos últimos 12 meses até o mês final, ignorando somente o intervalo de datas.",
+  "Shows the last 12 months through the final month, ignoring only the date range.",
+  "Consulta los últimos 12 meses hasta el mes final, ignorando solo el intervalo de fechas."
+ ],
+ [
+  "Histórico limitado ao período aplicado.",
+  "History limited to the applied period.",
+  "Historial limitado al período aplicado."
+ ],
+ [
+  "Salvar visão de Gráficos e Evoluções",
+  "Save Charts and Trends view",
+  "Guardar vista de gráficos y evolución"
+ ],
+ [
+  "Ex.: despesas de novembro",
+  "E.g. November expenses",
+  "Ej.: gastos de noviembre"
+ ],
+ [
+  "Visão salva nesta sessão.",
+  "View saved for this session.",
+  "Vista guardada en esta sesión."
+ ],
+ [
+  "Emitido em",
+  "Issued on",
+  "Emitido el"
+ ],
+ [
+  "Comprometimento (saídas ÷ receitas)",
+  "Commitment (outflows ÷ income)",
+  "Compromiso (salidas ÷ ingresos)"
+ ],
+ [
+  "Permita nova aba para imprimir/salvar a análise.",
+  "Allow a new tab to print/save the analysis.",
+  "Permite una nueva pestaña para imprimir o guardar el análisis."
+ ],
+ [
+  "Conferência de registros semelhantes",
+  "Review similar records",
+  "Revisar registros similares"
+ ],
+ [
+  "Pagamentos antes da próxima entrada",
+  "Payments before the next income",
+  "Pagos antes del próximo ingreso"
+ ],
+ [
+  "Mais de 30 dias",
+  "More than 30 days",
+  "Más de 30 días"
+ ],
+ [
+  "Gráfico de pizza",
+  "Pie chart",
+  "Gráfico circular"
+ ],
+ [
+  "não informado",
+  "not provided",
+  "no informado"
+ ],
+ [
+  "Selecionar lançamento",
+  "Select transaction",
+  "Seleccionar movimiento"
+ ],
+ [
+  "Relatório resumido",
+  "Summary report",
+  "Informe resumido"
+ ],
+ [
+  "· Emissão:",
+  "· Issued:",
+  "· Emisión:"
+ ],
+ [
+  "· Critério do período: vencimento",
+  "· Period basis: due date",
+  "· Criterio del período: vencimiento"
+ ],
+ [
+  "Visão geral do período",
+  "Period overview",
+  "Visión general del período"
+ ],
+ [
+  "A receber — total em aberto",
+  "Receivables — total outstanding",
+  "Por cobrar — total pendiente"
+ ],
+ [
+  "Despesas vencidas no período",
+  "Expenses overdue in the period",
+  "Gastos vencidos en el período"
+ ],
+ [
+  "Saldos e bases de cálculo",
+  "Balances and calculation bases",
+  "Saldos y bases de cálculo"
+ ],
+ [
+  "Por vencimento, no período:",
+  "By due date, in the period:",
+  "Por vencimiento, en el período:"
+ ],
+ [
+  "Menor saldo por vencimento:",
+  "Lowest balance by due date:",
+  "Saldo mínimo por vencimiento:"
+ ],
+ [
+  "Próximos 30 dias, a partir do realizado:",
+  "Next 30 days, starting from settled transactions:",
+  "Próximos 30 días, a partir de lo liquidado:"
+ ],
+ [
+  "Bases diferentes, não conciliadas com extrato. A projeção parte dos movimentos liquidados cadastrados até a referência e acrescenta os compromissos em aberto dos próximos 30 dias. Atrasados não são recebimentos presumidos.",
+  "Different bases, not reconciled with bank statements. Projection starts with recorded settlements through the reference date and adds commitments outstanding in the next 30 days. Overdue items are not presumed received.",
+  "Bases diferentes, sin conciliar con extractos bancarios. La proyección parte de las liquidaciones registradas hasta la referencia y añade compromisos pendientes de los próximos 30 días. Los atrasados no se presumen cobrados."
+ ],
+ [
+  "Saldos inicial, final e trajetória: N/D. Este recorte de conteúdo não determina o caixa disponível. Os totais acima se referem somente aos filtros informados.",
+  "Opening, closing and balance history: N/A. These content filters do not determine available cash. Totals above apply only to the specified filters.",
+  "Saldo inicial, final y trayectoria: N/D. Estos filtros de contenido no determinan la caja disponible. Los totales anteriores se refieren solo a los filtros indicados."
+ ],
+ [
+  "lançamentos na data",
+  "transactions on the date",
+  "movimientos en la fecha"
+ ],
+ [
+  "data(s) de vencimento: consulte o modo completo.",
+  "due date(s): see full mode.",
+  "fecha(s) de vencimiento: consulta el modo completo."
+ ],
+ [
+  "Próximas contas a pagar",
+  "Next bills to pay",
+  "Próximas cuentas por pagar"
+ ],
+ [
+  "Receitas vencidas no período:",
+  "Income overdue in the period:",
+  "Ingresos vencidos en el período:"
+ ],
+ [
+  "Receitas atrasadas de períodos anteriores:",
+  "Income overdue from previous periods:",
+  "Ingresos atrasados de períodos anteriores:"
+ ],
+ [
+  "Saídas atrasadas de períodos anteriores:",
+  "Outflows overdue from previous periods:",
+  "Salidas atrasadas de períodos anteriores:"
+ ],
+ [
+  "Déficit projetado, pela base realizada cadastrada:",
+  "Projected shortfall based on recorded settlements:",
+  "Déficit proyectado según las liquidaciones registradas:"
+ ],
+ [
+  "Os próximos recebimentos cadastrados estão concentrados em",
+  "The next recorded receipts are concentrated in",
+  "Los próximos cobros registrados se concentran en"
+ ],
+ [
+  "N/D — lançamentos não fornecidos.",
+  "N/A — transactions not provided.",
+  "N/D — movimientos no proporcionados."
+ ],
+ [
+  "Receitas e despesas: liquidado, em aberto no prazo e vencido. Valores detalhados na tabela acessível.",
+  "Income and expenses: settled, outstanding within term and overdue. Details appear in the accessible table.",
+  "Ingresos y gastos: liquidados, pendientes en plazo y vencidos. Valores detallados en la tabla accesible."
+ ],
+ [
+  "Verde: liquidado · Âmbar: em aberto no prazo · Vermelho: vencido",
+  "Green: settled · Amber: outstanding within term · Red: overdue",
+  "Verde: liquidado · Ámbar: pendiente en plazo · Rojo: vencido"
+ ],
+ [
+  "Tabela dos dados do gráfico",
+  "Chart data table",
+  "Tabla de datos del gráfico"
+ ],
+ [
+  "N/D — o recorte não permite calcular disponibilidade de caixa.",
+  "N/A — the selection does not determine available cash.",
+  "N/D — la selección no permite calcular la caja disponible."
+ ],
+ [
+  "Gráficos do resumo",
+  "Summary charts",
+  "Gráficos del resumen"
+ ],
+ [
+  "Trajetória dos próximos 30 dias",
+  "Next 30 days' balance path",
+  "Trayectoria de los próximos 30 días"
+ ],
+ [
+  "Os cinco maiores lançamentos de despesa",
+  "Five largest expense transactions",
+  "Los cinco mayores movimientos de gasto"
+ ],
+ [
+  "Valores e gráficos usam a mesma fotografia dos dados. Conteúdo detalhado disponível no modo completo.",
+  "Values and charts use the same data snapshot. Detailed content is available in full mode.",
+  "Los valores y gráficos usan la misma instantánea de datos. El contenido detallado está disponible en modo completo."
+ ],
+ [
+  "Conteúdo do relatório",
+  "Report contents",
+  "Contenido del informe"
+ ],
+ [
+  "Como deseja gerar o relatório?",
+  "How would you like to generate the report?",
+  "¿Cómo quieres generar el informe?"
+ ],
+ [
+  "Escolha o modo antes de personalizar o conteúdo. Os dois modos usam os mesmos dados e filtros desta exportação.",
+  "Choose the mode before customizing content. Both modes use the same data and filters for this export.",
+  "Elige el modo antes de personalizar el contenido. Ambos usan los mismos datos y filtros de esta exportación."
+ ],
+ [
+  "Modo do relatório",
+  "Report mode",
+  "Modo del informe"
+ ],
+ [
+  "Incluir no relatório completo",
+  "Include in full report",
+  "Incluir en el informe completo"
+ ],
+ [
+  "Orientação",
+  "Orientation",
+  "Orientación"
+ ],
+ [
+  "Salvar preferências deste modo para este relatório",
+  "Save this mode's preferences for this report",
+  "Guardar las preferencias de este modo para este informe"
+ ],
+ [
+  "Visão Geral",
+  "Overview",
+  "Visión general"
+ ],
+ [
+  "Gráfico Receitas × despesas",
+  "Income × expenses chart",
+  "Gráfico de ingresos × gastos"
+ ],
+ [
+  "Gráfico de saldo projetado",
+  "Projected balance chart",
+  "Gráfico del saldo proyectado"
+ ],
+ [
+  "Preferências não puderam ser salvas.",
+  "Could not save preferences.",
+  "No se pudieron guardar las preferencias."
+ ],
+ [
+  "Selecione ao menos um conteúdo.",
+  "Select at least one content item.",
+  "Selecciona al menos un contenido."
+ ],
+ [
+  "Relatório completo preparado com as seleções atuais.",
+  "Full report prepared with the current selections.",
+  "Informe completo preparado con la selección actual."
+ ],
+ [
+  "Gerar PDF abre a impressão do Chrome: escolha Salvar como PDF. Confira papel, orientação e margens na janela do navegador.",
+  "Generate PDF opens Chrome's print dialog: choose Save as PDF. Check paper size, orientation and margins in the browser dialog.",
+  "Generar PDF abre el diálogo de impresión de Chrome: elige Guardar como PDF. Revisa papel, orientación y márgenes en el diálogo del navegador."
+ ],
+ [
+  "Clique em Pré-visualizar para conferir o modo escolhido.",
+  "Click Preview to check the selected mode.",
+  "Pulsa Vista previa para comprobar el modo elegido."
+ ],
+ [
+  "Gráfico do relatório",
+  "Report chart",
+  "Gráfico del informe"
+ ],
+ [
+  "Um gráfico não pôde ser convertido. Confira sua prévia antes de salvar.",
+  "A chart could not be converted. Check its preview before saving.",
+  "No se pudo convertir un gráfico. Revisa su vista previa antes de guardar."
+ ],
+ [
+  "Permita uma nova aba para visualizar o relatório.",
+  "Allow a new tab to view the report.",
+  "Permite una nueva pestaña para ver el informe."
+ ],
+ [
+  "Filtros aplicados na janela de gráficos",
+  "Filters applied in the charts window",
+  "Filtros aplicados en la ventana de gráficos"
+ ],
+ [
+  "Cotação indisponível.",
+  "Exchange rate unavailable.",
+  "Cotización no disponible."
+ ],
+ [
+  "Moeda-base: BRL (R$). Valores originais, sem conversão.",
+  "Base currency: BRL (R$). Original amounts, without conversion.",
+  "Moneda base: BRL (R$). Importes originales, sin conversión."
+ ],
+ [
+  "Cotação indisponível: valores exibidos em BRL (R$).",
+  "Exchange rate unavailable: amounts shown in BRL (R$).",
+  "Cotización no disponible: importes en BRL (R$)."
+ ],
+ [
+  "Consulta em",
+  "Display currency:",
+  "Consulta en"
+ ],
+ [
+  "(Brasília) · Consulta:",
+  "(Brasília) · Viewed:",
+  "(Brasilia) · Consulta:"
+ ],
+ [
+  "Atualizar cotação / Refresh / Actualizar",
+  "Refresh exchange rate",
+  "Actualizar cotización"
+ ],
+ [
+  "Sem fechamento PTAX.",
+  "No PTAX closing rate.",
+  "Sin cierre PTAX."
+ ],
+ [
+  "Sem atualização.",
+  "Not updated.",
+  "Sin actualizar."
+ ],
+ [
+  "Usando a cotação salva, confira a data.",
+  "Using the saved exchange rate; check its date.",
+  "Se usa la cotización guardada; revisa su fecha."
+ ],
+ [
+  "Exibição em R$.",
+  "Amounts shown in R$.",
+  "Importes en R$."
+ ],
+ [
+  "Aguarde uma cotação válida ou selecione BRL antes de gerar o relatório.",
+  "Wait for a valid exchange rate or select BRL before generating the report.",
+  "Espera una cotización válida o selecciona BRL antes de generar el informe."
+ ],
+ [
+  "Painel e lançamentos com rolagem independente",
+  "Panel and transactions scroll independently",
+  "Panel y movimientos con desplazamiento independiente"
+ ],
+ [
+  "Sem título",
+  "Untitled",
+  "Sin título"
+ ],
+ [
+  "(cópia de conflito)",
+  "(conflict copy)",
+  "(copia en conflicto)"
+ ],
+ [
+  "gravação",
+  "saving",
+  "guardado"
+ ],
+ [
+  "autenticação",
+  "authentication",
+  "autenticación"
+ ],
+ [
+  "Não foi possível concluir a operação. As notas pendentes continuam neste dispositivo.",
+  "Could not complete the operation. Pending notes remain on this device.",
+  "No se pudo completar la operación. Las notas pendientes siguen en este dispositivo."
+ ],
+ [
+  "A sessão da nuvem não foi aceita. Entre novamente na mesma conta para sincronizar as notas pendentes.",
+  "The cloud session was rejected. Sign in to the same account again to synchronize pending notes.",
+  "La sesión de la nube fue rechazada. Vuelve a entrar en la misma cuenta para sincronizar las notas pendientes."
+ ],
+ [
+  "A API não encontrou a função das notas. Confira o projeto Supabase conectado e a atualização do cache da API.",
+  "The API could not find the notes function. Check the connected Supabase project and refresh the API cache.",
+  "La API no encontró la función de notas. Revisa el proyecto Supabase conectado y actualiza la caché de la API."
+ ],
+ [
+  "A API não encontrou a tabela das notas neste projeto. Confira se o aplicativo usa o mesmo Supabase em que o SQL foi executado.",
+  "The API could not find the notes table in this project. Check that the app uses the same Supabase where the SQL was run.",
+  "La API no encontró la tabla de notas en este proyecto. Comprueba que la aplicación usa el mismo Supabase donde se ejecutó el SQL."
+ ],
+ [
+  "A estrutura da tabela de notas não corresponde à versão do aplicativo. Confira as colunas da tabela no mesmo projeto Supabase.",
+  "The notes table structure does not match this app version. Check its columns in the same Supabase project.",
+  "La estructura de la tabla de notas no coincide con esta versión. Revisa sus columnas en el mismo proyecto Supabase."
+ ],
+ [
+  "O servidor recusou o formato de uma nota. A alteração local foi mantida para correção e reenvio.",
+  "The server rejected a note's format. Your local change was kept for correction and resending.",
+  "El servidor rechazó el formato de una nota. El cambio local se conservó para corregirlo y reenviarlo."
+ ],
+ [
+  "Não foi possível confirmar o salvamento neste dispositivo. Mantenha o editor aberto e exporte o rascunho.",
+  "Could not confirm saving on this device. Keep the editor open and export your draft.",
+  "No se pudo confirmar el guardado en este dispositivo. Mantén el editor abierto y exporta el borrador."
+ ],
+ [
+  "não identificado",
+  "unidentified",
+  "no identificado"
+ ],
+ [
+  "Fechar bloco de notas",
+  "Close notes",
+  "Cerrar notas"
+ ],
+ [
+  "Cor da nota",
+  "Note color",
+  "Color de la nota"
+ ],
+ [
+  "Título da nota",
+  "Note title",
+  "Título de la nota"
+ ],
+ [
+  "somente recebimentos identificados. Contas a receber não entram no caixa realizado.",
+  "only identified receipts. Receivables do not count toward settled cash flow.",
+  "solo cobros identificados. Las cuentas por cobrar no forman parte de la caja liquidada."
+ ],
+ [
+  "os realizados usam a data de pagamento. Quando falta, o painel aprovado usa o vencimento e registra a lacuna na conferência abaixo. Pendências usam vencimento.",
+  "settled items use the payment date. If it is missing, the approved panel uses the due date and flags the gap below. Pending items use the due date.",
+  "los liquidados usan la fecha de pago. Si falta, el panel aprobado usa el vencimiento y señala la ausencia abajo. Los pendientes usan el vencimiento."
+ ],
+ [
+  "Classificação:",
+  "Classification:",
+  "Clasificación:"
+ ],
+ [
+  "Informações ausentes:",
+  "Missing information:",
+  "Información ausente:"
+ ],
+ [
+  "renda fixa garantida, saldo bancário, reserva disponível e saldo/taxa/prazo de dívidas não são presumidos. Não informado é diferente de zero.",
+  "guaranteed fixed income, bank balance, available reserves and debt balances/rates/terms are not assumed. Not provided differs from zero.",
+  "No se presumen renta fija garantizada, saldo bancario, reserva disponible ni saldos, tasas y plazos de deudas. No informado es distinto de cero."
+ ],
+ [
+  "Simulações:",
+  "Simulations:",
+  "Simulaciones:"
+ ],
+ [
+  "taxa e aportes são hipóteses editáveis, sem garantia de rendimento. Não gravam nem alteram lançamentos.",
+  "rates and contributions are editable assumptions with no guaranteed return. They do not save or change transactions.",
+  "las tasas y aportaciones son supuestos editables sin rentabilidad garantizada. No guardan ni modifican movimientos."
+ ],
+ [
+  "Contas a receber · composição e lançamentos",
+  "Receivables · breakdown and transactions",
+  "Cuentas por cobrar · composición y movimientos"
+ ],
+ [
+  "Valores previstos, ainda não recebidos",
+  "Planned amounts, not yet received",
+  "Importes previstos, aún no cobrados"
+ ],
+ [
+  "dos recebíveis em aberto estão vencidos. Total previsto no recorte:",
+  "of outstanding receivables are overdue. Planned total in this selection:",
+  "de las cuentas por cobrar pendientes están vencidas. Total previsto de la selección:"
+ ],
+ [
+  "Fonte / descrição",
+  "Source / description",
+  "Fuente / descripción"
+ ],
+ [
+  "Situação pela data",
+  "Status based on date",
+  "Situación según la fecha"
+ ],
+ [
+  "Sem identificação",
+  "Unidentified",
+  "Sin identificación"
+ ],
+ [
+  "Sem status",
+  "No status",
+  "Sin estado"
+ ],
+ [
+  "Nenhum recebível em aberto nos filtros atuais.",
+  "No outstanding receivables match the current filters.",
+  "No hay cuentas por cobrar pendientes con los filtros actuales."
+ ],
+ [
+  "Próxima conferência: registrar a data efetiva do recebimento e revisar o status após conciliação. Este bloco é somente leitura.",
+  "Next review: enter actual receipt dates and check status after reconciliation. This block is read-only.",
+  "Próxima revisión: registra las fechas reales de cobro y revisa el estado tras conciliar. Este bloque es de solo lectura."
+ ],
+ [
+  "Sem data efetiva de pagamento",
+  "Missing actual payment date",
+  "Sin fecha real de pago"
+ ],
+ [
+  "O cálculo atual usa o vencimento quando a data do pagamento está ausente.",
+  "The current calculation uses the due date when the payment date is missing.",
+  "El cálculo actual usa el vencimiento cuando falta la fecha de pago."
+ ],
+ [
+  "Identifica datas de pagamento com status ainda pendente.",
+  "Identifies payment dates with a still-pending status.",
+  "Identifica fechas de pago con un estado aún pendiente."
+ ],
+ [
+  "Datas inválidas / sem datas válidas",
+  "Invalid dates / no valid dates",
+  "Fechas inválidas / sin fechas válidas"
+ ],
+ [
+  "Registros sem data válida não podem ser atribuídos com segurança ao período.",
+  "Records without a valid date cannot be reliably assigned to the period.",
+  "Los registros sin fecha válida no pueden asignarse con seguridad al período."
+ ],
+ [
+  "Status fora do padrão lido",
+  "Status outside the recognized standard",
+  "Estado fuera del estándar reconocido"
+ ],
+ [
+  "Revisar nomenclaturas antes de consolidar o realizado.",
+  "Review status names before consolidating settled totals.",
+  "Revisa los nombres de estado antes de consolidar lo liquidado."
+ ],
+ [
+  "Possíveis transferências internas",
+  "Possible internal transfers",
+  "Posibles transferencias internas"
+ ],
+ [
+  "Identificadas pelo texto. Conferir antes de tratar como receita ou despesa de consumo.",
+  "Identified from text. Review before treating them as income or consumption expenses.",
+  "Identificadas por el texto. Revísalas antes de tratarlas como ingresos o gastos de consumo."
+ ],
+ [
+  "Conferência de PF/PJ e qualidade dos dados",
+  "PF/PJ and data quality review",
+  "Revisión de PF/PJ y calidad de los datos"
+ ],
+ [
+  "lançamento(s), conforme o campo de pessoa no cadastro",
+  "transaction(s), according to the registered person type",
+  "movimiento(s), según el tipo de persona registrado"
+ ],
+ [
+  "PF/PJ não é inferido como natureza tributária. Despesas sem classificação de consumo reconhecida:",
+  "PF/PJ is not inferred as tax classification. Expenses without a recognized consumption classification:",
+  "PF/PJ no se deduce como clasificación fiscal. Gastos sin clasificación de consumo reconocida:"
+ ],
+ [
+  "A conferência não corrige nem exclui registros. A ausência de sinalizações não equivale a uma auditoria completa.",
+  "This review does not correct or delete records. No flags does not imply a complete audit.",
+  "Esta revisión no corrige ni elimina registros. La ausencia de avisos no equivale a una auditoría completa."
+ ],
+ [
+  "% da receita média recebida",
+  "% of average income received",
+  "% de los ingresos medios cobrados"
+ ],
+ [
+  "Oportunidades de economia e simulador de poupança",
+  "Savings opportunities and savings simulator",
+  "Oportunidades de ahorro y simulador de ahorro"
+ ],
+ [
+  "Economias potenciais informadas por você",
+  "Potential savings you provide",
+  "Ahorros potenciales indicados por ti"
+ ],
+ [
+  "Revisão de juros / contratos",
+  "Interest / contract review",
+  "Revisión de intereses / contratos"
+ ],
+ [
+  "Condomínio / serviços recorrentes",
+  "Condominium fees / recurring services",
+  "Comunidad / servicios recurrentes"
+ ],
+ [
+  "Atualizar cenário de economia",
+  "Update savings scenario",
+  "Actualizar escenario de ahorro"
+ ],
+ [
+  "· Projeção em 12 meses:",
+  "· 12-month projection:",
+  "· Proyección a 12 meses:"
+ ],
+ [
+  "Simulação de aportes mensais",
+  "Monthly contribution simulation",
+  "Simulación de aportaciones mensuales"
+ ],
+ [
+  "Base dos percentuais: média da receita efetivamente recebida nos meses do recorte (",
+  "Percentage baseline: average income actually received in the selected months (",
+  "Base de los porcentajes: ingresos medios realmente cobrados en los meses seleccionados ("
+ ],
+ [
+  "). Essa média não representa renda fixa garantida. Taxa hipotética editável:",
+  "). This average is not guaranteed fixed income. Editable hypothetical rate:",
+  "). Esta media no es una renta fija garantizada. Tasa hipotética editable:"
+ ],
+ [
+  "% ao mês. Aportes no fim de cada mês, sem saldo inicial.",
+  "% per month. Contributions at each month-end, with no opening balance.",
+  "% al mes. Aportaciones al final de cada mes, sin saldo inicial."
+ ],
+ [
+  "Cenário",
+  "Scenario",
+  "Escenario"
+ ],
+ [
+  "Prazo em meses",
+  "Term in months",
+  "Plazo en meses"
+ ],
+ [
+  "Taxa hipotética (% ao mês)",
+  "Hypothetical rate (% per month)",
+  "Tasa hipotética (% mensual)"
+ ],
+ [
+  "Informe um aporte para calcular",
+  "Enter a contribution to calculate",
+  "Introduce una aportación para calcular"
+ ],
+ [
+  "· Rendimento hipotético:",
+  "· Hypothetical return:",
+  "· Rendimiento hipotético:"
+ ],
+ [
+  "Comparação com a reserva: faltam",
+  "Reserve target comparison: still needed",
+  "Comparación con la reserva: faltan"
+ ],
+ [
+  "alcança",
+  "reaches",
+  "alcanza"
+ ],
+ [
+  "não alcança",
+  "does not reach",
+  "no alcanza"
+ ],
+ [
+  "esse valor no prazo escolhido, sob a hipótese acima.",
+  "that amount within the selected term, under the assumption above.",
+  "ese importe en el plazo elegido, con el supuesto anterior."
+ ],
+ [
+  "A comparação com a meta de reserva exige reserva atual informada e gastos essenciais identificados.",
+  "Comparing against the reserve target requires the current reserve and identified essential expenses.",
+  "La comparación con la meta de reserva requiere la reserva actual y gastos esenciales identificados."
+ ],
+ [
+  "Todos os cenários são ilustrativos e permanecem apenas nesta sessão.",
+  "All scenarios are illustrative and remain only in this session.",
+  "Todos los escenarios son ilustrativos y permanecen solo en esta sesión."
+ ],
+ [
+  "Conciliar recebíveis vencidos",
+  "Reconcile overdue receivables",
+  "Conciliar cobros vencidos"
+ ],
+ [
+  "em aberto: confirmar recebimentos e suas datas efetivas.",
+  "outstanding: confirm receipts and their actual dates.",
+  "pendientes: confirma los cobros y sus fechas reales."
+ ],
+ [
+  "realizados sem data válida de pagamento e",
+  "settled items without a valid payment date and",
+  "liquidados sin fecha válida de pago y"
+ ],
+ [
+  "situações de pagamento/status a conferir.",
+  "payment/status discrepancies to review.",
+  "discrepancias de pago y estado que revisar."
+ ],
+ [
+  "Validar PF/PJ e classificação",
+  "Validate PF/PJ and classification",
+  "Validar PF/PJ y clasificación"
+ ],
+ [
+  "Conferir itens não classificados e possíveis transferências antes de adotar totais como orçamento essencial.",
+  "Review unclassified items and possible transfers before using totals as an essential budget.",
+  "Revisa partidas sin clasificar y posibles transferencias antes de usar los totales como presupuesto esencial."
+ ],
+ [
+  "Informar a reserva disponível",
+  "Provide the available reserve",
+  "Informar la reserva disponible"
+ ],
+ [
+  "Use a seção 08 para simular a cobertura com o valor reservado que você confirmar.",
+  "Use section 08 to simulate coverage with the reserve amount you confirm.",
+  "Usa la sección 08 para simular la cobertura con el importe de reserva que confirmes."
+ ],
+ [
+  "Detalhar dívidas antes de estimar economia",
+  "Detail debts before estimating savings",
+  "Detallar las deudas antes de estimar ahorros"
+ ],
+ [
+  "Parcelas pagas não comprovam juros. Saldo devedor, credor, taxa e prazo precisam ser informados para comparar renegociações.",
+  "Paid installments do not prove interest costs. Provide the debt balance, lender, rate and term to compare renegotiations.",
+  "Las cuotas pagadas no acreditan intereses. Indica saldo deudor, acreedor, tasa y plazo para comparar renegociaciones."
+ ],
+ [
+  "Prioridades e plano de conferência",
+  "Priorities and review plan",
+  "Prioridades y plan de revisión"
+ ],
+ [
+  "Renda fixa mensal: não identificada de forma verificável neste cadastro. Investimentos registrados não demonstram o patrimônio total fora do sistema.",
+  "Fixed monthly income: not verifiably identified in these records. Recorded investments do not show total wealth outside this system.",
+  "Renta fija mensual: no identificada de forma verificable en estos registros. Las inversiones registradas no muestran el patrimonio total fuera del sistema."
+ ],
+ [
+  "CSV com aspas não fechadas.",
+  "CSV contains an unclosed quotation mark.",
+  "El CSV contiene comillas sin cerrar."
+ ],
+ [
+  "Arquivo sem lançamentos.",
+  "File has no transactions.",
+  "El archivo no contiene movimientos."
+ ],
+ [
+  "Cabeçalhos não reconhecidos. Use o CSV ou XLSX de lançamentos do projeto.",
+  "Unrecognized headers. Use the project's transactions CSV or XLSX.",
+  "Encabezados no reconocidos. Usa el CSV o XLSX de movimientos del proyecto."
+ ],
+ [
+  "Tipo não reconhecido na linha",
+  "Unrecognized type on row",
+  "Tipo no reconocido en la fila"
+ ],
+ [
+  "Valor inválido na linha",
+  "Invalid amount on row",
+  "Importe inválido en la fila"
+ ],
+ [
+  "O leitor de Excel não está disponível. Utilize o CSV equivalente ou aguarde o carregamento do leitor.",
+  "The Excel reader is unavailable. Use the equivalent CSV or wait for the reader to load.",
+  "El lector de Excel no está disponible. Usa el CSV equivalente o espera a que se cargue el lector."
+ ],
+ [
+  "Sem registros para o período e os filtros selecionados.",
+  "No records match the selected period and filters.",
+  "No hay registros para el período y los filtros seleccionados."
+ ],
+ [
+  "Gráfico circular indisponível sem valores positivos. Use linhas ou barras para valores negativos.",
+  "A pie chart requires positive values. Use lines or bars for negative values.",
+  "El gráfico circular requiere valores positivos. Usa líneas o barras para valores negativos."
+ ],
+ [
+  "Entre no aplicativo para consultar o Dashboard Pessoal.",
+  "Sign in to view the Personal Dashboard.",
+  "Entra en la aplicación para consultar el panel personal."
+ ],
+ [
+  "Até",
+  "To",
+  "Hasta"
+ ],
+ [
+  "Os indicadores e gráficos mostram apenas recebidos e pagos, pela data efetiva. A tabela abaixo inclui todos os cadastros com vencimento no período, inclusive pendentes. Um lançamento em aberto não equivale a valor realizado.",
+  "Indicators and charts show only received and paid amounts, by actual date. The table below includes all records due in the period, including pending items. An outstanding transaction is not a settled amount.",
+  "Los indicadores y gráficos muestran solo importes cobrados y pagados, por fecha real. La tabla incluye todos los registros con vencimiento en el período, también pendientes. Un movimiento pendiente no equivale a un importe liquidado."
+ ],
+ [
+  "Acumulação iniciada em zero no começo do recorte. Não representa saldo bancário conciliado nem inclui saldo anterior.",
+  "Accumulation starts at zero at the beginning of the selection. It is not a reconciled bank balance and excludes any opening balance.",
+  "La acumulación empieza en cero al inicio de la selección. No representa un saldo bancario conciliado ni incluye saldo anterior."
+ ],
+ [
+  "Esta seção apresenta custo financeiro, separado dos aportes em investimentos da seção 02. Não pressupõe que todo investimento seja uma despesa ou um custo de juros.",
+  "This section shows financial costs, separately from the investment contributions in section 02. Investments are not assumed to be expenses or interest costs.",
+  "Esta sección presenta costes financieros, separados de las aportaciones de inversión de la sección 02. No se presupone que una inversión sea un gasto o coste de intereses."
+ ],
+ [
+  "Reserva disponível (R$)",
+  "Available reserve (R$)",
+  "Reserva disponible (R$)"
+ ],
+ [
+  "Meta em meses",
+  "Target in months",
+  "Meta en meses"
+ ],
+ [
+  "Planejamento Financeiro · Dados da conta atual · Simulações ilustrativas · Nenhum lançamento é alterado por este painel.",
+  "Financial Planning · Current account data · Illustrative simulations · This panel does not change transactions.",
+  "Planificación financiera · Datos de la cuenta actual · Simulaciones ilustrativas · Este panel no modifica movimientos."
+ ],
+ [
+  "Pontos e lançamentos",
+  "Points and transactions",
+  "Puntos y movimientos"
+ ],
+ [
+  "Use Salvar como PDF na janela de impressão.",
+  "Use Save as PDF in the print dialog.",
+  "Usa Guardar como PDF en el diálogo de impresión."
+ ],
+ [
+  "Buscar opções",
+  "Search options",
+  "Buscar opciones"
+ ],
+ [
+  "Rosca indisponível sem composição positiva. Valores exibidos em barras.",
+  "A doughnut chart requires a positive breakdown. Values are shown as bars.",
+  "La gráfica de anillo requiere una composición positiva. Los valores se muestran en barras."
+ ],
+ [
+  "Análises comparativas",
+  "Comparative analysis",
+  "Análisis comparativos"
+ ],
+ [
+  "Selecione a comparação",
+  "Select comparison",
+  "Selecciona la comparación"
+ ],
+ [
+  "Mês atual da comparação",
+  "Current comparison month",
+  "Mes actual de comparación"
+ ],
+ [
+  "Escolha uma análise para gerar o gráfico comparativo.",
+  "Choose an analysis to generate the comparison chart.",
+  "Elige un análisis para generar el gráfico comparativo."
+ ],
+ [
+  "Mês atual da comparação em andamento: os valores podem estar incompletos em relação ao mês anterior.",
+  "The current comparison month is still in progress: values may be incomplete compared with the previous month.",
+  "El mes actual de comparación sigue en curso: los valores pueden estar incompletos frente al mes anterior."
+ ],
+ [
+  "Sem lançamentos para a comparação e os filtros selecionados. Zero exibido significa ausência de registros neste recorte, não garantia de mês completo.",
+  "No transactions match the comparison and selected filters. Displayed zero means no records in this selection, not a guaranteed complete month.",
+  "No hay movimientos para la comparación y los filtros seleccionados. El cero indica ausencia de registros en esta selección, no garantiza un mes completo."
+ ],
+ [
+  "Este quadro compara meses completos, substituindo apenas as datas do período e o autofiltro Mês. Pessoa, tipo, rubrica, sub-item, status, busca, valores e outros autofiltros permanecem ativos e podem deixar uma série sem registros. Investimentos ficam fora das despesas. Variação percentual: N/D quando o total anterior é zero ou negativo. Clique em uma barra para conferir seus lançamentos.",
+  "This compares full months, changing only the date range and Month autofilter. Person, type, category, subcategory, status, search, amounts and other autofilters remain active and may leave a series empty. Investments are excluded from expenses. Percentage change: N/A when the previous total is zero or negative. Click a bar to view its transactions.",
+  "Este cuadro compara meses completos y solo sustituye las fechas y el autofiltro Mes. Persona, tipo, categoría, subcategoría, estado, búsqueda, importes y demás autofiltros siguen activos y pueden dejar una serie sin registros. Las inversiones se excluyen de los gastos. Variación porcentual: N/D si el total anterior es cero o negativo. Pulsa una barra para ver sus movimientos."
+ ],
+ [
+  "Rosca indisponível sem composição positiva. Consulte os valores em barras.",
+  "A doughnut chart requires a positive breakdown. See the amounts in bars.",
+  "La gráfica de anillo requiere una composición positiva. Consulta los importes en barras."
+ ],
+ [
+  "total do período",
+  "period total",
+  "total del período"
+ ],
+ [
+  "Sem registros para o período, base e filtros selecionados.",
+  "No records match the selected period, basis and filters.",
+  "No hay registros para el período, la base y los filtros seleccionados."
+ ],
+ [
+  "Pesquisar descrição ou observação",
+  "Search description or notes",
+  "Buscar descripción u observaciones"
+ ],
+ [
+  "Gráfico interativo",
+  "Interactive chart",
+  "Gráfico interactivo"
+ ],
+ [
+  "Despesas por categoria",
+  "Expenses by category",
+  "Gastos por categoría"
+ ],
+ [
+  "Não informada",
+  "Not provided",
+  "No informada"
+ ],
+ [
+  "Não foi possível identificar a conta do planejamento.",
+  "Could not identify the planning account.",
+  "No se pudo identificar la cuenta de planificación."
+ ],
+ [
+  "Planejamento não pôde ser lido. Nenhum dado existente foi substituído.",
+  "Could not read the plan. No existing data was replaced.",
+  "No se pudo leer la planificación. No se sustituyeron datos existentes."
+ ],
+ [
+  "Planejamento salvo neste navegador, separado dos lançamentos.",
+  "Plan saved in this browser, separately from transactions.",
+  "Planificación guardada en este navegador, separada de los movimientos."
+ ],
+ [
+  "Não foi salvo:",
+  "Not saved:",
+  "No se guardó:"
+ ],
+ [
+  "Comparação não disponível",
+  "Comparison unavailable",
+  "Comparación no disponible"
+ ],
+ [
+  "Realizado + pendências (previsão)",
+  "Settled + pending (forecast)",
+  "Liquidado + pendiente (previsión)"
+ ],
+ [
+  "Realizado até",
+  "Settled through",
+  "Liquidado hasta"
+ ],
+ [
+  "Mês atual",
+  "Current month",
+  "Mes actual"
+ ],
+ [
+  "Conta bancária",
+  "Bank account",
+  "Cuenta bancaria"
+ ],
+ [
+  "Descrição / observação",
+  "Description / notes",
+  "Descripción / observaciones"
+ ],
+ [
+  "Base do fluxo",
+  "Cash flow basis",
+  "Base del flujo"
+ ],
+ [
+  "Excluir transferências internas marcadas explicitamente",
+  "Exclude explicitly marked internal transfers",
+  "Excluir transferencias internas marcadas explícitamente"
+ ],
+ [
+  "Entradas da base selecionada",
+  "Inflows on the selected basis",
+  "Entradas según la base seleccionada"
+ ],
+ [
+  "Saldo do período",
+  "Period balance",
+  "Saldo del período"
+ ],
+ [
+  "Taxa de poupança antes de aportes",
+  "Savings rate before contributions",
+  "Tasa de ahorro antes de aportaciones"
+ ],
+ [
+  "Posição informada em",
+  "Position provided as of",
+  "Posición informada al"
+ ],
+ [
+  "Ativos e dívidas não informados",
+  "Assets and debts not provided",
+  "Activos y deudas no informados"
+ ],
+ [
+  "(mesma quantidade de dias decorridos)",
+  "(same number of elapsed days)",
+  "(misma cantidad de días transcurridos)"
+ ],
+ [
+  "Clique em um ponto ou barra para conferir os dados.",
+  "Click a point or bar to check the data.",
+  "Pulsa un punto o barra para comprobar los datos."
+ ],
+ [
+  "Lançamentos do recorte",
+  "Transactions in the selection",
+  "Movimientos de la selección"
+ ],
+ [
+  "Diário",
+  "Daily",
+  "Diario"
+ ],
+ [
+  "Saldo estimado com abertura informada",
+  "Estimated balance with provided opening balance",
+  "Saldo estimado con saldo inicial informado"
+ ],
+ [
+  "Movimento acumulado (início em zero)",
+  "Cumulative movement (starting at zero)",
+  "Movimiento acumulado (inicio en cero)"
+ ],
+ [
+  "Saídas: despesas + aportes",
+  "Outflows: expenses + contributions",
+  "Salidas: gastos + aportaciones"
+ ],
+ [
+  "💸 Fluxo de caixa: entradas, saídas e momento",
+  "💸 Cash flow: inflows, outflows and timing",
+  "💸 Flujo de caja: entradas, salidas y momento"
+ ],
+ [
+  "Visualização",
+  "View",
+  "Visualización"
+ ],
+ [
+  "Gráfico",
+  "Chart",
+  "Gráfico"
+ ],
+ [
+  "Linha de saldo",
+  "Balance line",
+  "Línea de saldo"
+ ],
+ [
+  "Movimento acumulado do recorte",
+  "Cumulative movement in the selection",
+  "Movimiento acumulado de la selección"
+ ],
+ [
+  "Saldo com abertura informada",
+  "Balance with provided opening amount",
+  "Saldo con saldo inicial informado"
+ ],
+ [
+  "↓ Saídas (despesas + aportes)",
+  "↓ Outflows (expenses + contributions)",
+  "↓ Salidas (gastos + aportaciones)"
+ ],
+ [
+  "Não há movimentos até a data de referência para este período.",
+  "No movements through the reference date for this period.",
+  "No hay movimientos hasta la fecha de referencia para este período."
+ ],
+ [
+  "Movimento líquido",
+  "Net movement",
+  "Movimiento neto"
+ ],
+ [
+  "Ver tabela do fluxo (alternativa textual ao gráfico)",
+  "View cash flow table (text alternative to chart)",
+  "Ver tabla del flujo (alternativa textual al gráfico)"
+ ],
+ [
+  "Acumulado do recorte",
+  "Selection cumulative total",
+  "Acumulado de la selección"
+ ],
+ [
+  "Saldo com abertura",
+  "Balance including opening amount",
+  "Saldo con saldo inicial"
+ ],
+ [
+  "Ver recebíveis vencidos",
+  "View overdue receivables",
+  "Ver cobros vencidos"
+ ],
+ [
+  "Recebíveis vencidos",
+  "Overdue receivables",
+  "Cobros vencidos"
+ ],
+ [
+  "Contas a pagar no período",
+  "Bills to pay in the period",
+  "Cuentas por pagar en el período"
+ ],
+ [
+  "📂 Para onde o dinheiro está indo",
+  "📂 Where the money is going",
+  "📂 A dónde va el dinero"
+ ],
+ [
+  "Sem despesas neste recorte.",
+  "No expenses in this selection.",
+  "No hay gastos en esta selección."
+ ],
+ [
+  "Evolução mensal das categorias",
+  "Monthly category trends",
+  "Evolución mensual por categoría"
+ ],
+ [
+  "Evolução mensal das despesas por categoria",
+  "Monthly expense trends by category",
+  "Evolución mensual de gastos por categoría"
+ ],
+ [
+  "🎯 Orçamento planejado × realizado",
+  "🎯 Planned vs actual budget",
+  "🎯 Presupuesto previsto frente al real"
+ ],
+ [
+  "+ Definir orçamento",
+  "+ Set budget",
+  "+ Definir presupuesto"
+ ],
+ [
+  "Não há limites informados neste escopo e período. Gasto realizado não é limite de orçamento.",
+  "No limits provided for this scope and period. Actual spending is not a budget limit.",
+  "No hay límites informados para este ámbito y período. El gasto real no es un límite presupuestario."
+ ],
+ [
+  "Filtrar orçamento",
+  "Filter budget",
+  "Filtrar presupuesto"
+ ],
+ [
+  "Acima do limite:",
+  "Over budget:",
+  "Por encima del límite:"
+ ],
+ [
+  "Dívidas",
+  "Debts",
+  "Deudas"
+ ],
+ [
+  "Líquido",
+  "Net",
+  "Neto"
+ ],
+ [
+  "🏠 Patrimônio: posições informadas",
+  "🏠 Wealth: reported positions",
+  "🏠 Patrimonio: posiciones informadas"
+ ],
+ [
+  "Ativos, dívidas e líquido",
+  "Assets, debts and net worth",
+  "Activos, deudas y patrimonio neto"
+ ],
+ [
+  "+ Informar posição patrimonial",
+  "+ Provide wealth position",
+  "+ Informar posición patrimonial"
+ ],
+ [
+  "Dívidas da posição",
+  "Debts in the position",
+  "Deudas de la posición"
+ ],
+ [
+  "Histórico das posições patrimoniais informadas",
+  "History of reported wealth positions",
+  "Historial de posiciones patrimoniales informadas"
+ ],
+ [
+  "Patrimônio não informado. Aportes e pagamentos no cadastro não comprovam o valor de bens, investimentos ou saldo devedor.",
+  "Wealth not provided. Recorded contributions and payments do not prove asset values, investments or debt balances.",
+  "Patrimonio no informado. Las aportaciones y pagos registrados no acreditan el valor de bienes, inversiones ni saldos de deuda."
+ ],
+ [
+  "Histórico das posições até",
+  "Position history through",
+  "Historial de posiciones hasta"
+ ],
+ [
+  "📋 Dívidas e compromissos",
+  "📋 Debts and commitments",
+  "📋 Deudas y compromisos"
+ ],
+ [
+  "+ Cadastrar dívida",
+  "+ Add debt",
+  "+ Registrar deuda"
+ ],
+ [
+  "Dívida / posição",
+  "Debt / position",
+  "Deuda / posición"
+ ],
+ [
+  "Juros/mês",
+  "Interest/month",
+  "Intereses/mes"
+ ],
+ [
+  "Quitação",
+  "Repayment",
+  "Liquidación"
+ ],
+ [
+  "Estimativa de término",
+  "Estimated end date",
+  "Fecha estimada de finalización"
+ ],
+ [
+  "não calculável",
+  "not calculable",
+  "no calculable"
+ ],
+ [
+  "Posição inicial",
+  "Opening position",
+  "Posición inicial"
+ ],
+ [
+  "Cronograma de amortização estimado",
+  "Estimated amortization schedule",
+  "Calendario estimado de amortización"
+ ],
+ [
+  "Ver cronograma em tabela",
+  "View schedule as table",
+  "Ver calendario en tabla"
+ ],
+ [
+  "🏁 Objetivos e reserva de emergência",
+  "🏁 Goals and emergency reserve",
+  "🏁 Objetivos y reserva de emergencia"
+ ],
+ [
+  "Aporte mensal necessário:",
+  "Required monthly contribution:",
+  "Aportación mensual necesaria:"
+ ],
+ [
+  "Acumulado informado em",
+  "Accumulated amount reported as of",
+  "Importe acumulado informado al"
+ ],
+ [
+  "Gasto essencial médio/mês",
+  "Average essential expenses/month",
+  "Gasto esencial medio/mes"
+ ],
+ [
+  "🔎 O que merece atenção e próximo passo",
+  "🔎 What needs attention and the next step",
+  "🔎 Qué merece atención y próximo paso"
+ ],
+ [
+  "OBSERVAÇÃO DO RECORTE",
+  "OBSERVATION FOR THIS SELECTION",
+  "OBSERVACIÓN DE LA SELECCIÓN"
+ ],
+ [
+  "Revisar orçamento",
+  "Review budget",
+  "Revisar presupuesto"
+ ],
+ [
+  "Não há um alerta quantitativo específico neste recorte. Confira a qualidade dos dados e complete os campos não informados.",
+  "No specific quantitative alert in this selection. Check data quality and fill in missing information.",
+  "No hay un aviso cuantitativo específico en esta selección. Revisa la calidad de los datos y completa la información ausente."
+ ],
+ [
+  "Ações com economia estimada pelo usuário",
+  "Actions with user-estimated savings",
+  "Acciones con ahorro estimado por el usuario"
+ ],
+ [
+  "+ Registrar ação e estimativa",
+  "+ Record action and estimate",
+  "+ Registrar acción y estimación"
+ ],
+ [
+  "/mês ·",
+  "/month ·",
+  "/mes ·"
+ ],
+ [
+  "Estimativas informadas, não economia já realizada. Não se presume que parcelas de impostos ou cartões sejam integralmente juros.",
+  "These are estimates, not savings already achieved. Tax or card installments are not assumed to consist entirely of interest.",
+  "Son estimaciones, no ahorros ya realizados. No se presupone que las cuotas de impuestos o tarjetas sean íntegramente intereses."
+ ],
+ [
+  "% da renda média",
+  "% of average income",
+  "% de los ingresos medios"
+ ],
+ [
+  "Economia estimada nas ações",
+  "Estimated savings from actions",
+  "Ahorro estimado de las acciones"
+ ],
+ [
+  "📈 Simulador de poupança",
+  "📈 Savings simulator",
+  "📈 Simulador de ahorro"
+ ],
+ [
+  "Saldo inicial hipotético (R$)",
+  "Hypothetical opening balance (R$)",
+  "Saldo inicial hipotético (R$)"
+ ],
+ [
+  "Aporte livre/mês (R$)",
+  "Custom contribution/month (R$)",
+  "Aportación libre/mes (R$)"
+ ],
+ [
+  "Taxa líquida hipotética (% a.m.)",
+  "Hypothetical net rate (%/month)",
+  "Tasa neta hipotética (% mensual)"
+ ],
+ [
+  "Calcular cenários",
+  "Calculate scenarios",
+  "Calcular escenarios"
+ ],
+ [
+  "Projeções de poupança, em meses",
+  "Savings projections, in months",
+  "Proyecciones de ahorro, en meses"
+ ],
+ [
+  "Selecione um período com renda registrada ou informe um aporte livre. As ações sem estimativa não são tratadas como zero.",
+  "Choose a period with recorded income or enter a custom contribution. Actions without estimates are not treated as zero.",
+  "Elige un período con ingresos registrados o indica una aportación libre. Las acciones sin estimación no se tratan como cero."
+ ],
+ [
+  "Hipótese editável de",
+  "Editable assumption of",
+  "Supuesto editable de"
+ ],
+ [
+  "Data de pagamento e status em conflito",
+  "Payment date and status conflict",
+  "Conflicto entre fecha de pago y estado"
+ ],
+ [
+  "Pagamentos datados no futuro (fora do realizado até hoje)",
+  "Payments dated in the future (outside settlements through today)",
+  "Pagos con fecha futura (fuera de lo liquidado hasta hoy)"
+ ],
+ [
+  "Conta bancária não informada",
+  "Bank account not provided",
+  "Cuenta bancaria no informada"
+ ],
+ [
+  "Transferências internas explicitamente marcadas",
+  "Explicitly marked internal transfers",
+  "Transferencias internas marcadas explícitamente"
+ ],
+ [
+  "Leitura dos lançamentos nesta página:",
+  "Transactions read on this page:",
+  "Lectura de movimientos en esta página:"
+ ],
+ [
+  "· somente neste navegador e conta. Use Exportar planejamento para resguardar as fichas.",
+  "· only in this browser and account. Use Export plan to back up the records.",
+  "· solo en este navegador y cuenta. Usa Exportar planificación para resguardar las fichas."
+ ],
+ [
+  "Conferência",
+  "Review",
+  "Revisión"
+ ],
+ [
+  "Recebido/pago é reconhecido por DT PG válida ou status de quitação. Sem DT PG válida, usa vencimento e sinaliza a lacuna. Pendências usam vencimento. Patrimônio, principal das dívidas e reserva não são inferidos dos lançamentos. Conta/PF/PJ seguem campos do cadastro, sem inferência tributária por rubrica. Transferências só são excluídas quando marcadas explicitamente e a opção estiver ativa. Os alertas são relativos ao recorte e não comprovam dados fora da base carregada.",
+  "Received/paid is recognized by a valid payment date or settled status. Without a valid payment date, the due date is used and the gap is flagged. Pending items use the due date. Wealth, debt principal and reserves are not inferred from transactions. Account and PF/PJ follow registered fields, without tax inferences from categories. Transfers are excluded only when explicitly marked and the option is enabled. Alerts concern this selection and do not prove data beyond the loaded database.",
+  "Se reconoce el cobro o pago por fecha de pago válida o estado liquidado. Sin fecha válida, se usa el vencimiento y se señala la ausencia. Los pendientes usan el vencimiento. Patrimonio, principal de deudas y reservas no se deducen de los movimientos. Cuenta y PF/PJ siguen los campos registrados, sin inferencia fiscal por categoría. Las transferencias se excluyen solo si están marcadas explícitamente y la opción está activa. Los avisos corresponden a la selección y no acreditan datos fuera de la base cargada."
+ ],
+ [
+  "Saldo de abertura",
+  "Opening balance",
+  "Saldo inicial"
+ ],
+ [
+  "Data da abertura",
+  "Opening balance date",
+  "Fecha del saldo inicial"
+ ],
+ [
+  "Saldo da abertura (R$)",
+  "Opening balance (R$)",
+  "Saldo inicial (R$)"
+ ],
+ [
+  "Orçamento por categoria",
+  "Budget by category",
+  "Presupuesto por categoría"
+ ],
+ [
+  "Posição patrimonial",
+  "Wealth position",
+  "Posición patrimonial"
+ ],
+ [
+  "Data da posição",
+  "Position date",
+  "Fecha de la posición"
+ ],
+ [
+  "Dívidas totais incluídas (R$)",
+  "Total included debts (R$)",
+  "Deudas totales incluidas (R$)"
+ ],
+ [
+  "Investimentos já incluídos nos ativos (R$)",
+  "Investments already included in assets (R$)",
+  "Inversiones ya incluidas en activos (R$)"
+ ],
+ [
+  "O que mudou? (informação do usuário)",
+  "What changed? (user-provided)",
+  "¿Qué cambió? (información del usuario)"
+ ],
+ [
+  "Ficha de dívida",
+  "Debt record",
+  "Ficha de deuda"
+ ],
+ [
+  "Credor / dívida",
+  "Lender / debt",
+  "Acreedor / deuda"
+ ],
+ [
+  "Data do saldo informado",
+  "Date of reported balance",
+  "Fecha del saldo informado"
+ ],
+ [
+  "Saldo inicial para medir quitação (R$)",
+  "Initial balance to measure repayment (R$)",
+  "Saldo inicial para medir la liquidación (R$)"
+ ],
+ [
+  "Próxima parcela",
+  "Next installment",
+  "Próxima cuota"
+ ],
+ [
+  "Tipo de objetivo",
+  "Goal type",
+  "Tipo de objetivo"
+ ],
+ [
+  "Data do valor acumulado",
+  "Date of accumulated amount",
+  "Fecha del importe acumulado"
+ ],
+ [
+  "Valor já acumulado (R$)",
+  "Amount already accumulated (R$)",
+  "Importe ya acumulado (R$)"
+ ],
+ [
+  "Ação e economia estimada",
+  "Action and estimated savings",
+  "Acción y ahorro estimado"
+ ],
+ [
+  "Ação proposta",
+  "Proposed action",
+  "Acción propuesta"
+ ],
+ [
+  "📝 Fichas do planejamento pessoal",
+  "📝 Personal planning records",
+  "📝 Fichas de planificación personal"
+ ],
+ [
+  "Meta de poupança (%)",
+  "Savings target (%)",
+  "Meta de ahorro (%)"
+ ],
+ [
+  "Reserva: meta em meses",
+  "Reserve: target in months",
+  "Reserva: meta en meses"
+ ],
+ [
+  "Categorias essenciais (escolha explícita)",
+  "Essential categories (explicit choice)",
+  "Categorías esenciales (elección explícita)"
+ ],
+ [
+  "Salvar critérios",
+  "Save criteria",
+  "Guardar criterios"
+ ],
+ [
+  "Desfazer última remoção",
+  "Undo last removal",
+  "Deshacer la última eliminación"
+ ],
+ [
+  "Identificando a conta do planejamento…",
+  "Identifying the planning account…",
+  "Identificando la cuenta de planificación…"
+ ],
+ [
+  "Valor monetário inválido.",
+  "Invalid monetary amount.",
+  "Importe monetario inválido."
+ ],
+ [
+  "A data do valor confirmado não pode estar no futuro.",
+  "The confirmed amount's date cannot be in the future.",
+  "La fecha del importe confirmado no puede estar en el futuro."
+ ],
+ [
+  "O próximo vencimento não pode ser anterior à data do saldo.",
+  "The next due date cannot precede the balance date.",
+  "El próximo vencimiento no puede ser anterior a la fecha del saldo."
+ ],
+ [
+  "Permita a janela de impressão para salvar em PDF.",
+  "Allow the print window to save as PDF.",
+  "Permite la ventana de impresión para guardar en PDF."
+ ],
+ [
+  "Planejamento Financeiro — Análise Financeira",
+  "Financial Planning — Financial Analysis",
+  "Planificación financiera — Análisis financiero"
+ ],
+ [
+  "Identificador ausente ou repetido. Confira no Painel de Lançamentos.",
+  "Missing or repeated identifier. Check the Transactions Panel.",
+  "Identificador ausente o repetido. Revisa el panel de movimientos."
+ ],
+ [
+  "Valor de filtro inválido.",
+  "Invalid filter amount.",
+  "Importe de filtro inválido."
+ ],
+ [
+  "O valor mínimo deve ser menor que o máximo.",
+  "The minimum amount must be lower than the maximum.",
+  "El importe mínimo debe ser menor que el máximo."
+ ],
+ [
+  "Confira aporte, prazo e taxa do cenário.",
+  "Check the scenario's contribution, term and rate.",
+  "Revisa aportación, plazo y tasa del escenario."
+ ],
+ [
+  "A conta ou pessoa mudou. Reabra o formulário antes de salvar.",
+  "The account or person type changed. Reopen the form before saving.",
+  "La cuenta o el tipo de persona cambió. Vuelve a abrir el formulario antes de guardar."
+ ],
+ [
+  "Banco carregado no aplicativo e planejamento da conta atual",
+  "Loaded application database and current account's plan",
+  "Base cargada en la aplicación y planificación de la cuenta actual"
+ ],
+ [
+  "Nenhum lançamento encontrado para estes filtros.",
+  "No transactions match these filters.",
+  "No hay movimientos para estos filtros."
+ ],
+ [
+  "Movimentação:",
+  "Movement:",
+  "Movimiento:"
+ ],
+ [
+  "Resumo do período",
+  "Period summary",
+  "Resumen del período"
+ ],
+ [
+  "Os pendentes não integram os totais realizados. Datas e liquidação seguem os critérios da página de origem. Investimentos são apresentados separadamente das despesas.",
+  "Pending items are excluded from settled totals. Dates and settlement follow the originating page's criteria. Investments are presented separately from expenses.",
+  "Los pendientes no forman parte de los totales liquidados. Fechas y liquidación siguen los criterios de la página de origen. Las inversiones se presentan separadas de los gastos."
+ ],
+ [
+  "Movimentação por conta",
+  "Movement by account",
+  "Movimientos por cuenta"
+ ],
+ [
+  "Os valores por conta representam movimentos do recorte, não saldos bancários conciliados.",
+  "Amounts by account represent movements in this selection, not reconciled bank balances.",
+  "Los importes por cuenta representan movimientos de la selección, no saldos bancarios conciliados."
+ ],
+ [
+  "Fluxo de caixa detalhado",
+  "Detailed cash flow",
+  "Flujo de caja detallado"
+ ],
+ [
+  "Saldos só são exibidos quando há saldo inicial cadastrado e compatível com o recorte. Movimento líquido não equivale a saldo bancário. Intervalos sem movimento são omitidos.",
+  "Balances are shown only when a registered opening balance is compatible with the selection. Net movement is not a bank balance. Intervals without movement are omitted.",
+  "Los saldos se muestran solo si hay un saldo inicial registrado compatible con la selección. El movimiento neto no equivale a saldo bancario. Se omiten intervalos sin movimiento."
+ ],
+ [
+  "Receitas por categoria",
+  "Income by category",
+  "Ingresos por categoría"
+ ],
+ [
+  "Comparação e planejamento",
+  "Comparison and planning",
+  "Comparación y planificación"
+ ],
+ [
+  "O que merece atenção",
+  "What needs attention",
+  "Qué merece atención"
+ ],
+ [
+  "Confira as pendências e a classificação das categorias.",
+  "Check pending items and category classifications.",
+  "Revisa los pendientes y la clasificación de categorías."
+ ],
+ [
+  "Evolução mensal realizada",
+  "Monthly settled trends",
+  "Evolución mensual de lo liquidado"
+ ],
+ [
+  "Orçamento e objetivos cadastrados",
+  "Registered budgets and goals",
+  "Presupuestos y objetivos registrados"
+ ],
+ [
+  "Gráficos do recorte",
+  "Charts for the selection",
+  "Gráficos de la selección"
+ ],
+ [
+  "Pendências e vencimentos",
+  "Pending items and due dates",
+  "Pendientes y vencimientos"
+ ],
+ [
+  "Lançamentos realizados",
+  "Settled transactions",
+  "Movimientos liquidados"
+ ],
+ [
+  "Critérios e confiabilidade",
+  "Criteria and reliability",
+  "Criterios y fiabilidad"
+ ],
+ [
+  "Escolha o relatório para configurar o período e conferir a prévia.",
+  "Choose a report to set its period and check the preview.",
+  "Elige un informe para configurar el período y revisar la vista previa."
+ ],
+ [
+  "Recolher relatórios",
+  "Collapse reports",
+  "Contraer informes"
+ ],
+ [
+  "Desbloqueie os valores para acessar este relatório.",
+  "Unlock values to access this report.",
+  "Desbloquea los valores para acceder a este informe."
+ ],
+ [
+  "Período da página",
+  "Page period",
+  "Período de la página"
+ ],
+ [
+  "Movimentação",
+  "Movement",
+  "Movimiento"
+ ],
+ [
+  "Agrupamento do fluxo",
+  "Cash flow grouping",
+  "Agrupación del flujo"
+ ],
+ [
+  "Contas / carteiras — nenhuma marcada inclui todas do recorte",
+  "Accounts / portfolios — no selection includes all in the period",
+  "Cuentas / carteras — si no marcas ninguna, se incluyen todas las del período"
+ ],
+ [
+  "Os filtros de pessoa, rubrica, subitem e busca da página são preservados. Este formulário configura somente o relatório.",
+  "Person, category, subcategory and search filters from the page are preserved. This form configures only the report.",
+  "Se conservan los filtros de persona, categoría, subcategoría y búsqueda de la página. Este formulario configura solo el informe."
+ ],
+ [
+  "Visualizar relatório",
+  "View report",
+  "Ver informe"
+ ],
+ [
+  "Para PDF, escolha “Salvar como PDF” no diálogo de impressão.",
+  "For PDF, choose Save as PDF in the print dialog.",
+  "Para PDF, elige Guardar como PDF en el diálogo de impresión."
+ ],
+ [
+  "Escolha a área que deseja abrir em outra janela. Depois, arraste a janela para o segundo monitor.",
+  "Choose an area to open in another window. Then drag that window to your second monitor.",
+  "Elige el área que quieres abrir en otra ventana. Después arrástrala al segundo monitor."
+ ],
+ [
+  "Entre com seu e-mail e sua senha. Uma conta nova começa sem lançamentos e sem dados de outras pessoas.",
+  "Sign in with your email and password. A new account starts without transactions or anyone else's data.",
+  "Entra con tu correo y contraseña. Una cuenta nueva empieza sin movimientos ni datos de otras personas."
+ ],
+ [
+  "Para alterar sua senha, envie um link de recuperação ao seu e-mail.",
+  "To change your password, send a recovery link to your email.",
+  "Para cambiar la contraseña, envía un enlace de recuperación a tu correo."
+ ],
+ [
+  "Enviar link de recuperação",
+  "Send recovery link",
+  "Enviar enlace de recuperación"
+ ],
+ [
+  "Use o mesmo link no PC e no celular. Cada pessoa entra com sua própria conta.",
+  "Use the same link on your computer and phone. Each person signs in to their own account.",
+  "Usa el mismo enlace en ordenador y móvil. Cada persona entra con su propia cuenta."
+ ],
+ [
+  "Link para instalar",
+  "Installation link",
+  "Enlace de instalación"
+ ],
+ [
+  "Texto inválido no planejamento.",
+  "Invalid planning text.",
+  "Texto de planificación inválido."
+ ],
+ [
+  "Valor inválido no planejamento.",
+  "Invalid planning amount.",
+  "Importe de planificación inválido."
+ ],
+ [
+  "Data inválida no planejamento.",
+  "Invalid planning date.",
+  "Fecha de planificación inválida."
+ ],
+ [
+  "Lista inválida ou grande demais no planejamento.",
+  "Invalid or oversized planning list.",
+  "Lista de planificación inválida o demasiado grande."
+ ],
+ [
+  "Registro de planejamento inválido.",
+  "Invalid planning record.",
+  "Registro de planificación inválido."
+ ],
+ [
+  "Tipo de pessoa inválido.",
+  "Invalid person type.",
+  "Tipo de persona inválido."
+ ],
+ [
+  "Categorias essenciais inválidas.",
+  "Invalid essential categories.",
+  "Categorías esenciales inválidas."
+ ],
+ [
+  "Mês de orçamento inválido.",
+  "Invalid budget month.",
+  "Mes de presupuesto inválido."
+ ],
+ [
+  "Há registros de planejamento duplicados para o mesmo escopo/data.",
+  "Duplicate planning records for the same scope/date.",
+  "Hay fichas de planificación duplicadas para el mismo ámbito y fecha."
+ ],
+ [
+  "Histórico de remoções inválido.",
+  "Invalid removal history.",
+  "Historial de eliminaciones inválido."
+ ],
+ [
+  "Item removido inválido.",
+  "Invalid removed item.",
+  "Elemento eliminado inválido."
+ ],
+ [
+  "Período inválido.",
+  "Invalid period.",
+  "Período inválido."
+ ],
+ [
+  "Informe taxa mensal e parcela para estimar a quitação.",
+  "Enter the monthly rate and installment to estimate repayment.",
+  "Indica la tasa mensual y la cuota para estimar la liquidación."
+ ],
+ [
+  "A parcela não supera os juros iniciais sob essa hipótese.",
+  "The installment does not exceed initial interest under this assumption.",
+  "La cuota no supera los intereses iniciales con este supuesto."
+ ],
+ [
+  "Não houve quitação dentro do limite de 600 meses simulado.",
+  "The debt was not repaid within the simulated limit of 600 months.",
+  "La deuda no se liquidó dentro del límite simulado de 600 meses."
+ ],
+ [
+  "Use um período válido de até dez anos.",
+  "Use a valid period of up to ten years.",
+  "Usa un período válido de hasta diez años."
+ ],
+ [
+  "O autofiltro não pertence ao período selecionado.",
+  "The autofilter is outside the selected period.",
+  "El autofiltro no pertenece al período seleccionado."
+ ],
+ [
+  "Saídas superaram as entradas no recorte",
+  "Outflows exceeded inflows in this selection",
+  "Las salidas superaron las entradas en la selección"
+ ],
+ [
+  "Resultado de caixa negativo, incluindo os aportes pagos.",
+  "Negative cash flow result, including paid contributions.",
+  "Resultado de caja negativo, incluidas las aportaciones pagadas."
+ ],
+ [
+  "Recebíveis vencidos precisam de conferência",
+  "Overdue receivables need review",
+  "Los cobros vencidos necesitan revisión"
+ ],
+ [
+  "Despesas aumentaram frente ao período anterior",
+  "Expenses increased compared with the previous period",
+  "Los gastos aumentaron frente al período anterior"
+ ],
+ [
+  "Variação de",
+  "Change of",
+  "Variación de"
+ ],
+ [
+  "% no mesmo recorte de filtros.",
+  "% with the same filters.",
+  "% con los mismos filtros."
+ ],
+ [
+  "Caixa negativo em",
+  "Negative cash flow in",
+  "Caja negativa en"
+ ],
+ [
+  "dos últimos três meses",
+  "of the last three months",
+  "de los últimos tres meses"
+ ],
+ [
+  "Taxa de poupança abaixo da meta informada",
+  "Savings rate below the specified target",
+  "Tasa de ahorro por debajo de la meta indicada"
+ ],
+ [
+  "Realizado antes de aportes:",
+  "Actual before contributions:",
+  "Realizado antes de aportaciones:"
+ ],
+ [
+  "ultrapassou o orçamento",
+  "exceeded the budget",
+  "superó el presupuesto"
+ ],
+ [
+  "está próxima do limite",
+  "is near the limit",
+  "está cerca del límite"
+ ],
+ [
+  "Maior participação nas despesas:",
+  "Largest share of expenses:",
+  "Mayor participación en los gastos:"
+ ],
+ [
+  "% dos gastos filtrados. Revise os itens antes de definir cortes.",
+  "% of filtered expenses. Review the items before deciding cuts.",
+  "% de los gastos filtrados. Revisa las partidas antes de decidir recortes."
+ ],
+ [
+  "Escolha uma ferramenta para continuar.",
+  "Choose a tool to continue.",
+  "Elige una herramienta para continuar."
+ ],
+ [
+  "Consultar os compromissos no calendário financeiro.",
+  "View commitments in the financial calendar.",
+  "Consultar compromisos en el calendario financiero."
+ ],
+ [
+  "Abrir a calculadora do projeto.",
+  "Open the project's calculator.",
+  "Abrir la calculadora del proyecto."
+ ],
+ [
+  "Consultar os itens enviados para a lixeira.",
+  "View items sent to Trash.",
+  "Consultar los elementos enviados a la papelera."
+ ],
+ [
+  "Consultar o histórico disponível no aplicativo.",
+  "View the history available in the app.",
+  "Consultar el historial disponible en la aplicación."
+ ],
+ [
+  "Personalizar a saudação do projeto.",
+  "Personalize the project's greeting.",
+  "Personalizar el saludo del proyecto."
+ ],
+ [
+  "Recursos de proteção, cópia de segurança e acesso.",
+  "Protection, backup and access tools.",
+  "Herramientas de protección, copia de seguridad y acceso."
+ ],
+ [
+  "Exportar o banco completo para uma planilha Excel.",
+  "Export the full database to an Excel spreadsheet.",
+  "Exportar la base completa a una hoja de Excel."
+ ],
+ [
+  "Selecionar uma planilha para a importação existente.",
+  "Select a spreadsheet for the existing import process.",
+  "Seleccionar una hoja para el proceso de importación existente."
+ ],
+ [
+  "Exportar os lançamentos para um arquivo CSV.",
+  "Export transactions to a CSV file.",
+  "Exportar movimientos a un archivo CSV."
+ ],
+ [
+  "Criar uma cópia de segurança dos dados.",
+  "Create a backup of the data.",
+  "Crear una copia de seguridad de los datos."
+ ],
+ [
+  "Abrir a restauração de uma cópia de segurança.",
+  "Open backup restoration.",
+  "Abrir la restauración de una copia de seguridad."
+ ],
+ [
+  "Abrir a sincronização existente com a nuvem.",
+  "Open the existing cloud synchronization tools.",
+  "Abrir las herramientas existentes de sincronización con la nube."
+ ],
+ [
+  "Configurar a proteção e a recuperação de acesso.",
+  "Configure access protection and recovery.",
+  "Configurar la protección y recuperación de acceso."
+ ],
+ [
+  "Consulte os manuais e as informações do projeto.",
+  "Consult the project's manuals and information.",
+  "Consulta los manuales y la información del proyecto."
+ ],
+ [
+  "Pesquisar orientações nos manuais do projeto.",
+  "Search guidance in the project's manuals.",
+  "Buscar orientaciones en los manuales del proyecto."
+ ],
+ [
+  "Consultar o manual de operação.",
+  "View the operating manual.",
+  "Consultar el manual de uso."
+ ],
+ [
+  "Consultar a versão instalada do projeto.",
+  "Check the installed project version.",
+  "Consultar la versión instalada del proyecto."
+ ],
+ [
+  "Verificar as versões disponíveis pelo recurso existente.",
+  "Check available versions using the existing tool.",
+  "Comprobar las versiones disponibles mediante la herramienta existente."
+ ],
+ [
+  "Conhecer as informações do Planejamento Financeiro.",
+  "Learn about Financial Planning.",
+  "Consultar la información de Planificación financiera."
+ ],
+ [
+  "Abrir este recurso do projeto.",
+  "Open this project feature.",
+  "Abrir esta función del proyecto."
+ ],
+ [
+  "Navegação da área",
+  "Area navigation",
+  "Navegación del área"
+ ],
+ [
+  "Nenhum recurso disponível nesta área.",
+  "No features available in this area.",
+  "No hay funciones disponibles en esta área."
+ ],
+ [
+  "Acesso permitido somente para usuários com perfil de Administrador.",
+  "Access restricted to users with the Administrator role.",
+  "Acceso permitido solo a usuarios con perfil de administrador."
+ ],
+ [
+  "Filtro de coluna",
+  "Column filter",
+  "Filtro de columna"
+ ],
+ [
+  "O que foi atualizado nesta versão:",
+  "What's new in this version:",
+  "Novedades de esta versión:"
+ ],
+ [
+  "Os detalhes desta publicação não foram informados.",
+  "No release details were provided.",
+  "No se proporcionaron detalles de esta publicación."
+ ],
+ [
+  "Não foi possível baixar a atualização. Tente novamente.",
+  "Could not download the update. Try again.",
+  "No se pudo descargar la actualización. Inténtalo de nuevo."
+ ],
+ [
+  "O download da atualização demorou. Tente novamente.",
+  "The update download timed out. Try again.",
+  "La descarga de la actualización tardó demasiado. Inténtalo de nuevo."
+ ],
+ [
+  "Feche as janelas do aplicativo e abra novamente para concluir a atualização.",
+  "Close the app windows and reopen them to finish the update.",
+  "Cierra las ventanas de la aplicación y vuelve a abrirlas para completar la actualización."
+ ],
+ [
+  "Salve qualquer edição em andamento antes de atualizar. Deseja carregar a nova versão agora?",
+  "Save any work in progress before updating. Load the new version now?",
+  "Guarda los cambios pendientes antes de actualizar. ¿Cargar la nueva versión ahora?"
+ ],
+ [
+  "Verificar atualizações",
+  "Check for updates",
+  "Buscar actualizaciones"
+ ],
+ [
+  "Não foi possível consultar a versão publicada.",
+  "Could not check the published version.",
+  "No se pudo consultar la versión publicada."
+ ],
+ [
+  "O arquivo de versão publicado está inválido.",
+  "The published version file is invalid.",
+  "El archivo de versión publicado no es válido."
+ ],
+ [
+  "Nova versão disponível",
+  "New version available",
+  "Nueva versión disponible"
+ ],
+ [
+  "Você está na",
+  "You are using",
+  "Estás usando"
+ ],
+ [
+  "já pode ser instalada. Seus dados serão mantidos.",
+  "is ready to install. Your data will be kept.",
+  "ya puede instalarse. Tus datos se conservarán."
+ ],
+ [
+  "Versão atual do aplicativo",
+  "Current app version",
+  "Versión actual de la aplicación"
+ ],
+ [
+  "A versão",
+  "Version",
+  "La versión"
+ ],
+ [
+  "Verificação de versão",
+  "Version check",
+  "Comprobación de versión"
+ ],
+ [
+  "Esta cópia local ou de teste não será substituída.",
+  "This local or test copy will not be replaced.",
+  "Esta copia local o de prueba no se sustituirá."
+ ],
+ [
+  "Salve qualquer edição em andamento antes de atualizar.",
+  "Save any work in progress before updating.",
+  "Guarda los cambios pendientes antes de actualizar."
+ ],
+ [
+  "Você está usando a versão publicada mais recente.",
+  "You are using the latest published version.",
+  "Estás usando la versión publicada más reciente."
+ ],
+ [
+  "Esta cópia tem uma versão superior à publicada.",
+  "This copy has a newer version than the published release.",
+  "Esta copia tiene una versión superior a la publicada."
+ ],
+ [
+  "Não foi possível verificar",
+  "Could not check",
+  "No se pudo comprobar"
+ ],
+ [
+  "Tente novamente quando a conexão estiver disponível.",
+  "Try again when a connection is available.",
+  "Inténtalo de nuevo cuando haya conexión."
+ ],
+ [
+  "Local original do formulário de Cadastro",
+  "Original location of the registration form",
+  "Ubicación original del formulario de registro"
+ ],
+ [
+  "Nome do sub-item",
+  "Subcategory name",
+  "Nombre de la subcategoría"
+ ],
+ [
+  "Nome da rubrica",
+  "Category name",
+  "Nombre de la categoría"
+ ],
+ [
+  "Cancelar renomeação",
+  "Cancel rename",
+  "Cancelar cambio de nombre"
+ ],
+ [
+  "Período anual e meses",
+  "Annual period and months",
+  "Período anual y meses"
+ ],
+ [
+  "Ano do período",
+  "Period year",
+  "Año del período"
+ ],
+ [
+  "KPIs, receitas vs despesas e resultado por período em uma única tela.",
+  "KPIs, income vs expenses and period results on one screen.",
+  "Indicadores, ingresos frente a gastos y resultado del período en una sola pantalla."
+ ],
+ [
+  "Visualizar, editar e excluir os lançamentos já cadastrados.",
+  "View, edit and delete existing transactions.",
+  "Ver, editar y eliminar los movimientos registrados."
+ ],
+ [
+  "Novo lançamento, rubricas e sub-itens.",
+  "New transactions, categories and subcategories.",
+  "Nuevos movimientos, categorías y subcategorías."
+ ],
+ [
+  "Evolução mensal de receitas, despesas e saldo.",
+  "Monthly income, expense and balance trends.",
+  "Evolución mensual de ingresos, gastos y saldo."
+ ],
+ [
+  "Situação financeira, alertas e projeção do período.",
+  "Financial position, alerts and period projections.",
+  "Situación financiera, avisos y proyecciones del período."
+ ],
+ [
+  "Calendário, calculadora, lixeira, instalação do app e histórico.",
+  "Calendar, calculator, trash, app installation and history.",
+  "Calendario, calculadora, papelera, instalación de la aplicación e historial."
+ ],
+ [
+  "Exportar/importar, backup, restauração e controle de acesso.",
+  "Export/import, backup, restoration and access control.",
+  "Exportar e importar, copias de seguridad, restauración y control de acceso."
+ ],
+ [
+  "Manuais, versão do sistema e informações do projeto.",
+  "Manuals, system version and project information.",
+  "Manuales, versión del sistema e información del proyecto."
+ ],
+ [
+  "Base financeira · Período selecionado no painel",
+  "Financial data · Period selected in the panel",
+  "Base financiera · Período seleccionado en el panel"
+ ],
+ [
+  "Áreas do painel financeiro",
+  "Financial panel areas",
+  "Áreas del panel financiero"
+ ],
+ [
+  "· Período selecionado no painel",
+  "· Period selected in the panel",
+  "· Período seleccionado en el panel"
+ ],
+ [
+  "Assistente financeiro — cálculos locais e Gemini online",
+  "Financial assistant — local calculations and Gemini online",
+  "Asistente financiero — cálculos locales y Gemini en línea"
+ ],
+ [
+  "Taxa de poupança prevista",
+  "Planned savings rate",
+  "Tasa de ahorro prevista"
+ ],
+ [
+  "Filtro rápido:",
+  "Quick filter:",
+  "Filtro rápido:"
+ ],
+ [
+  "todos os lançamentos",
+  "all transactions",
+  "todos los movimientos"
+ ],
+ [
+  "Despesas: mês anterior × mês atual",
+  "Expenses: previous month × current month",
+  "Gastos: mes anterior × mes actual"
+ ],
+ [
+  "Receitas: mês anterior × mês atual",
+  "Income: previous month × current month",
+  "Ingresos: mes anterior × mes actual"
+ ],
+ [
+  "Selecione um mês válido para a comparação.",
+  "Select a valid month for comparison.",
+  "Selecciona un mes válido para comparar."
+ ],
+ [
+  "Total acima do limite seguro de cálculo. Refine os filtros.",
+  "Total exceeds the safe calculation limit. Refine the filters.",
+  "El total supera el límite seguro de cálculo. Ajusta los filtros."
+ ],
+ [
+  "Diferença acima do limite seguro de cálculo. Refine os filtros.",
+  "Difference exceeds the safe calculation limit. Refine the filters.",
+  "La diferencia supera el límite seguro de cálculo. Ajusta los filtros."
+ ],
+ [
+  "Participação dos valores comparados",
+  "Share of compared amounts",
+  "Participación de los importes comparados"
+ ],
+ [
+  "(mês anterior) ×",
+  "(previous month) ×",
+  "(mes anterior) ×"
+ ],
+ [
+  "(mês atual da comparação). Base:",
+  "(current comparison month). Basis:",
+  "(mes actual de comparación). Base:"
+ ],
+ [
+  "todos os cadastrados — previsão",
+  "all registered items — forecast",
+  "todos los registrados — previsión"
+ ],
+ [
+  "Diferença (R$)",
+  "Difference (R$)",
+  "Diferencia (R$)"
+ ],
+ [
+  "Lançamentos dos dois meses comparados",
+  "Transactions in the two compared months",
+  "Movimientos de los dos meses comparados"
+ ],
+ [
+  "Composição por rubrica",
+  "Breakdown by category",
+  "Composición por categoría"
+ ],
+ [
+  "Evolução das receitas (mensal)",
+  "Monthly income trend",
+  "Evolución mensual de ingresos"
+ ],
+ [
+  "Evolução das despesas (mensal)",
+  "Monthly expense trend",
+  "Evolución mensual de gastos"
+ ],
+ [
+  "Receitas por rubrica (",
+  "Income by category (",
+  "Ingresos por categoría ("
+ ],
+ [
+  "acumulado do ano",
+  "year to date",
+  "acumulado del año"
+ ],
+ [
+  "acumulado no período",
+  "cumulative in the period",
+  "acumulado del período"
+ ],
+ [
+  "Despesas por rubrica (",
+  "Expenses by category (",
+  "Gastos por categoría ("
+ ],
+ [
+  "· Sem registros para esta base e filtros.",
+  "· No records match this basis and filters.",
+  "· No hay registros para esta base y filtros."
+ ],
+ [
+  "Saldos acumulados e indicadores derivados não representam partes de um total. O gráfico padrão foi mantido.",
+  "Cumulative balances and derived indicators are not parts of a whole. The default chart was kept.",
+  "Los saldos acumulados e indicadores derivados no son partes de un total. Se mantuvo el gráfico predeterminado."
+ ],
+ [
+  "Selecione uma série válida.",
+  "Select a valid series.",
+  "Selecciona una serie válida."
+ ],
+ [
+  "Pizza e rosca não representam valores negativos. O gráfico padrão foi mantido.",
+  "Pie and doughnut charts cannot represent negative values. The default chart was kept.",
+  "Los gráficos circular y de anillo no representan valores negativos. Se mantuvo el gráfico predeterminado."
+ ],
+ [
+  "Não há um total positivo para compor as fatias. O gráfico padrão foi mantido.",
+  "There is no positive total for the slices. The default chart was kept.",
+  "No hay un total positivo para las porciones. Se mantuvo el gráfico predeterminado."
+ ],
+ [
+  "Permita a abertura de uma nova aba para visualizar e exportar os gráficos.",
+  "Allow a new tab to view and export charts.",
+  "Permite una nueva pestaña para ver y exportar gráficos."
+ ],
+ [
+  "Análise mensal — gráficos",
+  "Monthly analysis — charts",
+  "Análisis mensual — gráficos"
+ ],
+ [
+  "Logotipo do Planejamento Financeiro",
+  "Financial Planning logo",
+  "Logotipo de Planificación financiera"
+ ],
+ [
+  "Período de referência:",
+  "Reference period:",
+  "Período de referencia:"
+ ],
+ [
+  "Filtros atuais da análise mensal",
+  "Current monthly analysis filters",
+  "Filtros actuales del análisis mensual"
+ ],
+ [
+  "· Série:",
+  "· Series:",
+  "· Serie:"
+ ],
+ [
+  "Totais dos lançamentos representados nos gráficos exportados, sem repetição por ID. Cada gráfico completo conserva seu intervalo original.",
+  "Totals of transactions shown in the exported charts, without duplicate IDs. Each full chart retains its original interval.",
+  "Totales de movimientos de los gráficos exportados, sin repetir identificadores. Cada gráfico completo conserva su intervalo original."
+ ],
+ [
+  "Não foi possível preparar o relatório de gráficos. Tente novamente.",
+  "Could not prepare the chart report. Try again.",
+  "No se pudo preparar el informe de gráficos. Inténtalo de nuevo."
+ ],
+ [
+  "Indicador derivado: os lançamentos abaixo compõem o cálculo e não devem ser somados como saldos independentes.",
+  "Derived indicator: the transactions below make up the calculation and must not be summed as separate balances.",
+  "Indicador derivado: los movimientos siguientes forman parte del cálculo y no deben sumarse como saldos independientes."
+ ],
+ [
+  "Sem lançamentos correspondentes a este ponto no recorte disponível.",
+  "No transactions match this point in the available selection.",
+  "No hay movimientos correspondientes a este punto en la selección disponible."
+ ],
+ [
+  "lançamento(s) vinculados. Valores das descrições agrupados dentro de cada tipo e rubrica.",
+  "linked transaction(s). Description amounts are grouped within each type and category.",
+  "movimiento(s) vinculados. Los importes por descripción se agrupan dentro de cada tipo y categoría."
+ ],
+ [
+  "— abrir lançamentos",
+  "— open transactions",
+  "— abrir movimientos"
+ ],
+ [
+  "— composição percentual",
+  "— percentage breakdown",
+  "— composición porcentual"
+ ],
+ [
+  "por rubrica",
+  "by category",
+  "por categoría"
+ ],
+ [
+  "Histórico no recorte — meses com lançamentos",
+  "History in selection — months with transactions",
+  "Historial de la selección — meses con movimientos"
+ ],
+ [
+  "Receitas agrupadas por descrição, conforme os filtros selecionados.",
+  "Income grouped by description, according to selected filters.",
+  "Ingresos agrupados por descripción, según los filtros seleccionados."
+ ],
+ [
+  "Sem rúbrica",
+  "No category",
+  "Sin categoría"
+ ],
+ [
+  "Descrição / busca",
+  "Description / search",
+  "Descripción / búsqueda"
+ ],
+ [
+  "Critério de data",
+  "Date basis",
+  "Criterio de fecha"
+ ],
+ [
+  "Sem composição positiva para rosca. Consulte os valores na tabela ou em barras.",
+  "No positive breakdown for a doughnut chart. See the amounts in the table or bars.",
+  "Sin composición positiva para una gráfica de anillo. Consulta los importes en la tabla o en barras."
+ ],
+ [
+  "Lançamentos do recorte selecionado",
+  "Transactions in the selected period",
+  "Movimientos de la selección"
+ ],
+ [
+  "Participação e média mensal",
+  "Share and monthly average",
+  "Participación y media mensual"
+ ],
+ [
+  "Top 3 que mais diminuíram",
+  "Top 3 decreases",
+  "Las 3 mayores disminuciones"
+ ],
+ [
+  "Categoria com maior participação nas despesas",
+  "Category with the largest expense share",
+  "Categoría con mayor participación en gastos"
+ ],
+ [
+  "Maior variação mensal observada",
+  "Largest observed monthly change",
+  "Mayor variación mensual observada"
+ ],
+ [
+  "Gasto médio por dia da semana",
+  "Average spending by weekday",
+  "Gasto medio por día de la semana"
+ ],
+ [
+  "Categorias, ranking, evolução por categoria, padrão semanal e recorrentes.",
+  "Categories, ranking, category trends, weekly pattern and recurring commitments.",
+  "Categorías, clasificación, evolución por categoría, patrón semanal y compromisos recurrentes."
+ ],
+ [
+  "Sem despesas para o período, base e filtros selecionados. Limpe os filtros ou consulte as pendências na base de previsão.",
+  "No expenses match the selected period, basis and filters. Clear filters or review pending items using the forecast basis.",
+  "No hay gastos para el período, la base y los filtros seleccionados. Borra los filtros o consulta pendientes con la base de previsión."
+ ],
+ [
+  "Evolução de receitas e despesas e acumulados por rubrica.",
+  "Income and expense trends and cumulative amounts by category.",
+  "Evolución de ingresos y gastos y acumulados por categoría."
+ ],
+ [
+  "Análise detalhada",
+  "Detailed analysis",
+  "Análisis detallado"
+ ],
+ [
+  "Evolução mensal das receitas e despesas e acumulados por rubrica.",
+  "Monthly income and expense trends and cumulative amounts by category.",
+  "Evolución mensual de ingresos y gastos y acumulados por categoría."
+ ],
+ [
+  "Abrir os gráficos em uma janela para o segundo monitor",
+  "Open charts in a window for the second monitor",
+  "Abrir gráficos en una ventana para el segundo monitor"
+ ],
+ [
+  "O navegador bloqueou a janela dos gráficos. Permita pop-ups deste aplicativo e tente novamente.",
+  "The browser blocked the charts window. Allow pop-ups for this app and retry.",
+  "El navegador bloqueó la ventana de gráficos. Permite ventanas emergentes para esta aplicación y reintenta."
+ ],
+ [
+  "Reunir dados e gráficos em um único monitor",
+  "Combine data and charts on one monitor",
+  "Reunir datos y gráficos en un solo monitor"
+ ],
+ [
+  "Os gráficos acompanham a proteção dos valores. Toque em Mostrar para visualizar.",
+  "Charts follow value protection. Tap Show to view.",
+  "Los gráficos siguen la protección de valores. Pulsa Mostrar para verlos."
+ ],
+ [
+  "Receitas e despesas por evolução e rubrica, conforme os filtros selecionados.",
+  "Income and expenses by trend and category, according to selected filters.",
+  "Ingresos y gastos por evolución y categoría, según los filtros seleccionados."
+ ],
+ [
+  "Despesas por Rubrica",
+  "Expenses by category",
+  "Gastos por categoría"
+ ],
+ [
+  "Gráficos financeiros com rolagem independente",
+  "Financial charts with independent scrolling",
+  "Gráficos financieros con desplazamiento independiente"
+ ],
+ [
+  "Arquivo de notas inválido.",
+  "Invalid notes file.",
+  "Archivo de notas inválido."
+ ],
+ [
+  "Identificadores de notas duplicados.",
+  "Duplicate note identifiers.",
+  "Identificadores de notas duplicados."
+ ],
+ [
+  "Limite de notas atingido. Exporte suas notas antes de continuar.",
+  "Note limit reached. Export your notes before continuing.",
+  "Se alcanzó el límite de notas. Exporta tus notas antes de continuar."
+ ],
+ [
+  "Limite de armazenamento de notas atingido. Exporte suas notas antes de continuar.",
+  "Notes storage limit reached. Export your notes before continuing.",
+  "Se alcanzó el límite de almacenamiento de notas. Exporta tus notas antes de continuar."
+ ],
+ [
+  "Esta nota foi alterada em outra aba. Reabra a nota antes de editar.",
+  "This note changed in another tab. Reopen it before editing.",
+  "Esta nota cambió en otra pestaña. Vuelve a abrirla antes de editar."
+ ],
+ [
+  "Notas do período",
+  "Period notes",
+  "Notas del período"
+ ],
+ [
+  "Suas notas ficam neste navegador e não são enviadas à IA.",
+  "Your notes stay in this browser and are not sent to AI.",
+  "Tus notas permanecen en este navegador y no se envían a la IA."
+ ],
+ [
+  "Mês da nota",
+  "Note month",
+  "Mes de la nota"
+ ],
+ [
+  "Título",
+  "Title",
+  "Título"
+ ],
+ [
+  "Etiquetas separadas por vírgula",
+  "Comma-separated tags",
+  "Etiquetas separadas por comas"
+ ],
+ [
+  "Nenhuma nota neste mês.",
+  "No notes this month.",
+  "No hay notas en este mes."
+ ],
+ [
+  "Descartar alterações não salvas?",
+  "Discard unsaved changes?",
+  "¿Descartar los cambios sin guardar?"
+ ],
+ [
+  "Excluir esta nota? Esta ação não pode ser desfeita.",
+  "Delete this note? This cannot be undone.",
+  "¿Eliminar esta nota? No se puede deshacer."
+ ],
+ [
+  "Não foi possível abrir as notas.",
+  "Could not open notes.",
+  "No se pudieron abrir las notas."
+ ],
+ [
+  "Não foi possível importar o arquivo.",
+  "Could not import the file.",
+  "No se pudo importar el archivo."
+ ],
+ [
+  "Detalhes da sincronização",
+  "Synchronization details",
+  "Detalles de sincronización"
+ ],
+ [
+  "Planejamento Financeiro — Lançamentos",
+  "Financial Planning — Transactions",
+  "Planificación financiera — Movimientos"
+ ],
+ [
+  "Armazenamento de planejamento indisponível neste navegador.",
+  "Planning storage is unavailable in this browser.",
+  "El almacenamiento de planificación no está disponible en este navegador."
+ ],
+ [
+  "Não foi possível abrir o planejamento.",
+  "Could not open the plan.",
+  "No se pudo abrir la planificación."
+ ],
+ [
+  "Feche outras versões do planejamento e tente novamente.",
+  "Close other plan versions and retry.",
+  "Cierra otras versiones de la planificación e inténtalo de nuevo."
+ ],
+ [
+  "Não foi possível salvar o planejamento.",
+  "Could not save the plan.",
+  "No se pudo guardar la planificación."
+ ],
+ [
+  "O planejamento não foi salvo.",
+  "The plan was not saved.",
+  "La planificación no se guardó."
+ ],
+ [
+  "Ficha de planejamento inválida.",
+  "Invalid planning record.",
+  "Ficha de planificación inválida."
+ ],
+ [
+  "Esta ficha foi alterada em outra aba. Reabra antes de salvar.",
+  "This record changed in another tab. Reopen it before saving.",
+  "Esta ficha cambió en otra pestaña. Vuelve a abrirla antes de guardar."
+ ],
+ [
+  "O identificador já está em uso. Reabra a ficha para editar.",
+  "This identifier is already in use. Reopen the record to edit it.",
+  "El identificador ya está en uso. Vuelve a abrir la ficha para editarla."
+ ],
+ [
+  "A ficha mudou. Atualize antes de remover.",
+  "The record changed. Refresh before removing it.",
+  "La ficha cambió. Actualiza antes de eliminarla."
+ ],
+ [
+  "Já existe uma ficha com esse identificador.",
+  "A record with this identifier already exists.",
+  "Ya existe una ficha con este identificador."
+ ],
+ [
+  "A nuvem recusou esta tentativa de login (invalid_credentials). A sessão já salva não foi encerrada. A senha da conta de sincronização é independente da senha de abertura do aplicativo. Use Testar conexão da nuvem para verificar a sessão atual. Seus dados locais foram mantidos.",
+  "The cloud rejected this login attempt (invalid_credentials). The saved session was not closed. The synchronization password is independent of the app's opening password. Use Test cloud connection to check the current session. Your local data was kept.",
+  "La nube rechazó este intento de acceso (invalid_credentials). No se cerró la sesión guardada. La contraseña de sincronización es independiente de la de apertura. Usa Probar conexión con la nube para comprobar la sesión actual. Tus datos locales se conservaron."
+ ],
+ [
+  "Biblioteca Supabase não carregada.",
+  "Supabase library not loaded.",
+  "La biblioteca Supabase no se ha cargado."
+ ],
+ [
+  "Diagnóstico: não há sessão válida neste dispositivo. A sincronização financeira ainda não foi confirmada.",
+  "Diagnostic: there is no valid session on this device. Financial synchronization has not been confirmed.",
+  "Diagnóstico: no hay sesión válida en este dispositivo. La sincronización financiera no se ha confirmado."
+ ],
+ [
+  "A conta mudou durante o diagnóstico. Abra novamente a sincronização.",
+  "The account changed during diagnostics. Open synchronization again.",
+  "La cuenta cambió durante el diagnóstico. Abre de nuevo la sincronización."
+ ],
+ [
+  "Conexão OK: conta e sessão acessíveis. Ainda não há banco salvo para esta conta na nuvem. Testar conexão não envia os dados.",
+  "Connection OK: account and session accessible. No database has been saved for this cloud account yet. Testing the connection does not send data.",
+  "Conexión correcta: cuenta y sesión accesibles. Aún no hay una base guardada para esta cuenta en la nube. Probar la conexión no envía datos."
+ ],
+ [
+  "A nuvem não devolveu um banco financeiro válido.",
+  "The cloud did not return a valid financial database.",
+  "La nube no devolvió una base financiera válida."
+ ],
+ [
+  "Conexão OK, mas existe conflito entre as cópias financeiras.",
+  "Connection OK, but financial copies conflict.",
+  "Conexión correcta, pero hay conflicto entre las copias financieras."
+ ],
+ [
+  "Há alterações locais e a versão atual da nuvem ainda não foi confirmada neste dispositivo. O envio automático é bloqueado para evitar sobrescrever dados. Se a cópia do PC/nuvem for a correta, use Receber dados do PC/nuvem (com backup) e confira as duas cópias antes de confirmar.",
+  "There are local changes and the current cloud version has not been confirmed on this device. Automatic sending is blocked to prevent overwrites. If the PC/cloud copy is correct, use Receive PC/cloud data (with backup) and compare both copies before confirming.",
+  "Hay cambios locales y la versión actual de la nube no se ha confirmado en este dispositivo. El envío automático se bloquea para evitar sobrescrituras. Si la copia del ordenador o la nube es la correcta, usa Recibir datos del ordenador o la nube (con copia de seguridad) y compara ambas antes de confirmar."
+ ],
+ [
+  "Conexão OK: conta, sessão e tabela acessíveis. A movimentação financeira comparada coincide.",
+  "Connection OK: account, session and table accessible. Compared financial activity matches.",
+  "Conexión correcta: cuenta, sesión y tabla accesibles. La actividad financiera comparada coincide."
+ ],
+ [
+  "Este teste não envia nem recebe dados e não muda o indicador de sincronização. Para confirmar a operação, use Sincronizar agora.",
+  "This test neither sends nor receives data and does not change synchronization status. Use Synchronize now to confirm the operation.",
+  "Esta prueba no envía ni recibe datos ni cambia el indicador de sincronización. Usa Sincronizar ahora para confirmar la operación."
+ ],
+ [
+  "Conexão OK: conta, sessão e tabela acessíveis.",
+  "Connection OK: account, session and table accessible.",
+  "Conexión correcta: cuenta, sesión y tabla accesibles."
+ ],
+ [
+  "Há alterações locais aguardando confirmação de envio.",
+  "Local changes are awaiting sending confirmation.",
+  "Hay cambios locales pendientes de confirmación de envío."
+ ],
+ [
+  "Há dados diferentes na nuvem que podem ser recebidos.",
+  "Different cloud data is available to receive.",
+  "Hay datos diferentes en la nube que pueden recibirse."
+ ],
+ [
+  "Falha no diagnóstico:",
+  "Diagnostic failed:",
+  "Fallo del diagnóstico:"
+ ],
+ [
+  "Entre na conta de sincronização com o mesmo e-mail e senha usados no computador.",
+  "Sign in to synchronization with the same email and password used on the computer.",
+  "Entra en la sincronización con el mismo correo y contraseña usados en el ordenador."
+ ],
+ [
+  "A conta mudou. Abra novamente a sincronização.",
+  "The account changed. Open synchronization again.",
+  "La cuenta cambió. Abre de nuevo la sincronización."
+ ],
+ [
+  "A nuvem não devolveu um banco válido. Nenhum dado foi substituído.",
+  "The cloud did not return a valid database. No data was replaced.",
+  "La nube no devolvió una base válida. No se sustituyeron datos."
+ ],
+ [
+  "Receber neste dispositivo os dados atuais da sua conta na nuvem? Neste dispositivo:",
+  "Receive your account's current cloud data on this device? On this device:",
+  "¿Recibir los datos actuales de tu cuenta en la nube en este dispositivo? En este dispositivo:"
+ ],
+ [
+  "lançamento(s). Na nuvem:",
+  "transaction(s). In the cloud:",
+  "movimiento(s). En la nube:"
+ ],
+ [
+  "lançamento(s). Primeiro será salvo um backup das DUAS cópias. Depois da sua confirmação, somente os dados deste dispositivo serão substituídos.",
+  "transaction(s). A backup of BOTH copies will be saved first. After confirmation, only this device's data will be replaced.",
+  "movimiento(s). Primero se guardará una copia de seguridad de AMBAS versiones. Tras confirmar, solo se sustituirán los datos de este dispositivo."
+ ],
+ [
+  "Backup antes de receber dados da nuvem",
+  "Backup before receiving cloud data",
+  "Copia de seguridad antes de recibir datos de la nube"
+ ],
+ [
+  "Confira se o arquivo backup_celular_e_nuvem foi baixado. Com o backup salvo, confirme para receber os dados da nuvem neste dispositivo. Se o download não terminou, cancele.",
+  "Check that backup_celular_e_nuvem downloaded. With the backup saved, confirm receipt of cloud data on this device. Cancel if the download is incomplete.",
+  "Comprueba que se descargó backup_celular_e_nuvem. Con la copia guardada, confirma la recepción de datos de la nube en este dispositivo. Cancela si la descarga no terminó."
+ ],
+ [
+  "A conta mudou durante a comparação. Nenhum dado foi substituído.",
+  "The account changed during comparison. No data was replaced.",
+  "La cuenta cambió durante la comparación. No se sustituyeron datos."
+ ],
+ [
+  "A nuvem mudou durante a comparação. Compare novamente para receber a cópia mais recente.",
+  "The cloud changed during comparison. Compare again to receive the latest copy.",
+  "La nube cambió durante la comparación. Compara de nuevo para recibir la copia más reciente."
+ ],
+ [
+  "O conteúdo da nuvem mudou durante a comparação. Nenhum dado foi substituído.",
+  "Cloud content changed during comparison. No data was replaced.",
+  "El contenido de la nube cambió durante la comparación. No se sustituyeron datos."
+ ],
+ [
+  "Os dados locais mudaram durante a comparação. Nenhum dado foi substituído.",
+  "Local data changed during comparison. No data was replaced.",
+  "Los datos locales cambiaron durante la comparación. No se sustituyeron datos."
+ ],
+ [
+  "Dados da nuvem recebidos neste dispositivo. A cópia anterior foi preservada no backup.",
+  "Cloud data received on this device. The previous copy was preserved in the backup.",
+  "Datos de la nube recibidos en este dispositivo. La copia anterior se conservó en la copia de seguridad."
+ ],
+ [
+  "Dados recebidos com sucesso. A nuvem permaneceu intacta e a cópia anterior deste dispositivo está no backup.",
+  "Data received successfully. The cloud was unchanged and the previous device copy is in the backup.",
+  "Datos recibidos correctamente. La nube no cambió y la copia anterior del dispositivo está en la copia de seguridad."
+ ],
+ [
+  "Não foi possível concluir o recebimento. Preserve o backup e os dados deste dispositivo.",
+  "Could not finish receiving data. Preserve the backup and this device's data.",
+  "No se pudo completar la recepción. Conserva la copia de seguridad y los datos de este dispositivo."
+ ],
+ [
+  "Não foi possível obter uma cópia válida da nuvem. Nenhum dado foi substituído.",
+  "Could not obtain a valid cloud copy. No data was replaced.",
+  "No se pudo obtener una copia válida de la nube. No se sustituyeron datos."
+ ],
+ [
+  "lançamento(s).",
+  "transaction(s).",
+  "movimiento(s)."
+ ],
+ [
+  "Versão da nuvem:",
+  "Cloud version:",
+  "Versión de la nube:"
+ ],
+ [
+  "Será baixado um arquivo com as duas cópias antes da substituição.",
+  "A file containing both copies will download before replacement.",
+  "Se descargará un archivo con ambas copias antes de sustituir los datos."
+ ],
+ [
+  "Cópias antes da recuperação da nuvem",
+  "Copies before cloud recovery",
+  "Copias previas a la recuperación de la nube"
+ ],
+ [
+  "Confira se o arquivo backup_conflito_nuvem foi baixado. Clique em OK somente com o arquivo salvo, para substituir a nuvem pela cópia deste dispositivo. Se o download não terminou, clique em Cancelar.",
+  "Check that backup_conflito_nuvem downloaded. Click OK only after saving the file to replace cloud data with this device's copy. If the download is incomplete, click Cancel.",
+  "Comprueba que se descargó backup_conflito_nuvem. Pulsa Aceptar solo cuando el archivo esté guardado para sustituir la nube por la copia del dispositivo. Si la descarga no terminó, pulsa Cancelar."
+ ],
+ [
+  "A nuvem mudou durante a recuperação. Nenhum dado foi substituído. Tente comparar novamente.",
+  "The cloud changed during recovery. No data was replaced. Compare again.",
+  "La nube cambió durante la recuperación. No se sustituyeron datos. Compara de nuevo."
+ ],
+ [
+  "Os dados locais mudaram durante a recuperação. Faça uma nova comparação antes de continuar.",
+  "Local data changed during recovery. Compare again before continuing.",
+  "Los datos locales cambiaron durante la recuperación. Vuelve a comparar antes de continuar."
+ ],
+ [
+  "Recuperação concluída. Os dados deste dispositivo foram confirmados na nuvem.",
+  "Recovery completed. This device's data was confirmed in the cloud.",
+  "Recuperación completada. Los datos del dispositivo se confirmaron en la nube."
+ ],
+ [
+  "Falha na recuperação:",
+  "Recovery failed:",
+  "Fallo de recuperación:"
+ ],
+ [
+  "Não foi possível concluir a recuperação:",
+  "Could not complete recovery:",
+  "No se pudo completar la recuperación:"
+ ],
+ [
+  "Período inválido para o relatório.",
+  "Invalid report period.",
+  "Período de informe inválido."
+ ],
+ [
+  "Valor inválido no relatório.",
+  "Invalid report amount.",
+  "Importe de informe inválido."
+ ],
+ [
+  "Período muito extenso para a trajetória diária.",
+  "Period too long for a daily balance path.",
+  "Período demasiado extenso para la trayectoria diaria."
+ ],
+ [
+  "Filtros da exportação atual",
+  "Current export filters",
+  "Filtros de la exportación actual"
+ ],
+ [
+  "Indicadores econômicos. Use Pausar para interromper o movimento e ler os valores e as datas de referência.",
+  "Economic indicators. Use Pause to stop movement and read values and reference dates.",
+  "Indicadores económicos. Usa Pausar para detener el movimiento y leer los valores y las fechas de referencia."
+ ],
+ [
+  "Área inválida.",
+  "Invalid area.",
+  "Área inválida."
+ ],
+ [
+  "Fechar escolha da segunda tela",
+  "Close second-screen selection",
+  "Cerrar selección de segunda pantalla"
+ ],
+ [
+  "Escolher uma área para abrir no segundo monitor",
+  "Choose an area to open on the second monitor",
+  "Elige un área para abrir en el segundo monitor"
+ ],
+ [
+  "Falha na sincronização automática:",
+  "Automatic synchronization failed:",
+  "Fallo de sincronización automática:"
+ ]
+]);
+
+catalogue.push(...[
+ [
+  "Primeiro mês: sem comparação",
+  "First month: no comparison",
+  "Primer mes: sin comparación"
+ ],
+ [
+  "Valor não informado",
+  "Amount not provided",
+  "Importe no informado"
+ ],
+ [
+  "Mês anterior fora do recorte",
+  "Previous month outside the selection",
+  "Mes anterior fuera de la selección"
+ ],
+ [
+  "Percentual não calculável — mês anterior igual a zero",
+  "Percentage unavailable — previous month equals zero",
+  "Porcentaje no calculable — mes anterior igual a cero"
+ ],
+ [
+  "Percentual fora do limite numérico",
+  "Percentage exceeds the numeric limit",
+  "Porcentaje fuera del límite numérico"
+ ],
+ [
+  "Diminuição",
+  "Decrease",
+  "Disminución"
+ ],
+ [
+  "· variação mensal",
+  "· monthly change",
+  "· variación mensual"
+ ],
+ [
+  "Variação percentual mensal — escala própria",
+  "Monthly percentage change — separate scale",
+  "Variación porcentual mensual — escala independiente"
+ ],
+ [
+  "APLICATIVO JÁ ABERTO COMO INSTALADO Você já está usando o Planejamento Financeiro na janela do aplicativo. Não é necessário instalar novamente. Para instalar em outro PC ou celular, abra o link do aplicativo no navegador daquele aparelho.",
+  "APP ALREADY OPEN AS INSTALLED You are already using Financial Planning in the app window. No need to install it again. To install on another computer or phone, open the app link in that device's browser.",
+  "APLICACIÓN YA ABIERTA COMO INSTALADA Ya estás usando Planificación financiera en la ventana de la aplicación. No es necesario instalarla de nuevo. Para instalarla en otro ordenador o móvil, abre el enlace en el navegador de ese dispositivo."
+ ],
+ [
+  "Abra a versão publicada em https://ricardodavila.github.io/planejamento-financeiro/ no Chrome para instalar.",
+  "Open the published version at https://ricardodavila.github.io/planejamento-financeiro/ in Chrome to install.",
+  "Abre la versión publicada en https://ricardodavila.github.io/planejamento-financeiro/ con Chrome para instalarla."
+ ],
+ [
+  "1. Abra o Planejamento Financeiro pelo Google Chrome, usando a versão publicada no GitHub Pages.",
+  "1. Open Financial Planning in Google Chrome using the published GitHub Pages version.",
+  "1. Abre Planificación financiera en Google Chrome usando la versión publicada en GitHub Pages."
+ ],
+ [
+  "2. Toque no menu ⋮ do Chrome.",
+  "2. Tap Chrome's ⋮ menu.",
+  "2. Pulsa el menú ⋮ de Chrome."
+ ],
+ [
+  "4. Confirme em “Instalar” ou “Adicionar”.",
+  "4. Confirm with Install or Add.",
+  "4. Confirma con Instalar o Añadir."
+ ],
+ [
+  "Se “Instalar aplicativo” aparecer diretamente, use essa opção.",
+  "If Install app appears directly, use that option.",
+  "Si aparece Instalar aplicación directamente, usa esa opción."
+ ],
+ [
+  "Depois disso, o ícone do Planejamento Financeiro ficará disponível na tela inicial do celular.",
+  "The Financial Planning icon will then appear on your phone's home screen.",
+  "Después, el icono de Planificación financiera aparecerá en la pantalla de inicio del móvil."
+ ],
+ [
+  "A instalação automática não está disponível nesta aba. Isso também pode acontecer se o aplicativo já estiver instalado neste perfil do Chrome.",
+  "Automatic installation is unavailable in this tab. The app may already be installed in this Chrome profile.",
+  "La instalación automática no está disponible en esta pestaña. Puede que la aplicación ya esté instalada en este perfil de Chrome."
+ ],
+ [
+  "1. Abra o Planejamento Financeiro pelo Google Chrome na versão publicada no GitHub Pages.",
+  "1. Open Financial Planning in Google Chrome using the version published on GitHub Pages.",
+  "1. Abre Planificación financiera en Google Chrome usando la versión publicada en GitHub Pages."
+ ],
+ [
+  "2. Abra o menu ⋮ do Chrome e procure Transmitir, salvar e compartilhar > Instalar página como app (o nome pode variar).",
+  "2. Open Chrome's ⋮ menu and look for Cast, save and share > Install page as app (wording may vary).",
+  "2. Abre el menú ⋮ de Chrome y busca Transmitir, guardar y compartir > Instalar página como aplicación (el nombre puede variar)."
+ ],
+ [
+  "3. Se houver a opção, confirme em Instalar. O ícone de instalação na barra de endereço também pode ser usado.",
+  "3. If available, confirm with Install. You can also use the install icon in the address bar.",
+  "3. Si está disponible, confirma con Instalar. También puedes usar el icono de instalación de la barra de direcciones."
+ ],
+ [
+  "Se aparecer Abrir no aplicativo, ele já está instalado. Para conferir os aplicativos deste perfil, digite chrome://apps na barra de endereço. Não é necessário desinstalar nem apagar dados.",
+  "If Open in app appears, it is already installed. To check this profile's apps, enter chrome://apps in the address bar. No need to uninstall or delete data.",
+  "Si aparece Abrir en la aplicación, ya está instalada. Para ver las aplicaciones del perfil, escribe chrome://apps en la barra de direcciones. No es necesario desinstalar ni borrar datos."
+ ],
+ [
+  "PWA: Service Worker não registrado:",
+  "PWA: Service Worker not registered:",
+  "PWA: Service Worker no registrado:"
+ ],
+ [
+  "Informe um e-mail válido.",
+  "Enter a valid email address.",
+  "Introduce un correo electrónico válido."
+ ],
+ [
+  "A confirmação da senha não confere.",
+  "Password confirmation does not match.",
+  "La confirmación de la contraseña no coincide."
+ ],
+ [
+  "Proteção ativada com sucesso. A partir da próxima abertura, a senha será solicitada.",
+  "Protection enabled. A password will be required the next time you open the app.",
+  "Protección activada. Se pedirá la contraseña en la próxima apertura."
+ ],
+ [
+  "Deseja sair e bloquear o Planejamento Financeiro? Os dados permanecem neste dispositivo e a conta da nuvem não será desconectada.",
+  "Sign out and lock Financial Planning? Data stays on this device and the cloud account will not be disconnected.",
+  "¿Salir y bloquear Planificación financiera? Los datos permanecen en el dispositivo y la cuenta de la nube no se desconectará."
+ ],
+ [
+  "A proteção ainda não foi configurada.",
+  "Protection has not been configured yet.",
+  "La protección aún no se ha configurado."
+ ],
+ [
+  "O e-mail informado não corresponde ao e-mail de recuperação cadastrado.",
+  "The email does not match the registered recovery email.",
+  "El correo no coincide con el correo de recuperación registrado."
+ ],
+ [
+  "O envio automático ainda não está configurado. Abra “Segurança e Acesso” após entrar no sistema e informe os dados do EmailJS.",
+  "Automatic sending is not configured yet. After signing in, open Security and Access and provide the EmailJS details.",
+  "El envío automático aún no está configurado. Tras entrar, abre Seguridad y acceso e introduce los datos de EmailJS."
+ ],
+ [
+  "Serviço de e-mail indisponível.",
+  "Email service unavailable.",
+  "Servicio de correo no disponible."
+ ],
+ [
+  "O e-mail de recuperação está vazio. Abra Segurança e Acesso e cadastre um e-mail válido.",
+  "The recovery email is empty. Open Security and Access and enter a valid email.",
+  "El correo de recuperación está vacío. Abre Seguridad y acceso e introduce un correo válido."
+ ],
+ [
+  "Código enviado para o e-mail cadastrado. Ele expira em 10 minutos.",
+  "Code sent to the registered email. It expires in 10 minutes.",
+  "Código enviado al correo registrado. Caduca en 10 minutos."
+ ],
+ [
+  "Não foi possível enviar o código. EmailJS:",
+  "Could not send the code. EmailJS:",
+  "No se pudo enviar el código. EmailJS:"
+ ],
+ [
+  "Verifique o serviço Gmail e o template.",
+  "Check the Gmail service and template.",
+  "Revisa el servicio Gmail y la plantilla."
+ ],
+ [
+  "Código expirado. Solicite um novo código.",
+  "Code expired. Request a new code.",
+  "Código caducado. Solicita uno nuevo."
+ ],
+ [
+  "Código de verificação inválido.",
+  "Invalid verification code.",
+  "Código de verificación inválido."
+ ],
+ [
+  "A confirmação da nova senha não confere.",
+  "New password confirmation does not match.",
+  "La confirmación de la nueva contraseña no coincide."
+ ],
+ [
+  "Senha redefinida. Digite a nova senha para entrar.",
+  "Password reset. Enter the new password to sign in.",
+  "Contraseña restablecida. Introduce la nueva contraseña para entrar."
+ ],
+ [
+  "Configurações de segurança salvas.",
+  "Security settings saved.",
+  "Configuración de seguridad guardada."
+ ],
+ [
+  "Sem rubrica (opcional)",
+  "No category (optional)",
+  "Sin categoría (opcional)"
+ ],
+ [
+  "Sem sub-item (opcional)",
+  "No subcategory (optional)",
+  "Sin subcategoría (opcional)"
+ ],
+ [
+  "Digite o nome da Nova Rubrica:",
+  "Enter the new category name:",
+  "Introduce el nombre de la nueva categoría:"
+ ],
+ [
+  "Preencha o nome da rubrica.",
+  "Enter a category name.",
+  "Introduce un nombre de categoría."
+ ],
+ [
+  "\" adicionada com sucesso!",
+  "\" added successfully!",
+  "» añadida correctamente."
+ ],
+ [
+  "Esta rubrica já existe.",
+  "This category already exists.",
+  "Esta categoría ya existe."
+ ],
+ [
+  "Digite o nome do Novo Sub-Item:",
+  "Enter the new subcategory name:",
+  "Introduce el nombre de la nueva subcategoría:"
+ ],
+ [
+  "Preencha o nome do subitem.",
+  "Enter a subcategory name.",
+  "Introduce un nombre de subcategoría."
+ ],
+ [
+  "\" adicionado com sucesso!",
+  "\" added successfully!",
+  "» añadida correctamente."
+ ],
+ [
+  "Este sub-item já existe.",
+  "This subcategory already exists.",
+  "Esta subcategoría ya existe."
+ ],
+ [
+  "Catálogo de referências inválido.",
+  "Invalid reference catalogue.",
+  "Catálogo de referencias inválido."
+ ],
+ [
+  "ID_Item inválido na linha",
+  "Invalid ID_Item on row",
+  "ID_Item inválido en la fila"
+ ],
+ [
+  "Referência ausente ou ambígua:",
+  "Missing or ambiguous reference:",
+  "Referencia ausente o ambigua:"
+ ],
+ [
+  "A biblioteca de Excel não foi carregada. Use o Backup JSON, que funciona sem essa biblioteca.",
+  "The Excel library has not loaded. Use JSON Backup, which works without it.",
+  "La biblioteca de Excel no se ha cargado. Usa la copia JSON, que funciona sin ella."
+ ],
+ [
+  "Biblioteca XLSX indisponível.",
+  "XLSX library unavailable.",
+  "Biblioteca XLSX no disponible."
+ ],
+ [
+  "A planilha de lançamentos está vazia.",
+  "The transactions spreadsheet is empty.",
+  "La hoja de movimientos está vacía."
+ ],
+ [
+  "Importação Excel concluída.",
+  "Excel import completed.",
+  "Importación de Excel completada."
+ ],
+ [
+  "lançamento(s) processado(s), sem duplicação de IDs.",
+  "transaction(s) processed, without duplicate IDs.",
+  "movimiento(s) procesados, sin duplicar identificadores."
+ ],
+ [
+  "ainda não realizado",
+  "not yet settled",
+  "aún no liquidado"
+ ],
+ [
+  "lançamento(s) | Último backup:",
+  "transaction(s) · Last backup:",
+  "movimiento(s) · Última copia de seguridad:"
+ ],
+ [
+  "Não foi possível recuperar: o ID já existe no banco.",
+  "Could not restore: the ID already exists in the database.",
+  "No se pudo recuperar: el identificador ya existe en la base."
+ ],
+ [
+  "RECUPERAÇÃO",
+  "RECOVERY",
+  "RECUPERACIÓN"
+ ],
+ [
+  "Lançamento recuperado:",
+  "Transaction restored:",
+  "Movimiento recuperado:"
+ ],
+ [
+  "Estrutura JSON inválida.",
+  "Invalid JSON structure.",
+  "Estructura JSON inválida."
+ ],
+ [
+  "Este arquivo não pertence ao Planejamento Financeiro.",
+  "This file does not belong to Financial Planning.",
+  "Este archivo no pertenece a Planificación financiera."
+ ],
+ [
+  "O backup não contém a tabela de transações.",
+  "The backup has no transactions table.",
+  "La copia no contiene la tabla de movimientos."
+ ],
+ [
+  "Lançamento na posição",
+  "Transaction at position",
+  "Movimiento en la posición"
+ ],
+ [
+  "Backup de segurança criado antes da restauração.",
+  "Safety backup created before restoration.",
+  "Copia de seguridad creada antes de restaurar."
+ ],
+ [
+  "Não foi possível concluir o backup de segurança. A restauração foi cancelada.",
+  "Could not complete the safety backup. Restoration was cancelled.",
+  "No se pudo completar la copia de seguridad. Se canceló la restauración."
+ ],
+ [
+  "Banco restaurado com sucesso:",
+  "Database restored successfully:",
+  "Base restaurada correctamente:"
+ ],
+ [
+  "lançamento(s), IDs preservados e sem duplicação.",
+  "transaction(s), preserving IDs without duplicates.",
+  "movimiento(s), con identificadores conservados y sin duplicados."
+ ],
+ [
+  "Biblioteca Supabase JS não foi carregada.",
+  "Supabase JS library has not loaded.",
+  "La biblioteca Supabase JS no se ha cargado."
+ ],
+ [
+  "Supabase não pôde ser inicializado:",
+  "Could not initialize Supabase:",
+  "No se pudo iniciar Supabase:"
+ ],
+ [
+  "Sessão Supabase sem access_token:",
+  "Supabase session has no access_token:",
+  "Sesión Supabase sin access_token:"
+ ],
+ [
+  "localStorage não devolveu a sessão recém-gravada.",
+  "localStorage did not return the session just saved.",
+  "localStorage no devolvió la sesión recién guardada."
+ ],
+ [
+  "Sessão gravada, mas sem access_token.",
+  "Session saved, but without access_token.",
+  "Sesión guardada, pero sin access_token."
+ ],
+ [
+  "Falha real ao gravar sessão manual:",
+  "Actual failure saving the manual session:",
+  "Fallo real al guardar la sesión manual:"
+ ],
+ [
+  "Não foi possível restaurar a sessão no cliente Supabase:",
+  "Could not restore the session in the Supabase client:",
+  "No se pudo restaurar la sesión en el cliente Supabase:"
+ ],
+ [
+  "Renovação da sessão Supabase:",
+  "Supabase session refresh:",
+  "Renovación de sesión Supabase:"
+ ],
+ [
+  "Sessão da nuvem inválida ou expirada. Entre novamente na conta de sincronização.",
+  "Invalid or expired cloud session. Sign in to synchronization again.",
+  "Sesión de la nube inválida o caducada. Vuelve a entrar en la sincronización."
+ ],
+ [
+  "Serviço de nuvem não foi carregado. Verifique a conexão com a internet.",
+  "Cloud service not loaded. Check your internet connection.",
+  "El servicio de nube no se ha cargado. Revisa tu conexión a Internet."
+ ],
+ [
+  "Senha da conta Supabase Auth alterada com sucesso. Você já pode usar essa senha em “Nuvem → Entrar / Sincronizar”.",
+  "Supabase Auth password changed successfully. You can use it in Cloud → Sign in / Synchronize.",
+  "Contraseña de Supabase Auth cambiada correctamente. Puedes usarla en Nube → Entrar / Sincronizar."
+ ],
+ [
+  "Não foi possível alterar a senha:",
+  "Could not change the password:",
+  "No se pudo cambiar la contraseña:"
+ ],
+ [
+  "O link foi validado. Escolha uma nova senha para a conta de sincronização.",
+  "Link validated. Choose a new synchronization password.",
+  "Enlace validado. Elige una nueva contraseña de sincronización."
+ ],
+ [
+  "Recuperação Supabase:",
+  "Supabase recovery:",
+  "Recuperación Supabase:"
+ ],
+ [
+  "Falha na sincronização",
+  "Synchronization failed",
+  "Fallo de sincronización"
+ ],
+ [
+  "Sincronização em andamento",
+  "Synchronization in progress",
+  "Sincronización en curso"
+ ],
+ [
+  "Sem conta de nuvem conectada neste dispositivo",
+  "No cloud account connected on this device",
+  "No hay cuenta de la nube conectada en este dispositivo"
+ ],
+ [
+  "Banco da nuvem inválido.",
+  "Invalid cloud database.",
+  "Base de la nube inválida."
+ ],
+ [
+  "Data de sincronização inválida.",
+  "Invalid synchronization date.",
+  "Fecha de sincronización inválida."
+ ],
+ [
+  "Conflito de sincronização: a nuvem foi alterada desde a última confirmação. Os dados locais foram preservados.",
+  "Synchronization conflict: cloud data changed since the last confirmation. Local data was preserved.",
+  "Conflicto de sincronización: la nube cambió desde la última confirmación. Se conservaron los datos locales."
+ ],
+ [
+  "Não foi possível confirmar o envio: Supabase",
+  "Could not confirm sending: Supabase",
+  "No se pudo confirmar el envío: Supabase"
+ ],
+ [
+  "O banco remoto mudou durante o envio. Nenhuma confirmação foi registrada. Seus dados locais foram preservados.",
+  "The remote database changed during sending. No confirmation was recorded. Local data was preserved.",
+  "La base remota cambió durante el envío. No se registró confirmación. Se conservaron los datos locales."
+ ],
+ [
+  "Dados enviados para a nuvem com sucesso.",
+  "Data sent to the cloud successfully.",
+  "Datos enviados a la nube correctamente."
+ ],
+ [
+  "Entre na conta da nuvem.",
+  "Sign in to your cloud account.",
+  "Entra en tu cuenta de la nube."
+ ],
+ [
+  "Banco da sua conta carregado neste dispositivo.",
+  "Your account's database loaded on this device.",
+  "Base de tu cuenta cargada en este dispositivo."
+ ],
+ [
+  "Falha na sincronização:",
+  "Synchronization failed:",
+  "Fallo de sincronización:"
+ ],
+ [
+  "Sincronização concluída. Os dados desta conta foram enviados para a nuvem.",
+  "Synchronization completed. This account's data was sent to the cloud.",
+  "Sincronización completada. Los datos de esta cuenta se enviaron a la nube."
+ ],
+ [
+  "Sincronização concluída. Os dados desta conta foram carregados neste dispositivo.",
+  "Synchronization completed. This account's data was loaded on this device.",
+  "Sincronización completada. Los datos de esta cuenta se cargaron en este dispositivo."
+ ],
+ [
+  "Não foi possível sincronizar com a nuvem:",
+  "Could not synchronize with the cloud:",
+  "No se pudo sincronizar con la nube:"
+ ],
+ [
+  "Biblioteca Supabase não foi carregada. Atualize a página e tente novamente.",
+  "Supabase library has not loaded. Refresh the page and retry.",
+  "La biblioteca Supabase no se ha cargado. Actualiza la página e inténtalo de nuevo."
+ ],
+ [
+  "Informe o e-mail e a senha da conta de sincronização.",
+  "Enter your synchronization email and password.",
+  "Introduce el correo y la contraseña de sincronización."
+ ],
+ [
+  "O Supabase aceitou o login, mas não devolveu uma sessão. Verifique se a conta está confirmada.",
+  "Supabase accepted the login but returned no session. Check that the account is confirmed.",
+  "Supabase aceptó el acceso, pero no devolvió sesión. Comprueba que la cuenta esté confirmada."
+ ],
+ [
+  "O Supabase aceitou o login, mas a sessão não pôde ser confirmada no armazenamento local deste site.",
+  "Supabase accepted the login but the session could not be confirmed in this site's local storage.",
+  "Supabase aceptó el acceso, pero no se pudo confirmar la sesión en el almacenamiento local del sitio."
+ ],
+ [
+  "Conta conectada. Verificando a sincronização financeira.",
+  "Account connected. Checking financial synchronization.",
+  "Cuenta conectada. Comprobando la sincronización financiera."
+ ],
+ [
+  "Conta conectada e sincronização financeira concluída.",
+  "Account connected and financial synchronization completed.",
+  "Cuenta conectada y sincronización financiera completada."
+ ],
+ [
+  "A conta foi conectada com sucesso neste PC, mas a sincronização encontrou um erro:",
+  "The account connected successfully on this PC, but synchronization failed:",
+  "La cuenta se conectó correctamente en este ordenador, pero falló la sincronización:"
+ ],
+ [
+  "Falha no login da nuvem:",
+  "Cloud login failed:",
+  "Fallo de acceso a la nube:"
+ ],
+ [
+  "Não foi possível conectar à nuvem neste PC:",
+  "Could not connect to the cloud on this PC:",
+  "No se pudo conectar a la nube en este ordenador:"
+ ],
+ [
+  "A senha da conta de nuvem deve ter pelo menos 6 caracteres.",
+  "The cloud password must have at least 6 characters.",
+  "La contraseña de la nube debe tener al menos 6 caracteres."
+ ],
+ [
+  "Não foi possível criar a conta:",
+  "Could not create the account:",
+  "No se pudo crear la cuenta:"
+ ],
+ [
+  "Conta criada. Verifique o e-mail de confirmação da Supabase e depois entre por este botão.",
+  "Account created. Check Supabase's confirmation email, then sign in using this button.",
+  "Cuenta creada. Revisa el correo de confirmación de Supabase y entra con este botón."
+ ],
+ [
+  "Conta de nuvem criada e banco sincronizado.",
+  "Cloud account created and database synchronized.",
+  "Cuenta de la nube creada y base sincronizada."
+ ],
+ [
+  "Desconectado da nuvem. Os dados locais permanecem neste dispositivo.",
+  "Disconnected from the cloud. Local data stays on this device.",
+  "Desconectado de la nube. Los datos locales permanecen en el dispositivo."
+ ],
+ [
+  "Dispositivo conectado à nuvem. Use “Sincronizar agora” para confirmar o estado atual.",
+  "Device connected to the cloud. Use Synchronize now to confirm the current status.",
+  "Dispositivo conectado a la nube. Usa Sincronizar ahora para confirmar el estado actual."
+ ],
+ [
+  "Nenhuma conta de nuvem conectada neste dispositivo.",
+  "No cloud account connected on this device.",
+  "No hay cuenta de la nube conectada en este dispositivo."
+ ],
+ [
+  "Diagnóstico: este PC ainda não possui uma sessão Supabase gravada. Armazenamento:",
+  "Diagnostic: this PC has no saved Supabase session yet. Storage:",
+  "Diagnóstico: este ordenador aún no tiene una sesión Supabase guardada. Almacenamiento:"
+ ],
+ [
+  "Diagnóstico OK: conta, sessão e tabela acessíveis neste PC.",
+  "Diagnostic OK: account, session and table accessible on this PC.",
+  "Diagnóstico correcto: cuenta, sesión y tabla accesibles en este ordenador."
+ ],
+ [
+  "Diagnóstico:",
+  "Diagnostic:",
+  "Diagnóstico:"
+ ],
+ [
+  "Diagnóstico da nuvem:",
+  "Cloud diagnostic:",
+  "Diagnóstico de la nube:"
+ ],
+ [
+  "SINCRONIZAÇÃO",
+  "SYNCHRONIZATION",
+  "SINCRONIZACIÓN"
+ ],
+ [
+  "Não foi possível sincronizar o banco de dados. Os dados atuais foram mantidos.",
+  "Could not synchronize the database. Current data was kept.",
+  "No se pudo sincronizar la base. Se conservaron los datos actuales."
+ ],
+ [
+  "MÊS VIGENTE:",
+  "CURRENT MONTH:",
+  "MES ACTUAL:"
+ ],
+ [
+  "Atenção: há vencidos",
+  "Warning: overdue items",
+  "Atención: hay vencidos"
+ ],
+ [
+  "em valores vencidos.",
+  "in overdue amounts.",
+  "en importes vencidos."
+ ],
+ [
+  "em valores a vencer.",
+  "in upcoming amounts.",
+  "en importes por vencer."
+ ],
+ [
+  "Permita janelas pop-up para gerar o relatório.",
+  "Allow pop-up windows to generate the report.",
+  "Permite ventanas emergentes para generar el informe."
+ ],
+ [
+  "o período de",
+  "the period from",
+  "el período de"
+ ],
+ [
+  ", há",
+  ", there is",
+  ", hay"
+ ],
+ [
+  "em despesas a vencer e",
+  "in upcoming expenses and",
+  "en gastos por vencer y"
+ ],
+ [
+  "em valores vencidos. Os indicadores consideram somente os lançamentos de despesas selecionados.",
+  "in overdue amounts. Indicators include only the selected expense transactions.",
+  "en importes vencidos. Los indicadores incluyen solo los gastos seleccionados."
+ ],
+ [
+  "e há",
+  "and there is",
+  "y hay"
+ ],
+ [
+  "em despesas a vencer. Os valores vencidos identificados somam",
+  "in upcoming expenses. Identified overdue amounts total",
+  "en gastos por vencer. Los importes vencidos identificados suman"
+ ],
+ [
+  "Não há lançamentos marcados como vencidos nos dados considerados.",
+  "No transactions are marked overdue in the data considered.",
+  "No hay movimientos marcados como vencidos en los datos considerados."
+ ],
+ [
+  "Composição mensal: despesas pagas x a vencer",
+  "Monthly breakdown: paid vs upcoming expenses",
+  "Composición mensual: gastos pagados frente a gastos por vencer"
+ ],
+ [
+  "Composição mensal: receitas previstas x recebidas",
+  "Monthly breakdown: planned vs received income",
+  "Composición mensual: ingresos previstos frente a cobrados"
+ ],
+ [
+  "Nenhuma despesa pendente no mês selecionado.",
+  "No pending expenses in the selected month.",
+  "No hay gastos pendientes en el mes seleccionado."
+ ],
+ [
+  "Nenhum registro de despesa paga identificado no mês selecionado.",
+  "No paid expense record found in the selected month.",
+  "No se identificó ningún gasto pagado en el mes seleccionado."
+ ],
+ [
+  "Visão consolidada do fluxo financeiro •",
+  "Consolidated cash flow view •",
+  "Visión consolidada del flujo financiero •"
+ ],
+ [
+  "Relatório Gerencial de Planejamento Financeiro |",
+  "Financial Planning Management Report",
+  "Informe de gestión de planificación financiera"
+ ],
+ [
+  "documento(s) com vencimento em",
+  "document(s) due on",
+  "documento(s) con vencimiento el"
+ ],
+ [
+  "documento(s) com vencimento anterior a",
+  "document(s) due before",
+  "documento(s) con vencimiento anterior al"
+ ],
+ [
+  "Editar lançamento",
+  "Edit transaction",
+  "Editar movimiento"
+ ],
+ [
+  "O valor do lançamento não pode ser negativo. Informe zero ou um valor maior que zero.",
+  "The transaction amount cannot be negative. Enter zero or a positive amount.",
+  "El importe del movimiento no puede ser negativo. Introduce cero o un importe positivo."
+ ],
+ [
+  "ALTERAÇÃO",
+  "CHANGE",
+  "CAMBIO"
+ ],
+ [
+  "INCLUSÃO",
+  "ADDITION",
+  "ALTA"
+ ],
+ [
+  "Lançamento alterado",
+  "Transaction changed",
+  "Movimiento modificado"
+ ],
+ [
+  "Excluir o lançamento ID",
+  "Delete transaction ID",
+  "Eliminar movimiento con identificador"
+ ],
+ [
+  "EXCLUSÃO",
+  "DELETION",
+  "ELIMINACIÓN"
+ ],
+ [
+  "Enviado para a lixeira:",
+  "Sent to Trash:",
+  "Enviado a la papelera:"
+ ],
+ [
+  "Período: todos os lançamentos",
+  "Period: all transactions",
+  "Período: todos los movimientos"
+ ],
+ [
+  "Período: a partir de",
+  "Period: from",
+  "Período: desde"
+ ],
+ [
+  "Período: até",
+  "Period: through",
+  "Período: hasta"
+ ],
+ [
+  "· Descrição:",
+  "· Description:",
+  "· Descripción:"
+ ],
+ [
+  "· Valor mínimo:",
+  "· Minimum amount:",
+  "· Importe mínimo:"
+ ],
+ [
+  "· Valor máximo:",
+  "· Maximum amount:",
+  "· Importe máximo:"
+ ],
+ [
+  "Relatório de",
+  "Report of",
+  "Informe de"
+ ],
+ [
+  "A data inicial não pode ser posterior à data final.",
+  "The start date cannot be after the end date.",
+  "La fecha inicial no puede ser posterior a la final."
+ ],
+ [
+  "Não foi possível carregar os gráficos.",
+  "Could not load charts.",
+  "No se pudieron cargar los gráficos."
+ ],
+ [
+  "Valor total no período",
+  "Total amount in the period",
+  "Importe total del período"
+ ],
+ [
+  "(todo o período)",
+  "(entire period)",
+  "(todo el período)"
+ ],
+ [
+  "Total de Receitas X Total de Despesas",
+  "Total income vs total expenses",
+  "Total de ingresos frente al total de gastos"
+ ],
+ [
+  "Participação dos totais — Receitas e Despesas",
+  "Share of totals — income and expenses",
+  "Participación de los totales — ingresos y gastos"
+ ],
+ [
+  "Variação em valor:",
+  "Change in amount:",
+  "Variación en importe:"
+ ],
+ [
+  "Atenção: base anterior próxima de zero (",
+  "Warning: previous baseline close to zero (",
+  "Atención: base anterior cercana a cero ("
+ ],
+ [
+  "para",
+  "to",
+  "a"
+ ],
+ [
+  "· Variação em valor:",
+  "· Change in amount:",
+  "· Variación en importe:"
+ ],
+ [
+  "n/d (selecione dois meses para comparar)",
+  "N/A (select two months to compare)",
+  "N/D (selecciona dos meses para comparar)"
+ ],
+ [
+  "Comparativo Mês Anterior X Mês Atual — Receitas e Despesas",
+  "Previous vs current month — Income and expenses",
+  "Mes anterior frente al actual — Ingresos y gastos"
+ ],
+ [
+  "Comparativo Mês Anterior X Mês Atual —",
+  "Previous vs current month —",
+  "Mes anterior frente al actual —"
+ ],
+ [
+  "Dia do mês",
+  "Day of month",
+  "Día del mes"
+ ],
+ [
+  "Despesas X Receitas — Balanço Mensal",
+  "Expenses vs income — Monthly balance",
+  "Gastos frente a ingresos — Balance mensual"
+ ],
+ [
+  "(mês anterior)",
+  "(previous month)",
+  "(mes anterior)"
+ ],
+ [
+  "(mês atual)",
+  "(current month)",
+  "(mes actual)"
+ ],
+ [
+  "Total de Despesas —",
+  "Total expenses —",
+  "Total de gastos —"
+ ],
+ [
+  "Variação absoluta:",
+  "Absolute change:",
+  "Variación absoluta:"
+ ],
+ [
+  "· Não há valor no mês anterior para calcular o percentual.",
+  "· No previous-month amount to calculate the percentage.",
+  "· No hay importe del mes anterior para calcular el porcentaje."
+ ],
+ [
+  "· Atenção: percentual calculado sobre base anterior próxima de zero.",
+  "· Warning: percentage calculated from a previous baseline close to zero.",
+  "· Atención: porcentaje calculado sobre una base anterior cercana a cero."
+ ],
+ [
+  "todo o período",
+  "entire period",
+  "todo el período"
+ ],
+ [
+  "Nenhum lançamento corresponde aos filtros selecionados.",
+  "No transactions match the selected filters.",
+  "Ningún movimiento coincide con los filtros seleccionados."
+ ],
+ [
+  "O resultado previsto do período é zero (",
+  "The planned period result is zero (",
+  "El resultado previsto del período es cero ("
+ ],
+ [
+  "O resultado previsto do período é positivo em",
+  "The planned period result is positive by",
+  "El resultado previsto del período es positivo en"
+ ],
+ [
+  "O resultado previsto do período é negativo em",
+  "The planned period result is negative by",
+  "El resultado previsto del período es negativo en"
+ ],
+ [
+  "em despesas marcadas como vencidas.",
+  "in expenses marked overdue.",
+  "en gastos marcados como vencidos."
+ ],
+ [
+  "Data não identificada",
+  "Unidentified date",
+  "Fecha no identificada"
+ ],
+ [
+  "Últimos 12 meses — despesas",
+  "Last 12 months — expenses",
+  "Últimos 12 meses — gastos"
+ ],
+ [
+  "Últimos 12 meses — receitas",
+  "Last 12 months — income",
+  "Últimos 12 meses — ingresos"
+ ],
+ [
+  "lançamentos datados.",
+  "dated transactions.",
+  "movimientos con fecha."
+ ],
+ [
+  "Pendências de cadastro (",
+  "Registration issues (",
+  "Pendientes de registro ("
+ ],
+ [
+  "em despesas pendentes antes da próxima entrada de",
+  "in pending expenses before the next income of",
+  "en gastos pendientes antes del próximo ingreso de"
+ ],
+ [
+  "Não há receita futura em aberto identificada no recorte. Despesas pendentes com vencimento a partir do corte:",
+  "No future outstanding income found in the selection. Pending expenses due on or after the reference date:",
+  "No se identificaron ingresos futuros pendientes en la selección. Gastos pendientes con vencimiento desde la fecha de referencia:"
+ ],
+ [
+  "datados com valor e",
+  "dated with an amount and",
+  "con fecha e importe y"
+ ],
+ [
+  "cada, em",
+  "each, in",
+  "cada uno, en"
+ ],
+ [
+  "Nome para esta visão:",
+  "Name for this view:",
+  "Nombre de esta vista:"
+ ],
+ [
+  "O nome da visão está vazio. Preencha um nome para salvar.",
+  "The view name is empty. Enter a name to save.",
+  "El nombre de la vista está vacío. Introduce un nombre para guardar."
+ ],
+ [
+  "Não foi possível salvar a visão neste navegador.",
+  "Could not save the view in this browser.",
+  "No se pudo guardar la vista en este navegador."
+ ],
+ [
+  "Selecione uma visão salva para excluir.",
+  "Select a saved view to delete.",
+  "Selecciona una vista guardada para eliminarla."
+ ],
+ [
+  "Essa visão não está mais disponível.",
+  "This view is no longer available.",
+  "Esta vista ya no está disponible."
+ ],
+ [
+  "Excluir a visão “",
+  "Delete view “",
+  "Eliminar la vista «"
+ ],
+ [
+  "”? Apenas os filtros salvos serão removidos. Os lançamentos serão preservados.",
+  "”? Only saved filters will be removed. Transactions will be kept.",
+  "»? Solo se eliminarán los filtros guardados. Los movimientos se conservarán."
+ ],
+ [
+  "Visão excluída. Os filtros atuais foram mantidos.",
+  "View deleted. Current filters were kept.",
+  "Vista eliminada. Se conservaron los filtros actuales."
+ ],
+ [
+  "Não foi possível excluir a visão neste navegador.",
+  "Could not delete the view in this browser.",
+  "No se pudo eliminar la vista en este navegador."
+ ],
+ [
+  "Prev de Receita (R$)",
+  "Planned income (R$)",
+  "Ingresos previstos (R$)"
+ ],
+ [
+  "Receitas recebidas por vencimento",
+  "Income received by due date",
+  "Ingresos cobrados por vencimiento"
+ ],
+ [
+  "Receitas recebidas por rubrica",
+  "Income received by category",
+  "Ingresos cobrados por categoría"
+ ],
+ [
+  "Despesas cadastradas por vencimento",
+  "Recorded expenses by due date",
+  "Gastos registrados por vencimiento"
+ ],
+ [
+  "Despesas cadastradas por rubrica",
+  "Recorded expenses by category",
+  "Gastos registrados por categoría"
+ ],
+ [
+  "Total de Despesas (R$)",
+  "Total expenses (R$)",
+  "Total de gastos (R$)"
+ ],
+ [
+  "Evolução Diária: Prev. de Receita vs Despesas",
+  "Daily trend: planned income vs expenses",
+  "Evolución diaria: ingresos previstos frente a gastos"
+ ],
+ [
+  "Resumo Consolidado: Prev. de Receita vs Despesas",
+  "Consolidated summary: planned income vs expenses",
+  "Resumen consolidado: ingresos previstos frente a gastos"
+ ],
+ [
+  "Distribuição Geral por Rubricas",
+  "Overall category breakdown",
+  "Distribución general por categorías"
+ ],
+ [
+  "Sem dados",
+  "No data",
+  "Sin datos"
+ ],
+ [
+  "Sincronização automática:",
+  "Automatic synchronization:",
+  "Sincronización automática:"
+ ],
+ [
+  "A proteção do Planejamento Financeiro ainda não foi configurada.",
+  "Financial Planning protection has not been configured yet.",
+  "La protección de Planificación financiera aún no se ha configurado."
+ ],
+ [
+  "Perfil alterado para Administrador com sucesso.",
+  "Role changed to Administrator successfully.",
+  "Perfil cambiado a administrador correctamente."
+ ],
+ [
+  "Senha incorreta ou não foi possível validar a senha do Planejamento Financeiro.",
+  "Incorrect password or unable to validate the Financial Planning password.",
+  "Contraseña incorrecta o no se pudo validar la contraseña de Planificación financiera."
+ ],
+ [
+  "Para salvar o perfil Administrador, primeiro confirme a senha do Planejamento Financeiro.",
+  "Confirm the Financial Planning password before saving the Administrator role.",
+  "Confirma la contraseña de Planificación financiera antes de guardar el perfil de administrador."
+ ],
+ [
+  "Não foi possível guardar as configurações neste navegador.",
+  "Could not save settings in this browser.",
+  "No se pudo guardar la configuración en este navegador."
+ ],
+ [
+  "Notificações",
+  "Notifications",
+  "Notificaciones"
+ ],
+ [
+  "Fechar notificação",
+  "Close notification",
+  "Cerrar notificación"
+ ],
+ [
+  "Modo de teste local: a sincronização Supabase pode exigir HTTPS e sessão autenticada.",
+  "Local test mode: Supabase synchronization may require HTTPS and an authenticated session.",
+  "Modo de prueba local: la sincronización Supabase puede requerir HTTPS y sesión autenticada."
+ ],
+ [
+  "segundos antes de solicitar outro código.",
+  "seconds before requesting another code.",
+  "segundos antes de solicitar otro código."
+ ],
+ [
+  "Manual do Usuário",
+  "User Manual",
+  "Manual del usuario"
+ ],
+ [
+  "Manual do Administrador",
+  "Administrator Manual",
+  "Manual del administrador"
+ ],
+ [
+  "Guia de Instalação dos Serviços Online",
+  "Online Services Installation Guide",
+  "Guía de instalación de servicios en línea"
+ ],
+ [
+  "Manuais e documentação",
+  "Manuals and documentation",
+  "Manuales y documentación"
+ ],
+ [
+  "O serviço de autenticação não está disponível.",
+  "Authentication service unavailable.",
+  "El servicio de autenticación no está disponible."
+ ],
+ [
+  "Entre na conta de sincronização do Supabase antes de abrir os manuais.",
+  "Sign in to the Supabase synchronization account before opening manuals.",
+  "Entra en la cuenta de sincronización Supabase antes de abrir los manuales."
+ ],
+ [
+  "A sessão não foi validada pelo Supabase. Entre novamente em Nuvem.",
+  "Supabase did not validate the session. Sign in to Cloud again.",
+  "Supabase no validó la sesión. Vuelve a entrar en Nube."
+ ],
+ [
+  "A conta da sessão não corresponde à conta validada. Entre novamente.",
+  "The session account does not match the validated account. Sign in again.",
+  "La cuenta de la sesión no coincide con la cuenta validada. Vuelve a entrar."
+ ],
+ [
+  "Não foi possível verificar a autorização administrativa.",
+  "Could not check administrator authorization.",
+  "No se pudo comprobar la autorización administrativa."
+ ],
+ [
+  "Documento não reconhecido.",
+  "Unrecognized document.",
+  "Documento no reconocido."
+ ],
+ [
+  "Acesso restrito: esta conta não está autorizada como administradora.",
+  "Restricted access: this account is not authorized as administrator.",
+  "Acceso restringido: esta cuenta no está autorizada como administradora."
+ ],
+ [
+  "O Supabase não autorizou o acesso ao documento (",
+  "Supabase did not authorize document access (",
+  "Supabase no autorizó el acceso al documento ("
+ ],
+ [
+  "O Supabase não retornou o link seguro do documento.",
+  "Supabase did not return a secure document link.",
+  "Supabase no devolvió el enlace seguro del documento."
+ ],
+ [
+  "O link retornado não pertence ao serviço de documentos.",
+  "The returned link does not belong to the document service.",
+  "El enlace devuelto no pertenece al servicio de documentos."
+ ],
+ [
+  "Não foi possível carregar o leitor dos manuais. Verifique a conexão e tente novamente.",
+  "Could not load the manuals reader. Check the connection and retry.",
+  "No se pudo cargar el lector de manuales. Revisa la conexión y reintenta."
+ ],
+ [
+  "A conta ou o perfil mudou. Faça uma nova pesquisa.",
+  "The account or role changed. Run a new search.",
+  "La cuenta o el perfil cambió. Realiza una nueva búsqueda."
+ ],
+ [
+  "Trechos encontrados. Confira o contexto no manual antes de seguir a orientação.",
+  "Excerpts found. Check the manual's context before following the guidance.",
+  "Se encontraron extractos. Revisa el contexto del manual antes de seguir las indicaciones."
+ ],
+ [
+  "Não encontrei uma orientação suficientemente relacionada nos manuais disponíveis para sua conta. Tente outras palavras ou consulte o manual.",
+  "No sufficiently relevant guidance found in the manuals available for your account. Try other words or consult the manual.",
+  "No se encontró orientación suficientemente relacionada en los manuales disponibles para tu cuenta. Prueba otras palabras o consulta el manual."
+ ],
+ [
+  "— página",
+  "— page",
+  "— página"
+ ],
+ [
+  "Não foi possível pesquisar os manuais. Tente novamente.",
+  "Could not search manuals. Try again.",
+  "No se pudieron buscar los manuales. Inténtalo de nuevo."
+ ],
+ [
+  "Use Baixar PDF para abrir no leitor do aparelho.",
+  "Use Download PDF to open it in the device's reader.",
+  "Usa Descargar PDF para abrirlo en el lector del dispositivo."
+ ],
+ [
+  "Acesso restrito: este documento está disponível somente no perfil Administrador.",
+  "Restricted access: this document is available only to the Administrator role.",
+  "Acceso restringido: este documento está disponible solo para el perfil de administrador."
+ ],
+ [
+  "Não foi possível abrir o visualizador de documentos.",
+  "Could not open the document viewer.",
+  "No se pudo abrir el visor de documentos."
+ ],
+ [
+  "Não foi possível abrir o documento. Verifique a sessão e as permissões no Supabase.",
+  "Could not open the document. Check the Supabase session and permissions.",
+  "No se pudo abrir el documento. Revisa la sesión y los permisos de Supabase."
+ ],
+ [
+  "Versão:",
+  "Version:",
+  "Versión:"
+ ],
+ [
+  "A consulta de versões ainda não foi publicada no site.",
+  "Version checking has not been published on the website yet.",
+  "La consulta de versiones aún no se ha publicado en el sitio."
+ ],
+ [
+  "Esta é uma cópia de teste ou local. Ela não será substituída pelo aplicativo publicado.",
+  "This is a local or test copy. The published app will not replace it.",
+  "Esta es una copia local o de prueba. La aplicación publicada no la sustituirá."
+ ],
+ [
+  "Há uma nova versão disponível. Salve qualquer edição em andamento antes de atualizar.",
+  "A new version is available. Save any work in progress before updating.",
+  "Hay una nueva versión disponible. Guarda los cambios pendientes antes de actualizar."
+ ],
+ [
+  "A atualização demorou. Tente novamente.",
+  "The update timed out. Try again.",
+  "La actualización tardó demasiado. Inténtalo de nuevo."
+ ],
+ [
+  "Não foi possível baixar a atualização.",
+  "Could not download the update.",
+  "No se pudo descargar la actualización."
+ ],
+ [
+  "A versão instalada ainda não permite atualização imediata. Feche todas as janelas do aplicativo e abra novamente.",
+  "This installed version does not support immediate updates yet. Close all app windows and reopen.",
+  "Esta versión instalada aún no permite actualizar de inmediato. Cierra todas las ventanas de la aplicación y vuelve a abrirlas."
+ ],
+ [
+  "Nenhuma alteração foi feita no aplicativo.",
+  "No changes were made to the app.",
+  "No se realizaron cambios en la aplicación."
+ ],
+ [
+  "lançamento(s) usam este nome.",
+  "transaction(s) use this name.",
+  "movimiento(s) usan este nombre."
+ ],
+ [
+  "Este cadastro está em uso em lançamentos ou na Lixeira. Use Renomear ou Unificar.",
+  "This reference item is used in transactions or Trash. Use Rename or Merge.",
+  "Este registro de referencia se usa en movimientos o en la papelera. Usa Renombrar o Unificar."
+ ],
+ [
+  "Escolha um nome diferente do atual.",
+  "Choose a name different from the current one.",
+  "Elige un nombre distinto del actual."
+ ],
+ [
+  "Esse nome já existe. Use Unificar.",
+  "That name already exists. Use Merge.",
+  "Ese nombre ya existe. Usa Unificar."
+ ],
+ [
+  "lançamento(s) atualizado(s).",
+  "transaction(s) updated.",
+  "movimiento(s) actualizados."
+ ],
+ [
+  "Cadastro excluído.",
+  "Reference item deleted.",
+  "Registro de referencia eliminado."
+ ],
+ [
+  "Selecione o cadastro de destino.",
+  "Select the destination reference item.",
+  "Selecciona el registro de referencia de destino."
+ ],
+ [
+  "” com “",
+  "” with “",
+  "» con «"
+ ],
+ [
+  "”, preservando os lançamentos?",
+  "”, preserving transactions?",
+  "», conservando los movimientos?"
+ ],
+ [
+  "Cópia manual",
+  "Manual copy",
+  "Copia manual"
+ ],
+ [
+  "Link copiado. Abra-o no navegador do celular.",
+  "Link copied. Open it in your phone's browser.",
+  "Enlace copiado. Ábrelo en el navegador del móvil."
+ ],
+ [
+  "O link está selecionado. Use Ctrl+C no computador ou toque e segure para copiar no celular.",
+  "The link is selected. Use Ctrl+C on your computer or touch and hold to copy on your phone.",
+  "El enlace está seleccionado. Usa Ctrl+C en el ordenador o mantén pulsado para copiar en el móvil."
+ ],
+ [
+  "Abra no navegador do celular para instalar.",
+  "Open in your phone's browser to install.",
+  "Abre en el navegador del móvil para instalar."
+ ],
+ [
+  "Instalação aceita. Confira o ícone no celular.",
+  "Installation accepted. Check the icon on your phone.",
+  "Instalación aceptada. Comprueba el icono en el móvil."
+ ],
+ [
+  "Instalação cancelada. Você pode tentar novamente pelo menu do navegador.",
+  "Installation cancelled. You can retry from the browser menu.",
+  "Instalación cancelada. Puedes reintentar desde el menú del navegador."
+ ],
+ [
+  "Se o aplicativo já estiver instalado, abra pelo ícone. Caso contrário, use o menu do Chrome ou Compartilhar no Safari conforme as instruções acima.",
+  "If already installed, open the app using its icon. Otherwise use Chrome's menu or Safari's Share option as instructed above.",
+  "Si ya está instalada, abre la aplicación con su icono. Si no, usa el menú de Chrome o Compartir de Safari según las instrucciones anteriores."
+ ],
+ [
+  "Poupança (depósitos desde 04/05/2012)",
+  "Savings (deposits since 2012-05-04)",
+  "Ahorro (depósitos desde 2012-05-04)"
+ ],
+ [
+  "% no período mensal",
+  "% for the monthly period",
+  "% en el período mensual"
+ ],
+ [
+  "Dólar comercial venda",
+  "Commercial USD selling rate",
+  "Dólar comercial venta"
+ ],
+ [
+  "BCB indisponível",
+  "BCB unavailable",
+  "BCB no disponible"
+ ],
+ [
+  "Resposta inválida",
+  "Invalid response",
+  "Respuesta inválida"
+ ],
+ [
+  ": indisponível",
+  ": unavailable",
+  ": no disponible"
+ ],
+ [
+  "Não foi possível validar a senha. Tente novamente.",
+  "Could not validate the password. Try again.",
+  "No se pudo validar la contraseña. Inténtalo de nuevo."
+ ],
+ [
+  "Selecione um mês válido.",
+  "Select a valid month.",
+  "Selecciona un mes válido."
+ ],
+ [
+  "Informe as datas inicial e final válidas.",
+  "Enter valid start and end dates.",
+  "Introduce fechas inicial y final válidas."
+ ],
+ [
+  "em despesas previstas por vencimento. No mês anterior:",
+  "in planned expenses by due date. Previous month:",
+  "en gastos previstos por vencimiento. Mes anterior:"
+ ],
+ [
+  "Considerando todos os lançamentos em aberto em",
+  "Considering all outstanding transactions in",
+  "Considerando todos los movimientos pendientes en"
+ ],
+ [
+  "(sem base para percentual).",
+  "(no baseline for percentage).",
+  "(sin base para el porcentaje)."
+ ],
+ [
+  ": aumento de",
+  ": increase of",
+  ": aumento de"
+ ],
+ [
+  "Despesas previstas por vencimento: •",
+  "Planned expenses by due date: •",
+  "Gastos previstos por vencimiento: •"
+ ],
+ [
+  "Nenhuma despesa no período.",
+  "No expenses in the period.",
+  "No hay gastos en el período."
+ ],
+ [
+  "Maiores categorias de despesas previstas em",
+  "Largest planned expense categories in",
+  "Mayores categorías de gastos previstos en"
+ ],
+ [
+  ": receitas previstas de",
+  ": planned income of",
+  ": ingresos previstos de"
+ ],
+ [
+  "estão recebidas. Critério: período do vencimento.",
+  "have been received. Based on due-date period.",
+  "están cobrados. Según el período de vencimiento."
+ ],
+ [
+  ": despesas previstas de",
+  ": planned expenses of",
+  ": gastos previstos de"
+ ],
+ [
+  "estão pagas e",
+  "are paid and",
+  "están pagados y"
+ ],
+ [
+  "Resumo de",
+  "Summary of",
+  "Resumen de"
+ ],
+ [
+  "Não encontrei a categoria “",
+  "Could not find category “",
+  "No se encontró la categoría «"
+ ],
+ [
+  "” nas despesas deste mês ou do mês anterior. Categorias disponíveis:",
+  "” in this or the previous month's expenses. Available categories:",
+  "» en los gastos de este mes ni del anterior. Categorías disponibles:"
+ ],
+ [
+  "lançamentos semelhantes:",
+  "similar transactions:",
+  "movimientos similares:"
+ ],
+ [
+  "Possíveis duplicados em",
+  "Possible duplicates in",
+  "Posibles duplicados en"
+ ],
+ [
+  "Não encontrei possíveis duplicados em",
+  "No possible duplicates found in",
+  "No se encontraron posibles duplicados en"
+ ],
+ [
+  "pelo critério de mesmo tipo, vencimento, valor, descrição, categoria e subitem. Registros sem descrição não foram comparados. Nenhum registro foi alterado.",
+  "using the same type, due date, amount, description, category and subcategory. Records without a description were not compared. No record was changed.",
+  "según el mismo tipo, vencimiento, importe, descripción, categoría y subcategoría. No se compararon registros sin descripción. No se modificó ningún registro."
+ ],
+ [
+  "Receitas a receber em",
+  "Unreceived income in",
+  "Ingresos por cobrar en"
+ ],
+ [
+  "Despesas em aberto em",
+  "Unpaid expenses in",
+  "Gastos pendientes en"
+ ],
+ [
+  "lançamento(s). Critério: período do vencimento.",
+  "transaction(s). Based on due-date period.",
+  "movimiento(s). Según el período de vencimiento."
+ ],
+ [
+  "No período anterior de igual duração",
+  "In the previous period of equal duration",
+  "En el período anterior de igual duración"
+ ],
+ [
+  "Considerando os lançamentos em aberto no intervalo selecionado",
+  "Considering outstanding transactions in the selected range",
+  "Considerando los movimientos pendientes del intervalo seleccionado"
+ ],
+ [
+  "intervalo do vencimento",
+  "due-date range",
+  "intervalo de vencimiento"
+ ],
+ [
+  "pagamentos fora do intervalo",
+  "payments outside the range",
+  "pagos fuera del intervalo"
+ ],
+ [
+  "Entre novamente na sua conta da nuvem.",
+  "Sign in to your cloud account again.",
+  "Vuelve a entrar en tu cuenta de la nube."
+ ],
+ [
+  "Informe uma pergunta de até 600 caracteres.",
+  "Enter a question of up to 600 characters.",
+  "Introduce una pregunta de hasta 600 caracteres."
+ ],
+ [
+  "Período de análise por vencimento (inclusive):",
+  "Analysis period by due date (inclusive):",
+  "Período de análisis por vencimiento (incluido):"
+ ],
+ [
+  "Para consultar um intervalo no Gemini, reduza a pergunta para até 300 caracteres.",
+  "To query a date range with Gemini, shorten your question to 300 characters.",
+  "Para consultar un intervalo con Gemini, reduce tu pregunta a 300 caracteres."
+ ],
+ [
+  "O servidor retornou uma resposta inválida. O assistente local continua disponível.",
+  "The server returned an invalid response. The local assistant remains available.",
+  "El servidor devolvió una respuesta inválida. El asistente local sigue disponible."
+ ],
+ [
+  "Sua sessão expirou. Entre novamente na sua conta da nuvem.",
+  "Your session expired. Sign in to your cloud account again.",
+  "Tu sesión caducó. Vuelve a entrar en tu cuenta de la nube."
+ ],
+ [
+  "Acesso não autorizado. Confira se está na conta da Luciane e no endereço de testes publicado.",
+  "Unauthorized access. Check that you are using Luciane's account and the published test URL.",
+  "Acceso no autorizado. Comprueba que usas la cuenta de Luciane y la dirección de pruebas publicada."
+ ],
+ [
+  "A função assistente-financeiro não foi encontrada no Supabase.",
+  "The assistente-financeiro function was not found in Supabase.",
+  "No se encontró la función assistente-financeiro en Supabase."
+ ],
+ [
+  "Limite de consultas atingido. Aguarde e use o assistente local.",
+  "Query limit reached. Wait and use the local assistant.",
+  "Se alcanzó el límite de consultas. Espera y usa el asistente local."
+ ],
+ [
+  "O Gemini está desativado ou indisponível. O assistente local continua disponível.",
+  "Gemini is disabled or unavailable. The local assistant remains available.",
+  "Gemini está desactivado o no disponible. El asistente local sigue disponible."
+ ],
+ [
+  "Não foi possível consultar o Gemini. Use o assistente local.",
+  "Could not query Gemini. Use the local assistant.",
+  "No se pudo consultar Gemini. Usa el asistente local."
+ ],
+ [
+  "O Gemini não retornou uma resposta. Reformule a pergunta.",
+  "Gemini returned no answer. Rephrase the question.",
+  "Gemini no devolvió respuesta. Reformula la pregunta."
+ ],
+ [
+  "Atualize a página para carregar a nova sessão do assistente.",
+  "Refresh the page to load the assistant's new session.",
+  "Actualiza la página para cargar la nueva sesión del asistente."
+ ],
+ [
+  "Entre na sua conta em Nuvem para usar o Gemini.",
+  "Sign in to Cloud to use Gemini.",
+  "Entra en tu cuenta en Nube para usar Gemini."
+ ],
+ [
+  "Ver lançamentos do período",
+  "View period transactions",
+  "Ver movimientos del período"
+ ],
+ [
+  "Ver lançamentos do período anterior",
+  "View previous-period transactions",
+  "Ver movimientos del período anterior"
+ ],
+ [
+  "· Critério: data de vencimento.",
+  "· Based on due date.",
+  "· Por fecha de vencimiento."
+ ],
+ [
+  "A conta conectada mudou. Faça uma nova consulta.",
+  "The connected account changed. Make a new query.",
+  "La cuenta conectada cambió. Realiza una nueva consulta."
+ ],
+ [
+  "Recolher filtros avançados",
+  "Collapse advanced filters",
+  "Contraer filtros avanzados"
+ ],
+ [
+  "lançamento(s) exibido(s)",
+  "transaction(s) displayed",
+  "movimiento(s) mostrados"
+ ],
+ [
+  "Sem receitas para os filtros selecionados.",
+  "No income matches the selected filters.",
+  "No hay ingresos para los filtros seleccionados."
+ ],
+ [
+  "Sem despesas para os filtros selecionados.",
+  "No expenses match the selected filters.",
+  "No hay gastos para los filtros seleccionados."
+ ],
+ [
+  "Período personalizado",
+  "Custom period",
+  "Período personalizado"
+ ],
+ [
+  "Excluir lançamento",
+  "Delete transaction",
+  "Eliminar movimiento"
+ ],
+ [
+  "Saudação e perfil",
+  "Greeting and role",
+  "Saludo y perfil"
+ ],
+ [
+  "Buscar lançamento",
+  "Search transactions",
+  "Buscar movimientos"
+ ],
+ [
+  "Buscar descrição, rubrica ou subitem",
+  "Search description, category or subcategory",
+  "Buscar descripción, categoría o subcategoría"
+ ],
+ [
+  "Períodos rápidos",
+  "Quick periods",
+  "Períodos rápidos"
+ ],
+ [
+  "Navegação do celular",
+  "Mobile navigation",
+  "Navegación del móvil"
+ ],
+ [
+  "Sem sub-item",
+  "No subcategory",
+  "Sin subcategoría"
+ ],
+ [
+  "Busca de rúbrica",
+  "Category search",
+  "Búsqueda de categoría"
+ ],
+ [
+  "Busca de sub-item",
+  "Subcategory search",
+  "Búsqueda de subcategoría"
+ ],
+ [
+  "Sem filtros",
+  "No filters",
+  "Sin filtros"
+ ],
+ [
+  "Saídas¹",
+  "Outflows¹",
+  "Salidas¹"
+ ],
+ [
+  "Saldo do grupo",
+  "Group balance",
+  "Saldo del grupo"
+ ],
+ [
+  "Acumulado por vencimento até o corte",
+  "Cumulative by due date through reference date",
+  "Acumulado por vencimiento hasta la referencia"
+ ],
+ [
+  "Retirada das receitas ainda não recebidas até o corte",
+  "Remove income not yet received through reference date",
+  "Retirada de ingresos aún no cobrados hasta la referencia"
+ ],
+ [
+  "Reversão das saídas ainda não liquidadas até o corte",
+  "Reverse outflows not yet settled through reference date",
+  "Reversión de salidas aún no liquidadas hasta la referencia"
+ ],
+ [
+  "Ajuste por datas efetivas e lançamentos liquidados fora da base de vencimentos",
+  "Adjust actual dates and settlements outside the due-date basis",
+  "Ajuste por fechas reales y liquidaciones fuera de la base de vencimientos"
+ ],
+ [
+  "Base realizada cadastrada usada na projeção",
+  "Recorded settled basis used for projection",
+  "Base liquidada registrada usada en la proyección"
+ ],
+ [
+  "Entradas em aberto na janela de 30 dias",
+  "Outstanding inflows in the 30-day window",
+  "Entradas pendientes en la ventana de 30 días"
+ ],
+ [
+  "Saídas em aberto na janela de 30 dias",
+  "Outstanding outflows in the 30-day window",
+  "Salidas pendientes en la ventana de 30 días"
+ ],
+ [
+  "Saldo final calculado em",
+  "Calculated closing balance as of",
+  "Saldo final calculado al"
+ ],
+ [
+  "Menor saldo na projeção de 30 dias:",
+  "Lowest balance in the 30-day projection:",
+  "Saldo mínimo en la proyección de 30 días:"
+ ],
+ [
+  ", primeira ocorrência em",
+  ", first occurrence on",
+  ", primera aparición el"
+ ],
+ [
+  "A necessidade efetiva de recursos depende do caixa disponível conciliado.",
+  "Actual funding needs depend on reconciled available cash.",
+  "Las necesidades reales de fondos dependen de la caja disponible conciliada."
+ ],
+ [
+  "Próxima entrada cadastrada:",
+  "Next recorded income:",
+  "Próximo ingreso registrado:"
+ ],
+ [
+  "dia(s) após o corte). Confirmar os recebimentos e revisar os compromissos anteriores a essa entrada.",
+  "day(s) after reference date). Confirm receipts and review commitments before that income.",
+  "día(s) después de la referencia). Confirma los cobros y revisa los compromisos anteriores a ese ingreso."
+ ],
+ [
+  "Não há entrada em aberto cadastrada na janela de 30 dias.",
+  "No outstanding income recorded in the 30-day window.",
+  "No hay ingresos pendientes registrados en la ventana de 30 días."
+ ],
+ [
+  "Receitas ainda não recebidas no período:",
+  "Income not yet received in the period:",
+  "Ingresos aún no cobrados en el período:"
+ ],
+ [
+  "% das receitas cadastradas). Atrasados em todo o histórico filtrado: a receber",
+  "% of recorded income). Overdue across the filtered history: receivables",
+  "% de los ingresos registrados). Atrasados de todo el historial filtrado: por cobrar"
+ ],
+ [
+  "cada, com vencimento em",
+  "each, due on",
+  "cada uno, con vencimiento el"
+ ],
+ [
+  "Sem receita",
+  "No income",
+  "Sin ingresos"
+ ],
+ [
+  "Maior saída individual",
+  "Largest individual outflow",
+  "Mayor salida individual"
+ ],
+ [
+  "Sem saída",
+  "No outflow",
+  "Sin salidas"
+ ],
+ [
+  "Maior saída diária",
+  "Largest daily outflow",
+  "Mayor salida diaria"
+ ],
+ [
+  "Corte de referência:",
+  "Reference date:",
+  "Fecha de referencia:"
+ ],
+ [
+  "Saldo inicial por vencimento",
+  "Opening balance by due date",
+  "Saldo inicial por vencimiento"
+ ],
+ [
+  "antes de",
+  "before",
+  "antes de"
+ ],
+ [
+  "Resultado líquido previsto do período",
+  "Planned net period result",
+  "Resultado neto previsto del período"
+ ],
+ [
+  "Primeira ocorrência do menor saldo:",
+  "First occurrence of lowest balance:",
+  "Primera aparición del saldo mínimo:"
+ ],
+ [
+  "Total de saídas¹",
+  "Total outflows¹",
+  "Total de salidas¹"
+ ],
+ [
+  "Maior lançamento de saída",
+  "Largest outflow transaction",
+  "Mayor movimiento de salida"
+ ],
+ [
+  "Sem lançamento",
+  "No transaction",
+  "Sin movimientos"
+ ],
+ [
+  "Dia mais crítico",
+  "Most critical day",
+  "Día más crítico"
+ ],
+ [
+  "Sem movimentação",
+  "No activity",
+  "Sin movimientos"
+ ],
+ [
+  "Total cadastrado inclui os liquidados. Resultado do período não inclui saldo inicial. Corte do realizado:",
+  "Recorded totals include settled items. Period results exclude opening balance. Settlement reference date:",
+  "El total registrado incluye lo liquidado. El resultado del período excluye el saldo inicial. Fecha de referencia de lo liquidado:"
+ ],
+ [
+  "o saldo projetado fica negativo em",
+  "the projected balance becomes negative on",
+  "el saldo proyectado pasa a negativo el"
+ ],
+ [
+  "Saldo acumulado negativo a partir de",
+  "Cumulative balance negative starting on",
+  "Saldo acumulado negativo desde"
+ ],
+ [
+  "Sem saldo acumulado ou projetado negativo.",
+  "No negative cumulative or projected balance.",
+  "No hay saldo acumulado ni proyectado negativo."
+ ],
+ [
+  "lançamento(s) sem vencimento entram nos totais, mas não no fluxo por data.",
+  "transaction(s) without a due date count toward totals, but not dated cash flow.",
+  "movimiento(s) sin vencimiento se incluyen en los totales, pero no en el flujo por fecha."
+ ],
+ [
+  "Maior saída do período:",
+  "Largest outflow in the period:",
+  "Mayor salida del período:"
+ ],
+ [
+  "% do tipo",
+  "% of the type",
+  "% del tipo"
+ ],
+ [
+  "Sem saldo projetado negativo nesta janela.",
+  "No negative projected balance in this window.",
+  "No hay saldo proyectado negativo en esta ventana."
+ ],
+ [
+  "Fechamento da semana / janela",
+  "Week / window closing balance",
+  "Saldo al cierre de la semana / ventana"
+ ],
+ [
+  "Saldo projetado nos próximos 30 dias",
+  "Projected balance for the next 30 days",
+  "Saldo proyectado de los próximos 30 días"
+ ],
+ [
+  "A previsão mantém os filtros de conteúdo, independentemente do mês selecionado. Parte das movimentações realizadas cadastradas até hoje e acrescenta os compromissos em aberto dos próximos 30 dias. Atrasados não são reagendados: em todos os períodos, a pagar",
+  "The forecast keeps content filters, regardless of selected month. It starts from recorded settlements through today and adds outstanding commitments for the next 30 days. Overdue items are not rescheduled: across all periods, payable",
+  "La previsión conserva los filtros de contenido, independientemente del mes seleccionado. Parte de las liquidaciones registradas hasta hoy y añade compromisos pendientes de los próximos 30 días. Los atrasados no se reprograman: en todos los períodos, por pagar"
+ ],
+ [
+  "Emissão",
+  "Issue date",
+  "Emisión"
+ ],
+ [
+  "Previsão 30 dias",
+  "30-day forecast",
+  "Previsión a 30 días"
+ ],
+ [
+  "Conciliação das bases",
+  "Basis reconciliation",
+  "Conciliación de bases"
+ ],
+ [
+  "Retirada de receitas não recebidas",
+  "Remove unreceived income",
+  "Retirada de ingresos no cobrados"
+ ],
+ [
+  "Reversão de saídas não liquidadas",
+  "Reverse unsettled outflows",
+  "Reversión de salidas no liquidadas"
+ ],
+ [
+  "Ajuste por datas efetivas",
+  "Adjust actual dates",
+  "Ajuste por fechas reales"
+ ],
+ [
+  "Projeção diária",
+  "Daily projection",
+  "Proyección diaria"
+ ],
+ [
+  "Abrir descrições e filtrar esta rubrica. Use Limpar filtro para retornar.",
+  "Open descriptions and filter this category. Use Clear filter to return.",
+  "Abre las descripciones y filtra esta categoría. Usa Borrar filtro para volver."
+ ],
+ [
+  "cartão selecionado",
+  "selected card",
+  "tarjeta seleccionada"
+ ],
+ [
+  "Unidade do ranking",
+  "Ranking unit",
+  "Unidad de clasificación"
+ ],
+ [
+  "Movimentos do mapa",
+  "Heat map activity",
+  "Movimientos del mapa"
+ ],
+ [
+  "Fechar composição",
+  "Close breakdown",
+  "Cerrar composición"
+ ],
+ [
+  "Pago com",
+  "Paid with",
+  "Pagado con"
+ ],
+ [
+  "dia(s) de atraso",
+  "day(s) late",
+  "día(s) de retraso"
+ ],
+ [
+  "Próxima entrada prevista:",
+  "Next expected income:",
+  "Próximo ingreso previsto:"
+ ],
+ [
+  "grupo(s) de possível duplicidade: conferir, sem excluir automaticamente.",
+  "possible duplicate group(s): review, without automatic deletion.",
+  "grupo(s) de posible duplicidad: revisar, sin eliminar automáticamente."
+ ],
+ [
+  "Próximos 30 dias (",
+  "Next 30 days (",
+  "Próximos 30 días ("
+ ],
+ [
+  "), com filtros de conteúdo, independentemente do mês selecionado.",
+  "), with content filters, regardless of selected month.",
+  "), con filtros de contenido, independientemente del mes seleccionado."
+ ],
+ [
+  "O cadastro mudou. Refaça a operação.",
+  "Records changed. Repeat the operation.",
+  "Los registros cambiaron. Repite la operación."
+ ],
+ [
+  "Selecione lançamentos em aberto.",
+  "Select outstanding transactions.",
+  "Selecciona movimientos pendientes."
+ ],
+ [
+  "Informe uma data válida.",
+  "Enter a valid date.",
+  "Introduce una fecha válida."
+ ],
+ [
+  "Baixa registrada. Desfazer disponível.",
+  "Settlement recorded. Undo is available.",
+  "Liquidación registrada. Se puede deshacer."
+ ],
+ [
+  "Selecione os lançamentos.",
+  "Select transactions.",
+  "Selecciona movimientos."
+ ],
+ [
+  "Selecione até 200 lançamentos para preservar a recuperação na Lixeira.",
+  "Select up to 200 transactions to preserve recovery from Trash.",
+  "Selecciona hasta 200 movimientos para conservar la recuperación desde la papelera."
+ ],
+ [
+  "lançamento(s) para a Lixeira?",
+  "transaction(s) to Trash?",
+  "movimiento(s) a la papelera?"
+ ],
+ [
+  "Exclusão múltipla:",
+  "Bulk deletion:",
+  "Eliminación múltiple:"
+ ],
+ [
+  "Há IDs já restaurados. Use a Lixeira para conferir.",
+  "Some IDs were already restored. Check Trash.",
+  "Ya se restauraron algunos identificadores. Revisa la papelera."
+ ],
+ [
+  "A lixeira mudou. Confira a restauração individual.",
+  "Trash changed. Check individual restoration.",
+  "La papelera cambió. Revisa la restauración individual."
+ ],
+ [
+  "Os registros mudaram. Desfazer não sobrescreveu alterações posteriores.",
+  "Records changed. Undo did not overwrite later changes.",
+  "Los registros cambiaron. Deshacer no sobrescribió cambios posteriores."
+ ],
+ [
+  "Reversão da baixa",
+  "Undo settlement",
+  "Reversión de liquidación"
+ ],
+ [
+  "Informe de 0 a 365 dias.",
+  "Enter 0 to 365 days.",
+  "Introduce de 0 a 365 días."
+ ],
+ [
+  "Simulação isolada · cadastros preservados. Saldo final:",
+  "Isolated simulation · original records preserved. Closing balance:",
+  "Simulación aislada · registros conservados. Saldo final:"
+ ],
+ [
+  "Confirmar geração de",
+  "Confirm generation of",
+  "Confirmar generación de"
+ ],
+ [
+  "Os cadastros mudaram. Atualize a prévia.",
+  "Records changed. Refresh the preview.",
+  "Los registros cambiaron. Actualiza la vista previa."
+ ],
+ [
+  "lançamento(s) recorrente(s)?",
+  "recurring transaction(s)?",
+  "movimiento(s) recurrentes?"
+ ],
+ [
+  "RECORRÊNCIA",
+  "RECURRENCE",
+  "RECURRENCIA"
+ ],
+ [
+  "Descrição exata",
+  "Exact description",
+  "Descripción exacta"
+ ],
+ [
+  "Permita a nova aba para o relatório.",
+  "Allow a new tab for the report.",
+  "Permite una nueva pestaña para el informe."
+ ],
+ [
+  "Filtrar lançamentos",
+  "Filter transactions",
+  "Filtrar movimientos"
+ ],
+ [
+  "Mais opções e visões salvas",
+  "More options and saved views",
+  "Más opciones y vistas guardadas"
+ ],
+ [
+  "tabela de notas",
+  "notes table",
+  "tabla de notas"
+ ],
+ [
+  "função de gravação das notas",
+  "notes saving function",
+  "función de guardado de notas"
+ ],
+ [
+  "função de identificação da conta",
+  "account identification function",
+  "función de identificación de cuenta"
+ ],
+ [
+  "política de isolamento",
+  "isolation policy",
+  "política de aislamiento"
+ ],
+ [
+  "outra dependência do servidor",
+  "another server dependency",
+  "otra dependencia del servidor"
+ ],
+ [
+  "Falha na sincronização das notas.",
+  "Notes synchronization failed.",
+  "Falló la sincronización de notas."
+ ],
+ [
+  "A sessão das notas não corresponde à conta conectada.",
+  "The notes session does not match the connected account.",
+  "La sesión de notas no coincide con la cuenta conectada."
+ ],
+ [
+  "Resposta inválida do serviço de notas.",
+  "Invalid response from the notes service.",
+  "Respuesta inválida del servicio de notas."
+ ],
+ [
+  "Falha no serviço de notas.",
+  "Notes service failed.",
+  "Fallo del servicio de notas."
+ ],
+ [
+  "Campos de notas inválidos.",
+  "Invalid note fields.",
+  "Campos de notas inválidos."
+ ],
+ [
+  "Ordenação de notas inválida.",
+  "Invalid note order.",
+  "Orden de notas inválido."
+ ],
+ [
+  "Página de notas inválida.",
+  "Invalid notes page.",
+  "Página de notas inválida."
+ ],
+ [
+  "Título ou texto excedeu o limite da nota.",
+  "The note title or text exceeds its limit.",
+  "El título o texto de la nota supera el límite."
+ ],
+ [
+  "Resposta inválida do servidor de notas.",
+  "Invalid response from the notes server.",
+  "Respuesta inválida del servidor de notas."
+ ],
+ [
+  "Este navegador não disponibilizou o armazenamento de notas.",
+  "This browser did not provide notes storage.",
+  "Este navegador no proporcionó almacenamiento de notas."
+ ],
+ [
+  "Feche outras abas antigas para atualizar o armazenamento de notas.",
+  "Close older tabs to update notes storage.",
+  "Cierra las pestañas antiguas para actualizar el almacenamiento de notas."
+ ],
+ [
+  "Identidade inválida no armazenamento de notas.",
+  "Invalid identity in notes storage.",
+  "Identidad inválida en el almacenamiento de notas."
+ ],
+ [
+  "Não foi possível gravar as notas neste dispositivo.",
+  "Could not save notes on this device.",
+  "No se pudieron guardar las notas en este dispositivo."
+ ],
+ [
+  "A identificação da conta ainda não terminou.",
+  "Account identification is not finished yet.",
+  "La identificación de la cuenta aún no ha terminado."
+ ],
+ [
+  "Conta inválida.",
+  "Invalid account.",
+  "Cuenta inválida."
+ ],
+ [
+  "Identificador inválido da nota.",
+  "Invalid note identifier.",
+  "Identificador de nota inválido."
+ ],
+ [
+  "O servidor não confirmou a versão enviada da nota.",
+  "The server did not confirm the submitted note version.",
+  "El servidor no confirmó la versión enviada de la nota."
+ ],
+ [
+  "Lista de notas inválida.",
+  "Invalid notes list.",
+  "Lista de notas inválida."
+ ],
+ [
+  "Confirmação inválida do servidor de notas.",
+  "Invalid notes server confirmation.",
+  "Confirmación inválida del servidor de notas."
+ ],
+ [
+  "Formato de notas antigas inválido.",
+  "Invalid legacy notes format.",
+  "Formato de notas antiguas inválido."
+ ],
+ [
+  "Migração não confirmada no dispositivo.",
+  "Migration not confirmed on this device.",
+  "Migración no confirmada en este dispositivo."
+ ],
+ [
+  "Resumo do painel",
+  "Panel summary",
+  "Resumen del panel"
+ ],
+ [
+  "domínio personalizado",
+  "custom domain",
+  "dominio personalizado"
+ ],
+ [
+  "Código:",
+  "Code:",
+  "Código:"
+ ],
+ [
+  "· Lembrete para conferir",
+  "· Reminder to review",
+  "· Recordatorio para revisar"
+ ],
+ [
+  "· Não enviada à nuvem",
+  "· Not sent to cloud",
+  "· No enviada a la nube"
+ ],
+ [
+  "Notas locais deste navegador. Não são transferidas automaticamente ao entrar.",
+  "Local notes in this browser. Not automatically transferred when signing in.",
+  "Notas locales de este navegador. No se transfieren automáticamente al entrar."
+ ],
+ [
+  "Notas da conta conectada. Ao sair, pendências locais são mantidas para evitar perda.",
+  "Notes for the connected account. Pending local changes are kept on sign-out to avoid loss.",
+  "Notas de la cuenta conectada. Al salir, se conservan cambios locales pendientes para evitar pérdidas."
+ ],
+ [
+  "Âmbar",
+  "Amber",
+  "Ámbar"
+ ],
+ [
+  "Conflito preservado em uma nova cópia.",
+  "Conflict preserved in a new copy.",
+  "Conflicto conservado en una nueva copia."
+ ],
+ [
+  "Não foi possível salvar. Mantenha esta janela aberta ou exporte o texto.",
+  "Could not save. Keep this window open or export the text.",
+  "No se pudo guardar. Mantén la ventana abierta o exporta el texto."
+ ],
+ [
+  "Rascunho recuperado da memória desta aba. Exporte ou tente salvar novamente.",
+  "Draft recovered from this tab's memory. Export it or try saving again.",
+  "Borrador recuperado de la memoria de esta pestaña. Expórtalo o reintenta guardarlo."
+ ],
+ [
+  "Salvamento local neste navegador. Entre na nuvem para sincronizar.",
+  "Local saving in this browser. Sign in to Cloud to synchronize.",
+  "Guardado local en este navegador. Entra en Nube para sincronizar."
+ ],
+ [
+  "Offline. As alterações salvas serão enviadas quando houver conexão.",
+  "Offline. Saved changes will be sent when a connection is available.",
+  "Sin conexión. Los cambios guardados se enviarán cuando haya conexión."
+ ],
+ [
+  "notas antigas. Importar para",
+  "legacy notes. Import into",
+  "notas antiguas. Importar a"
+ ],
+ [
+  "? Cancelar mantém o original.",
+  "? Cancel keeps the original.",
+  "? Cancelar conserva el original."
+ ],
+ [
+  "O texto excederia o limite da nota.",
+  "The text would exceed the note limit.",
+  "El texto superaría el límite de la nota."
+ ],
+ [
+  "Excluir esta nota? A exclusão será sincronizada.",
+  "Delete this note? Deletion will be synchronized.",
+  "¿Eliminar esta nota? La eliminación se sincronizará."
+ ],
+ [
+  "Mostre o painel gerencial para inserir um resumo dos valores visíveis.",
+  "Show the management panel to insert a summary of visible values.",
+  "Muestra el panel de gestión para insertar un resumen de los valores visibles."
+ ],
+ [
+  "Resumo do painel —",
+  "Panel summary —",
+  "Resumen del panel —"
+ ],
+ [
+  "Registrado em",
+  "Recorded on",
+  "Registrado el"
+ ],
+ [
+  "Discricionárias",
+  "Discretionary",
+  "Discrecionales"
+ ],
+ [
+  "Visão de planejamento financeiro pessoal ·",
+  "Personal financial planning view ·",
+  "Visión de planificación financiera personal ·"
+ ],
+ [
+  "Ano do Dashboard",
+  "Dashboard year",
+  "Año del panel"
+ ],
+ [
+  "Lançamentos cadastrados por vencimento:",
+  "Transactions registered by due date:",
+  "Movimientos registrados por vencimiento:"
+ ],
+ [
+  "Sem lançamentos no período",
+  "No transactions in the period",
+  "No hay movimientos en el período"
+ ],
+ [
+  "Há recebíveis vencidos no período",
+  "Overdue receivables in the period",
+  "Hay cobros vencidos en el período"
+ ],
+ [
+  "Resultado positivo no período",
+  "Positive period result",
+  "Resultado positivo en el período"
+ ],
+ [
+  "Valores recebidos no período",
+  "Amounts received in the period",
+  "Importes cobrados en el período"
+ ],
+ [
+  "da renda recebida",
+  "of income received",
+  "de los ingresos cobrados"
+ ],
+ [
+  "Sem renda recebida para comparação",
+  "No income received for comparison",
+  "Sin ingresos cobrados para comparar"
+ ],
+ [
+  "Recebido − pago − aportes em investimentos",
+  "Received − paid − investment contributions",
+  "Cobrado − pagado − aportaciones de inversión"
+ ],
+ [
+  "Saúde Financeira Pessoal — Indicadores",
+  "Personal Financial Health — Indicators",
+  "Salud financiera personal — Indicadores"
+ ],
+ [
+  "Sem receitas recebidas",
+  "No income received",
+  "Sin ingresos cobrados"
+ ],
+ [
+  "Informe a reserva disponível na seção 08",
+  "Enter the available reserve in section 08",
+  "Indica la reserva disponible en la sección 08"
+ ],
+ [
+  "Composição da Despesa Paga",
+  "Paid expense breakdown",
+  "Composición del gasto pagado"
+ ],
+ [
+  "Recebíveis pendentes:",
+  "Outstanding receivables:",
+  "Cobros pendientes:"
+ ],
+ [
+  "Concentração de Renda por Cliente",
+  "Income concentration by client",
+  "Concentración de ingresos por cliente"
+ ],
+ [
+  "Recebíveis pendentes por fonte",
+  "Outstanding receivables by source",
+  "Cobros pendientes por fuente"
+ ],
+ [
+  "Resultado acumulado do recorte",
+  "Cumulative selection result",
+  "Resultado acumulado de la selección"
+ ],
+ [
+  "Custo financeiro no período",
+  "Financial cost in the period",
+  "Coste financiero del período"
+ ],
+ [
+  "Média mensal",
+  "Monthly average",
+  "Media mensual"
+ ],
+ [
+  "meses entre o primeiro e o último registro",
+  "months between the first and last record",
+  "meses entre el primer y el último registro"
+ ],
+ [
+  "Condições das dívidas",
+  "Debt terms",
+  "Condiciones de las deudas"
+ ],
+ [
+  "Não informadas",
+  "Not provided",
+  "No informadas"
+ ],
+ [
+  "Reserva de Emergência — Progresso",
+  "Emergency reserve — Progress",
+  "Reserva de emergencia — Progreso"
+ ],
+ [
+  "Gastos essenciais/mês",
+  "Essential expenses/month",
+  "Gastos esenciales/mes"
+ ],
+ [
+  "Média dos meses entre o primeiro e o último registro",
+  "Average of months between the first and last record",
+  "Media de los meses entre el primer y el último registro"
+ ],
+ [
+  "Situação atual",
+  "Current status",
+  "Situación actual"
+ ],
+ [
+  "Cobertura não calculada",
+  "Coverage not calculated",
+  "Cobertura no calculada"
+ ],
+ [
+  "Reserva não informada.",
+  "Reserve not provided.",
+  "Reserva no informada."
+ ],
+ [
+  "para a meta.",
+  "toward the target.",
+  "para la meta."
+ ],
+ [
+  "Não há base de gastos essenciais para estimar a meta.",
+  "No essential expense baseline to estimate the target.",
+  "No hay base de gastos esenciales para estimar la meta."
+ ],
+ [
+  "Gastos essenciais pagos no período",
+  "Essential expenses paid in the period",
+  "Gastos esenciales pagados en el período"
+ ],
+ [
+  "Participação dos juros e encargos nas despesas",
+  "Share of interest and charges in expenses",
+  "Participación de intereses y cargos en los gastos"
+ ],
+ [
+  "🎯 Fontes de renda",
+  "🎯 Income sources",
+  "🎯 Fuentes de ingresos"
+ ],
+ [
+  "Maior concentração:",
+  "Largest concentration:",
+  "Mayor concentración:"
+ ],
+ [
+  "Oportunidades informadas na seção 08",
+  "Opportunities provided in section 08",
+  "Oportunidades indicadas en la sección 08"
+ ],
+ [
+  "Este indicador depende de informações ou cenários informados. Não corresponde a um conjunto de lançamentos confirmados. Consulte os campos e a metodologia desta seção.",
+  "This indicator depends on provided information or scenarios. It is not a set of confirmed transactions. See this section's fields and methodology.",
+  "Este indicador depende de información o escenarios indicados. No corresponde a un conjunto de movimientos confirmados. Consulta los campos y la metodología de esta sección."
+ ],
+ [
+  "lançamento(s) correspondentes ao indicador, respeitando o período e os filtros desta página.",
+  "transaction(s) contributing to this indicator, respecting this page's period and filters.",
+  "movimiento(s) que componen este indicador, respetando el período y los filtros de esta página."
+ ],
+ [
+  "lançamento(s) na composição. Valores exibidos em R$.",
+  "transaction(s) in the breakdown. Amounts shown in R$.",
+  "movimiento(s) en la composición. Importes en R$."
+ ],
+ [
+  "Permita a janela de impressão para salvar o PDF ou imprimir.",
+  "Allow the print window to save a PDF or print.",
+  "Permite la ventana de impresión para guardar un PDF o imprimir."
+ ],
+ [
+  "Selecione Salvar como PDF no diálogo de impressão.",
+  "Select Save as PDF in the print dialog.",
+  "Selecciona Guardar como PDF en el diálogo de impresión."
+ ],
+ [
+  "Relatório para impressão.",
+  "Report for printing.",
+  "Informe para impresión."
+ ],
+ [
+  "Permita a abertura da janela de impressão para salvar em PDF.",
+  "Allow the print window to save as PDF.",
+  "Permite abrir la ventana de impresión para guardar en PDF."
+ ],
+ [
+  "Gráfico financeiro",
+  "Financial chart",
+  "Gráfico financiero"
+ ],
+ [
+  "Informe valores de economia válidos e não negativos.",
+  "Enter valid, nonnegative savings amounts.",
+  "Introduce importes de ahorro válidos y no negativos."
+ ],
+ [
+  "Informe um aporte não negativo, prazo inteiro de 1 a 600 meses e taxa entre 0% e 10% ao mês. Valores que ultrapassam a precisão monetária não são calculados.",
+  "Enter a nonnegative contribution, an integer term from 1 to 600 months and a monthly rate between 0% and 10%. Values exceeding monetary precision are not calculated.",
+  "Introduce una aportación no negativa, un plazo entero de 1 a 600 meses y una tasa mensual entre 0% y 10%. No se calculan valores que excedan la precisión monetaria."
+ ],
+ [
+  "Informe um intervalo válido de até 10 anos.",
+  "Enter a valid date range of up to 10 years.",
+  "Introduce un intervalo válido de hasta 10 años."
+ ],
+ [
+  "Limpar filtros da tabela",
+  "Clear table filters",
+  "Borrar filtros de la tabla"
+ ],
+ [
+  "Data de pagamento / recebimento (DT PG)",
+  "Payment / receipt date",
+  "Fecha de pago / cobro"
+ ],
+ [
+  "Autofiltrar por",
+  "Autofilter by",
+  "Autofiltrar por"
+ ],
+ [
+  "Permita a abertura da impressão para salvar o PDF ou imprimir.",
+  "Allow printing to save a PDF or print.",
+  "Permite abrir la impresión para guardar el PDF o imprimir."
+ ],
+ [
+  "Selecione Salvar como PDF no destino da impressão.",
+  "Select Save as PDF as the print destination.",
+  "Selecciona Guardar como PDF como destino de impresión."
+ ],
+ [
+  "Relatório dos lançamentos do recorte atual.",
+  "Report of transactions in the current selection.",
+  "Informe de movimientos de la selección actual."
+ ],
+ [
+  "lançamentos. Por vencimento em",
+  "transactions. By due date in",
+  "movimientos. Por vencimiento en"
+ ],
+ [
+  "Todos os lançamentos do período e pessoa selecionados.",
+  "All transactions for the selected period and person type.",
+  "Todos los movimientos del período y tipo de persona seleccionados."
+ ],
+ [
+  "Selecione um intervalo válido dentro do mesmo ano.",
+  "Select a valid range within the same year.",
+  "Selecciona un intervalo válido dentro del mismo año."
+ ],
+ [
+  "Todos os cadastrados (previsão)",
+  "All registered items (forecast)",
+  "Todos los registrados (previsión)"
+ ],
+ [
+  "Dia da semana",
+  "Weekday",
+  "Día de la semana"
+ ],
+ [
+  "Previsão — inclui pendências",
+  "Forecast — includes pending items",
+  "Previsión — incluye pendientes"
+ ],
+ [
+  "· Mínimo",
+  "· Minimum",
+  "· Mínimo"
+ ],
+ [
+  "· Máximo",
+  "· Maximum",
+  "· Máximo"
+ ],
+ [
+  "média/mês ·",
+  "average/month ·",
+  "media/mes ·"
+ ],
+ [
+  "registros · Soma dos lançamentos:",
+  "records · Sum of transactions:",
+  "registros · Suma de movimientos:"
+ ],
+ [
+  "Despesa média/mês",
+  "Average expenses/month",
+  "Gasto medio/mes"
+ ],
+ [
+  "Ranking de categorias",
+  "Category ranking",
+  "Clasificación de categorías"
+ ],
+ [
+  "Nenhum crescimento comparável neste recorte.",
+  "No comparable growth in this selection.",
+  "No hay crecimiento comparable en esta selección."
+ ],
+ [
+  "Nenhuma redução comparável neste recorte.",
+  "No comparable decrease in this selection.",
+  "No hay reducción comparable en esta selección."
+ ],
+ [
+  "Sem despesas no recorte.",
+  "No expenses in the selection.",
+  "No hay gastos en la selección."
+ ],
+ [
+  "entre o maior e o menor mês",
+  "between the highest and lowest month",
+  "entre el mes mayor y el menor"
+ ],
+ [
+  "Sem variação calculável.",
+  "No calculable change.",
+  "Sin variación calculable."
+ ],
+ [
+  "Evolução mensal por categoria (% da renda)",
+  "Monthly category trends (% of income)",
+  "Evolución mensual por categoría (% de los ingresos)"
+ ],
+ [
+  "Padrão semanal de gastos",
+  "Weekly spending pattern",
+  "Patrón semanal de gastos"
+ ],
+ [
+  "Média diária",
+  "Daily average",
+  "Media diaria"
+ ],
+ [
+  "do total. Na base realizada, gastos e dias futuros ficam fora desta média.",
+  "of the total. On a settled basis, future days and expenses are excluded from this average.",
+  "del total. En la base liquidada, los días y gastos futuros quedan fuera de esta media."
+ ],
+ [
+  "/ano (projeção)",
+  "/year (projection)",
+  "/año (proyección)"
+ ],
+ [
+  "Recorrência marcada no cadastro",
+  "Recurrence marked in the record",
+  "Recurrencia marcada en el registro"
+ ],
+ [
+  "Repetição observada em",
+  "Repetition observed over",
+  "Repetición observada en"
+ ],
+ [
+  "registros sem data válida não entram nos gráficos.",
+  "records without a valid date are excluded from charts.",
+  "registros sin fecha válida se excluyen de los gráficos."
+ ],
+ [
+  "Permita a janela de impressão para salvar o PDF.",
+  "Allow the print window to save the PDF.",
+  "Permite la ventana de impresión para guardar el PDF."
+ ],
+ [
+  "← Voltar aos Gráficos",
+  "← Back to Charts",
+  "← Volver a gráficos"
+ ],
+ [
+  "Recolher filtros avançados ▴",
+  "Collapse advanced filters ▴",
+  "Contraer filtros avanzados ▴"
+ ],
+ [
+  "Confira os limites de valor.",
+  "Check the amount limits.",
+  "Revisa los límites de importe."
+ ],
+ [
+  "Relatório Analítico — Dashboard Pessoal",
+  "Analytical Report — Personal Dashboard",
+  "Informe analítico — Panel personal"
+ ],
+ [
+  "Relatório Analítico — Análise Financeira",
+  "Analytical Report — Financial Analysis",
+  "Informe analítico — Análisis financiero"
+ ],
+ [
+  "Saída",
+  "Outflow",
+  "Salida"
+ ],
+ [
+  "Todas disponíveis",
+  "All available",
+  "Todas las disponibles"
+ ],
+ [
+  "Transferências internas excluídas",
+  "Internal transfers excluded",
+  "Transferencias internas excluidas"
+ ],
+ [
+  "Aportes pagos em investimentos",
+  "Paid investment contributions",
+  "Aportaciones de inversión pagadas"
+ ],
+ [
+  "Resultado após aportes",
+  "Result after contributions",
+  "Resultado tras aportaciones"
+ ],
+ [
+  "Taxa de poupança antes dos aportes",
+  "Savings rate before contributions",
+  "Tasa de ahorro antes de aportaciones"
+ ],
+ [
+  "Lançamentos liquidados",
+  "Settled transactions",
+  "Movimientos liquidados"
+ ],
+ [
+  "Recebíveis pendentes",
+  "Outstanding receivables",
+  "Cobros pendientes"
+ ],
+ [
+  "Saídas e aportes",
+  "Outflows and contributions",
+  "Salidas y aportaciones"
+ ],
+ [
+  "Início do intervalo",
+  "Interval start",
+  "Inicio del intervalo"
+ ],
+ [
+  "Participação",
+  "Share",
+  "Participación"
+ ],
+ [
+  "Informação",
+  "Information",
+  "Información"
+ ],
+ [
+  "Resultado do período anterior",
+  "Previous period result",
+  "Resultado del período anterior"
+ ],
+ [
+  "Comparação indisponível para este filtro",
+  "Comparison unavailable for this filter",
+  "Comparación no disponible para este filtro"
+ ],
+ [
+  "Movimento líquido mensal",
+  "Monthly net movement",
+  "Movimiento neto mensual"
+ ],
+ [
+  "Relatório de leitura: não altera lançamentos, categorias ou o banco. Registros explicitamente cancelados ou excluídos foram desconsiderados (",
+  "Read-only report: does not change transactions, categories or the database. Explicitly cancelled or deleted records were excluded (",
+  "Informe de solo lectura: no modifica movimientos, categorías ni la base. Se excluyeron los registros marcados explícitamente como cancelados o eliminados ("
+ ],
+ [
+  "). Valores ausentes não são tratados como zero. Projeções não representam rendimentos garantidos. As contas não identificadas aparecem como “Não informada”.",
+  "). Missing values are not treated as zero. Projections do not guarantee returns. Unidentified accounts appear as “Not provided”.",
+  "). Los valores ausentes no se tratan como cero. Las proyecciones no garantizan rentabilidad. Las cuentas no identificadas aparecen como «No informada»."
+ ],
+ [
+  "Incluir gráficos",
+  "Include charts",
+  "Incluir gráficos"
+ ],
+ [
+  "Incluir lançamentos detalhados",
+  "Include detailed transactions",
+  "Incluir movimientos detallados"
+ ],
+ [
+  "Voltar às opções",
+  "Back to options",
+  "Volver a las opciones"
+ ],
+ [
+  "Permita a janela de impressão para continuar.",
+  "Allow the print window to continue.",
+  "Permite la ventana de impresión para continuar."
+ ],
+ [
+  "Informe um período válido de até dez anos.",
+  "Enter a valid period of up to ten years.",
+  "Introduce un período válido de hasta diez años."
+ ],
+ [
+  "Prévia gerada. Confira os valores antes de imprimir.",
+  "Preview generated. Check amounts before printing.",
+  "Vista previa generada. Revisa los importes antes de imprimir."
+ ],
+ [
+  "Não foi possível gerar o relatório:",
+  "Could not generate the report:",
+  "No se pudo generar el informe:"
+ ],
+ [
+  "Pendências",
+  "Pending items",
+  "Pendientes"
+ ]
+]);
+
+catalogue.push(...[["dos quais", "of which", "de los cuales"], ["vencidos.", "overdue.", "vencidos."], ["fontes", "sources", "fuentes"], ["registros", "records", "registros"], ["registros em aberto por vencimento; não entram na receita realizada.", "outstanding records by due date; excluded from settled income.", "registros pendientes por vencimiento; no forman parte de los ingresos liquidados."], ["pendências; não entram no realizado.", "pending items; excluded from settled totals.", "pendientes; no forman parte de lo liquidado."], ["compromissos ainda abertos.", "commitments still outstanding.", "compromisos aún pendientes."], ["meses", "months", "meses"], ["mês", "month", "mes"], ["ano", "year", "año"], ["anos", "years", "años"], ["dia(s)", "day(s)", "día(s)"], ["dias", "days", "días"], ["por", "by", "por"], ["a", "to", "a"], ["De", "From", "Desde"], ["/mês", "/month", "/mes"], ["/ano", "/year", "/año"], ["prazo", "deadline", "plazo"], ["prazo vencido", "deadline passed", "plazo vencido"], ["tarefas", "tasks", "tareas"], ["média/mês", "average/month", "media/mes"], ["Real brasileiro (BRL — R$)", "Brazilian real (BRL — R$)", "Real brasileño (BRL — R$)"], ["US Dollar (USD — US$)", "US Dollar (USD — US$)", "Dólar estadounidense (USD — US$)"], ["Euro (EUR — €)", "Euro (EUR — €)", "Euro (EUR — €)"], ["All rights reserved.", "All rights reserved.", "Todos los derechos reservados."], ["Variação (%)", "Change (%)", "Variación (%)"], ["Aumento", "Increase", "Aumento"], ["Estabilidade", "No change", "Estabilidad"], ["Seg", "Mon", "Lun"], ["Ter", "Tue", "Mar"], ["Qua", "Wed", "Mié"], ["Qui", "Thu", "Jue"], ["Sex", "Fri", "Vie"], ["Sáb", "Sat", "Sáb"], ["Dom", "Sun", "Dom"], ["Não recebida", "Not received", "No recibida"], ["Não recebido", "Not received", "No recibido"], ["Preencha este campo.", "Fill out this field.", "Completa este campo."], ["Informe um valor válido para este campo.", "Enter a valid value for this field.", "Introduce un valor válido para este campo."], ["Confira o formato deste campo.", "Check this field’s format.", "Revisa el formato de este campo."], ["O valor está fora dos limites permitidos.", "The value is outside the allowed limits.", "El valor está fuera de los límites permitidos."]]);
+
+catalogue.push(...[
+ [
+  "Dashboard · Pessoal",
+  "Dashboard · Personal",
+  "Panel · Personal"
+ ],
+ [
+  "Pessoa",
+  "Person",
+  "Persona"
+ ],
+ [
+  "Exibindo",
+  "Showing",
+  "Mostrando"
+ ],
+ [
+  "ℹ️ Metodologia e leitura dos dados",
+  "ℹ️ Methodology and data interpretation",
+  "ℹ️ Metodología y lectura de los datos"
+ ],
+ [
+  "Receita realizada:",
+  "Settled income:",
+  "Ingresos liquidados:"
+ ],
+ [
+  "Datas:",
+  "Dates:",
+  "Fechas:"
+ ],
+ [
+  "receitas recebidas menos despesas pagas e aportes pagos. O acumulado parte de zero no recorte; não equivale a saldo bancário conciliado.",
+  "income received minus expenses paid and paid contributions. Accumulation starts at zero in the selection; it is not a reconciled bank balance.",
+  "ingresos cobrados menos gastos pagados y aportaciones pagadas. El acumulado empieza en cero en la selección; no equivale a saldo bancario conciliado."
+ ],
+ [
+  "PF/PJ segue o cadastro. A categoria de despesa é uma aproximação por descrição/rubrica/subitem; não comprova natureza tributária. Transferências candidatas são sinalizadas para revisão e não são removidas automaticamente dos totais.",
+  "PF/PJ follows the registered person type. Expense classification is an approximation based on description/category/subcategory, not proof of tax status. Potential transfers are flagged for review, not automatically removed from totals.",
+  "PF/PJ sigue el registro. La categoría de gasto es una aproximación por descripción, categoría y subcategoría, no acredita naturaleza fiscal. Las posibles transferencias se señalan para revisar y no se eliminan automáticamente de los totales."
+ ],
+ [
+  "Resultado realizado ÷ receita recebida",
+  "Settled result ÷ income received",
+  "Resultado liquidado ÷ ingresos cobrados"
+ ],
+ [
+  "Compromissos a vencer",
+  "Upcoming commitments",
+  "Compromisos por vencer"
+ ],
+ [
+  "100% na maior fonte recebida",
+  "100% in the largest received source",
+  "100% en la mayor fuente cobrada"
+ ],
+ [
+  "Aportes pagos no período; não é saldo da carteira",
+  "Contributions paid in the period; not the portfolio balance",
+  "Aportaciones pagadas en el período; no es el saldo de la cartera"
+ ],
+ [
+  "Critério: recebidos e pagos por data de pagamento; quando ausente, usa vencimento. Pendências usam vencimento. Fontes usam o campo cliente quando disponível, ou a descrição do lançamento. O resultado inclui os aportes pagos em investimentos.",
+  "Basis: receipts and payments by payment date; if missing, use due date. Pending items use due date. Sources use the client field when available, otherwise the transaction description. Results include paid investment contributions.",
+  "Criterio: cobros y pagos por fecha de pago; si falta, se usa el vencimiento. Los pendientes usan el vencimiento. Las fuentes usan el campo cliente si está disponible o la descripción del movimiento. El resultado incluye aportaciones de inversión pagadas."
+ ],
+ [
+  "Vencem hoje",
+  "Due today",
+  "Vencen hoy"
+ ],
+ [
+  "Status cadastrado",
+  "Registered status",
+  "Estado registrado"
+ ],
+ [
+  "Pagamento e status a conferir",
+  "Payment and status to review",
+  "Pago y estado por revisar"
+ ],
+ [
+  "Identificadores repetidos / ausentes",
+  "Repeated / missing identifiers",
+  "Identificadores repetidos / ausentes"
+ ],
+ [
+  "Repetições são conferidas no cadastro filtrado; IDs ausentes, nos registros do recorte ou sem data.",
+  "Duplicates are checked in filtered records; missing IDs in records from this period or without a date.",
+  "Las repeticiones se revisan en los registros filtrados; los identificadores ausentes, en registros del período o sin fecha."
+ ],
+ [
+  "Receitas vs Despesas",
+  "Income vs Expenses",
+  "Ingresos frente a gastos"
+ ],
+ [
+  "Resultado",
+  "Result",
+  "Resultado"
+ ],
+ [
+  "Linha pontilhada: variação relativa ao mês anterior, na escala percentual à direita. Primeiro mês e base anterior zero não geram ponto; lacunas não são ligadas. Períodos parciais podem não ser equivalentes. Zeros seguem os valores exibidos, inclusive meses sem registros; não comprovam mês completo. Em séries percentuais, a variação é relativa, não em pontos percentuais.",
+  "Dotted line: change relative to the previous month, on the right-hand percentage scale. The first month and a zero previous baseline generate no point; gaps are not connected. Partial periods may not be equivalent. Zeros follow displayed values, including months without records; they do not prove a complete month. For percentage series, change is relative, not in percentage points.",
+  "Línea punteada: variación respecto al mes anterior, en la escala porcentual derecha. El primer mes y una base anterior cero no generan punto; no se unen intervalos sin base. Los períodos parciales pueden no ser equivalentes. Los ceros siguen los valores mostrados, incluidos meses sin registros; no acreditan un mes completo. En series porcentuales, la variación es relativa, no en puntos porcentuales."
+ ],
+ [
+  "Leitura",
+  "Interpretation",
+  "Lectura"
+ ],
+ [
+  "Essenciais",
+  "Essential",
+  "Esenciales"
+ ],
+ [
+  "Rubrica ou subitem ÷ total do mesmo mês e tipo no recorte filtrado. Receitas e despesas têm totais separados; subitens também usam o total do tipo, não o da rubrica. Total mensal zero: percentual não exibido. Não some rubricas e seus subitens, pois representam os mesmos lançamentos.",
+  "Category or subcategory ÷ total for the same month and type in the filtered selection. Income and expenses have separate totals; subcategories also use the type total, not the category total. If the monthly total is zero, no percentage is shown. Do not add categories to their subcategories, as they represent the same transactions.",
+  "Categoría o subcategoría ÷ total del mismo mes y tipo de la selección filtrada. Ingresos y gastos tienen totales separados; las subcategorías también usan el total del tipo, no el de la categoría. Si el total mensual es cero, no se muestra porcentaje. No sumes categorías y subcategorías: representan los mismos movimientos."
+ ],
+ [
+  "Rubrica / subitem",
+  "Category / subcategory",
+  "Categoría / subcategoría"
+ ],
+ [
+  "Classificação indicativa por rubrica, subitem e descrição. Juros/encargos identificados separadamente; parcelamentos e cartões não são tratados integralmente como juros. Demais despesas permanecem como “Não classificado”.",
+  "Indicative classification by category, subcategory and description. Interest and charges are identified separately; installments and card payments are not treated entirely as interest. Other expenses remain Unclassified.",
+  "Clasificación indicativa por categoría, subcategoría y descripción. Los intereses y cargos se identifican por separado; las cuotas y tarjetas no se tratan íntegramente como intereses. Los demás gastos quedan como Sin clasificar."
+ ],
+ [
+  "Custo Financeiro — Valores Identificados",
+  "Financial Cost — Identified Amounts",
+  "Coste financiero — Importes identificados"
+ ],
+ [
+  "Custo financeiro: juros e encargos",
+  "Financial cost: interest and charges",
+  "Coste financiero: intereses y cargos"
+ ],
+ [
+  "Juros e encargos identificados",
+  "Identified interest and charges",
+  "Intereses y cargos identificados"
+ ],
+ [
+  "Saldo, taxa e prazo precisam ser detalhados",
+  "Balance, rate and term need to be detailed",
+  "Es necesario detallar saldo, tasa y plazo"
+ ],
+ [
+  "Baseada nos gastos classificados como essenciais",
+  "Based on expenses classified as essential",
+  "Basada en gastos clasificados como esenciales"
+ ],
+ [
+  "Simular reserva",
+  "Simulate reserve",
+  "Simular reserva"
+ ],
+ [
+  "Preencha estimativas mensais para avaliar um cenário. Campos em branco são não informados; zero pode ser informado explicitamente. Não são economias já realizadas.",
+  "Enter monthly estimates to assess a scenario. Blank fields mean not provided; zero can be entered explicitly. These are not savings already achieved.",
+  "Introduce estimaciones mensuales para evaluar un escenario. Los campos vacíos son no informados; puedes indicar cero explícitamente. No son ahorros ya realizados."
+ ],
+ [
+  "Revisão de juros / contratos (R$)",
+  "Interest / contract review (R$)",
+  "Revisión de intereses / contratos (R$)"
+ ],
+ [
+  "Condomínio / serviços recorrentes (R$)",
+  "Condominium fees / recurring services (R$)",
+  "Comunidad / servicios recurrentes (R$)"
+ ],
+ [
+  "Telefonia / outras despesas (R$)",
+  "Phone / other expenses (R$)",
+  "Telefonía / otros gastos (R$)"
+ ],
+ [
+  "Total mensal:",
+  "Monthly total:",
+  "Total mensual:"
+ ],
+ [
+  "Aporte mensal",
+  "Monthly contribution",
+  "Aportación mensual"
+ ],
+ [
+  "Oportunidades informadas",
+  "Provided opportunities",
+  "Oportunidades informadas"
+ ],
+ [
+  "Aporte mensal (R$)",
+  "Monthly contribution (R$)",
+  "Aportación mensual (R$)"
+ ],
+ [
+  "Calcular",
+  "Calculate",
+  "Calcular"
+ ],
+ [
+  "A taxa pode ser zero; nesse caso, o resultado corresponde à soma dos aportes.",
+  "The rate can be zero; in that case, the result is the sum of contributions.",
+  "La tasa puede ser cero; en ese caso, el resultado es la suma de aportaciones."
+ ],
+ [
+  "Perspectiva Pessoal",
+  "Personal Outlook",
+  "Perspectiva personal"
+ ],
+ [
+  "🏠 Essenciais",
+  "🏠 Essential",
+  "🏠 Esenciales"
+ ],
+ [
+  "🍽️ Custo financeiro",
+  "🍽️ Financial cost",
+  "🍽️ Coste financiero"
+ ],
+ [
+  "✈️ Economia anual simulada",
+  "✈️ Simulated annual savings",
+  "✈️ Ahorro anual simulado"
+ ],
+ [
+  "Cadastrar uma nova receita ou despesa.",
+  "Register a new income or expense transaction.",
+  "Registrar un nuevo ingreso o gasto."
+ ],
+ [
+  "Gerenciar Cadastro",
+  "Manage reference data",
+  "Gestionar datos de referencia"
+ ],
+ [
+  "Consultar rubricas cadastradas.",
+  "View registered categories.",
+  "Consultar las categorías registradas."
+ ],
+ [
+  "Cadastrar uma nova rubrica/categoria.",
+  "Register a new category.",
+  "Registrar una nueva categoría."
+ ],
+ [
+  "Cadastrar um sub-item vinculado a uma rubrica.",
+  "Register a subcategory linked to a category.",
+  "Registrar una subcategoría vinculada a una categoría."
+ ],
+ [
+  "Consumo; aportes aparecem separados",
+  "Consumption; contributions shown separately",
+  "Consumo; las aportaciones aparecen separadas"
+ ],
+ [
+  "Receitas − despesas − aportes",
+  "Income − expenses − contributions",
+  "Ingresos − gastos − aportaciones"
+ ],
+ [
+  "Investimentos / objetivos",
+  "Investments / goals",
+  "Inversiones / objetivos"
+ ],
+ [
+  "Informar saldo inicial",
+  "Enter opening balance",
+  "Informar saldo inicial"
+ ],
+ [
+  "↑ Entradas",
+  "↑ Inflows",
+  "↑ Entradas"
+ ],
+ [
+  "Entradas",
+  "Inflows",
+  "Entradas"
+ ],
+ [
+  "Abertura no recorte",
+  "Opening amount in selection",
+  "Saldo inicial de la selección"
+ ],
+ [
+  "Fechamento estimado",
+  "Estimated closing balance",
+  "Saldo final estimado"
+ ],
+ [
+  "Sem abertura confirmada para a conta/pessoa e sem filtros de conteúdo, o acumulado começa em zero e não representa saldo bancário. A abertura informada é transportada por movimentos realizados anteriores ao recorte; completude e conciliação da base precisam ser conferidas. A previsão inclui pendências por vencimento e não equivale a dinheiro recebido.",
+  "Without a confirmed opening balance for the account/person type and without content filters, accumulation starts at zero and is not a bank balance. The opening amount is carried forward using settled movements before the selection; completeness and reconciliation must be checked. Forecast includes pending items by due date and is not money received.",
+  "Sin saldo inicial confirmado para la cuenta y persona, y sin filtros de contenido, el acumulado empieza en cero y no representa saldo bancario. El saldo inicial se traslada mediante movimientos liquidados anteriores; hay que comprobar integridad y conciliación. La previsión incluye pendientes por vencimiento y no equivale a dinero cobrado."
+ ],
+ [
+  "Intervalo",
+  "Interval",
+  "Intervalo"
+ ],
+ [
+  "Aportes",
+  "Contributions",
+  "Aportaciones"
+ ],
+ [
+  "Sempre despesas realizadas do recorte filtrado. A projeção linear do mês exige pelo menos sete dias decorridos, três datas distintas de gastos e início do mês no recorte; supõe ritmo diário constante. Sem dados suficientes, não é calculada.",
+  "Always settled expenses from the filtered selection. The month's linear projection requires at least seven elapsed days, three distinct spending dates and the start of the month within the selection; it assumes a constant daily pace. It is not calculated without enough data.",
+  "Siempre gastos liquidados de la selección filtrada. La proyección lineal mensual exige al menos siete días transcurridos, tres fechas de gasto distintas y el inicio del mes dentro de la selección; supone un ritmo diario constante. Sin datos suficientes, no se calcula."
+ ],
+ [
+  "Exibir",
+  "Show",
+  "Mostrar"
+ ],
+ [
+  "Ativos",
+  "Assets",
+  "Activos"
+ ],
+ [
+  "Motivo informado",
+  "Provided reason",
+  "Motivo informado"
+ ],
+ [
+  "Saldo devedor informado",
+  "Reported outstanding debt",
+  "Saldo deudor informado"
+ ],
+ [
+  "Parcelas mensais informadas",
+  "Reported monthly installments",
+  "Cuotas mensuales informadas"
+ ],
+ [
+  "Não há dívidas detalhadas neste escopo. Isso não significa saldo devedor igual a zero; parcelas no banco de lançamentos não comprovam o principal.",
+  "No detailed debts in this scope. This does not mean zero debt; installments in the transactions database do not establish the principal.",
+  "No hay deudas detalladas en este ámbito. Esto no significa deuda cero; las cuotas registradas no acreditan el principal."
+ ],
+ [
+  "Taxa ausente é diferente de juros zero. A simulação assume taxa e parcela mensais constantes, sem encargos extras ou novas dívidas; o contrato pode ter outra regra. O prazo informado na ficha não garante quitação. Conferir taxa e custo total antes de definir prioridades.",
+  "A missing rate differs from zero interest. Simulation assumes a constant monthly rate and installment, without extra fees or new debts; the contract may use different rules. The reported term does not guarantee repayment. Check the rate and total cost before setting priorities.",
+  "Una tasa ausente no equivale a intereses cero. La simulación supone tasa y cuota mensuales constantes, sin cargos extra ni nuevas deudas; el contrato puede tener otras reglas. El plazo informado no garantiza la liquidación. Revisa la tasa y el coste total antes de fijar prioridades."
+ ],
+ [
+  "+ Cadastrar objetivo",
+  "+ Add goal",
+  "+ Registrar objetivo"
+ ],
+ [
+  "Definir categorias essenciais",
+  "Define essential categories",
+  "Definir categorías esenciales"
+ ],
+ [
+  "Reserva informada / cobertura",
+  "Reported reserve / coverage",
+  "Reserva informada / cobertura"
+ ],
+ [
+  "A meta usa somente categorias essenciais escolhidas e meses encerrados com registros. Sem base suficiente, permanece não informada. Reserva atual vem de objetivos do tipo Reserva; confirme recursos separados para não somar o mesmo dinheiro duas vezes. Valor acumulado e projeção são exibidos separadamente.",
+  "The target uses only explicitly chosen essential categories and completed months with records. It remains unreported without enough data. The current reserve comes from Reserve-type goals; confirm separate funds to avoid double counting. Accumulated amounts and projections are shown separately.",
+  "La meta usa solo las categorías esenciales elegidas y meses terminados con registros. Sin base suficiente, queda no informada. La reserva actual procede de objetivos de tipo Reserva; confirma fondos separados para no contar dos veces el mismo dinero. El acumulado y las proyecciones se muestran por separado."
+ ],
+ [
+  "Conferir dados",
+  "Check data",
+  "Revisar datos"
+ ],
+ [
+  "Prazo (meses)",
+  "Term (months)",
+  "Plazo (meses)"
+ ],
+ [
+  "ℹ️ Confiabilidade e metodologia",
+  "ℹ️ Reliability and methodology",
+  "ℹ️ Fiabilidad y metodología"
+ ],
+ [
+  "Quantidade",
+  "Count",
+  "Cantidad"
+ ],
+ [
+  "Datas sem validade",
+  "Invalid dates",
+  "Fechas inválidas"
+ ],
+ [
+  "Realizados sem DT PG (usam vencimento)",
+  "Settled without payment date (uses due date)",
+  "Liquidados sin fecha de pago (usan vencimiento)"
+ ],
+ [
+  "IDs vazios ou repetidos",
+  "Empty or repeated IDs",
+  "Identificadores vacíos o repetidos"
+ ],
+ [
+  "Corrigir categorias no Cadastro",
+  "Correct categories in Registration",
+  "Corregir categorías en Registros"
+ ],
+ [
+  "Exportar planejamento",
+  "Export plan",
+  "Exportar planificación"
+ ],
+ [
+  "Atualizar planejamento",
+  "Refresh plan",
+  "Actualizar planificación"
+ ],
+ [
+  "⚙️ Metas e categorias essenciais",
+  "⚙️ Targets and essential categories",
+  "⚙️ Metas y categorías esenciales"
+ ],
+ [
+  "Salvar ficha",
+  "Save record",
+  "Guardar ficha"
+ ],
+ [
+  "Limpar ficha",
+  "Clear record",
+  "Limpiar ficha"
+ ],
+ [
+  "Limite planejado (R$)",
+  "Planned limit (R$)",
+  "Límite previsto (R$)"
+ ],
+ [
+  "Ativos totais (R$)",
+  "Total assets (R$)",
+  "Activos totales (R$)"
+ ],
+ [
+  "Saldo devedor (R$)",
+  "Outstanding balance (R$)",
+  "Saldo deudor (R$)"
+ ],
+ [
+  "Parcela mensal (R$)",
+  "Monthly installment (R$)",
+  "Cuota mensual (R$)"
+ ],
+ [
+  "Juros mensais (%; vazio = não informado)",
+  "Monthly interest (%; blank = not provided)",
+  "Interés mensual (%; vacío = no informado)"
+ ],
+ [
+  "Prazo restante informado (meses)",
+  "Reported remaining term (months)",
+  "Plazo restante informado (meses)"
+ ],
+ [
+  "Objetivo financeiro",
+  "Financial goal",
+  "Objetivo financiero"
+ ],
+ [
+  "Objetivo",
+  "Goal",
+  "Objetivo"
+ ],
+ [
+  "Valor pretendido (R$)",
+  "Target amount (R$)",
+  "Importe objetivo (R$)"
+ ],
+ [
+  "Prazo desejado",
+  "Desired deadline",
+  "Plazo deseado"
+ ],
+ [
+  "Economia mensal estimada (R$)",
+  "Estimated monthly savings (R$)",
+  "Ahorro mensual estimado (R$)"
+ ],
+ [
+  "Categoria",
+  "Category",
+  "Categoría"
+ ],
+ [
+  "Top 3 que mais cresceram",
+  "Top 3 increases",
+  "Los 3 mayores aumentos"
+ ],
+ [
+  "Comparação do primeiro ao último mês com despesas no recorte; base inicial zero ou apenas um mês: N/D. Variação observada não é economia garantida.",
+  "Compares the first and last months with expenses in the selection; a zero starting baseline or a single month gives N/A. Observed change does not guarantee savings.",
+  "Compara el primer y último mes con gastos en la selección; una base inicial cero o un solo mes dan N/D. La variación observada no garantiza ahorro."
+ ],
+ [
+  "Despesa da categoria ÷ receita do mesmo mês e filtros. Sem receita positiva: N/D, sem linha até zero. Filtros manuais também se aplicam às receitas. O clique em categoria ou recorrente recorta a despesa e conserva a renda de referência; mês e dia filtram ambos.",
+  "Category expenses ÷ income for the same month and filters. Without positive income: N/A, with no line to zero. Manual filters also apply to income. Clicking a category or recurring item filters expenses and keeps the reference income; month and weekday filter both.",
+  "Gasto de la categoría ÷ ingresos del mismo mes y filtros. Sin ingresos positivos: N/D, sin línea hasta cero. Los filtros manuales también se aplican a ingresos. Pulsar una categoría o recurrente filtra el gasto y conserva los ingresos de referencia; mes y día filtran ambos."
+ ],
+ [
+  "Compromissos fixos recorrentes",
+  "Recurring fixed commitments",
+  "Compromisos fijos recurrentes"
+ ],
+ [
+  "Total mensal estimado dos recorrentes identificados",
+  "Estimated monthly total of identified recurring items",
+  "Total mensual estimado de los recurrentes identificados"
+ ],
+ [
+  "Total:",
+  "Total:",
+  "Total:"
+ ],
+ [
+  "Receitas por rubrica (acumulado no período)",
+  "Income by category (cumulative in the period)",
+  "Ingresos por categoría (acumulado del período)"
+ ],
+ [
+  "Despesas por rubrica (acumulado no período)",
+  "Expenses by category (cumulative in the period)",
+  "Gastos por categoría (acumulado del período)"
+ ],
+ [
+  "Os totais e os detalhes usam os mesmos lançamentos e filtros. Investimentos ficam fora das séries de despesas. Clique no mês para comparar receitas e despesas no mesmo recorte; clique na rubrica para filtrar os quatro gráficos. A base realizada considera recebidos e pagos; a previsão inclui pendências.",
+  "Totals and details use the same transactions and filters. Investments are excluded from expense series. Click a month to compare income and expenses in the same selection; click a category to filter all four charts. The settled basis uses receipts and payments; forecast includes pending items.",
+  "Los totales y detalles usan los mismos movimientos y filtros. Las inversiones se excluyen de las series de gastos. Pulsa un mes para comparar ingresos y gastos en la misma selección; pulsa una categoría para filtrar los cuatro gráficos. La base liquidada usa cobros y pagos; la previsión incluye pendientes."
+ ],
+ [
+  "Notas",
+  "Notes",
+  "Notas"
+ ],
+ [
+  "Base financeira",
+  "Financial data",
+  "Base financiera"
+ ],
+ [
+  "Visão de planejamento financeiro pessoal",
+  "Personal financial planning view",
+  "Visión de planificación financiera personal"
+ ],
+ [
+  "Metodologia e leitura dos dados",
+  "Methodology and data interpretation",
+  "Metodología y lectura de los datos"
+ ],
+ [
+  "Resultado realizado",
+  "Settled result",
+  "Resultado liquidado"
+ ],
+ [
+  "Em aberto",
+  "Outstanding",
+  "Pendiente"
+ ],
+ [
+  "variação mensal",
+  "monthly change",
+  "variación mensual"
+ ],
+ [
+  "Participação no mês",
+  "Monthly share",
+  "Participación en el mes"
+ ],
+ [
+  "Custo financeiro",
+  "Financial cost",
+  "Coste financiero"
+ ],
+ [
+  "Economia anual simulada",
+  "Simulated annual savings",
+  "Ahorro anual simulado"
+ ],
+ [
+  "Essenciais",
+  "Essential",
+  "Esenciales"
+ ],
+ [
+  "Não classificado",
+  "Unclassified",
+  "Sin clasificar"
+ ],
+ [
+  "Cadastro",
+  "Registration",
+  "Registros"
+ ],
+ [
+  "de",
+  "of",
+  "de"
+ ],
+ [
+  "média/mês",
+  "average/month",
+  "media/mes"
+ ],
+ [
+  "Cálculo sem rendimento, com meses calendários restantes (mínimo um).",
+  "Calculation excludes returns and uses remaining calendar months (at least one).",
+  "Cálculo sin rendimiento con meses naturales restantes (mínimo uno)."
+ ],
+ [
+  "N/D dos recebíveis em aberto estão vencidos.",
+  "Overdue share of outstanding receivables: N/A.",
+  "Participación de cobros pendientes vencidos: N/D."
+ ],
+ [
+  "Esses valores não são renda já recebida.",
+  "These amounts are not income already received.",
+  "Estos importes no son ingresos ya cobrados."
+ ],
+ [
+  "Critério",
+  "Basis",
+  "Criterio"
+ ],
+ [
+  "Pessoa",
+  "Person",
+  "Persona"
+ ],
+ [
+  "Mês",
+  "Month",
+  "Mes"
+ ],
+ [
+  "Base:",
+  "Basis:",
+  "Base:"
+ ],
+ [
+  "Nome do usuário",
+  "User name",
+  "Nombre del usuario"
+ ],
+ [
+  "Leitura:",
+  "Read on:",
+  "Lectura:"
+ ],
+ [
+  "prazo vencido",
+  "deadline passed",
+  "plazo vencido"
+ ],
+ [
+  "pontos percentuais",
+  "percentage points",
+  "puntos porcentuales"
+ ],
+ [
+  "na maior fonte recebida",
+  "in the largest received source",
+  "en la mayor fuente cobrada"
+ ],
+ [
+  "Recebíveis pendentes; vencidos",
+  "Outstanding receivables; overdue",
+  "Cobros pendientes; vencidos"
+ ],
+ [
+  "para a meta",
+  "toward the target",
+  "para la meta"
+ ],
+ [
+  "nenhuma ficha salva",
+  "no records saved",
+  "ninguna ficha guardada"
+ ],
+ [
+  "Total potencial",
+  "Potential total",
+  "Total potencial"
+ ]
+]);
+
+catalogue.push(...[["Gráfico financeiro interativo", "Interactive financial chart", "Gráfico financiero interactivo"], ["Gráfico de barras", "Bar chart", "Gráfico de barras"], ["Gráfico interativo", "Interactive chart", "Gráfico interactivo"], ["Progresso da reserva", "Reserve progress", "Progreso de la reserva"], ["Total previsto no recorte", "Planned total in selection", "Total previsto de la selección"], ["Revisar rubricas antes de usar gastos essenciais como orçamento consolidado.", "Review categories before using essential expenses as a consolidated budget.", "Revisa las categorías antes de usar gastos esenciales como presupuesto consolidado."], ["Valores desta simulação permanecem apenas nesta sessão; não alteram os lançamentos ou o banco.", "These simulation values stay in this session only; they do not change transactions or the database.", "Los valores de esta simulación permanecen solo en esta sesión; no modifican movimientos ni la base."], ["na maior fonte recebida", "in the largest received source", "en la mayor fuente cobrada"], ["participação no mês", "monthly share", "participación en el mes"], ["variação mensal", "monthly change", "variación mensual"], ["base anterior zero; variação % N/D", "previous baseline zero; percentage change N/A", "base anterior cero; variación porcentual N/D"], ["nenhuma ficha salva", "no records saved", "ninguna ficha guardada"], ["Salvamento local, separado do banco de lançamentos.", "Saved locally, separately from the transactions database.", "Guardado local, separado de la base de movimientos."], ["Alterar conta/pessoa recarrega o escopo; exporte as fichas para resguardo.", "Changing account/person type reloads the scope; export records as a backup.", "Cambiar cuenta o persona recarga el ámbito; exporta las fichas para resguardarlas."], ["Remoções podem ser desfeitas.", "Removals can be undone.", "Las eliminaciones se pueden deshacer."], ["Semestre", "Half-year", "Semestre"], ["Trimestre", "Quarter", "Trimestre"], ["Colunas + linha", "Columns + line", "Columnas + línea"], ["De", "From", "Desde"], ["Aumento", "Increase", "Aumento"], ["Aportes no período; objetivos informados", "Contributions in the period; reported goals", "Aportaciones del período; objetivos informados"], ["carteira", "portfolio", "cartera"], ["metas", "targets", "metas"], ["Conta", "Account", "Cuenta"], ["Consultando Banco Central…", "Checking Central Bank…", "Consultando el Banco Central…"], ["BCB PTAX, venda/fechamento", "BCB PTAX, selling/closing rate", "BCB PTAX, venta/cierre"]]);
+
+catalogue.push(...[["Mensal", "Monthly", "Mensual"], ["Semanal", "Weekly", "Semanal"], ["Trimestral", "Quarterly", "Trimestral"], ["Semestral", "Half-yearly", "Semestral"], ["Anual", "Yearly", "Anual"], ["Ativos totais", "Total assets", "Activos totales"], ["Detalhar", "Details for", "Detallar"], ["Ver contas a pagar", "View bills to pay", "Ver cuentas por pagar"], ["pendências", "pending items", "pendientes"], ["não entram no realizado.", "excluded from settled totals.", "no se incluyen en los importes realizados."], ["Aportes no período", "Contributions in the period", "Aportaciones del período"], ["objetivos informados", "reported goals", "objetivos informados"], ["Meta estimada", "Estimated target", "Meta estimada"], ["Economia estimada nas ações", "Estimated savings from actions", "Ahorro estimado en las acciones"], ["da renda média", "of average income", "de los ingresos medios"], ["somente neste navegador e conta.", "only in this browser and account.", "solo en este navegador y cuenta."], ["Não é confirmação de sincronização com a nuvem.", "This does not confirm cloud synchronization.", "No confirma la sincronización con la nube."], ["Use Exportar planejamento para resguardar as fichas.", "Use Export plan to back up records.", "Usa Exportar planificación para resguardar las fichas."], ["As posições são informadas manualmente por data.", "Positions are entered manually by date.", "Las posiciones se informan manualmente por fecha."], ["Investimentos informados já fazem parte dos ativos.", "Reported investments are already included in assets.", "Las inversiones informadas ya forman parte de los activos."], ["Dívidas detalhadas abaixo não são somadas novamente à posição patrimonial.", "Debts detailed below are not added again to the wealth position.", "Las deudas detalladas a continuación no se suman de nuevo a la posición patrimonial."], ["Taxa de poupança = (receita − consumo) ÷ receita; os aportes reduzem o caixa, mas não o consumo.", "Savings rate = (income − consumption) ÷ income; contributions reduce cash but not consumption.", "Tasa de ahorro = (ingresos − consumo) ÷ ingresos; las aportaciones reducen el efectivo, pero no el consumo."], ["Posições de patrimônio, dívidas e objetivos seguem conta/pessoa e datas próprias, sem recorte por rubrica.", "Wealth, debt and goal positions follow their own account/person scope and dates, without category filtering.", "Las posiciones de patrimonio, deudas y objetivos siguen su cuenta/persona y fechas propias, sin filtro por categoría."]]);
+catalogue.push(...[["PF/PJ não é inferido como natureza tributária.", "PF/PJ does not establish tax classification.", "PF/PJ no determina la naturaleza tributaria."], ["Despesas sem classificação de consumo reconhecida", "Expenses without a recognized consumption classification", "Gastos sin clasificación de consumo reconocida"], ["Essa média não representa renda fixa garantida.", "This average does not represent guaranteed fixed income.", "Este promedio no representa ingresos fijos garantizados."], ["Taxa hipotética editável", "Editable hypothetical rate", "Tasa hipotética editable"], ["Aportes no fim de cada mês, sem saldo inicial.", "Contributions at each month-end, without an opening balance.", "Aportaciones al final de cada mes, sin saldo inicial."], ["Realizado — recebidos e pagos", "Settled — received and paid", "Realizado — cobrado y pagado"], ["Por DT PG; sem data, vencimento", "By payment date; due date when missing", "Por fecha de pago; vencimiento si no consta"]]);
+catalogue.push(...[["Receitas × Despesas", "Income × Expenses", "Ingresos × Gastos"], ["Etapa 35: amplia as traduções da interface para inglês e espanhol, incluindo mensagens, gráficos, simuladores e relatórios.", "Stage 35: expands English and Spanish interface translations, including messages, charts, simulators and reports.", "Etapa 35: amplía las traducciones de la interfaz al inglés y español, incluidos mensajes, gráficos, simuladores e informes."], ["Preserva nomes e textos cadastrados, valores, filtros, cores e dados financeiros ao trocar o idioma.", "Preserves registered names and text, amounts, filters, colors and financial data when changing language.", "Conserva nombres y textos registrados, importes, filtros, colores y datos financieros al cambiar de idioma."]]);
 function bootFinancialLanguage(catalogue, options) {
  'use strict';
  options=options||{};
@@ -4395,6 +11332,38 @@ function bootFinancialLanguage(catalogue, options) {
  const textRecords=new WeakMap(),attributeRecords=new WeakMap(),chartLabels=new WeakMap();
  let trigger,menu;
  const patterns=[
+  [/^Variação de (.+)% no mesmo recorte de filtros\.$/,'Change of $1% with the same filters.','Variación de $1% con los mismos filtros.'],
+  [/^([\d.,]+)% dos gastos filtrados\. Revise os itens antes de definir cortes\.$/,'$1% of filtered expenses. Review items before deciding cuts.','$1% de los gastos filtrados. Revisa las partidas antes de decidir recortes.'],
+  [/^([\d.,]+)% da receita média mensal da mesma base\. Último mês de cada grupo de rubrica, sub-item e descrição\. Repetições não comprovam contrato fixo\. Projeção anual = mensal × 12; não soma dos pagamentos do ano\. Nenhum cadastro é alterado\.$/,'$1% of average monthly income on the same basis. Last month of each category, subcategory and description group. Repetition does not prove a fixed contract. Annual projection = monthly × 12, not the sum of yearly payments. No records are changed.','$1% de los ingresos medios mensuales de la misma base. Último mes de cada grupo de categoría, subcategoría y descripción. Las repeticiones no acreditan contrato fijo. Proyección anual = mensual × 12, no la suma de pagos del año. No se modifica ningún registro.'],
+  [/^Total: (.+)\. Média calculada em (\d+) meses entre o primeiro e o último registro do recorte; meses vazios dentro desse intervalo contam\. Categorias seguem as rubricas do cadastro\.$/,'Total: $1. Average over $2 months between the first and last record in the selection; empty months within that range count. Categories follow registered categories.','Total: $1. Media de $2 meses entre el primer y último registro de la selección; cuentan los meses vacíos del intervalo. Las categorías siguen los datos registrados.'],
+  [/^Média = gastos ÷ ocorrências de cada dia, incluindo dias sem gastos\. Realizado: até hoje; previsão: período inteiro\. Fim de semana: (.+)% do total\. Na base realizada, gastos e dias futuros ficam fora desta média\.$/,'Average = expenses ÷ occurrences of each weekday, including days without spending. Settled: through today; forecast: full period. Weekend: $1% of total. Future days and expenses are excluded from settled averages.','Media = gastos ÷ apariciones de cada día, incluidos días sin gastos. Liquidado: hasta hoy; previsión: período completo. Fin de semana: $1% del total. Se excluyen días y gastos futuros de la media liquidada.'],
+  [/^Hipótese editável de (.+)% ao mês; padrão sem rendimento\. Aportes ao final de cada mês\. Não há garantia de retorno, nem taxa de mercado presumida\. Renda média dos meses completos com registros no recorte; meses sem registros não comprovam ausência de renda\. Não é renda fixa garantida\. Projeções não alteram objetivos, patrimônio ou lançamentos\. Compare o aporte com o superávit efetivo antes de adotá-lo\.$/,'Editable assumption of $1% per month; default excludes returns. Contributions at each month-end. No guaranteed return or assumed market rate. Average income over completed months with records; missing months do not prove no income. This is not guaranteed fixed income. Projections do not change goals, wealth or transactions. Compare contributions with actual surplus before adopting them.','Supuesto editable del $1% mensual; el valor predeterminado no incluye rendimiento. Aportaciones al final de cada mes. No hay rentabilidad garantizada ni tasa de mercado supuesta. Ingresos medios de meses completos con registros; los meses sin registros no acreditan ausencia de ingresos. No es renta fija garantizada. Las proyecciones no modifican objetivos, patrimonio ni movimientos. Compara la aportación con el superávit real antes de adoptarla.'],
+
+  [/^Meta \((\d+) meses\)$/,'Target ($1 months)','Meta ($1 meses)'],
+  [/^([+−-]?[\d.,]+) pontos percentuais$/,'$1 percentage points','$1 puntos porcentuales'],
+  [/^(\d+)º trimestre$/,'Quarter $1','Trimestre $1'],
+  [/^(\d+)º semestre$/,'Half-year $1','Semestre $1'],
+  [/^([\d.,]+)% da receita média recebida$/,'$1% of average income received','$1% de los ingresos medios cobrados'],
+  [/^([\d.,]+)% da renda média$/,'$1% of average income','$1% de los ingresos medios'],
+  [/^Meta informada: (.+)$/,'Provided target: $1','Meta informada: $1'],
+  
+  [/^Visão de planejamento financeiro pessoal · (.+)$/,'Personal financial planning view · $1','Visión de planificación financiera personal · $1'],
+  [/^([\d.,]+)% dos recebíveis em aberto estão vencidos\.$/,'$1% of outstanding receivables are overdue.','$1% de los cobros pendientes están vencidos.'],
+  [/^Repetição observada em (\d+) meses$/,'Repetition observed over $1 months','Repetición observada en $1 meses'],
+
+  [/^(.+) ultrapassou o orçamento$/,'$1 exceeded the budget','$1 superó el presupuesto'],
+  [/^(.+) está próxima do limite$/,'$1 is near the limit','$1 está cerca del límite'],
+  [/^Maior participação nas despesas: (.+)$/,'Largest expense share: $1','Mayor participación en gastos: $1'],
+  [/^Filtrar(?: por)? (.+)$/,'Filter by $1','Filtrar por $1'],
+  [/^Autofiltro: (.+)$/,'Autofilter: $1','Autofiltro: $1'],
+  [/^Rubrica "(.+)" adicionada com sucesso!$/,'Category "$1" added successfully!','Categoría «$1» añadida correctamente.'],
+  [/^Sub-Item "(.+)" adicionado com sucesso!$/,'Subcategory "$1" added successfully!','Subcategoría «$1» añadida correctamente.'],
+  [/^Maior fonte recebida: (.+)$/,'Largest income source received: $1','Mayor fuente de ingresos cobrados: $1'],
+  [/^Consulta: (.+)$/,'Query: $1','Consulta: $1'],
+  [/^Versão: (V[0-9.]+)$/,'Version: $1','Versión: $1'],
+  [/^Versão desta cópia: (.+)\. Versão publicada: (.+)\.$/,'This copy: $1. Published version: $2.','Versión de esta copia: $1. Versión publicada: $2.'],
+  [/^Versão de distribuição (V[0-9.]+) — acesso individual\.$/,'Distribution version $1 — individual access.','Versión de distribución $1 — acceso individual.'],
+
   [/^Próxima entrada prevista: (.+)\.$/,'Next expected income: $1.','Próximo ingreso previsto: $1.'],
   [/^Filtro rápido: (.+)\.$/,'Quick filter: $1.','Filtro rápido: $1.'],
   [/^referência (.+)$/,'reference $1','referencia $1'],
@@ -4447,7 +11416,7 @@ function bootFinancialLanguage(catalogue, options) {
   [/^Em (.+): receitas previstas de (.+), das quais (.+) estão recebidas\. Critério: período do vencimento\.$/,'In $1: planned income of $2, with $3 received. Based on the due-date period.','En $1: ingresos previstos de $2, con $3 recibidos. Según el período de vencimiento.'],
   [/^Em (.+): despesas previstas de (.+), das quais (.+) estão pagas e (.+) em aberto\.(.*)$/,'In $1: planned expenses of $2, with $3 paid and $4 unpaid.$5','En $1: gastos previstos de $2, con $3 pagados y $4 pendientes.$5'],
   [/^Maiores categorias de despesas previstas em (.+):$/,'Largest planned expense categories in $1:','Mayores categorías de gastos previstos en $1:'],
-  [/^Total (.+)$/,'Total $1','Total $1'],
+  
   [/^Filtros \((\d+)\)$/,'Filters ($1)','Filtros ($1)'],
   [/^Tipo de gráfico: (.+)$/,'Chart type: $1','Tipo de gráfico: $1']
  ];
@@ -4459,28 +11428,47 @@ function bootFinancialLanguage(catalogue, options) {
   const dated=n.match(/^([^\p{L}\p{N}]*)(Dashboard Pessoal)(\s*—\s*\d{4})$/u);if(dated)return leading+dated[1]+(target==='en'?'Personal Dashboard':'Panel personal')+dated[3]+trailing;
   let row=bySource.get(n.toLowerCase());
   if(row){let result=row[index];if(n===n.toLocaleUpperCase('pt-BR')&&/[a-zà-ÿ]/i.test(n))result=result.toLocaleUpperCase(locales[target]);return leading+result+trailing;}
+  const percentageNote=n.match(/^(Base dos percentuais: média da receita efetivamente recebida nos meses do recorte \(.+?\)\.) (.+)$/);if(percentageNote)return translateBase(percentageNote[1],target)+' '+translateBase(percentageNote[2],target);
+  const punctuation=n.match(/^(.+?)([.!?;,]+)$/);if(punctuation&&bySource.has(punctuation[1].trim().toLowerCase()))return leading+translateBase(punctuation[1],target)+punctuation[2]+trailing;
   if(n.endsWith(':')){const label=bySource.get(n.slice(0,-1).trim().toLowerCase());if(label)return leading+label[index]+':'+trailing;}
   // Decorative toolbar arrows and icons are kept exactly where they already were.
   const decorated=n.match(/^([^\p{L}\p{N}]*)(.*?)(\s*[▾▼▸▹▴▲△▽]?)$/u);
   if(decorated&&(row=bySource.get(decorated[2].trim().toLowerCase())))return leading+decorated[1]+row[index]+decorated[3]+trailing;
   if(n.includes('\n')||raw.includes('\n'))return raw.split('\n').map(line=>translate(line,target)).join('\n');
-  const field=n.match(/^(Rubrica|Categoria|Descrição|Sub-Item|Tipo|Status): (.*)$/);if(field)return leading+translateBase(field[1],target)+': '+(['Tipo','Status'].includes(field[1])?translateBase(canonical(field[2]),target):field[2])+trailing;
+  const isoRange=n.match(/^(\d{4}-\d{2}-\d{2}) a (\d{4}-\d{2}-\d{2})$/);if(isoRange)return leading+isoRange[1]+(target==='en'?' to ':' a ')+isoRange[2]+trailing;
+
+  for(const [pattern,en,es]of patterns)if(pattern.test(n))return leading+n.replace(pattern,target==='en'?en:es)+trailing;
+
+  const details=n.match(/^(Detalhar|Fluxo de caixa) (.+)$/);if(details)return leading+translateBase(details[1],target)+' '+translateBase(details[2],target)+trailing;
+  const field=n.match(/^(Rubrica|Categoria|Descrição|Sub-Item|Tipo|Status|Pessoa|Conta): (.*)$/);if(field&&!n.includes('. ')&&!n.includes(' · '))return leading+translateBase(field[1],target)+': '+((['Tipo','Status','Pessoa'].includes(field[1])||field[1]==='Conta'&&/^(Todas|Todos)$/.test(field[2]))?translateBase(canonical(field[2]),target):field[2])+trailing;
   const profile=n.match(/^(Perfil|Tipo de pessoa): (.+)$/);if(profile)return leading+(profile[1]==='Perfil'?(target==='en'?'Role: ':'Perfil: '):(target==='en'?'Person type: ':'Tipo de persona: '))+translateBase(canonical(profile[2]),target)+trailing;
   const analysis=n.match(/^Modo: (.+)\. Tipo de pessoa: (.+)\. Critério: vencimento\.$/);if(analysis)return leading+(target==='en'?'Mode: ':'Modo: ')+translateBase(canonical(analysis[1]),target)+(target==='en'?'. Person type: ':'. Tipo de persona: ')+translateBase(canonical(analysis[2]),target)+(target==='en'?'. Based on due date.':'. Según fecha de vencimiento.')+trailing;
   const risk=n.match(/^Menor saldo calculado: (.+?) em (.+?)\.(?: Próxima entrada prevista: (.+?)\.)?$/);if(risk)return leading+(target==='en'?'Lowest calculated balance: ':'Saldo mínimo calculado: ')+risk[1]+(target==='en'?' on ':' el ')+risk[2]+'.'+(risk[3]?' '+translateBase('Próxima entrada prevista: '+risk[3]+'.',target):'')+trailing;
+  const current=n.match(/^Recorte atual: (.+?) a (.+?) · Pessoa: (.+?)\. Os complementos acompanham os mesmos filtros do Dashboard\.$/);if(current)return leading+(target==='en'?'Current selection: ':'Selección actual: ')+current[1]+(target==='en'?' to ':' a ')+current[2]+' · '+translateBase('Pessoa: '+current[3],target)+(target==='en'?'. Additional panels follow the same Dashboard filters.':'. Los complementos siguen los mismos filtros del panel.')+trailing;
+  const plan=n.match(/^Planejamento: (.+)$/);if(plan)return leading+(target==='en'?'Plan: ':'Planificación: ')+translateBase(plan[1],target)+trailing;
+  const scope=n.match(/^Escopo das fichas: (.+)$/);if(scope)return leading+(target==='en'?'Record scope: ':'Ámbito de las fichas: ')+translateBase(scope[1],target)+trailing;
   for(const [pattern,en,es]of patterns)if(pattern.test(n))return leading+n.replace(pattern,target==='en'?en:es)+trailing;
   if(n.includes(' • '))return leading+n.split(' • ').map(part=>translateBase(part,target)).join(' • ')+trailing;
   if(n.includes(' · ')&&!/^Saldo inicial calculado:/.test(n))return leading+n.split(' · ').map(part=>translateBase(part,target)).join(' · ')+trailing;
   const bullets=[['• Receitas previstas:','• Planned income:','• Ingresos previstos:'],['• Despesas previstas:','• Planned expenses:','• Gastos previstos:'],['• Saldo previsto:','• Planned balance:','• Saldo previsto:'],['• Recebido:','• Received:','• Recibido:'],['• Pago:','• Paid:','• Pagado:'],['• Diferença entre recebido e pago:','• Difference between received and paid:','• Diferencia entre lo recibido y pagado:'],['• Vencidos:','• Overdue:','• Vencidos:'],['• Vencendo hoje:','• Due today:','• Con vencimiento hoy:'],['• Próximos 30 dias (após hoje):','• Next 30 days (after today):','• Próximos 30 días (después de hoy):'],['• Diferença:','• Difference:','• Diferencia:']];
   for(const row of bullets)if(n.startsWith(row[0]))return leading+row[index]+n.slice(row[0].length)+trailing;
+  if(n.includes('. ')){const sentences=n.split(/(?<=\.)\s+(?=[A-ZÀ-Ý])/);if(sentences.length>1)return leading+sentences.map(part=>translateBase(part,target)).join(' ')+trailing;}
+  if(n.includes('; '))return leading+n.split('; ').map(part=>translateBase(part,target)).join('; ')+trailing;
+  const unavailable=n.match(/^(.*?)([Nn]ão informado)(.*)$/);if(unavailable){const prefix=unavailable[1],suffix=unavailable[3];return leading+translateBase(prefix,target)+translateBase('Não informado',target)+translateBase(suffix,target)+trailing;}
+  // Only structured UI fragments around amounts/dates/counts are composed.
+  // Captured values keep their original bytes; unknown prose is never word-translated.
+  const tokens=n.split(/((?:(?:R\$|US\$|[$€])\s*)?[-−]?\d{1,4}(?:[.,:/–-]\d+)*(?:\s*%)?)/g);
+  if(tokens.length>1){let changed=false,valid=true;const rendered=tokens.map((part,i)=>{if(i%2||!/[\p{L}]/u.test(part))return part;const next=translateBase(part,target);if(next!==part)changed=true;else if(!bySource.has(normalize(part).toLowerCase()))valid=false;return next;});if(valid&&changed)return leading+rendered.join('')+trailing;}
   return raw;
  }
  function translate(value,target=language){
   let result=translateBase(value,target);if(/^Período de referência:/.test(String(value)))result=result.replace(/(\d{2}\/\d{2}\/\d{4}) a (?=\d{2}\/)/g,target==='en'?'$1 to ':'$1 a ');if(target==='pt-BR')return result;
+  if(target==='en')result=result.replace(/\b1 months\b/g,'1 month').replace(/\b1 sources\b/g,'1 source');if(target==='es')result=result.replace(/\b1 meses\b/g,'1 mes').replace(/\b1 fuentes\b/g,'1 fuente');
   const months=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
   let localized=result.replace(/(\d{1,2}) de (janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro) de (\d{4})/gi,(_,day,month,year)=>new Date(Number(year),months.indexOf(month.toLowerCase()),Number(day),12).toLocaleDateString(locales[target],{day:'numeric',month:'long',year:'numeric'}));
   localized=localized.replace(/\b(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro) de (\d{4})\b/gi,(_,month,year)=>new Date(Number(year),months.indexOf(month.toLowerCase()),1,12).toLocaleDateString(locales[target],{month:'long',year:'numeric'}));
   const shortMonths=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  localized=localized.replace(/^(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)(\/\d{2,4})$/i,(_,month,year)=>new Date(2026,shortMonths.indexOf(month.toLowerCase()),1,12).toLocaleDateString(locales[target],{month:'short'}).replace(/\.$/,'')+year);
   localized=localized.replace(/\b(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\. de (\d{2}|\d{4})\b/gi,(_,month,year)=>new Date(Number(year.length===2?'20'+year:year),shortMonths.indexOf(month.toLowerCase()),1,12).toLocaleDateString(locales[target],{month:'short',year:year.length===2?'2-digit':'numeric'}));
   if(target==='en'&&/^-?[\d.,]+ mil$/.test(localized.trim()))localized=localized.replace(',','.').replace(' mil','k');
   if(localized.trim()==='N/D'&&target==='en')localized=localized.replace('N/D','N/A');
@@ -4508,7 +11496,7 @@ function bootFinancialLanguage(catalogue, options) {
   const category=String(question).match(/(?:in (?:the )?category|en la categoria|en la categoría)\s+(.+?)\s*[?!.]*$/i);
   return command+(category?' na categoria '+category[1]:'');
  }
- const api={getLanguage:()=>language,translate,canonical,originalText,question:uiQuestion,setLanguage,
+ const api={getLanguage:()=>language,translate,canonical,originalText,shouldSkip:excluded,caption:chartCaption,question:uiQuestion,setLanguage,
   decorate(html){const script='<script id="pf-global-language-report">('+bootFinancialLanguage.toString()+')('+JSON.stringify(catalogue).replace(/</g,'\\u003c')+','+JSON.stringify({language,noMenu:true})+');<'+'/script>';return html.includes('id="pf-global-language-report"')?html:(()=>{const at=html.toLowerCase().lastIndexOf('</body>');return at<0?html+script:html.slice(0,at)+script+html.slice(at)})();}
  };
  window.PFI18n=api;
@@ -4516,8 +11504,10 @@ function bootFinancialLanguage(catalogue, options) {
   if(!element)return true;
   if(element.closest('.g-rank-row .row>span,[data-restored-point^="incomeDescription:"] b:first-child,[data-restored-point^="ranking:"] b:first-child,#compositionBars .row>span,.clean-profile-card strong'))return true;
   if(element.closest('.user')&&element.tagName!=='SMALL')return true;
-  if(element.closest('tbody,tfoot')&&!element.closest('button')&&!element.closest('#listaVencimentoHoje td:nth-child(n+2),#listaVencidos td:nth-child(n+2)'))return true;
-  return !!element.closest('script,style,noscript,textarea,[contenteditable="true"],[data-pf-i18n-skip],#pfLanguageMenu,#pfLanguageButton,#pf493Actions,#pfMobileMaisPanel,#pfHelpMenu .pf-help-dropdown,.analysis-bars,.pf-bar-row,.pf-heat-cell,.pfce-alt,.pfce-bars,.pfce-detail tbody,.pfce-points,#pfDozeMeses,.grafico-area,svg text,.lcm-value,.lcm-valor,[data-g-item-field],[data-pf-dynamic-value]');
+  if(element.closest('[data-pf-i18n-skip]'))return true;if(element.closest('[data-pf-i18n-ui]'))return false;
+  const cell=element.closest('tbody,tfoot')?element.closest('td'):null;if(cell&&!element.closest('button')){const field=cell.dataset?.autoCell;if(field&&!['tipo','status'].includes(field))return true;const table=cell.closest('table'),heading=table?.tHead?.rows?.[0]?.cells?.[cell.cellIndex];const key=normalize(canonical(originalText(heading))).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();if(/rubrica|categoria|subitem|sub-item|descri|cliente|fonte|conta|nome|credor|motivo|acao proposta/.test(key))return true;}
+
+  return !!element.closest('script,style,noscript,textarea,[contenteditable="true"],[data-pf-i18n-skip],#pfLanguageMenu,#pfLanguageButton,#pf493Actions,#pfHelpMenu .pf-help-dropdown,.analysis-rubric,.pa-bars>button>span:first-child,.pa-legend>button,.pfgo-rank>strong,.pfgo-legend>button,.pf-bar-row,.pf-heat-cell,.pfce-alt,.pfce-bars,.pfce-detail tbody,.pfce-points,#pfDozeMeses,.grafico-area,svg text,.lcm-value,.lcm-valor,[data-g-item-field],[data-pf-dynamic-value]');
  }
  function applyNode(node){
   // Etapa 19: status Pago não deve virar o substantivo Pagamento por colisão PT/ES.
@@ -4525,16 +11515,19 @@ function bootFinancialLanguage(catalogue, options) {
   if(statusParent?.closest('#tabelaCorpo td[data-auto-cell="status"],#pf-auto-popup[data-pf-filter-field="status"]')&&/^(?:pagamento|pago|paid|pagado|payment)$/i.test(normalize(node.data))){
    const next=translate('Pago');if(next!==node.data){statusParent.dataset.pfceUi='true';node.data=next;}textRecords.set(node,{source:'Pago',last:next});return;
   }
-  const parent=node.parentElement;const chartText=parent?.closest('svg text,#pfDozeMeses,.grafico-area');const chartSource=textRecords.get(node);const original=chartSource&&node.data===chartSource.last?chartSource.source:node.data;if(chartText&&/^(?:N\/D|-?[\d.,]+ mil|(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\. de \d{2,4})$/.test(original.trim())){const next=translate(original);node.data=next;textRecords.set(node,{source:original,last:next});return;}if(excluded(parent)||!normalize(node.data))return;
-  const option=parent.closest('option');if(option){const select=option.parentElement;if(/rubric|categor|subitem|descri|conta|nome/i.test(select?.id||'')&&!/^(?:Todos?|Todas?|Todas as Rubricas|Todos os Sub[- ]Itens)$/i.test(normalize(node.data)))return;if(!option.hasAttribute('value'))option.setAttribute('value',option.value);}
+  const parent=node.parentElement;if(parent?.closest?.('svg title')&&node.data.includes(' · ')){const saved=textRecords.get(node),source=saved&&node.data===saved.last?saved.source:node.data,next=chartCaption(source,!!parent.closest('[data-pf-user-series]'));if(next!==node.data)node.data=next;textRecords.set(node,{source,last:next});return;}const chartText=parent?.closest('svg text,#pfDozeMeses,.grafico-area');const chartSource=textRecords.get(node);const original=chartSource&&node.data===chartSource.last?chartSource.source:node.data;if(chartText&&/^(?:N\/D|-?[\d.,]+ mil|(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)(?:\. de |\/)\d{2,4})$/.test(original.trim())){const next=translate(original);if(next!==node.data)node.data=next;textRecords.set(node,{source:original,last:next});return;}if(parent?.closest?.('svg text')&&parent.closest('.pfpct-axis,.pfgo-donut')){const next=translate(original);if(next!==node.data)node.data=next;textRecords.set(node,{source:original,last:next});return;}if(excluded(parent)||!normalize(node.data))return;
+  const option=parent.closest('option');if(option){const select=option.parentElement;if(/rubric|categor|subitem|descri|conta|account|nome|debt-select/i.test((select?.id||'')+' '+(select?.name||''))&&!/^(?:Todos?|Todas?|Todas as Rubricas|Todos os Sub[- ]Itens)$/i.test(normalize(node.data)))return;if(!option.hasAttribute('value'))option.setAttribute('value',option.value);}
   const old=textRecords.get(node),source=old&&node.data===old.last?old.source:canonical(node.data),next=translate(source);
   if(next!==node.data){parent.dataset.pfceUi='true';node.data=next;}
   textRecords.set(node,{source,last:next});
  }
+ function chartCaption(value,preserveFirst=false){if(language==='pt-BR')return value;const parts=String(value).split(' · ');if(/^Filtrar (?:Evolução|Despesas por rubrica|Receitas por rubrica)/.test(parts[0]))parts[0]=translate('Filtrar')+' '+translate(parts[0].slice(8));return parts.map((part,i)=>i===0?(preserveFirst?part:translate(part)):/^(?:\d{4}-\d{2}|(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)(?:\. de |\/)\d{2,4})$/.test(part)?translate(part):/^(?:Aumento|Diminuição|Sem alteração|Primeiro mês|Base anterior zero|Variação|N\/D)/.test(part)?translate(part):part).join(' · ');}
  function applyAttribute(element,name){
-  if(excluded(element))return;const value=element.getAttribute(name);if(!value)return;
+  const chartLabel=!!element.closest?.('svg')&&['title','aria-label'].includes(name);
+  const fieldAttribute=element.matches?.('input,textarea')&&['placeholder','title','aria-label'].includes(name)&&!element.closest('[data-pf-i18n-skip]');
+  if(excluded(element)&&!chartLabel&&!fieldAttribute)return;const value=element.getAttribute(name);if(!value)return;
   let record=attributeRecords.get(element);if(!record){record={};attributeRecords.set(element,record);}
-  const previous=record[name],source=previous&&value===previous.last?previous.source:canonical(value),next=translate(source);
+  const previous=record[name],source=previous&&value===previous.last?previous.source:canonical(value),next=chartLabel&&source.includes(' · ')?chartCaption(source,!!element.closest('[data-pf-user-series]')):chartLabel&&element.getAttribute('role')==='button'&&!/^Filtrar /.test(source)?source:translate(source);
   if(value!==next)element.setAttribute(name,next);record[name]={source,last:next};
  }
  function observe(){observer?.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['hidden','class','open','title','placeholder','aria-label']});}
@@ -4543,7 +11536,7 @@ function bootFinancialLanguage(catalogue, options) {
   try{ensureMenu();document.documentElement.lang=language;const question=document.getElementById('pfIaQuestion');if(question)question.lang=language;
    const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode())applyNode(node);
    for(const element of document.querySelectorAll('[placeholder],[title],[aria-label]'))for(const name of ['placeholder','title','aria-label'])applyAttribute(element,name);
-   if(trigger)trigger.textContent=translate('Idioma')+' ▾';
+   if(trigger){const label=translate('Idioma')+' ▾';if(trigger.textContent!==label)trigger.textContent=label;}
    if(menu)for(const item of menu.querySelectorAll('[data-pf-locale]'))item.setAttribute('aria-checked',String(item.dataset.pfLocale===language));
   }finally{observe();}
  }
@@ -4588,6 +11581,9 @@ function bootFinancialLanguage(catalogue, options) {
   const core=window.PFAssistenteCore;if(core&&!core.pfLanguageWrapped){core.pfLanguageWrapped=true;const answer=core.answer.bind(core);core.answer=(question,...args)=>answer(language==='pt-BR'?question:uiQuestion(question),...args);}
   const gemini=window.PFGemini;if(gemini&&!gemini.pfLanguageWrapped){gemini.pfLanguageWrapped=true;const query=gemini.query.bind(gemini);gemini.query=args=>{if(language==='pt-BR')return query(args);const prefix=language==='en'?'Respond in English. ':'Responde en español. ';if((prefix+args.question).length>600)throw Error(translate('Reduza a pergunta para enviar no idioma selecionado.'));return query({...args,question:prefix+args.question});};}
   if(typeof Chart!=='undefined'&&typeof Chart.register==='function')Chart.register({id:'pfGlobalLanguage',beforeUpdate(chart){for(const axis of Object.values(chart.options.scales||{})){if(!axis.ticks)continue;const callback=axis.ticks.callback;if(callback&&!callback.pfLanguageWrapped){const wrapped=function(...args){const value=callback.apply(this,args);return Array.isArray(value)?value.map(v=>translate(v)):translate(value);};wrapped.pfLanguageWrapped=true;axis.ticks.callback=wrapped;}}for(const dataset of chart.data.datasets||[]){const previous=chartLabels.get(dataset),source=previous&&dataset.label===previous.last?previous.source:canonical(dataset.label);dataset.label=translate(source);chartLabels.set(dataset,{source,last:dataset.label});}}});
+  const localizedValidity=new WeakSet();
+  document.addEventListener('invalid',event=>{const field=event.target;if(!field?.validity||typeof field.setCustomValidity!=='function')return;const v=field.validity;if(v.customError&&!localizedValidity.has(field)){const text=translate(field.validationMessage);if(text!==field.validationMessage)field.setCustomValidity(text);return;}const message=v.valueMissing?'Preencha este campo.':v.typeMismatch&&field.type==='email'?'Informe um e-mail válido.':v.patternMismatch?'Confira o formato deste campo.':v.rangeOverflow||v.rangeUnderflow||v.stepMismatch?'O valor está fora dos limites permitidos.':'Informe um valor válido para este campo.';field.setCustomValidity(translate(message));localizedValidity.add(field);},true);
+  document.addEventListener('input',event=>{const field=event.target;if(localizedValidity.has(field)){field.setCustomValidity('');localizedValidity.delete(field);}},true);
   observer=new MutationObserver(schedule);apply();syncContainer();
   try{if(window.opener?.PFI18n){const sync=()=>setLanguage(window.opener.PFI18n.getLanguage(),false);window.opener.addEventListener('pf-language-change',sync);window.addEventListener('pagehide',()=>{try{window.opener.removeEventListener('pf-language-change',sync);}catch(_){}},{once:true});}}catch(_){}
  }

@@ -1,10 +1,9 @@
 {
-  "version": "V5.1.18",
-  "name": "V5.1.18",
+  "version": "V5.1.19",
+  "name": "V5.1.19",
   "channel": "pessoal",
   "notes": [
-    "Corrige colisões dos identificadores dos cadastros e alinha as referências das importações e exportações.",
-    "Preserva os IDs dos lançamentos e leva o catálogo de referências no pacote de sincronização.",
-    "Melhora a validação da importação Excel; a atualização não inclui nem substitui os dados financeiros do usuário."
+    "Etapa 35: amplia as traduções da interface para inglês e espanhol, incluindo mensagens, gráficos, simuladores e relatórios.",
+    "Preserva nomes e textos cadastrados, valores, filtros, cores e dados financeiros ao trocar o idioma."
   ]
 }
