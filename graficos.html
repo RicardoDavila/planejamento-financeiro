@@ -1124,4 +1124,46 @@ function install(){refresh();new MutationObserver(schedule).observe(document.bod
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();})();
 
 })();</script>
+<style id="pf-hub-fit-style">/* Etapa 33: enquadramento das páginas de navegação. Sem ocultar conteúdo. */
+@media screen and (min-width:901px) and (pointer:fine){
+html body.pf-dashboard-shell:is([data-pf-dash-view="home"],[data-pf-dash-view="tools"],[data-pf-dash-view="security"],[data-pf-dash-view="help"]),
+html body.pf-dashboard-shell:has(#pfGraphicsPage[data-go-view="hub"]:not([hidden])){--pf33-gap:12px;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important}
+html body.pf-dashboard-shell:is([data-pf-dash-view="home"],[data-pf-dash-view="tools"],[data-pf-dash-view="security"],[data-pf-dash-view="help"]) #appConteudo,
+html body.pf-dashboard-shell:has(#pfGraphicsPage[data-go-view="hub"]:not([hidden])) #appConteudo{box-sizing:border-box!important;width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;padding:18px 24px 34px!important}
+html body.pf-dashboard-shell:is([data-pf-dash-view="home"],[data-pf-dash-view="tools"],[data-pf-dash-view="security"],[data-pf-dash-view="help"]) #pfDashboardHeader,
+html body.pf-dashboard-shell:has(#pfGraphicsPage[data-go-view="hub"]:not([hidden])) #pfDashboardHeader{padding-bottom:14px;margin-bottom:14px;gap:14px}
+html body.pf-dashboard-shell:is([data-pf-dash-view="home"],[data-pf-dash-view="tools"],[data-pf-dash-view="security"],[data-pf-dash-view="help"]) #pfDashboardPerson,
+html body.pf-dashboard-shell:has(#pfGraphicsPage[data-go-view="hub"]:not([hidden])) #pfDashboardPerson{margin-bottom:12px;min-height:34px}
+html body.pf-dashboard-shell #pfDashboardHome .pf-dash-grid,#pfAreaCardsPage .pf-area-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--pf33-gap,16px)}
+html body.pf-dashboard-shell #pfDashboardHome .pf-dash-card,#pfAreaCardsPage .pf-area-card{min-height:0!important;min-width:0;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere;padding:18px 18px!important;gap:5px}
+html body.pf-dashboard-shell #pfDashboardHome .pf-dash-icon,#pfAreaCardsPage .pf-area-icon{font-size:26px;line-height:1.15;margin-bottom:5px}
+html body.pf-dashboard-shell #pfDashboardHome .pf-dash-card strong,#pfAreaCardsPage .pf-area-card strong{font-size:15px;line-height:1.3;margin-bottom:4px}
+html body.pf-dashboard-shell #pfDashboardHome .pf-dash-card>span:last-child,#pfAreaCardsPage .pf-area-description{font-size:12px;line-height:1.4}
+html body.pf-dashboard-shell #pfDashboardHome>p{margin-bottom:12px!important}
+html body.pf-dashboard-shell #pfDashboardToolbar{margin-bottom:14px;gap:7px}
+#pfAreaCardsPage{padding-bottom:0;box-sizing:border-box;min-width:0;width:100%}
+#pfAreaCardsPage nav{margin-bottom:12px}
+#pfAreaCardsPage header{margin-bottom:14px}
+#pfAreaCardsPage header p{margin:5px 0 0;font-size:13px;line-height:1.4}
+#pfAreaCardsPage h1{font-size:26px;margin-bottom:4px}
+#pfGraphicsPage[data-go-view="hub"]{width:100%;min-width:0;margin:0 auto;padding:0;box-sizing:border-box}
+#pfGraphicsPage[data-go-view="hub"] h1{font-size:26px;margin-bottom:10px}
+#pfGraphicsPage[data-go-view="hub"] .pf-dash-card{min-height:0!important;padding:20px!important}
+#pfGraphicsPage[data-go-view="hub"] .pfgo-grid2{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#pfGraphicsPage[data-go-view="hub"] .pfgo-period{flex-wrap:wrap!important;overflow:visible!important;gap:5px;margin:10px 0;padding:10px}
+#pfGraphicsPage[data-go-view="hub"] .pfgo-filter-actions{gap:7px;margin:10px 0}
+#pfGraphicsPage[data-go-view="hub"] .pfgo-note{margin:8px 0;font-size:12px}
+html body.pf-dashboard-shell:has(#pfGraphicsPage[data-go-view="hub"]:not([hidden])) #pfDashboardNavigation{margin-bottom:12px}
+@media(max-height:800px){
+html body.pf-dashboard-shell:is([data-pf-dash-view="home"],[data-pf-dash-view="tools"],[data-pf-dash-view="security"],[data-pf-dash-view="help"]),html body.pf-dashboard-shell:has(#pfGraphicsPage[data-go-view="hub"]:not([hidden])){--pf33-gap:10px}
+html body.pf-dashboard-shell:is([data-pf-dash-view="home"],[data-pf-dash-view="tools"],[data-pf-dash-view="security"],[data-pf-dash-view="help"]) #appConteudo,html body.pf-dashboard-shell:has(#pfGraphicsPage[data-go-view="hub"]:not([hidden])) #appConteudo{padding:14px 20px 30px!important}
+html body.pf-dashboard-shell:is([data-pf-dash-view="home"],[data-pf-dash-view="tools"],[data-pf-dash-view="security"],[data-pf-dash-view="help"]) #pfDashboardHeader,html body.pf-dashboard-shell:has(#pfGraphicsPage[data-go-view="hub"]:not([hidden])) #pfDashboardHeader{padding-bottom:10px;margin-bottom:10px}
+html body.pf-dashboard-shell #pfDashboardHome .pf-dash-card,#pfAreaCardsPage .pf-area-card{padding:13px 15px!important}
+html body.pf-dashboard-shell #pfDashboardHome .pf-dash-icon,#pfAreaCardsPage .pf-area-icon{font-size:24px;margin-bottom:4px}
+html body.pf-dashboard-shell #pfDashboardHome h1,#pfAreaCardsPage h1{font-size:25px!important}
+#pfAreaCardsPage nav button{padding:8px 12px}
+#pfGraphicsPage[data-go-view="hub"] .pf-dash-card{padding:16px!important}
+}
+}
+</style>
 </body></html>

@@ -1,12 +1,10 @@
 {
   "pessoal": [
-    "Mantém a paleta aprovada para avaliação na Etapa 32: alterações apenas no modo claro.",
-    "Corrige a validação do modo escuro no GitHub Actions: o teste usa uma referência de integridade local ao repositório, sem depender das pastas históricas de etapas.",
-    "Dados, filtros, gráficos, Notas e regras do modo escuro preservados."
+    "Ajusta o enquadramento da Página Inicial, Gráficos (tela dos dois cards), Ações e Ferramentas, Segurança e Ajuda e Informações no computador.",
+    "Redistribui cards e compacta espaços sem ocultar textos ou bloquear a rolagem; preserva filtros, dados, temas e telas detalhadas."
   ],
   "distribuicao": [
-    "Mantém a paleta aprovada para avaliação na Etapa 32: alterações apenas no modo claro.",
-    "Corrige a validação do modo escuro no GitHub Actions: o teste usa uma referência de integridade local ao repositório, sem depender das pastas históricas de etapas.",
-    "Dados, filtros, gráficos, Notas e regras do modo escuro preservados."
+    "Ajusta o enquadramento da Página Inicial, Gráficos (tela dos dois cards), Ações e Ferramentas, Segurança e Ajuda e Informações no computador.",
+    "Redistribui cards e compacta espaços sem ocultar textos ou bloquear a rolagem; preserva filtros, dados, temas e telas detalhadas."
   ]
 }
