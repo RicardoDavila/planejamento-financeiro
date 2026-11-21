@@ -48,3 +48,11 @@ body:not(.dark-mode) #pfAnalysisPage .pa-metric.green strong{color:#00734d}body:
 .pa-legend>.green{border-color:#00de99}.pa-legend>.red{border-color:#ff4d6a}.pa-legend>.cyan{border-color:var(--pa-cyan)}
 
 }
+@media (min-width:901px) and (pointer:fine){
+#pfAnalysisPage .pa-planning-access{margin:24px 0}
+#pfAnalysisPage .pa-plan-access{display:flex;align-items:center;gap:18px;width:100%;text-align:left;padding:24px;cursor:pointer}
+#pfAnalysisPage .pa-plan-access>span:first-child{font-size:30px}
+#pfAnalysisPage .pa-plan-access strong{display:block;font-size:20px;margin-bottom:8px;color:var(--pa-ink)}
+#pfAnalysisPage .pa-plan-access small{display:block;color:var(--pa-cyan)}
+#pfAnalysisPage .pa-plan-access:hover,#pfAnalysisPage .pa-plan-access:focus-visible{border-color:var(--pa-cyan);box-shadow:0 0 14px #00e5ff33}
+}

@@ -1,10 +1,10 @@
 {
   "pessoal": [
-    "Etapa 37: amplia o Resumo Executivo com Receitas Previstas e Total de Despesas, preservando os quatro cards existentes.",
-    "Novos totais por vencimento, com os filtros do resumo e composição sem dupla contagem."
+    "Etapa 38.1: separa Meu Planejamento Financeiro da Análise Financeira, preservando fichas e vínculos.",
+    "Transfere patrimônio, dívidas, objetivos e simulador de poupanças para a nova página, com filtros e navegação."
   ],
   "distribuicao": [
-    "Etapa 37: amplia o Resumo Executivo com Receitas Previstas e Total de Despesas, preservando os quatro cards existentes.",
-    "Novos totais por vencimento, com os filtros do resumo e composição sem dupla contagem."
+    "Etapa 38.1: separa Meu Planejamento Financeiro da Análise Financeira, preservando fichas e vínculos.",
+    "Transfere patrimônio, dívidas, objetivos e simulador de poupanças para a nova página, com filtros e navegação."
   ]
 }
