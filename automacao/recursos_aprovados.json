@@ -181,7 +181,11 @@
       "Filtros avançados",
       "Salvar em PDF",
       "Voltar Página Inicial",
-      "defaults(Number(today().slice(0,4)),true)"
+      "defaults(Number(today().slice(0,4)),true)",
+      "function openInvestments",
+      "function investmentSections",
+      "data-pa-investments",
+      "scenarioConfirmed"
     ],
     "pf-analysis-style": [
       ".pa-svg polyline,.pa-svg polygon{pointer-events:none}",
