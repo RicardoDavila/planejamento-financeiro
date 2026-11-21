@@ -1,10 +1,10 @@
 {
   "pessoal": [
-    "Etapa 35: amplia as traduções da interface para inglês e espanhol, incluindo mensagens, gráficos, simuladores e relatórios.",
-    "Preserva nomes e textos cadastrados, valores, filtros, cores e dados financeiros ao trocar o idioma."
+    "Etapa 36: adiciona Novo Lançamento e quatro indicadores filtrados ao Painel de Lançamentos.",
+    "Receitas Previstas inclui recebidas e a receber sem dupla contagem; os indicadores acompanham alterações e filtros."
   ],
   "distribuicao": [
-    "Etapa 35: amplia as traduções da interface para inglês e espanhol, incluindo mensagens, gráficos, simuladores e relatórios.",
-    "Preserva nomes e textos cadastrados, valores, filtros, cores e dados financeiros ao trocar o idioma."
+    "Etapa 36: adiciona Novo Lançamento e quatro indicadores filtrados ao Painel de Lançamentos.",
+    "Receitas Previstas inclui recebidas e a receber sem dupla contagem; os indicadores acompanham alterações e filtros."
   ]
 }

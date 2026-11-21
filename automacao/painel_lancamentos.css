@@ -65,3 +65,18 @@ body.pf-dashboard-shell[data-pf-dash-view=cadastro] #layout-workspace{display:no
 }
 
 }
+@media (min-width:901px) and (pointer:fine){
+#pf-entries-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+#pf-entries-kpis .pf-entry-kpi{min-width:0;padding:16px;border:1px solid var(--dash-line);border-radius:12px;background:var(--dash-card);box-shadow:var(--pf32-card-shadow,none)}
+#pf-entries-kpis h3{font:600 12px 'Space Grotesk',Arial;margin:0 0 12px;color:var(--dash-ink)}
+#pf-entries-kpis strong{font:700 clamp(16px,1.8vw,24px) 'JetBrains Mono',monospace;overflow-wrap:anywhere}
+#pf-entries-kpis p{font:11px/1.5 'Space Grotesk',Arial;color:var(--dash-muted);margin:10px 0 0}
+#pf-entries-kpis .pf-entry-kpi-note{grid-column:1/-1;margin:0}
+#pf-entries-kpis article:hover{border-color:var(--dash-accent);box-shadow:0 0 12px #00e5ff33}
+#pf-entries-actions [data-entries-new]{margin-right:auto}
+}
+
+@media (min-width:901px) and (pointer:fine){
+html body #pf-entries-kpis strong{color:var(--pf16-ink,var(--dash-ink))!important}
+html body.dark-mode #pf-entries-kpis .pf-entry-kpi p{color:#00e5ff!important}
+}
