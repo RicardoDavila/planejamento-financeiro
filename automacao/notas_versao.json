@@ -1,10 +1,12 @@
 {
   "pessoal": [
-    "Ajusta o enquadramento da Página Inicial, Gráficos (tela dos dois cards), Ações e Ferramentas, Segurança e Ajuda e Informações no computador.",
-    "Redistribui cards e compacta espaços sem ocultar textos ou bloquear a rolagem; preserva filtros, dados, temas e telas detalhadas."
+    "Etapa 34: diferencia cards por página no modo escuro e aplica fundos suaves por finalidade dos indicadores no modo claro.",
+    "Destaca áreas internas de gráficos, preservando séries, escalas, filtros, dados, hover, foco e enquadramento aprovado.",
+    "Traduções e novos indicadores do Painel de Lançamentos permanecem para as próximas etapas."
   ],
   "distribuicao": [
-    "Ajusta o enquadramento da Página Inicial, Gráficos (tela dos dois cards), Ações e Ferramentas, Segurança e Ajuda e Informações no computador.",
-    "Redistribui cards e compacta espaços sem ocultar textos ou bloquear a rolagem; preserva filtros, dados, temas e telas detalhadas."
+    "Etapa 34: diferencia cards por página no modo escuro e aplica fundos suaves por finalidade dos indicadores no modo claro.",
+    "Destaca áreas internas de gráficos, preservando séries, escalas, filtros, dados, hover, foco e enquadramento aprovado.",
+    "Traduções e novos indicadores do Painel de Lançamentos permanecem para as próximas etapas."
   ]
 }

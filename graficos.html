@@ -1071,12 +1071,97 @@ function chartColors(){
   });if(changed)c.update?.('none');
  }
 }
-function refresh(){if(running||!document.body)return;running=true;try{surfaces();buttons();statuses();chartColors();for(const n of touched.keys())if(!n.isConnected)touched.delete(n);}finally{running=false;}}
-function cleanClone(copy){for(const n of [copy,...copy.querySelectorAll('*')]){for(const p of ['color','background-color','border-color','background-image','fill','stroke'])if(n.style?.getPropertyValue(p).includes('--pf16-')||n.dataset?.pf16Action||n.dataset?.pf16Status)n.style?.removeProperty(p);for(const k of ['pf16Action','pf16Active','pf16Status','pf16Surface'])if(n.dataset?.[k])delete n.dataset[k];}return copy;}
+function refresh(){if(running||!document.body)return;running=true;try{surfaces();buttons();statuses();chartColors();window.PFSurfaces34?.refresh();for(const n of touched.keys())if(!n.isConnected)touched.delete(n);}finally{running=false;}}
+function cleanClone(copy){window.PFSurfaces34?.cleanClone(copy);for(const n of [copy,...copy.querySelectorAll('*')]){for(const p of ['color','background-color','border-color','background-image','fill','stroke'])if(n.style?.getPropertyValue(p).includes('--pf16-')||n.dataset?.pf16Action||n.dataset?.pf16Status)n.style?.removeProperty(p);for(const k of ['pf16Action','pf16Active','pf16Status','pf16Surface'])if(n.dataset?.[k])delete n.dataset[k];}return copy;}
 window.PFProjectTheme={refresh,cleanClone,actionKind,statusKind};
 })();
 
 })();</script>
+<style id="pf-surfaces-34-style">/* Etapa 34: somente aparência desktop; não altera dimensões, conteúdo ou séries. */
+@media screen and (min-width:901px) and (pointer:fine){
+html body.dark-mode{--pf34-page-card:#1C242B;--pf16-card:var(--pf34-page-card)}
+html body.dark-mode[data-pf-dash-view="entries"]{--pf34-page-card:#20252B}
+html body.dark-mode[data-pf-dash-view="cadastro"]{--pf34-page-card:#222629}
+html body.dark-mode[data-pf-dash-view="charts"]{--pf34-page-card:#1D2529}
+html body.dark-mode[data-pf-dash-view="analysis"]{--pf34-page-card:#1C252C}
+html body.dark-mode[data-pf-dash-view="tools"]{--pf34-page-card:#242623}
+html body.dark-mode[data-pf-dash-view="security"]{--pf34-page-card:#232329}
+html body.dark-mode[data-pf-dash-view="help"]{--pf34-page-card:#20242A}
+html body.dark-mode:has(#chart-grid):not([data-pf-dash-view]){--pf34-page-card:#1D2529}
+html body.dark-mode #pfGraphicsPage{--pf16-card:#1D2529}
+html body.dark-mode #pfPersonalDashboard{--pf16-card:#1C242B}
+html body.dark-mode #pfAnalysisPage{--pf16-card:#1C252C}
+html body.dark-mode #pfCadastroPage{--pf16-card:#222629}
+html body.dark-mode :is([data-pf16-surface="card"],.panel,.analysis-grid>section,[class~="card"],[class*="-card"],.pa-click,.pfgo-week>button,[data-pf34-kind]){background-color:var(--pf16-card)!important}
+html body.dark-mode #pfIaDialog :is(.ia-shell,.ia-controls,.ia-chips,.ia-footer){background-color:var(--pf34-page-card)!important}
+/* Uma variável por finalidade permite decorar componentes novos sem regras de layout. */
+html body:not(.dark-mode){--pf16-bg:#F3F7FA;--pf34-neutral:#F2F5F8;--pf34-income:#EAF5FC;--pf34-expense:#FFF0F1;--pf34-positive:#EAF7F0;--pf34-indicator:#F1EEFC;--pf34-plot:#F5F9FC}
+html body:not(.dark-mode) :is(.panel,[class~="card"],[class*="-card"],[data-pf16-surface="card"],.pf-dash-card,.pf-area-card,.pdp-kpi,.pa-metric,.pfgo-metric,.fc-card,.g-metric,.dashboard-v40-card){--pf16-card:var(--pf34-neutral)}
+html body:not(.dark-mode) [data-pf34-kind="income"]{--pf16-card:var(--pf34-income)}
+html body:not(.dark-mode) [data-pf34-kind="expense"]{--pf16-card:var(--pf34-expense)}
+html body:not(.dark-mode) [data-pf34-kind="positive"]{--pf16-card:var(--pf34-positive)}
+html body:not(.dark-mode) [data-pf34-kind="indicator"]{--pf16-card:var(--pf34-indicator)}
+html body:not(.dark-mode) [data-pf34-kind="neutral"]{--pf16-card:var(--pf34-neutral)}
+html body:not(.dark-mode) [data-pf34-kind]{background-color:var(--pf16-card)!important}
+html body:not(.dark-mode) :is(.analysis-grid>section,[data-pdp-chart],.pf-chart-card,.analysis-card,.pa-card:has(svg),.pfgo-card:has(svg),.g-card:has(canvas)){--pf16-card:#FFFFFF;--pf16-border:#DCE5EC;--pf16-line:#DCE5EC;background-color:#FFFFFF!important}
+html body:not(.dark-mode) :is(.analysis-bars,canvas,svg.pdp-svg,svg.pa-svg,svg.pfgo-svg,svg.pfgo-donut,svg.pfpct-svg){background-color:var(--pf34-plot)!important}
+html body :is([data-pf34-value="true"],.pdp-value,.pa-metric>strong,.pfgo-metric>strong){font-weight:750}
+html body:not(.dark-mode) :is([data-pf34-kind="income"],[data-pf34-kind="positive"]) [data-pf34-value="true"]{--pf16-ink:#166534}
+html body:not(.dark-mode) [data-pf34-kind="expense"] [data-pf34-value="true"]{--pf16-ink:#BE123C}
+html body:not(.dark-mode) [data-pf34-kind="indicator"] [data-pf34-value="true"]{--pf16-ink:#6D28D9}
+html body.dark-mode [data-pf34-finance-kind="income"]{--pf16-ink:#00de99}
+html body.dark-mode :is([data-pf34-finance-kind="expense"],[data-pf34-finance-kind="overdue"]){--pf16-ink:#ff4d6a}
+html body.dark-mode :is([data-pf34-finance-kind="investment"],[data-pf34-finance-kind="upcoming"]){--pf16-ink:#57b6ff}
+html body.dark-mode [data-pf34-finance-kind="today"]{--pf16-ink:#ffd166}
+html body.dark-mode [data-pf34-finance-kind="other"]{--pf16-ink:#b49aff}
+html body:not(.dark-mode) [data-pf34-kind="income"][data-pf34-value="true"]{--pf16-ink:#166534}
+html body:not(.dark-mode) [data-pf34-kind="positive"][data-pf34-value="true"]{--pf16-ink:#166534}
+html body:not(.dark-mode) [data-pf34-kind="expense"][data-pf34-value="true"]{--pf16-ink:#BE123C}
+html body:not(.dark-mode) [data-pf34-kind="indicator"][data-pf34-value="true"]{--pf16-ink:#6D28D9}
+/* Mantém a hierarquia dos valores sem alterar o enquadramento. */
+html body :is(.pdp-kpi,.pa-metric,.pfgo-metric) [data-pf34-value="true"]{font-size:1.4rem}
+/* Contorno aprovado de hover/foco preservado pela paleta do projeto. */
+}
+</style>
+<script id="pf-surfaces-34-script">/* Etapa 34: decoração de componentes existentes, sem dados ou armazenamento. */
+(()=>{'use strict';
+const fold=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function kind(label,value=''){
+ const s=fold(label),negative=/[-−]\s*(?:R\$|US\$|[$€])?\s*\d/.test(value);
+ if(/%/.test(value))return 'indicator';
+ if(/saldo|resultado|balance|net result|superavit/.test(s))return !/[1-9]/.test(value)?'neutral':negative?'expense':'positive';
+ if(/receit|recebid|renda|entrada|income|revenue|ingreso/.test(s)&&!/despes|expense|gasto|saida/.test(s))return 'income';
+ if(/despes|gasto|custo|saida|expense|egreso|vencid|atrasad|overdue/.test(s))return 'expense';
+ if(/taxa|percent|compromet|cobertura|meta|objetivo|invest|aporte|patrimonio|reserva|rate|goal|asset/.test(s)||/%/.test(value))return 'indicator';
+ return 'neutral';
+}
+if(typeof module!=='undefined'&&module.exports)module.exports={kind};
+if(typeof document==='undefined')return;
+const enabled=()=>typeof matchMedia!=='function'||!matchMedia('(max-width:900px), (pointer:coarse)').matches;
+function mark(n,key,v){if(n?.dataset&&n.dataset[key]!==v)n.dataset[key]=v;}
+function decorate(card,label,value){if(!card||!value)return;mark(card,'pf34Kind',kind(label,value.textContent));mark(value,'pf34Value','true');mark(value,'pf34FinanceKind',window.PFSemanticPalette?.classify(label)||'other');}
+function refresh(){
+ if(!enabled())return;
+ for(const card of document.querySelectorAll('.pdp-kpi,.pa-metric,.pfgo-metric,.pa-click,.dashboard-v40-card,.g-metric,.fc-card,.desktop-balance-grid>div')){
+  const value=card.querySelector('.pdp-value,.val,.value,.number,strong');
+  const title=card.querySelector('.pdp-label,.lbl,.label,h3,h4,small,:scope>span');
+  const direct=[...card.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join(' ').trim();
+  decorate(card,direct||title?.textContent||'',value);
+ }
+ const native={pgReceitas:'Receitas',pgRecebido:'Receita recebida',pgDespesas:'Despesas',pgInvestimentos:'Investimentos',pgAVencer:'A vencer',pgVencido:'Vencido',pgSaldo:'Saldo',cardPrevReceita:'Receitas previstas',cardRecRecebidas:'Receita recebida',cardDespesas:'Despesas',cardInvestimento:'Investimentos',cardSaldo:'Saldo',cardPendente:'Pendências'};
+ for(const [id,label]of Object.entries(native)){const value=document.getElementById(id);if(value)decorate(value.parentElement,label,value);}
+ for(const value of document.querySelectorAll('[data-pf-dark-role="value"],.pa-card>strong,.pa-grid3>div>strong,.pa-row>div>strong,.pdpx-audit article>strong,.pdp-card strong,.pfgo-card strong,.pfge-total strong,.analysis-amount')){
+  if(value.closest('table')||value.parentElement?.closest('[data-pf34-kind]'))continue;
+  if(!value.matches('[data-pf-dark-role="value"],.analysis-amount')&&!/(?:R\$|US\$|[$€]|\d[\d.,]*\s*%|N\/D|Nao informad|Não informad)/i.test(value.textContent))continue;
+  const card=value.parentElement,title=card?.querySelector('.pdp-label,.lbl,.label,.analysis-rubric,h2,h3,h4,small,p');
+  const label=value.closest('.analysis-revenue')?'Receitas':value.closest('.analysis-expense')?'Despesas':title?.textContent||'';
+  mark(value,'pf34Kind',kind(label,value.textContent));mark(value,'pf34Value','true');mark(value,'pf34FinanceKind',window.PFSemanticPalette?.classify(label)||'other');
+ }
+}
+function cleanClone(copy){for(const n of [copy,...copy.querySelectorAll('[data-pf34-kind],[data-pf34-value],[data-pf34-finance-kind]')]){n.removeAttribute('data-pf34-kind');n.removeAttribute('data-pf34-value');n.removeAttribute('data-pf34-finance-kind');}return copy;}
+window.PFSurfaces34={refresh,cleanClone,kind};
+})();
+</script>
 <script id="pf-white-buttons-script">/* pf-desktop-only-v511 */
 (function(){if(typeof matchMedia==='function'&&matchMedia('(max-width:900px), (pointer:coarse)').matches)return;
 /* Botões azuis; cards da Página Inicial e, no escuro, do Cadastro com hierarquia neutra. */

@@ -297,6 +297,26 @@
       ".pfpct-axis",
       ".pfpct-shares",
       "@media print"
+    ],
+    "pf-surfaces-34-style": [
+      "#1C242B",
+      "#20252B",
+      "#222629",
+      "#1D2529",
+      "#1C252C",
+      "#242623",
+      "#232329",
+      "#20242A",
+      "#EAF5FC",
+      "#FFF0F1",
+      "#EAF7F0",
+      "#F1EEFC",
+      "#F2F5F8"
+    ],
+    "pf-surfaces-34-script": [
+      "PFSurfaces34",
+      "function kind",
+      "function cleanClone"
     ]
   },
   "bloco_relatorios": "pf-report-selection-module",

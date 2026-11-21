@@ -111,8 +111,8 @@ function chartColors(){
   });if(changed)c.update?.('none');
  }
 }
-function refresh(){if(running||!document.body)return;running=true;try{surfaces();buttons();statuses();chartColors();for(const n of touched.keys())if(!n.isConnected)touched.delete(n);}finally{running=false;}}
-function cleanClone(copy){for(const n of [copy,...copy.querySelectorAll('*')]){for(const p of ['color','background-color','border-color','background-image','fill','stroke'])if(n.style?.getPropertyValue(p).includes('--pf16-')||n.dataset?.pf16Action||n.dataset?.pf16Status)n.style?.removeProperty(p);for(const k of ['pf16Action','pf16Active','pf16Status','pf16Surface'])if(n.dataset?.[k])delete n.dataset[k];}return copy;}
+function refresh(){if(running||!document.body)return;running=true;try{surfaces();buttons();statuses();chartColors();window.PFSurfaces34?.refresh();for(const n of touched.keys())if(!n.isConnected)touched.delete(n);}finally{running=false;}}
+function cleanClone(copy){window.PFSurfaces34?.cleanClone(copy);for(const n of [copy,...copy.querySelectorAll('*')]){for(const p of ['color','background-color','border-color','background-image','fill','stroke'])if(n.style?.getPropertyValue(p).includes('--pf16-')||n.dataset?.pf16Action||n.dataset?.pf16Status)n.style?.removeProperty(p);for(const k of ['pf16Action','pf16Active','pf16Status','pf16Surface'])if(n.dataset?.[k])delete n.dataset[k];}return copy;}
 window.PFProjectTheme={refresh,cleanClone,actionKind,statusKind};
 })();
 

@@ -1,0 +1,45 @@
+/* Etapa 34: somente aparência desktop; não altera dimensões, conteúdo ou séries. */
+@media screen and (min-width:901px) and (pointer:fine){
+html body.dark-mode{--pf34-page-card:#1C242B;--pf16-card:var(--pf34-page-card)}
+html body.dark-mode[data-pf-dash-view="entries"]{--pf34-page-card:#20252B}
+html body.dark-mode[data-pf-dash-view="cadastro"]{--pf34-page-card:#222629}
+html body.dark-mode[data-pf-dash-view="charts"]{--pf34-page-card:#1D2529}
+html body.dark-mode[data-pf-dash-view="analysis"]{--pf34-page-card:#1C252C}
+html body.dark-mode[data-pf-dash-view="tools"]{--pf34-page-card:#242623}
+html body.dark-mode[data-pf-dash-view="security"]{--pf34-page-card:#232329}
+html body.dark-mode[data-pf-dash-view="help"]{--pf34-page-card:#20242A}
+html body.dark-mode:has(#chart-grid):not([data-pf-dash-view]){--pf34-page-card:#1D2529}
+html body.dark-mode #pfGraphicsPage{--pf16-card:#1D2529}
+html body.dark-mode #pfPersonalDashboard{--pf16-card:#1C242B}
+html body.dark-mode #pfAnalysisPage{--pf16-card:#1C252C}
+html body.dark-mode #pfCadastroPage{--pf16-card:#222629}
+html body.dark-mode :is([data-pf16-surface="card"],.panel,.analysis-grid>section,[class~="card"],[class*="-card"],.pa-click,.pfgo-week>button,[data-pf34-kind]){background-color:var(--pf16-card)!important}
+html body.dark-mode #pfIaDialog :is(.ia-shell,.ia-controls,.ia-chips,.ia-footer){background-color:var(--pf34-page-card)!important}
+/* Uma variável por finalidade permite decorar componentes novos sem regras de layout. */
+html body:not(.dark-mode){--pf16-bg:#F3F7FA;--pf34-neutral:#F2F5F8;--pf34-income:#EAF5FC;--pf34-expense:#FFF0F1;--pf34-positive:#EAF7F0;--pf34-indicator:#F1EEFC;--pf34-plot:#F5F9FC}
+html body:not(.dark-mode) :is(.panel,[class~="card"],[class*="-card"],[data-pf16-surface="card"],.pf-dash-card,.pf-area-card,.pdp-kpi,.pa-metric,.pfgo-metric,.fc-card,.g-metric,.dashboard-v40-card){--pf16-card:var(--pf34-neutral)}
+html body:not(.dark-mode) [data-pf34-kind="income"]{--pf16-card:var(--pf34-income)}
+html body:not(.dark-mode) [data-pf34-kind="expense"]{--pf16-card:var(--pf34-expense)}
+html body:not(.dark-mode) [data-pf34-kind="positive"]{--pf16-card:var(--pf34-positive)}
+html body:not(.dark-mode) [data-pf34-kind="indicator"]{--pf16-card:var(--pf34-indicator)}
+html body:not(.dark-mode) [data-pf34-kind="neutral"]{--pf16-card:var(--pf34-neutral)}
+html body:not(.dark-mode) [data-pf34-kind]{background-color:var(--pf16-card)!important}
+html body:not(.dark-mode) :is(.analysis-grid>section,[data-pdp-chart],.pf-chart-card,.analysis-card,.pa-card:has(svg),.pfgo-card:has(svg),.g-card:has(canvas)){--pf16-card:#FFFFFF;--pf16-border:#DCE5EC;--pf16-line:#DCE5EC;background-color:#FFFFFF!important}
+html body:not(.dark-mode) :is(.analysis-bars,canvas,svg.pdp-svg,svg.pa-svg,svg.pfgo-svg,svg.pfgo-donut,svg.pfpct-svg){background-color:var(--pf34-plot)!important}
+html body :is([data-pf34-value="true"],.pdp-value,.pa-metric>strong,.pfgo-metric>strong){font-weight:750}
+html body:not(.dark-mode) :is([data-pf34-kind="income"],[data-pf34-kind="positive"]) [data-pf34-value="true"]{--pf16-ink:#166534}
+html body:not(.dark-mode) [data-pf34-kind="expense"] [data-pf34-value="true"]{--pf16-ink:#BE123C}
+html body:not(.dark-mode) [data-pf34-kind="indicator"] [data-pf34-value="true"]{--pf16-ink:#6D28D9}
+html body.dark-mode [data-pf34-finance-kind="income"]{--pf16-ink:#00de99}
+html body.dark-mode :is([data-pf34-finance-kind="expense"],[data-pf34-finance-kind="overdue"]){--pf16-ink:#ff4d6a}
+html body.dark-mode :is([data-pf34-finance-kind="investment"],[data-pf34-finance-kind="upcoming"]){--pf16-ink:#57b6ff}
+html body.dark-mode [data-pf34-finance-kind="today"]{--pf16-ink:#ffd166}
+html body.dark-mode [data-pf34-finance-kind="other"]{--pf16-ink:#b49aff}
+html body:not(.dark-mode) [data-pf34-kind="income"][data-pf34-value="true"]{--pf16-ink:#166534}
+html body:not(.dark-mode) [data-pf34-kind="positive"][data-pf34-value="true"]{--pf16-ink:#166534}
+html body:not(.dark-mode) [data-pf34-kind="expense"][data-pf34-value="true"]{--pf16-ink:#BE123C}
+html body:not(.dark-mode) [data-pf34-kind="indicator"][data-pf34-value="true"]{--pf16-ink:#6D28D9}
+/* Mantém a hierarquia dos valores sem alterar o enquadramento. */
+html body :is(.pdp-kpi,.pa-metric,.pfgo-metric) [data-pf34-value="true"]{font-size:1.4rem}
+/* Contorno aprovado de hover/foco preservado pela paleta do projeto. */
+}
