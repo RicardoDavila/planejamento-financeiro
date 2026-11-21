@@ -50,7 +50,7 @@ function create(){
  }
  return html+'</div></article></section>';
  }
- return {capture,reset,input,submit,change,preset,section};
+ return {capture,reset,input,submit,change,preset,section,snapshot:()=>draft?JSON.parse(JSON.stringify(draft)):null};
 }
-window.PFFixedIncome={products,read,annualRate,point,calculate,create};
+window.PFFixedIncome={products,fields,read,annualRate,point,calculate,create};
 })();

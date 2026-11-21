@@ -63,3 +63,16 @@ body:not(.dark-mode) #pfAnalysisPage .pa-metric.green strong{color:#00734d}body:
 #pa-fixed-results>p,#pa-fixed-income article>p{font-size:14px;line-height:1.6;overflow-wrap:anywhere}
 #pa-fixed-results .pa-tablewrap th,#pa-fixed-results .pa-tablewrap td{white-space:normal}
 }
+
+@media (min-width:901px) and (pointer:fine){
+#pa-guide .pa-guide-wide{grid-column:1/-1;line-height:1.6;font-size:14px}
+#pa-guide fieldset{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+#pa-guide fieldset:has([name="product"]){display:flex}
+#pa-guide .pa-guide-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:18px 0}
+#pa-guide .pa-guide-facts>div{border-bottom:1px solid var(--pa-line);padding:12px 0;min-width:0}
+#pa-guide dt{color:var(--pa-muted);font-size:13px}#pa-guide dd{margin:8px 0 0;font-size:15px;color:var(--pa-ink);overflow-wrap:anywhere}
+#pa-guide article>p,#pa-guide-report p,#pa-guide-report li{line-height:1.6;font-size:14px;overflow-wrap:anywhere}
+#pa-guide-report h4{font-size:18px;margin-top:32px;color:var(--pa-ink)}
+#pa-guide-report th,#pa-guide-report td{white-space:normal}
+#pa-guide textarea{min-height:100px;width:100%;resize:vertical}
+}

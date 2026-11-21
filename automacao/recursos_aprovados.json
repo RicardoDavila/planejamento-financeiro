@@ -328,6 +328,14 @@
       "Confirme as premissas",
       "confirm:false",
       "252"
+    ],
+    "pf-planning-guide-script": [
+      "function analyze",
+      "function questionnaire",
+      "function report",
+      "sem IA remota",
+      "Confirme as informações e premissas",
+      "não substitui orientação profissional individualizada"
     ]
   },
   "bloco_relatorios": "pf-report-selection-module",

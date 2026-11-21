@@ -1,0 +1,64 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),path=require('path');
+(async()=>{
+ const nodes={},timers=[];let body;
+ class E{constructor(){this.dataset={};this.events={};this.hidden=false;this.classList={contains:()=>false,add(){},remove(){}};}set innerHTML(v){this.html=v;}get innerHTML(){return this.html||'';}setAttribute(){}addEventListener(k,f){this.events[k]=f;}querySelectorAll(){return [];}querySelector(s){return s==='h1'?{focus(){}}:null;}before(e){nodes[e.id]=e;e.parentElement=body;}append(e){nodes[e.id]=e;e.parentElement=this;}focus(){}}
+ body=new E();body.dataset.pfDashView='home';nodes['layout-workspace']=new E();
+ const window={PFAnalysisConfig:{owner:()=> 'fixture'},PFDashboard:{show:v=>body.dataset.pfDashView=v}};
+ const env={window,document:{readyState:'complete',body,getElementById:id=>nodes[id]||null,createElement:()=>new E(),addEventListener(){}},matchMedia:()=>({matches:false}),MutationObserver:class{observe(){}},setInterval:f=>timers.push(f),setTimeout:f=>f(),protecaoAutenticada:true,obterDataLocalISO:()=> '2026-11-15',transacoes:[{id:1,tipo:'Receita',valor:1000,vencimento:'2026-11-01',dataPg:'2026-11-01',status:'Recebido',tipoPessoa:'PF',categoria:'Renda'},{id:2,tipo:'Despesa',valor:100,vencimento:'2026-11-05',dataPg:'2026-11-05',status:'Pago',tipoPessoa:'PF',categoria:'Moradia'}],console};vm.createContext(env);
+ for(const f of ['analise_financeira_core.js','planejamento_pessoal_store.js','dashboard_revisao.js','renda_fixa.js','assistente_planejamento.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,f),'utf8'),env);
+ const doc=env.document;delete env.document;vm.runInContext(fs.readFileSync(path.join(__dirname,'dashboard_pessoal.js'),'utf8'),env);env.document=doc;
+ const C=window.PFAnalysisMath,S=window.PFPlanningStore,store=S.memory(),scope={account:'Todas',person:'Todas'};
+ await store.change('fixture',p=>{p.snapshots=[{...scope,id:'pos',date:'2026-11-01',assets:500000,liabilities:100000,invested:null,reason:'Bens fictícios'}];p.goals=[{...scope,id:'goal',date:'2026-11-01',name:'Meta preservada',kind:'goal',current:10000,target:20000,deadline:'2027-11-01'}];return p;});window.PFAnalysisConfig.store=store;
+ env.transacoes[0].cliente='Empresa Alfa';
+ env.FormData=class{constructor(form){this.values=form.values||{};}get(k){return this.values[k]??null;}has(k){return Object.hasOwn(this.values,k);}getAll(k){return this.has(k)?(Array.isArray(this.get(k))?this.get(k):[this.get(k)]):[];}*[Symbol.iterator](){yield* Object.entries(this.values);}};
+ const saved=JSON.stringify(await store.read('fixture')),financial=JSON.stringify(env.transacoes);
+ vm.runInContext(fs.readFileSync(path.join(__dirname,'analise_financeira.js'),'utf8'),env);
+ const api=window.PFPersonalAnalysis;api.showInvestments({source:'analysis'});await new Promise(setImmediate);const root=nodes.pfAnalysisPage;
+ const submit=(id,values)=>root.events.submit({preventDefault(){},target:{id,values}});
+ assert(root.innerHTML.includes('Informe um aporte para calcular'));assert.equal((root.innerHTML.match(/id="pa-scenario-form"/g)||[]).length,1);
+ assert(!root.innerHTML.includes('pdpx-savings-form'));assert(!root.innerHTML.includes('Valor futuro estimado'));
+ submit('pa-scenario-form',{initial:'0',deposit:'',term:'12',rate:'0'});assert(!root.innerHTML.includes('Valor futuro estimado'));
+ submit('pa-scenario-form',{initial:'0',deposit:'0',term:'12',rate:'0'});assert(root.innerHTML.includes('Valor futuro estimado'));assert(root.innerHTML.includes('R$ 0,00'));
+ submit('pa-scenario-form',{initial:'100',deposit:'10',term:'12',rate:'0',incomeBasis:'selection'});assert(root.innerHTML.includes('R$ 220,00'));
+ submit('pa-quick-savings-form',{quick0:'10',quick1:'',quick2:'0'});assert.equal(api.investmentSummary().annualSavings,12000);
+ api.showPlanning();assert(root.innerHTML.includes('Abrir simulador compartilhado'));assert(!root.innerHTML.includes('id="pa-scenario-form"'));api.showInvestments({source:'planning'});assert(root.innerHTML.includes('R$ 220,00'));assert.equal(api.investmentSummary().annualSavings,12000);
+ const legacy={quick:[500,null,0],contribution:12300,term:24,rate:.88};
+ api.showInvestments({source:'dashboard',owner:'fixture',filter:{year:2026,from:'2026-11-01',to:'2026-11-30',person:'Todas',search:'Alfa'},legacy,reserve:0});
+ assert(root.innerHTML.includes('R$ 220,00'),'dashboard entry must not silently replace the shared scenario');assert(root.innerHTML.includes('Cenário anterior do Dashboard'));assert(/Base dos percentuais: R\$\s1\.000,00 por mês/.test(root.innerHTML));
+ const beforeForeign=root.innerHTML;api.showInvestments({source:'dashboard',owner:'foreign',filter:{},legacy:{}});assert.equal(root.innerHTML,beforeForeign);
+ root.events.click({target:{closest:()=>({dataset:{},matches:s=>s==='[data-pa-import-dashboard]'})}});
+ assert(!root.innerHTML.includes('Valor futuro estimado'));assert(root.innerHTML.includes('value="123"'));assert.equal(api.investmentSummary().annualSavings,6000);
+ submit('pa-scenario-form',{initial:'0',deposit:'123',term:'24',rate:'.88',incomeBasis:'selection'});const expected=C.futureValue(0,12300,24,.88);assert(root.innerHTML.includes((expected.value/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})));
+ for(const args of [[0,12,0],[10000,24,.88],[100008,60,1.5]])assert.equal(window.PFPersonalReview.futureValue(...args).future,C.futureValue(0,...args).value);
+ assert.equal(JSON.stringify(await store.read('fixture')),saved);assert.equal(JSON.stringify(env.transacoes),financial);
+
+ const fixedData={initial:'100',deposit:'10',months:'12',product:['fixed'],fixed:'0',ipca:'',confirm:'on'};
+ assert(root.innerHTML.includes('Simulador de Renda Fixa'));
+ const missingConfirm={...fixedData};delete missingConfirm.confirm;submit('pa-fixed-form',missingConfirm);assert(!root.innerHTML.includes('<h3>Comparação bruta de renda fixa</h3>'));
+ submit('pa-fixed-form',fixedData);assert(root.innerHTML.includes('<h3>Comparação bruta de renda fixa</h3>'));assert(root.innerHTML.includes('R$ 220,00'));assert(root.innerHTML.includes('Inflação não informada'));
+ api.showPlanning();api.showInvestments({source:'planning'});assert(root.innerHTML.includes('<h3>Comparação bruta de renda fixa</h3>'));
+ // An edit invalidates the previous calculation and clears confirmation without rebuilding fields.
+ let stale='',checked=true;const rfForm={values:{...fixedData,deposit:'20'},querySelector:()=>({set checked(v){checked=v;}})};
+ const originalQuery=root.querySelector.bind(root);root.querySelector=selector=>selector==='#pa-fixed-results'?{set innerHTML(v){stale=v;}}:originalQuery(selector);
+ root.events.input({target:{name:'deposit',closest:s=>s==='#pa-fixed-form'?rfForm:null}});assert.equal(checked,false);assert(stale.includes('Premissas alteradas'));
+ root.querySelector=originalQuery;api.refresh();assert(!root.innerHTML.includes('<h3>Comparação bruta de renda fixa</h3>'));
+ submit('pa-fixed-form',{...fixedData,initial:'0',deposit:'0'});assert(root.innerHTML.includes('<h3>Comparação bruta de renda fixa</h3>'));assert(root.innerHTML.includes('R$ 0,00'));
+ assert.equal(JSON.stringify(await store.read('fixture')),saved);assert.equal(JSON.stringify(env.transacoes),financial);
+
+ api.showPlanning();assert(root.innerHTML.includes('Assistente de planejamento financeiro'));
+ let guideForm=null;const queryBeforeGuide=root.querySelector.bind(root);root.querySelector=selector=>selector==='#pa-guide-form'?guideForm:queryBeforeGuide(selector);
+ const guideSubmit=values=>{guideForm={id:'pa-guide-form',values,querySelector:s=>s==='[name="projectionMode"]'&&Object.hasOwn(values,'projectionMode')?{}:null};submit('pa-guide-form',values);};
+ for(const values of [{income:'5000'},{fixedExpenses:'1000',variableExpenses:'1000'},{hasDebt:'no'},{initial:'1000',deposit:'100',months:'12'},{reserve:'2000',essential:'1500',reserveMonths:'6'},{goal0name:'Objetivo preservado',goal0target:'2000',goal0current:'0',goal0monthly:'100',goal0months:'12'},{liquidity:'anytime'},{experience:'new',risk:'low'},{context:'Contexto da sessão'}])guideSubmit(values);
+ assert(root.innerHTML.includes('Revisão e confirmação'));assert(!root.innerHTML.includes('Seu resumo de planejamento'));
+ guideForm={id:'pa-guide-form',values:{projectionMode:'compare'},querySelector:s=>s==='[name="projectionMode"]'?{}:null};
+ root.events.click({target:{closest:()=>({dataset:{paGuide:'rates'},matches:()=>false})}});
+ assert(/name="product"[^>]+value="fixed" checked/.test(root.innerHTML),'adopted products survive the parent render');
+ assert(/name="fixed"[^>]+value="0"/.test(root.innerHTML),'adopted rates survive the parent render');
+ guideSubmit({projectionMode:'compare',product:['fixed'],fixed:'0',confirm:'on'});assert(root.innerHTML.includes('Seu resumo de planejamento'));assert(root.innerHTML.includes('R$ 2.200,00'));assert.equal((root.innerHTML.match(/<h4>[1-8]\./g)||[]).length,8);
+ api.showInvestments({source:'planning'});api.showPlanning();assert(root.innerHTML.includes('Objetivo preservado'));
+ guideForm=null;root.querySelector=queryBeforeGuide;
+ assert.equal(JSON.stringify(await store.read('fixture')),saved);assert.equal(JSON.stringify(env.transacoes),financial);
+ env.protecaoAutenticada=false;timers[0]();assert.equal(api.investmentSummary(),null);assert(!root.innerHTML.includes('123'));
+ env.protecaoAutenticada=true;api.showInvestments({source:'analysis'});await new Promise(setImmediate);assert(!root.innerHTML.includes('Valor futuro estimado'));assert.equal(api.investmentSummary().annualSavings,null);api.showPlanning();assert(!root.innerHTML.includes('Contexto da sessão'));assert(!root.innerHTML.includes('Seu resumo de planejamento'));assert(!root.innerHTML.includes('<h3>Comparação bruta de renda fixa</h3>'));
+ console.log('PASS Etapa38.2: um formulário/cálculo, zero versus vazio, filtros herdados, estado compartilhado, importação explícita, owner e dados preservados.');
+})().catch(e=>{console.error(e);process.exitCode=1;});
