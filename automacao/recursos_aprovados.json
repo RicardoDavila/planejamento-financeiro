@@ -321,6 +321,13 @@
       "PFSurfaces34",
       "function kind",
       "function cleanClone"
+    ],
+    "pf-fixed-income-script": [
+      "function annualRate",
+      "function calculate",
+      "Confirme as premissas",
+      "confirm:false",
+      "252"
     ]
   },
   "bloco_relatorios": "pf-report-selection-module",

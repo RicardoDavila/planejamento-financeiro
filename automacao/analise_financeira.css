@@ -56,3 +56,10 @@ body:not(.dark-mode) #pfAnalysisPage .pa-metric.green strong{color:#00734d}body:
 #pfAnalysisPage .pa-plan-access small{display:block;color:var(--pa-cyan)}
 #pfAnalysisPage .pa-plan-access:hover,#pfAnalysisPage .pa-plan-access:focus-visible{border-color:var(--pa-cyan);box-shadow:0 0 14px #00e5ff33}
 }
+
+@media (min-width:901px) and (pointer:fine){
+#pfAnalysisPage .pa-fixed-premises{grid-column:1/-1;padding:16px;border:1px solid var(--pa-line);border-radius:12px;color:var(--pa-ink);line-height:1.6}
+#pfAnalysisPage .pa-fixed-premises ul{padding-left:22px;font-size:14px;color:var(--pa-muted)}
+#pa-fixed-results>p,#pa-fixed-income article>p{font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+#pa-fixed-results .pa-tablewrap th,#pa-fixed-results .pa-tablewrap td{white-space:normal}
+}

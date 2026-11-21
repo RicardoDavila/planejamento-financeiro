@@ -1,10 +1,10 @@
 {
   "pessoal": [
-    "Etapa 38.2: cria Simulador de Investimentos e unifica poupança, aportes e oportunidades em uma única ferramenta compartilhada.",
-    "Transfere conteúdos do Dashboard, mantém filtros e retornos e não altera dados financeiros."
+    "Etapa 38.3: adiciona comparação hipotética de renda fixa com taxas editáveis e confirmação das premissas.",
+    "Resultados brutos, inflação opcional, prazos livres e de exemplo, gráficos selecionáveis e impressão. Não altera lançamentos nem aplica taxas históricas automaticamente."
   ],
   "distribuicao": [
-    "Etapa 38.2: cria Simulador de Investimentos e unifica poupança, aportes e oportunidades em uma única ferramenta compartilhada.",
-    "Transfere conteúdos do Dashboard, mantém filtros e retornos e não altera dados financeiros."
+    "Etapa 38.3: adiciona comparação hipotética de renda fixa com taxas editáveis e confirmação das premissas.",
+    "Resultados brutos, inflação opcional, prazos livres e de exemplo, gráficos selecionáveis e impressão. Não altera lançamentos nem aplica taxas históricas automaticamente."
   ]
 }
