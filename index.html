@@ -2599,7 +2599,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                         <button onclick="criarContaNuvem()" class="bg-slate-700 hover:bg-slate-800 text-white rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-user-plus mr-1"></i> Criar conta</button>
                     </div>
                     <button onclick="sincronizarAgoraNuvem()" class="w-full border border-emerald-600 text-emerald-700 hover:bg-emerald-50 rounded-lg py-2.5 text-sm font-semibold"><i class="fa-solid fa-arrows-rotate mr-1"></i> Sincronizar agora</button>
-                    <button type="button" onclick="receberDadosNuvemComBackup()" class="w-full border border-blue-700 text-blue-800 rounded-lg py-2.5 text-sm font-semibold">Receber dados do PC/nuvem (com backup)</button>
                     <button onclick="testarConexaoNuvem()" class="w-full border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg py-2 text-xs font-semibold"><i class="fa-solid fa-stethoscope mr-1"></i> Testar conexão da nuvem</button>
                     <button onclick="sairNuvem()" class="w-full text-xs text-red-600 hover:text-red-800 font-semibold">Desconectar este dispositivo da nuvem</button>
                     <p class="text-[11px] text-slate-500 leading-relaxed">A senha de acesso do aplicativo continua independente. A conta acima é usada somente para identificar seu banco na nuvem e permitir que computador e celular compartilhem os mesmos dados.</p>
@@ -4376,7 +4375,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             supabaseCliente.auth.onAuthStateChange((evento, sessao) => {
                 if (sessao?.user) {
                     const badge = document.getElementById('statusNuvemBadge');
-                    if (badge && /^(Local|Conectar)$/.test(badge.textContent.trim())) atualizarStatusNuvem('Conta conectada; aguardando sincronização.');
+                    if (badge) badge.textContent = 'Online';
                     const emailEl = document.getElementById('nuvemEmail');
                     if (emailEl && !emailEl.value) emailEl.value = sessao.user.email || '';
                 } else {
@@ -4524,7 +4523,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             restaurarSessaoNuvemManual().then(sessao => {
                 if (sessao?.user) {
                     const badge = document.getElementById('statusNuvemBadge');
-                    if (badge && /^(Local|Conectar)$/.test(badge.textContent.trim())) atualizarStatusNuvem('Conta conectada; aguardando sincronização.');
+                    if (badge) badge.textContent = 'Online';
                     const emailEl = document.getElementById('nuvemEmail');
                     if (emailEl && !emailEl.value) emailEl.value = sessao.user.email || '';
                 }
@@ -4725,7 +4724,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         }
         function pfMesmaVersao(a,b){return !!a&&!!b&&pfInstanteNuvem(a)===pfInstanteNuvem(b);}
         function pfTemAlteracoesLocais(){
-            const confirmed=pfLerBaseFinanceiraConfirmada();if(confirmed)return !pfDadosFinanceirosIguais(coletarPacoteNuvem(),confirmed.financeiro);
             const token=localStorage.getItem('pf_alteracao_token');
             if(token)return token!==localStorage.getItem('pf_alteracao_confirmada');
             const local=localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL),base=localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO);
@@ -4734,7 +4732,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         async function salvarPacoteNuvem(){
             pfEnviosPendentes++;
             const operation=async()=>{
-                if(pfRecebendoDadosNuvem)throw Error('Recebimento da nuvem em andamento. Aguarde a conclusão.');
                 const session=await obterSessaoNuvem();
                 if(!session)throw new Error('Entre novamente na conta.');
                 const remote=await carregarPacoteNuvem();
@@ -4751,177 +4748,22 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 const rows=await response.json();
                 if(!Array.isArray(rows)||rows.length!==1||!rows[0].updated_at)throw new Error('O banco remoto mudou durante o envio. Nenhuma confirmação foi registrada. Seus dados locais foram preservados.');
                 localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO,rows[0].updated_at);
-                localStorage.setItem('pf_alteracao_confirmada',token);pfSalvarBaseFinanceiraConfirmada(payload,session.user.id,rows[0].updated_at);
+                localStorage.setItem('pf_alteracao_confirmada',token);
                 atualizarStatusNuvem('Dados enviados para a nuvem com sucesso.',true);return true;
             };
             const run=async()=>{const current=await obterSessaoNuvem();if(!current)throw new Error('Entre na conta da nuvem.');return navigator.locks?.request?navigator.locks.request('pf-pessoal-envio-'+current.user.id,{mode:'exclusive'},operation):operation();};
             const pending=pfFilaEnvio.then(run,run);pfFilaEnvio=pending.catch(()=>{});
             try{return await pending;}finally{pfEnviosPendentes--;}
         }
-        function pfCanonicoSync(valor) {
-            if (Array.isArray(valor)) return valor.map(pfCanonicoSync);
-            if (valor && typeof valor === 'object') return Object.fromEntries(Object.keys(valor).sort().map(k=>[k,pfCanonicoSync(valor[k])]));
-            return valor;
-        }
-        function pfDadosFinanceirosIguais(a,b) {
-            const campos=['transacoes','rubricas_ocultas','subitens_ocultos','rubricas_extras','subitens_extras','lixeira','data_abertura_projeto'];
-            const compararLinha=t=>{const c={...t};if(c.tipo==='Despesa'&&!c.dataPg&&['Pendente','A Vencer','Vencido'].includes(c.status)){delete c.status;delete c.idStatus;}return c;};
-            const selecionar=p=>Object.fromEntries(campos.map(k=>[k,k==='transacoes'?[...(p?.[k]||[])].map(compararLinha).sort((x,y)=>String(x.id).localeCompare(String(y.id))):p?.[k]??(k==='data_abertura_projeto'?'':[])]));
-            return JSON.stringify(pfCanonicoSync(selecionar(a)))===JSON.stringify(pfCanonicoSync(selecionar(b)));
-        }
-        async function pfConfirmarCopiasIguais(remote) {
-            // Só reconcilia automaticamente se TODOS os dados financeiros coincidirem.
-            const local=coletarPacoteNuvem();
-            if (!remote?.updated_at || !pfDadosFinanceirosIguais(local,remote.payload)) return false;
-            const historico=[...(remote.payload.historico||[]),...(local.historico||[])];
-            const unicos=new Map(historico.map(h=>[JSON.stringify(pfCanonicoSync(h)),h]));
-            const combinado=[...unicos.values()].sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
-            const anterior=localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO)||'';
-            localStorage.setItem(CHAVE_HISTORICO,JSON.stringify(combinado));
-            localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO,remote.updated_at);
-            try {
-                // O envio existente ainda verifica a versão e usa PATCH condicional.
-                await salvarPacoteNuvem();
-                return true;
-            } catch(error) {
-                if (localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO)===remote.updated_at) {
-                    if(anterior)localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO,anterior);
-                    else localStorage.removeItem(CHAVE_ULTIMA_SINCRONIZACAO);
-                }
-                throw error;
-            }
-        }
-        let pfAtualizacaoAoRetornar=null;
-        async function pfVerificarNuvemAoRetornar() {
-            if(document.hidden||document.body.classList.contains('auth-pendente'))return;
-            if(pfAtualizacaoAoRetornar)return pfAtualizacaoAoRetornar;
-            const operation=(async()=>{
-                try {
-                    await pfSincronizarConta();
-                    popularSelectsDinamicos();renderTable();atualizarPainelGerencial();atualizarInfoBanco();verificarContasVencendoHoje();
-                }catch(error){atualizarStatusNuvem('Falha na sincronização automática: '+error.message);}
-            })();
-            pfAtualizacaoAoRetornar=operation;
-            try{await operation;}finally{pfAtualizacaoAoRetornar=null;}
-        }
-        document.addEventListener('visibilitychange',pfVerificarNuvemAoRetornar);
-        window.addEventListener('online',pfVerificarNuvemAoRetornar);
-        window.addEventListener('focus',pfVerificarNuvemAoRetornar);
-
-
-        // A cópia confirmada permite distinguir alterações financeiras de status calculados.
-        let pfRecebendoDadosNuvem=false;
-        function pfIdContaSync(){
-            try{return String(window.parent?.pfdUser?.id||(typeof obterSessaoNuvemManual==='function'?obterSessaoNuvemManual()?.user?.id:'')||'');}catch(_){return '';}
-        }
-        function pfSalvarBaseFinanceiraConfirmada(payload,userId,version){
-            if(!userId||!version||String(userId)!==pfIdContaSync())return false;
-            const fields=['transacoes','rubricas_ocultas','subitens_ocultos','rubricas_extras','subitens_extras','lixeira','data_abertura_projeto'];
-            const financeiro=Object.fromEntries(fields.map(k=>[k,payload?.[k]??(k==='data_abertura_projeto'?'':[])]));
-            try{localStorage.setItem('pf_base_financeira_confirmada_'+userId,JSON.stringify({user_id:String(userId),version,financeiro}));return true;}catch(error){console.warn('Não foi possível guardar a referência de sincronização; mantendo a proteção por versão.',error);return false;}
-        }
-        function pfLerBaseFinanceiraConfirmada(){
-            try{
-                const owner=pfIdContaSync();if(!owner)return null;
-                const base=JSON.parse(localStorage.getItem('pf_base_financeira_confirmada_'+owner)||'null');
-                const known=localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO)||'';
-                if(!base||base.user_id!==owner||!base.financeiro||!known)return null;
-                if(base.version!==known&&!(typeof pfMesmaVersao==='function'&&pfMesmaVersao(base.version,known)))return null;
-                return base;
-            }catch(_){return null;}
-        }
-        function pfDetalheFalhaLoginNuvem(error){
-            if(error?.code==='invalid_credentials'||/invalid login credentials/i.test(error?.message||''))return 'A nuvem recusou esta tentativa de login (invalid_credentials). A sessão já salva não foi encerrada. A senha da conta de sincronização é independente da senha de abertura do aplicativo. Use Testar conexão da nuvem para verificar a sessão atual. Seus dados locais foram mantidos.';
-            return resumirErroSupabase(error);
-        }
-        function pfMostrarDiagnosticoNuvem(texto,ok=false){
-            let box=document.getElementById('nuvemDiagnosticoMsg');
-            if(!box){
-                const anchor=document.getElementById('nuvemStatusMsg');if(!anchor)return;
-                box=document.createElement('div');box.id='nuvemDiagnosticoMsg';box.setAttribute('role','status');box.setAttribute('aria-live','polite');anchor.after(box);
-            }
-            box.textContent=texto;box.className='text-xs rounded-lg border p-3 mt-2 '+(ok?'bg-blue-50 border-blue-200 text-blue-800':'bg-amber-50 border-amber-200 text-amber-900');
-            // Somente diagnóstico. Não altera badge, confirmação, sessão ou banco.
-        }
-        async function pfTestarConexaoNuvem(){
-            try{
-                if(!supabaseCliente&&!inicializarSupabaseCliente())throw Error('Biblioteca Supabase não carregada.');
-                const session=await obterSessaoNuvem();
-                if(!session?.user?.id){pfMostrarDiagnosticoNuvem('Diagnóstico: não há sessão válida neste dispositivo. A sincronização financeira ainda não foi confirmada.');return {estado:'sem_sessao'};}
-                const owner=String(session.user.id),remote=await carregarPacoteNuvem();
-                if(String((await obterSessaoNuvem())?.user?.id||'')!==owner)throw Error('A conta mudou durante o diagnóstico. Abra novamente a sincronização.');
-                if(!remote?.payload){pfMostrarDiagnosticoNuvem('Conexão OK: conta e sessão acessíveis. Ainda não há banco salvo para esta conta na nuvem. Testar conexão não envia os dados.',true);return {estado:'sem_banco'};}
-                if(!Array.isArray(remote.payload.transacoes))throw Error('A nuvem não devolveu um banco financeiro válido.');
-                const local=coletarPacoteNuvem(),same=pfDadosFinanceirosIguais(local,remote.payload),changed=pfTemAlteracoesLocais();
-                const known=localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO)||'',confirmed=pfMesmaVersao(known,remote.updated_at);
-                const counts=' Neste dispositivo: '+local.transacoes.length+' lançamento(s); na nuvem: '+remote.payload.transacoes.length+'.';
-                if(changed&&!confirmed&&!same){
-                    pfMostrarDiagnosticoNuvem('Conexão OK, mas existe conflito entre as cópias financeiras.'+counts+' Há alterações locais e a versão atual da nuvem ainda não foi confirmada neste dispositivo. O envio automático é bloqueado para evitar sobrescrever dados. Se a cópia do PC/nuvem for a correta, use Receber dados do PC/nuvem (com backup) e confira as duas cópias antes de confirmar.');
-                    return {estado:'conflito',local:local.transacoes.length,nuvem:remote.payload.transacoes.length};
-                }
-                if(same){pfMostrarDiagnosticoNuvem('Conexão OK: conta, sessão e tabela acessíveis. A movimentação financeira comparada coincide.'+counts+' Este teste não envia nem recebe dados e não muda o indicador de sincronização. Para confirmar a operação, use Sincronizar agora.',true);return {estado:'copias_iguais'};}
-                pfMostrarDiagnosticoNuvem('Conexão OK: conta, sessão e tabela acessíveis.'+counts+(changed?' Há alterações locais aguardando confirmação de envio.':' Há dados diferentes na nuvem que podem ser recebidos.')+' Use Sincronizar agora para executar a transferência; testar conexão apenas verifica o acesso.',true);
-                return {estado:changed?'envio_pendente':'recebimento_pendente'};
-            }catch(error){pfMostrarDiagnosticoNuvem('Falha no diagnóstico: '+resumirErroSupabase(error)+'. Nenhum lançamento foi substituído.');return {estado:'erro'};}
-        }
-        function pfComparacaoRecebimento(p){const c={...p};delete c.atualizado_localmente_em;return JSON.stringify(pfCanonicoSync(c));}
-        async function receberDadosNuvemComBackup(){
-            if(pfRecebendoDadosNuvem)return false;
-            pfRecebendoDadosNuvem=true;
-            let localAntes=null,antes=null,aplicando=false,concluido=false;
-            const metadata=[CHAVE_ULTIMA_SINCRONIZACAO,CHAVE_ULTIMA_ALTERACAO_LOCAL,'pf_alteracao_token','pf_alteracao_confirmada'];
-            try{
-                clearTimeout(sincronizacaoNuvemTimer);await pfFilaEnvio;
-                const session=await obterSessaoNuvem();
-                if(!session?.access_token||!session.user?.id)throw Error('Entre na conta de sincronização com o mesmo e-mail e senha usados no computador.');
-                const owner=String(session.user.id),remote=await carregarPacoteNuvem();
-                if(String((await obterSessaoNuvem())?.user?.id||'')!==owner)throw Error('A conta mudou. Abra novamente a sincronização.');
-                if(!Array.isArray(remote?.payload?.transacoes)||!remote.updated_at)throw Error('A nuvem não devolveu um banco válido. Nenhum dado foi substituído.');
-                if(typeof validarBackup==='function')validarBackup(remote.payload);
-                localAntes=coletarPacoteNuvem();
-                if(!window.confirm('Receber neste dispositivo os dados atuais da sua conta na nuvem?\n\nNeste dispositivo: '+localAntes.transacoes.length+' lançamento(s).\nNa nuvem: '+remote.payload.transacoes.length+' lançamento(s).\n\nPrimeiro será salvo um backup das DUAS cópias. Depois da sua confirmação, somente os dados deste dispositivo serão substituídos.'))return false;
-                const backup={sistema:'Planejamento Financeiro',finalidade:'Backup antes de receber dados da nuvem',user_id:owner,data_backup:new Date().toISOString(),local:localAntes,nuvem:remote};
-                // Se a cópia de segurança não puder ser gravada, interrompe antes da troca.
-                localStorage.setItem('pf_backup_antes_receber_nuvem_'+owner,JSON.stringify(backup));
-                const url=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json;charset=utf-8'}));
-                const link=document.createElement('a');link.href=url;link.download='backup_celular_e_nuvem_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
-                if(!window.confirm('Confira se o arquivo backup_celular_e_nuvem foi baixado.\n\nCom o backup salvo, confirme para receber os dados da nuvem neste dispositivo. Se o download não terminou, cancele.'))return false;
-                await pfFilaEnvio;
-                const current=await carregarPacoteNuvem(),active=await obterSessaoNuvem();
-                if(String(active?.user?.id||'')!==owner)throw Error('A conta mudou durante a comparação. Nenhum dado foi substituído.');
-                if(!pfMesmaVersao(current?.updated_at,remote.updated_at))throw Error('A nuvem mudou durante a comparação. Compare novamente para receber a cópia mais recente.');
-                if(pfComparacaoRecebimento(current?.payload)!==pfComparacaoRecebimento(remote.payload))throw Error('O conteúdo da nuvem mudou durante a comparação. Nenhum dado foi substituído.');
-                if(pfComparacaoRecebimento(localAntes)!==pfComparacaoRecebimento(coletarPacoteNuvem()))throw Error('Os dados locais mudaram durante a comparação. Nenhum dado foi substituído.');
-                antes=Object.fromEntries(metadata.map(k=>[k,localStorage.getItem(k)]));
-                aplicando=true;aplicarPacoteNuvem(current.payload);
-                localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO,current.updated_at);
-                localStorage.setItem(CHAVE_ULTIMA_ALTERACAO_LOCAL,current.updated_at);
-                localStorage.setItem('pf_alteracao_confirmada',localStorage.getItem('pf_alteracao_token')||'');
-                pfSalvarBaseFinanceiraConfirmada(current.payload,owner,current.updated_at);
-                concluido=true;aplicando=false;
-                popularSelectsDinamicos();renderTable();atualizarPainelGerencial();atualizarInfoBanco();verificarContasVencendoHoje();
-                atualizarStatusNuvem('Dados da nuvem recebidos neste dispositivo. A cópia anterior foi preservada no backup.',true);
-                alert('Dados recebidos com sucesso. A nuvem permaneceu intacta e a cópia anterior deste dispositivo está no backup.');return true;
-            }catch(error){
-                if(aplicando&&localAntes){
-                    try{aplicarPacoteNuvem(localAntes);for(const [k,v]of Object.entries(antes||{})){if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}}
-                    catch(rollbackError){console.error('Falha ao restaurar a cópia local; preserve o backup baixado.',rollbackError);}
-                }
-                atualizarStatusNuvem((concluido?'Dados recebidos; falha ao atualizar a tela: ':'Falha ao receber os dados: ')+error.message);
-                alert((concluido?'Os dados foram recebidos, mas a tela precisa ser atualizada. ':'Não foi possível concluir o recebimento. Preserve o backup e os dados deste dispositivo. ')+error.message);return false;
-            }finally{pfRecebendoDadosNuvem=false;}
-        }
         async function pfSincronizarConta(){
-            if(pfRecebendoDadosNuvem)throw Error('Recebimento da nuvem em andamento. Aguarde a conclusão.');
             await pfFilaEnvio;
             const remote=await carregarPacoteNuvem();
             if(!remote?.payload){await salvarPacoteNuvem();return 'enviado';}
-            if(pfTemAlteracoesLocais()){if(await pfConfirmarCopiasIguais(remote))return 'enviado';await salvarPacoteNuvem();return 'enviado';}
+            if(pfTemAlteracoesLocais()){await salvarPacoteNuvem();return 'enviado';}
             aplicarPacoteNuvem(remote.payload);
             localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO,remote.updated_at);
             localStorage.setItem(CHAVE_ULTIMA_ALTERACAO_LOCAL,remote.updated_at);
             localStorage.setItem('pf_alteracao_confirmada',localStorage.getItem('pf_alteracao_token')||'');
-            pfSalvarBaseFinanceiraConfirmada(remote.payload,pfIdContaSync(),remote.updated_at);
             atualizarStatusNuvem('Banco da sua conta carregado neste dispositivo.',true);return 'carregado';
         }
         async function sincronizarNuvemAoAbrir(){
@@ -4939,7 +4781,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             sincronizacaoNuvemTimer = setTimeout(async () => {
                 try {
                     const session = await obterSessaoNuvem();
-                    if (session) await pfSincronizarConta();
+                    if (session) await salvarPacoteNuvem();
                 } catch (e) {
                     console.error('Erro ao salvar na nuvem:', e);
                     atualizarStatusNuvem('Alteração salva neste dispositivo; sincronização pendente.');
@@ -4972,8 +4814,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Conectando...'; }
                 atualizarStatusNuvem('Conectando ao Supabase...');
 
-                // Uma tentativa recusada não deve encerrar a sessão anterior.
-                // Preserva a sessão anterior até a nova autenticação ser validada.
+                // Limpa uma sessão antiga somente deste dispositivo antes de autenticar.
+                try { await supabaseCliente.auth.signOut({ scope: 'local' }); } catch (_) {}
                 const { data, error } = await supabaseCliente.auth.signInWithPassword({ email, password });
                 if (error) throw error;
                 if (!data?.session?.access_token) throw new Error('O Supabase aceitou o login, mas não devolveu uma sessão. Verifique se a conta está confirmada.');
@@ -5028,7 +4870,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                     document.getElementById('statusNuvemBadge').textContent = 'Online';
                     const detalhe = resumirErroSupabase(syncError);
                     atualizarStatusNuvem('Conta conectada, mas houve erro no banco: ' + detalhe, false);
-                    alert('A conta foi conectada com sucesso neste dispositivo, mas a sincronização encontrou um erro:\n\n' + detalhe);
+                    alert('A conta foi conectada com sucesso neste PC, mas a sincronização encontrou um erro:\n\n' + detalhe);
                 }
 
                 popularSelectsDinamicos();
@@ -5039,9 +4881,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             } catch (e) {
                 console.error('Falha no login da nuvem:', e);
                 document.getElementById('statusNuvemBadge').textContent = 'Local';
-                const detalhe = pfDetalheFalhaLoginNuvem(e);
+                const detalhe = resumirErroSupabase(e);
                 atualizarStatusNuvem('Falha no login: ' + detalhe, false);
-                alert('Não foi possível conectar à nuvem neste dispositivo:\n\n' + detalhe);
+                alert('Não foi possível conectar à nuvem neste PC:\n\n' + detalhe);
             } finally {
                 if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-1"></i> Entrar / Sincronizar'; }
             }
@@ -5082,7 +4924,23 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 } else atualizarStatusNuvem('Nenhuma conta de nuvem conectada neste dispositivo.');
             });
         }
-        async function testarConexaoNuvem() { return await pfTestarConexaoNuvem(); }
+        async function testarConexaoNuvem() {
+            try {
+                if (!supabaseCliente && !inicializarSupabaseCliente()) throw new Error('Biblioteca Supabase não carregada.');
+                const session = await obterSessaoNuvem();
+                const armazenamento = (() => { try { return !!window.localStorage; } catch(e) { return false; } })();
+                if (!session) {
+                    atualizarStatusNuvem('Diagnóstico: este PC ainda não possui uma sessão Supabase gravada. Armazenamento: ' + (armazenamento ? 'OK' : 'bloqueado') + '.');
+                    return;
+                }
+                const remoto = await carregarPacoteNuvem();
+                atualizarStatusNuvem(remoto?.payload ? 'Diagnóstico OK: conta, sessão e tabela acessíveis neste PC.' : 'Diagnóstico OK: conta e sessão acessíveis; ainda não há banco salvo para este usuário.', true);
+            } catch (e) {
+                const detalhe = resumirErroSupabase(e);
+                atualizarStatusNuvem('Diagnóstico: ' + detalhe, false);
+                alert('Diagnóstico da nuvem:\n\n' + detalhe);
+            }
+        }
 
         function fecharConfiguracaoNuvem() {
             const modal = document.getElementById('modalConfiguracaoNuvem');
@@ -7701,17 +7559,14 @@ function fecharAcoesMobile(){
                 const ultimaSincronizacao = localStorage.getItem(CHAVE_ULTIMA_SINCRONIZACAO) || '';
                 if (remoto.updated_at && !pfMesmaVersao(remoto.updated_at,ultimaSincronizacao) && !pfEnviosPendentes) {
                     const ultimaAlteracaoLocal = localStorage.getItem(CHAVE_ULTIMA_ALTERACAO_LOCAL) || '';
-                    if (pfTemAlteracoesLocais()) {
-                        await pfSincronizarConta();
-                        popularSelectsDinamicos();renderTable();atualizarPainelGerencial();atualizarInfoBanco();verificarContasVencendoHoje();
-                    } else {
+                    if (!pfTemAlteracoesLocais()) {
                         aplicarPacoteNuvem(remoto.payload);
                         localStorage.setItem(CHAVE_ULTIMA_SINCRONIZACAO, remoto.updated_at);
                         popularSelectsDinamicos(); renderTable(); atualizarPainelGerencial(); atualizarInfoBanco();
                         atualizarStatusNuvem('Banco atualizado automaticamente pela nuvem.', true);
                     }
                 }
-            } catch(e) { console.warn('Sincronização automática:', e); atualizarStatusNuvem('Falha na sincronização automática: '+e.message); }
+            } catch(e) { console.warn('Sincronização automática:', e); }
         }, 15000);
 
         window.onload = function() {
@@ -8531,108 +8386,34 @@ body.dark-mode .pf-filtro-item > label {
  document.addEventListener('click',function(e){const a=e.target.closest('[data-pf-manual-index]');if(!a)return;e.preventDefault();const item=manuals[Number(a.getAttribute('data-pf-manual-index'))];if(!item)return;pfAbrirManualProtegido(item,null);});
  window.pfShowCurrentVersion=function(){show('Versão atual do projeto','<p><strong>'+CURRENT_VERSION+'</strong></p><p>Planejamento Financeiro · Aplicativo Web / PWA</p><p>Versão identificada no arquivo de distribuição carregado.</p>');closeMenu();};
  window.pfShowAbout=function(){show('Sobre o Planejamento Financeiro','<p><strong>Planejamento Financeiro</strong></p><p>All rights reserved.<br>Ricardo Dávila Corporation.</p><p>Versão: '+CURRENT_VERSION+'</p>');closeMenu();};
- const pfUpdateBase=new URL('https://ricardodavila.github.io/planejamento-financeiro/');
- const pfUpdateKey='pf_ultima_versao_aberta_v1';
- const pfUpdateHost=window;
- const pfUpdateLocal=pfUpdateHost.location.origin!==pfUpdateBase.origin||![pfUpdateBase.pathname,pfUpdateBase.pathname+'index.html'].includes(pfUpdateHost.location.pathname);
- let pfUpdatePending=null,pfUpdateLastCheck=0,pfUpdateNotified='',pfUpdateOpened=false;
- function pfUpdateRead(){try{return localStorage.getItem(pfUpdateKey)||'';}catch{return '';}}
- function pfUpdateRemember(){try{localStorage.setItem(pfUpdateKey,CURRENT_VERSION);}catch{}}
- function pfUpdateAppendNotes(body,release){
-  const heading=document.createElement('strong');heading.textContent='O que foi atualizado nesta versão:';heading.style.cssText='display:block;margin:12px 0 6px';body.append(heading);
-  const notes=Array.isArray(release?.notes)?release.notes.filter(n=>typeof n==='string'&&n.trim()).map(n=>n.trim()):[];
-  if(!notes.length){const text=document.createElement('p');text.textContent='Os detalhes desta publicação não foram informados.';body.append(text);return;}
-  const list=document.createElement('ul');list.style.cssText='margin:6px 0 12px;padding-left:22px;list-style:disc;line-height:1.5';
-  for(const note of notes){const item=document.createElement('li');item.textContent=note;item.style.marginBottom='6px';list.append(item);}
-  body.append(list);
- }
- function pfUpdateBanner(title,message,latest='',release=null){
-  document.getElementById('pfUpdateNotice')?.remove();
-  const box=document.createElement('section');box.id='pfUpdateNotice';box.setAttribute('role','status');box.setAttribute('aria-live','polite');
-  box.style.cssText='position:fixed;bottom:88px;left:12px;right:12px;max-width:560px;margin:0 auto;z-index:15000;background:#fff;color:#1e293b;border:2px solid #2563eb;border-radius:14px;padding:16px;box-shadow:0 8px 30px #0f172a44;font:14px system-ui;max-height:45dvh;overflow:auto';
-  const heading=document.createElement('strong');heading.textContent=title;box.append(heading);
-  const text=document.createElement('p');text.textContent=message;text.style.cssText='margin:8px 0;line-height:1.5';box.append(text);
-  pfUpdateAppendNotes(box,release);
-  if(latest){const update=pfUpdateButton(latest,box);box.append(update);}
-  const close=document.createElement('button');close.type='button';close.textContent=latest?'Agora não':'Fechar';close.style.cssText='padding:9px 14px;border-radius:8px;border:1px solid #94a3b8;background:#f1f5f9;color:#1e293b;margin:4px';close.onclick=()=>box.remove();box.append(close);
-  document.body.append(box);
- }
- async function pfUpdateActivate(latest){
-  if('serviceWorker' in navigator){
-   const reg=await navigator.serviceWorker.getRegistration(pfUpdateBase.href);
-   if(reg){
-    await reg.update();
-    if(reg.installing)await new Promise((resolve,reject)=>{
-     const worker=reg.installing;
-     const finish=error=>{clearTimeout(timer);worker.removeEventListener('statechange',check);error?reject(error):resolve();};
-     const check=()=>{if(worker.state==='installed'||worker.state==='activated')finish();else if(worker.state==='redundant')finish(Error('Não foi possível baixar a atualização. Tente novamente.'));};
-     const timer=setTimeout(()=>finish(Error('O download da atualização demorou. Tente novamente.')),20000);
-     worker.addEventListener('statechange',check);check();
-    });
-    if(reg.waiting)await new Promise((resolve,reject)=>{
-     const done=()=>{clearTimeout(timer);navigator.serviceWorker.removeEventListener('controllerchange',done);resolve();};
-     const timer=setTimeout(()=>{navigator.serviceWorker.removeEventListener('controllerchange',done);reject(Error('Feche as janelas do aplicativo e abra novamente para concluir a atualização.'));},12000);
-     navigator.serviceWorker.addEventListener('controllerchange',done);
-     reg.waiting.postMessage({type:'SKIP_WAITING'});
-    });
-   }
-  }
-  const url=new URL(pfUpdateBase.href);url.searchParams.set('pf_update',latest);
-  pfUpdateHost.location.replace(url.href);
- }
- function pfUpdateButton(latest,body){
-  const button=document.createElement('button');button.type='button';button.textContent='Atualizar agora';button.style.cssText='padding:10px 14px;border:0;border-radius:8px;background:#1d4ed8;color:white;margin:4px';
-  button.onclick=async()=>{
-   if(!window.confirm('Salve qualquer edição em andamento antes de atualizar. Deseja carregar a nova versão agora?'))return;
-   button.disabled=true;button.textContent='Preparando atualização…';
-   try{await pfUpdateActivate(latest);}catch(error){button.disabled=false;button.textContent='Tentar novamente';const text=document.createElement('p');text.textContent=error.message;body.append(text);}
-  };
-  return button;
- }
+ let pfVerificacaoAutomaticaIniciada=false;
  window.pfCheckUpdates=async function(automatica=false){
-  automatica=automatica===true;
-  if(automatica&&(document.hidden||pfUpdateLocal))return;
-  if(pfUpdatePending){await pfUpdatePending;if(automatica)return;}
-  if(automatica&&Date.now()-pfUpdateLastCheck<30000)return;
-  const operation=(async()=>{
-   pfUpdateLastCheck=Date.now();
-   if(!automatica){closeMenu();show('Verificar atualizações','<p>Consultando a versão publicada…</p>');}
-   try{
-    const response=await fetch(new URL('version.json?t='+Date.now(),pfUpdateBase),{cache:'no-store',signal:AbortSignal.timeout(15000)});
-    if(!response.ok)throw Error('Não foi possível consultar a versão publicada.');
-    const release=await response.json();
-    if(!/^v?\d+(\.\d+){1,3}$/i.test(release.version||''))throw Error('O arquivo de versão publicado está inválido.');
-    const latest=release.version,cmp=compareVersions(latest,CURRENT_VERSION);
-    const previous=pfUpdateRead();
-    if(!pfUpdateLocal)pfUpdateRemember();
-    if(automatica){
-     if(cmp>0&&latest!==pfUpdateNotified){
-      pfUpdateNotified=latest;
-      pfUpdateBanner('Nova versão disponível','Você está na '+CURRENT_VERSION+'. A versão '+latest+' já pode ser instalada. Seus dados serão mantidos.',latest,release);
-     }else if(cmp===0&&!pfUpdateOpened&&(!previous||compareVersions(CURRENT_VERSION,previous)>0)){
-      pfUpdateBanner(previous?'Aplicativo atualizado':'Versão atual do aplicativo','A versão '+CURRENT_VERSION+' foi carregada. Seus dados foram mantidos.','',release);
-     }
-     pfUpdateOpened=true;return;
-    }
-    show(cmp>0?'Nova versão disponível':'Verificação de versão','');
-    const body=document.getElementById('pfHelpModalBody'),text=document.createElement('p');
-    text.textContent='Versão desta cópia: '+CURRENT_VERSION+'. Versão publicada: '+latest+'.';body.append(text);
-    const explanation=document.createElement('p');explanation.textContent=pfUpdateLocal?'Esta cópia local ou de teste não será substituída.':cmp>0?'Salve qualquer edição em andamento antes de atualizar.':cmp===0?'Você está usando a versão publicada mais recente.':'Esta cópia tem uma versão superior à publicada.';body.append(explanation);
-    pfUpdateAppendNotes(body,release);
-    if(!pfUpdateLocal&&cmp>0)body.append(pfUpdateButton(latest,body));
-   }catch(error){
-    pfUpdateLastCheck=0;
-    if(!automatica){show('Não foi possível verificar','');const text=document.createElement('p');text.textContent=error.message+' Tente novamente quando a conexão estiver disponível.';document.getElementById('pfHelpModalBody').append(text);}
-   }
-  })();
-  pfUpdatePending=operation;
-  try{await operation;}finally{if(pfUpdatePending===operation)pfUpdatePending=null;}
+  automatica = automatica === true;
+  if(automatica){if(pfVerificacaoAutomaticaIniciada)return;pfVerificacaoAutomaticaIniciada=true;}
+  if(!automatica){closeMenu();show('Verificar atualizações','<p>Consultando a versão publicada…</p>');}
+  const base=new URL('https://ricardodavila.github.io/planejamento-financeiro/');
+  const local=location.origin!==base.origin||!location.pathname.startsWith(base.pathname);
+  try{
+   const response=await fetch(new URL('version.json?t='+Date.now(),base),{cache:'no-store',signal:AbortSignal.timeout(15000)});
+   if(!response.ok)throw Error(response.status===404?'A consulta de versões ainda não foi publicada no site.':'Não foi possível consultar a versão publicada.');
+   const release=await response.json();if(!/^v?\d+(\.\d+){1,3}$/i.test(release.version||''))throw Error('O arquivo de versão publicado está inválido.');
+   const latest=release.version,cmp=compareVersions(latest,CURRENT_VERSION);
+   if(automatica && (local || cmp<=0))return;
+   const text=document.createElement('div');const info=document.createElement('p');info.textContent='Versão desta cópia: '+CURRENT_VERSION+'. Versão publicada: '+latest+'.';text.append(info);
+   const explanation=document.createElement('p');explanation.textContent=local?'Esta é uma cópia de teste ou local. Ela não será substituída pelo aplicativo publicado.':cmp>0?'Há uma nova versão disponível. Salve qualquer edição em andamento antes de atualizar.':cmp===0?'Você está usando a versão publicada mais recente.':'Esta cópia tem uma versão superior à publicada.';text.append(explanation);
+   show(cmp>0?'Nova versão disponível':'Verificação de versão',text.innerHTML);
+   const body=document.getElementById('pfHelpModalBody');
+   if(automatica){const depois=document.createElement('button');depois.type='button';depois.className='pf-help-primary';depois.textContent='Agora não';depois.onclick=()=>window.pfCloseHelpModal();body.append(depois);}
+   if(local){const a=document.createElement('a');a.href=base.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Abrir aplicativo publicado';a.className='pf-help-primary';body.append(a);}
+   else if(cmp>0){const b=document.createElement('button');b.type='button';b.className='pf-help-primary';b.textContent='Atualizar agora';b.onclick=async()=>{
+    b.disabled=true;b.textContent='Preparando atualização…';
+    try{
+     if('serviceWorker' in navigator){const reg=await navigator.serviceWorker.getRegistration(base.href);if(reg){await reg.update();if(reg.installing)await new Promise((resolve,reject)=>{const w=reg.installing;const timer=setTimeout(()=>reject(Error('A atualização demorou. Tente novamente.')),20000);const check=()=>{if(w.state==='installed'){clearTimeout(timer);resolve();}else if(w.state==='redundant'){clearTimeout(timer);reject(Error('Não foi possível baixar a atualização.'));}};w.addEventListener('statechange',check);check();});if(reg.waiting){await new Promise((resolve,reject)=>{const timer=setTimeout(()=>{navigator.serviceWorker.removeEventListener('controllerchange',done);reject(Error('A versão instalada ainda não permite atualização imediata. Feche todas as janelas do aplicativo e abra novamente.'));},12000);function done(){clearTimeout(timer);resolve();}navigator.serviceWorker.addEventListener('controllerchange',done,{once:true});reg.waiting.postMessage({type:'SKIP_WAITING'});});}}}
+     const url=new URL(location.href);url.searchParams.set('pf_update',latest);location.replace(url.href);
+    }catch(e){b.disabled=false;b.textContent='Tentar atualizar novamente';const p=document.createElement('p');p.textContent=e.message;body.append(p);}
+   };body.append(b);}
+  }catch(error){if(automatica)return;show('Não foi possível verificar','<p id="pfUpdateError"></p>');document.getElementById('pfUpdateError').textContent=error.message+' Nenhuma alteração foi feita no aplicativo.';}
  };
- document.addEventListener('visibilitychange',()=>{if(!document.hidden)return window.pfCheckUpdates(true);});
- window.addEventListener('focus',()=>window.pfCheckUpdates(true));
- window.addEventListener('online',()=>window.pfCheckUpdates(true));
- setInterval(()=>window.pfCheckUpdates(true),120000);
-
 
  document.addEventListener('click',e=>{const m=document.getElementById('pfHelpModal');if(e.target===m)window.pfCloseHelpModal();const d=document.getElementById('pfHelpMenu');if(d&&!d.contains(e.target)&&!e.target.closest('#pfHelpModal'))d.open=false;});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')window.pfCloseHelpModal();});
@@ -10011,7 +9792,7 @@ function install(){
  el('recover').onclick=()=>{el('toast').hidden=true;if(!deletedRecord||document.body.classList.contains('auth-pendente'))return;const bin=obterLixeira(),index=bin.findIndex(x=>String(x.item.id)===String(deletedRecord.id)&&JSON.stringify(x.item)===deletedRecord.fingerprint);deletedRecord=null;clearTimeout(undoTimer);if(index>=0){recuperarDaLixeira(index);fecharSegurancaBanco();}};el('more-rows').onclick=()=>{limit+=30;render();};
  el('assistant').onclick=()=>original('pfIaLaunch').click();el('new').onclick=()=>openModal();el('home').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});el('entries').onclick=()=>el('q').scrollIntoView({behavior:'smooth',block:'center'});el('charts').onclick=()=>openGraficosModal();el('more').onclick=()=>original('pfMenuCompacto').click();el('menu').onclick=()=>original('pfMenuCompacto').click();el('theme').onclick=()=>original('pf-theme-toggle').click();
  function themeLabel(){el('theme').textContent=document.body.classList.contains('dark-mode')?'☀ Claro':'◐ Escuro';}new MutationObserver(themeLabel).observe(document.body,{attributes:true,attributeFilter:['class']});themeLabel();
- async function cloud(){const run=++cloudRun;try{const session=await obterSessaoNuvem();if(run!==cloudRun)return;sessionConnected=Boolean(session?.access_token&&session?.user?.id&&(!session.expires_at||Number(session.expires_at)>Date.now()/1000));const metadata=session?.user?.user_metadata||{},name=String(metadata.nome||metadata.full_name||metadata.name||'').trim();if(name!==cloudUserName){cloudUserName=name;render();}}catch{sessionConnected=false;}const raw=(original('statusNuvemBadge')?.textContent||'').trim();const synced=sessionConnected&&raw==='Online';el('cloud').classList.toggle('online',synced);el('cloud').textContent=/sincronizando/i.test(raw)?'↻ Sincronizando':/falha|erro|pendente|expirada/i.test(raw)?'● Sincronização pendente':synced?'● Sincronizada':'○ Sem confirmação';el('cloud').title=original('statusNuvemBadge')?.title||'Conexão e sincronização com a nuvem';}
+ async function cloud(){const run=++cloudRun;try{const session=await obterSessaoNuvem();if(run!==cloudRun)return;sessionConnected=Boolean(session?.access_token&&session?.user?.id&&(!session.expires_at||Number(session.expires_at)>Date.now()/1000));const metadata=session?.user?.user_metadata||{},name=String(metadata.nome||metadata.full_name||metadata.name||'').trim();if(name!==cloudUserName){cloudUserName=name;render();}}catch{sessionConnected=false;}const raw=(original('statusNuvemBadge')?.textContent||'').trim();el('cloud').classList.toggle('online',sessionConnected);el('cloud').textContent=/sincronizando/i.test(raw)?'↻ Sincronizando':sessionConnected?'● Conectada':'○ Desconectada';el('cloud').title=original('statusNuvemBadge')?.title||'Conexão e sincronização com a nuvem';}
  el('cloud').onclick=()=>abrirConfiguracaoNuvem();if(original('statusNuvemBadge'))new MutationObserver(cloud).observe(original('statusNuvemBadge'),{childList:true,characterData:true,subtree:true});cloud();
  for(const id of ['pf495GreetingTitle','pf495PerfilBadge'])if(original(id))new MutationObserver(render).observe(original(id),{childList:true,characterData:true,subtree:true});
 
@@ -10112,7 +9893,7 @@ async function renew(session){
    assertOwner(fresh,owner,started);
    const current=await auth.getSession();assertOwner(current.data?.session,owner,started);
    if(typeof salvarSessaoNuvemManual==='function')salvarSessaoNuvemManual(fresh);
-   return fresh;
+   indicator('Online');return fresh;
   }catch(error){indicator('Sessão expirada');if(/mudou/.test(error.message||''))throw error;throw Error('Não foi possível renovar a sessão da nuvem. Entre novamente na sua conta; os dados locais foram preservados.');}
  })();
  pendingRefresh={owner,promise:operation};try{return await operation;}finally{if(pendingRefresh?.promise===operation)pendingRefresh=null;}
@@ -20101,7 +19882,7 @@ catalogue.push(...[
   "Cuenta conectada y sincronización financiera completada."
  ],
  [
-  "A conta foi conectada com sucesso neste dispositivo, mas a sincronização encontrou um erro:",
+  "A conta foi conectada com sucesso neste PC, mas a sincronização encontrou um erro:",
   "The account connected successfully on this PC, but synchronization failed:",
   "La cuenta se conectó correctamente en este ordenador, pero falló la sincronización:"
  ],
@@ -20111,7 +19892,7 @@ catalogue.push(...[
   "Fallo de acceso a la nube:"
  ],
  [
-  "Não foi possível conectar à nuvem neste dispositivo:",
+  "Não foi possível conectar à nuvem neste PC:",
   "Could not connect to the cloud on this PC:",
   "No se pudo conectar a la nube en este ordenador:"
  ],
@@ -20151,12 +19932,12 @@ catalogue.push(...[
   "No hay cuenta de la nube conectada en este dispositivo."
  ],
  [
-  "Diagnóstico: este dispositivo ainda não possui uma sessão Supabase gravada. Armazenamento:",
+  "Diagnóstico: este PC ainda não possui uma sessão Supabase gravada. Armazenamento:",
   "Diagnostic: this PC has no saved Supabase session yet. Storage:",
   "Diagnóstico: este ordenador aún no tiene una sesión Supabase guardada. Almacenamiento:"
  ],
  [
-  "Diagnóstico OK: conta, sessão e tabela acessíveis neste dispositivo.",
+  "Diagnóstico OK: conta, sessão e tabela acessíveis neste PC.",
   "Diagnostic OK: account, session and table accessible on this PC.",
   "Diagnóstico correcto: cuenta, sesión y tabla accesibles en este ordenador."
  ],
@@ -25025,98 +24806,6 @@ body.pf-mobile-layout #pfMobileShell>header.bar>#pfNotasBtn:not([hidden]){grid-a
   return '<!doctype html>\n'+report.documentElement.outerHTML;
  };
  window.PFChartExplorer=api;
-})();
-
-</script>
-<style id="pf-rodape-mercado-ajustado">
-/* Contraste adicional somente no tema Dia. */
-body:not(.dark-mode) #pfIndicadores {
-  background:#dbeafe!important;
-  color:#12345a!important;
-  border-top:2px solid #2563eb!important;
-  box-shadow:0 -2px 10px #1e40af18;
-  font-size:13px!important;
-  font-weight:650;
-}
-body:not(.dark-mode) #pfIndicadores a {color:#12345a!important;font-weight:700;}
-body:not(.dark-mode) #pfIndicadores button,
-body:not(.dark-mode) #pfMostrarIndicadores {
-  color:#12345a!important;
-  background:#eff6ff!important;
-  border:1px solid #93b4e8!important;
-  font-weight:650;
-}
-/* O rodapé fica acima dos totais e da navegação no celular. */
-body.pf-mobile-layout #pfIndicadores:not([hidden]) {
-  display:flex!important;
-  bottom:var(--pf-market-bottom,104px)!important;
-  height:44px!important;
-  gap:4px;
-  padding:0 6px;
-  font-size:12px!important;
-}
-body.pf-mobile-layout #pfMostrarIndicadores:not([hidden]) {
-  display:block!important;
-  bottom:var(--pf-market-bottom,104px)!important;
-  height:44px!important;
-}
-body.pf-mobile-layout #pfIndicadores button {
-  min-height:36px;
-  padding:4px 6px;
-  font-size:11px;
-}
-body.pf-mobile-layout #pfIndicadores a {font-size:10px;}
-body.pf-mobile-layout #pfIndTrack span {padding-right:32px;}
-body.pf-mobile-layout #pfMobileShell {
-  padding-bottom:calc(var(--pf-market-bottom,104px) + var(--pf-market-space,44px) + 24px)!important;
-}
-body.pf-mobile-layout #pfMobileShell .ai {
-  bottom:calc(var(--pf-market-bottom,104px) + var(--pf-market-space,44px) + 16px)!important;
-}
-body.pf-mobile-layout.auth-pendente #pfIndicadores,
-body.pf-mobile-layout.auth-pendente #pfMostrarIndicadores,
-body.pf-mobile-layout.pf-edicao-lancamento #pfIndicadores,
-body.pf-mobile-layout.pf-edicao-lancamento #pfMostrarIndicadores,
-body.pf-mobile-layout:has(dialog[open]) #pfIndicadores,
-body.pf-mobile-layout:has(dialog[open]) #pfMostrarIndicadores {
-  display:none!important;
-}
-@media print {
-  body.pf-mobile-layout #pfIndicadores:not([hidden]),
-  body.pf-mobile-layout #pfMostrarIndicadores:not([hidden]) {display:none!important;}
-}
-
-</style>
-<script id="pf-rodape-mercado-layout">
-(() => {
- 'use strict';
- const bar=document.getElementById('pfIndicadores');
- const restore=document.getElementById('pfMostrarIndicadores');
- if(!bar||!restore)return;
- const root=document.documentElement;
- function layoutMarket(){
-  if(!document.body.classList.contains('pf-mobile-layout'))return;
-  const total=document.querySelector('#pfMobileShell .total');
-  const nav=document.querySelector('#pfMobileShell .nav');
-  const control=[total,nav].find(el=>el&&getComputedStyle(el).display!=='none'&&el.getBoundingClientRect().height>0);
-  const bottom=control?Math.max(0,Math.ceil(innerHeight-control.getBoundingClientRect().top)):104;
-  root.style.setProperty('--pf-market-bottom',bottom+'px');
-  root.style.setProperty('--pf-market-space',(!bar.hidden||!restore.hidden)?'44px':'0px');
- }
- const viewport=document.getElementById('pfIndViewport');
- if(viewport)viewport.setAttribute('aria-label','Indicadores econômicos. Use Pausar para interromper o movimento e ler os valores e as datas de referência.');
- window.addEventListener('resize',layoutMarket);
- window.addEventListener('orientationchange',layoutMarket);
- window.visualViewport?.addEventListener('resize',layoutMarket);
- if(window.ResizeObserver){
-  const resize=new ResizeObserver(layoutMarket);
-  for(const el of document.querySelectorAll('#pfMobileShell .total,#pfMobileShell .nav'))resize.observe(el);
- }
- const observer=new MutationObserver(layoutMarket);
- observer.observe(document.body,{attributes:true,attributeFilter:['class']});
- observer.observe(bar,{attributes:true,attributeFilter:['hidden']});
- observer.observe(restore,{attributes:true,attributeFilter:['hidden']});
- layoutMarket();
 })();
 
 </script>

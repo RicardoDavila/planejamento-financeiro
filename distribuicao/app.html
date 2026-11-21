@@ -4623,38 +4623,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             }catch(_){return null;}
         }
         function pfDetalheFalhaLoginNuvem(error){
-            if(error?.code==='invalid_credentials'||/invalid login credentials/i.test(error?.message||''))return 'A nuvem recusou esta tentativa de login (invalid_credentials). A sessão já salva não foi encerrada. A senha da conta de sincronização é independente da senha de abertura do aplicativo. Use Testar conexão da nuvem para verificar a sessão atual. Seus dados locais foram mantidos.';
+            if(error?.code==='invalid_credentials'||/invalid login credentials/i.test(error?.message||''))return 'E-mail ou senha da conta de sincronização não conferem. Use a mesma conta da nuvem do computador. A senha de abertura do aplicativo é independente. Seus dados locais foram mantidos.';
             return resumirErroSupabase(error);
-        }
-        function pfMostrarDiagnosticoNuvem(texto,ok=false){
-            let box=document.getElementById('nuvemDiagnosticoMsg');
-            if(!box){
-                const anchor=document.getElementById('nuvemStatusMsg');if(!anchor)return;
-                box=document.createElement('div');box.id='nuvemDiagnosticoMsg';box.setAttribute('role','status');box.setAttribute('aria-live','polite');anchor.after(box);
-            }
-            box.textContent=texto;box.className='text-xs rounded-lg border p-3 mt-2 '+(ok?'bg-blue-50 border-blue-200 text-blue-800':'bg-amber-50 border-amber-200 text-amber-900');
-            // Somente diagnóstico. Não altera badge, confirmação, sessão ou banco.
-        }
-        async function pfTestarConexaoNuvem(){
-            try{
-                if(!supabaseCliente&&!inicializarSupabaseCliente())throw Error('Biblioteca Supabase não carregada.');
-                const session=await obterSessaoNuvem();
-                if(!session?.user?.id){pfMostrarDiagnosticoNuvem('Diagnóstico: não há sessão válida neste dispositivo. A sincronização financeira ainda não foi confirmada.');return {estado:'sem_sessao'};}
-                const owner=String(session.user.id),remote=await carregarPacoteNuvem();
-                if(String((await obterSessaoNuvem())?.user?.id||'')!==owner)throw Error('A conta mudou durante o diagnóstico. Abra novamente a sincronização.');
-                if(!remote?.payload){pfMostrarDiagnosticoNuvem('Conexão OK: conta e sessão acessíveis. Ainda não há banco salvo para esta conta na nuvem. Testar conexão não envia os dados.',true);return {estado:'sem_banco'};}
-                if(!Array.isArray(remote.payload.transacoes))throw Error('A nuvem não devolveu um banco financeiro válido.');
-                const local=coletarPacoteNuvem(),same=pfDadosFinanceirosIguais(local,remote.payload),changed=pfTemAlteracoesLocais();
-                const known=pfdLocal.getItem(CHAVE_ULTIMA_SINCRONIZACAO)||'',confirmed=pfMesmaVersao(known,remote.updated_at);
-                const counts=' Neste dispositivo: '+local.transacoes.length+' lançamento(s); na nuvem: '+remote.payload.transacoes.length+'.';
-                if(changed&&!confirmed&&!same){
-                    pfMostrarDiagnosticoNuvem('Conexão OK, mas existe conflito entre as cópias financeiras.'+counts+' Há alterações locais e a versão atual da nuvem ainda não foi confirmada neste dispositivo. O envio automático é bloqueado para evitar sobrescrever dados. Se a cópia do PC/nuvem for a correta, use Receber dados do PC/nuvem (com backup) e confira as duas cópias antes de confirmar.');
-                    return {estado:'conflito',local:local.transacoes.length,nuvem:remote.payload.transacoes.length};
-                }
-                if(same){pfMostrarDiagnosticoNuvem('Conexão OK: conta, sessão e tabela acessíveis. A movimentação financeira comparada coincide.'+counts+' Este teste não envia nem recebe dados e não muda o indicador de sincronização. Para confirmar a operação, use Sincronizar agora.',true);return {estado:'copias_iguais'};}
-                pfMostrarDiagnosticoNuvem('Conexão OK: conta, sessão e tabela acessíveis.'+counts+(changed?' Há alterações locais aguardando confirmação de envio.':' Há dados diferentes na nuvem que podem ser recebidos.')+' Use Sincronizar agora para executar a transferência; testar conexão apenas verifica o acesso.',true);
-                return {estado:changed?'envio_pendente':'recebimento_pendente'};
-            }catch(error){pfMostrarDiagnosticoNuvem('Falha no diagnóstico: '+resumirErroSupabase(error)+'. Nenhum lançamento foi substituído.');return {estado:'erro'};}
         }
         function pfComparacaoRecebimento(p){const c={...p};delete c.atualizado_localmente_em;return JSON.stringify(pfCanonicoSync(c));}
         async function receberDadosNuvemComBackup(){
@@ -4815,7 +4785,23 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         function sairNuvem(){return window.parent.pfdLogout();}
 
         function abrirConfiguracaoNuvem(){window.pfdAssert();window.parent.pfdOpenAccount();}
-        async function testarConexaoNuvem() { return await pfTestarConexaoNuvem(); }
+        async function testarConexaoNuvem() {
+            try {
+                if (!supabaseCliente && !inicializarSupabaseCliente()) throw new Error('Biblioteca Supabase não carregada.');
+                const session = await obterSessaoNuvem();
+                const armazenamento = (() => { try { return !!window.pfdLocal; } catch(e) { return false; } })();
+                if (!session) {
+                    atualizarStatusNuvem('Diagnóstico: este dispositivo ainda não possui uma sessão Supabase gravada. Armazenamento: ' + (armazenamento ? 'OK' : 'bloqueado') + '.');
+                    return;
+                }
+                const remoto = await carregarPacoteNuvem();
+                atualizarStatusNuvem(remoto?.payload ? 'Diagnóstico OK: conta, sessão e tabela acessíveis neste dispositivo.' : 'Diagnóstico OK: conta e sessão acessíveis; ainda não há banco salvo para este usuário.', true);
+            } catch (e) {
+                const detalhe = resumirErroSupabase(e);
+                atualizarStatusNuvem('Diagnóstico: ' + detalhe, false);
+                alert('Diagnóstico da nuvem:\n\n' + detalhe);
+            }
+        }
 
         function fecharConfiguracaoNuvem() {
             const modal = document.getElementById('modalConfiguracaoNuvem');
@@ -8083,7 +8069,7 @@ body.dark-mode .pf-filtro-item > label {
 
 <script id="pf-help-menu-logic">
 (function(){
- const CURRENT_VERSION='V5.1.19';
+ const CURRENT_VERSION='V5.1.16';
  const REPO='RicardoDavila/planejamento-financeiro';
  const RELEASES_URL='https://github.com/'+REPO+'/releases';
  const LATEST_API='https://api.github.com/repos/'+REPO+'/releases/latest';
@@ -11207,7 +11193,99 @@ body.dark-mode #desktopGraphics #gMonthlyChart svg{color:#e2e8f0}
 #desktopGraphics .panelheading .toolbar:has(#gPdf){display:flex!important;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;position:static!important}
 #desktopGraphics #gPdf,#desktopGraphics #gPrint,#desktopGraphics #desktop-graphics-close{position:static!important;inset:auto!important;transform:none!important;float:none!important;min-height:42px;margin:0!important;flex:0 0 auto;white-space:nowrap}
 @media(max-width:650px){#desktopGraphics .panelheading .toolbar:has(#gPdf){width:100%;justify-content:flex-start}#desktopGraphics #gPdf,#desktopGraphics #gPrint,#desktopGraphics #desktop-graphics-close{flex:1 1 auto;font-size:13px}}
-</style><script id="pf-report-selection-module">/* Relatórios: modelos explícitos, duas apresentações e exportação sem código visível. */
+</style><style id="pf-rodape-mercado-ajustado">
+/* Contraste adicional somente no tema Dia. */
+body:not(.dark-mode) #pfIndicadores {
+  background:#dbeafe!important;
+  color:#12345a!important;
+  border-top:2px solid #2563eb!important;
+  box-shadow:0 -2px 10px #1e40af18;
+  font-size:13px!important;
+  font-weight:650;
+}
+body:not(.dark-mode) #pfIndicadores a {color:#12345a!important;font-weight:700;}
+body:not(.dark-mode) #pfIndicadores button,
+body:not(.dark-mode) #pfMostrarIndicadores {
+  color:#12345a!important;
+  background:#eff6ff!important;
+  border:1px solid #93b4e8!important;
+  font-weight:650;
+}
+/* O rodapé fica acima dos totais e da navegação no celular. */
+body.pf-mobile-layout #pfIndicadores:not([hidden]) {
+  display:flex!important;
+  bottom:var(--pf-market-bottom,104px)!important;
+  height:44px!important;
+  gap:4px;
+  padding:0 6px;
+  font-size:12px!important;
+}
+body.pf-mobile-layout #pfMostrarIndicadores:not([hidden]) {
+  display:block!important;
+  bottom:var(--pf-market-bottom,104px)!important;
+  height:44px!important;
+}
+body.pf-mobile-layout #pfIndicadores button {
+  min-height:36px;
+  padding:4px 6px;
+  font-size:11px;
+}
+body.pf-mobile-layout #pfIndicadores a {font-size:10px;}
+body.pf-mobile-layout #pfIndTrack span {padding-right:32px;}
+body.pf-mobile-layout #pfMobileShell {
+  padding-bottom:calc(var(--pf-market-bottom,104px) + var(--pf-market-space,44px) + 24px)!important;
+}
+body.pf-mobile-layout #pfMobileShell .ai {
+  bottom:calc(var(--pf-market-bottom,104px) + var(--pf-market-space,44px) + 16px)!important;
+}
+body.pf-mobile-layout.auth-pendente #pfIndicadores,
+body.pf-mobile-layout.auth-pendente #pfMostrarIndicadores,
+body.pf-mobile-layout.pf-edicao-lancamento #pfIndicadores,
+body.pf-mobile-layout.pf-edicao-lancamento #pfMostrarIndicadores,
+body.pf-mobile-layout:has(dialog[open]) #pfIndicadores,
+body.pf-mobile-layout:has(dialog[open]) #pfMostrarIndicadores {
+  display:none!important;
+}
+@media print {
+  body.pf-mobile-layout #pfIndicadores:not([hidden]),
+  body.pf-mobile-layout #pfMostrarIndicadores:not([hidden]) {display:none!important;}
+}
+
+</style>
+<script id="pf-rodape-mercado-layout">
+(() => {
+ 'use strict';
+ const bar=document.getElementById('pfIndicadores');
+ const restore=document.getElementById('pfMostrarIndicadores');
+ if(!bar||!restore)return;
+ const root=document.documentElement;
+ function layoutMarket(){
+  if(!document.body.classList.contains('pf-mobile-layout'))return;
+  const total=document.querySelector('#pfMobileShell .total');
+  const nav=document.querySelector('#pfMobileShell .nav');
+  const control=[total,nav].find(el=>el&&getComputedStyle(el).display!=='none'&&el.getBoundingClientRect().height>0);
+  const bottom=control?Math.max(0,Math.ceil(innerHeight-control.getBoundingClientRect().top)):104;
+  root.style.setProperty('--pf-market-bottom',bottom+'px');
+  root.style.setProperty('--pf-market-space',(!bar.hidden||!restore.hidden)?'44px':'0px');
+ }
+ const viewport=document.getElementById('pfIndViewport');
+ if(viewport)viewport.setAttribute('aria-label','Indicadores econômicos. Use Pausar para interromper o movimento e ler os valores e as datas de referência.');
+ window.addEventListener('resize',layoutMarket);
+ window.addEventListener('orientationchange',layoutMarket);
+ window.visualViewport?.addEventListener('resize',layoutMarket);
+ if(window.ResizeObserver){
+  const resize=new ResizeObserver(layoutMarket);
+  for(const el of document.querySelectorAll('#pfMobileShell .total,#pfMobileShell .nav'))resize.observe(el);
+ }
+ const observer=new MutationObserver(layoutMarket);
+ observer.observe(document.body,{attributes:true,attributeFilter:['class']});
+ observer.observe(bar,{attributes:true,attributeFilter:['hidden']});
+ observer.observe(restore,{attributes:true,attributeFilter:['hidden']});
+ layoutMarket();
+})();
+
+</script>
+<script id="pf-report-selection-module">/* Relatórios: modelos explícitos, duas apresentações e exportação sem código visível. */
 (function () {
   'use strict';
   function financialModel(input) {
@@ -14494,7 +14572,7 @@ const catalogue=[["Painel Financeiro", "Financial Panel", "Panel financiero"], [
 "Tu nombre se guardará en este navegador y aparecerá en el saludo del panel."
 ],
 [
-"O perfil Administrador depende de autorização no serviço. O backup dos seus dados está disponível em Ações e ferramentas.",
+"Para mudar de Usuário para Administrador será solicitada a senha do Planejamento Financeiro.",
 "Changing from User to Administrator requires the Planejamento Financeiro password.",
 "Para cambiar de Usuario a Administrador se solicitará la contraseña de Planejamento Financeiro."
 ],
@@ -19770,7 +19848,7 @@ catalogue.push(...[
   "Cuenta conectada y sincronización financiera completada."
  ],
  [
-  "A conta foi conectada com sucesso neste dispositivo, mas a sincronização encontrou um erro:",
+  "A conta foi conectada com sucesso neste PC, mas a sincronização encontrou um erro:",
   "The account connected successfully on this PC, but synchronization failed:",
   "La cuenta se conectó correctamente en este ordenador, pero falló la sincronización:"
  ],
@@ -19780,7 +19858,7 @@ catalogue.push(...[
   "Fallo de acceso a la nube:"
  ],
  [
-  "Não foi possível conectar à nuvem neste dispositivo:",
+  "Não foi possível conectar à nuvem neste PC:",
   "Could not connect to the cloud on this PC:",
   "No se pudo conectar a la nube en este ordenador:"
  ],
@@ -19820,12 +19898,12 @@ catalogue.push(...[
   "No hay cuenta de la nube conectada en este dispositivo."
  ],
  [
-  "Diagnóstico: este dispositivo ainda não possui uma sessão Supabase gravada. Armazenamento:",
+  "Diagnóstico: este PC ainda não possui uma sessão Supabase gravada. Armazenamento:",
   "Diagnostic: this PC has no saved Supabase session yet. Storage:",
   "Diagnóstico: este ordenador aún no tiene una sesión Supabase guardada. Almacenamiento:"
  ],
  [
-  "Diagnóstico OK: conta, sessão e tabela acessíveis neste dispositivo.",
+  "Diagnóstico OK: conta, sessão e tabela acessíveis neste PC.",
   "Diagnostic OK: account, session and table accessible on this PC.",
   "Diagnóstico correcto: cuenta, sesión y tabla accesibles en este ordenador."
  ],
@@ -26063,98 +26141,6 @@ window.PFBankAudit={compare};
 })();
 
 })();</script>
-<style id="pf-rodape-mercado-ajustado">
-/* Contraste adicional somente no tema Dia. */
-body:not(.dark-mode) #pfIndicadores {
-  background:#dbeafe!important;
-  color:#12345a!important;
-  border-top:2px solid #2563eb!important;
-  box-shadow:0 -2px 10px #1e40af18;
-  font-size:13px!important;
-  font-weight:650;
-}
-body:not(.dark-mode) #pfIndicadores a {color:#12345a!important;font-weight:700;}
-body:not(.dark-mode) #pfIndicadores button,
-body:not(.dark-mode) #pfMostrarIndicadores {
-  color:#12345a!important;
-  background:#eff6ff!important;
-  border:1px solid #93b4e8!important;
-  font-weight:650;
-}
-/* O rodapé fica acima dos totais e da navegação no celular. */
-body.pf-mobile-layout #pfIndicadores:not([hidden]) {
-  display:flex!important;
-  bottom:var(--pf-market-bottom,104px)!important;
-  height:44px!important;
-  gap:4px;
-  padding:0 6px;
-  font-size:12px!important;
-}
-body.pf-mobile-layout #pfMostrarIndicadores:not([hidden]) {
-  display:block!important;
-  bottom:var(--pf-market-bottom,104px)!important;
-  height:44px!important;
-}
-body.pf-mobile-layout #pfIndicadores button {
-  min-height:36px;
-  padding:4px 6px;
-  font-size:11px;
-}
-body.pf-mobile-layout #pfIndicadores a {font-size:10px;}
-body.pf-mobile-layout #pfIndTrack span {padding-right:32px;}
-body.pf-mobile-layout #pfMobileShell {
-  padding-bottom:calc(var(--pf-market-bottom,104px) + var(--pf-market-space,44px) + 24px)!important;
-}
-body.pf-mobile-layout #pfMobileShell .ai {
-  bottom:calc(var(--pf-market-bottom,104px) + var(--pf-market-space,44px) + 16px)!important;
-}
-body.pf-mobile-layout.auth-pendente #pfIndicadores,
-body.pf-mobile-layout.auth-pendente #pfMostrarIndicadores,
-body.pf-mobile-layout.pf-edicao-lancamento #pfIndicadores,
-body.pf-mobile-layout.pf-edicao-lancamento #pfMostrarIndicadores,
-body.pf-mobile-layout:has(dialog[open]) #pfIndicadores,
-body.pf-mobile-layout:has(dialog[open]) #pfMostrarIndicadores {
-  display:none!important;
-}
-@media print {
-  body.pf-mobile-layout #pfIndicadores:not([hidden]),
-  body.pf-mobile-layout #pfMostrarIndicadores:not([hidden]) {display:none!important;}
-}
-
-</style>
-<script id="pf-rodape-mercado-layout">
-(() => {
- 'use strict';
- const bar=document.getElementById('pfIndicadores');
- const restore=document.getElementById('pfMostrarIndicadores');
- if(!bar||!restore)return;
- const root=document.documentElement;
- function layoutMarket(){
-  if(!document.body.classList.contains('pf-mobile-layout'))return;
-  const total=document.querySelector('#pfMobileShell .total');
-  const nav=document.querySelector('#pfMobileShell .nav');
-  const control=[total,nav].find(el=>el&&getComputedStyle(el).display!=='none'&&el.getBoundingClientRect().height>0);
-  const bottom=control?Math.max(0,Math.ceil(innerHeight-control.getBoundingClientRect().top)):104;
-  root.style.setProperty('--pf-market-bottom',bottom+'px');
-  root.style.setProperty('--pf-market-space',(!bar.hidden||!restore.hidden)?'44px':'0px');
- }
- const viewport=document.getElementById('pfIndViewport');
- if(viewport)viewport.setAttribute('aria-label','Indicadores econômicos. Use Pausar para interromper o movimento e ler os valores e as datas de referência.');
- window.addEventListener('resize',layoutMarket);
- window.addEventListener('orientationchange',layoutMarket);
- window.visualViewport?.addEventListener('resize',layoutMarket);
- if(window.ResizeObserver){
-  const resize=new ResizeObserver(layoutMarket);
-  for(const el of document.querySelectorAll('#pfMobileShell .total,#pfMobileShell .nav'))resize.observe(el);
- }
- const observer=new MutationObserver(layoutMarket);
- observer.observe(document.body,{attributes:true,attributeFilter:['class']});
- observer.observe(bar,{attributes:true,attributeFilter:['hidden']});
- observer.observe(restore,{attributes:true,attributeFilter:['hidden']});
- layoutMarket();
-})();
-
-</script>
 <style id="pf-semantic-palette-style">/* pf-desktop-only-v511 */
 @media (min-width:901px) and (pointer:fine) {
 /* Apenas modo escuro e cores: não muda estrutura, eventos, filtros ou dados. */
