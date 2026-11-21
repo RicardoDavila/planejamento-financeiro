@@ -1,10 +1,10 @@
 {
   "pessoal": [
-    "Etapa 36: adiciona Novo Lançamento e quatro indicadores filtrados ao Painel de Lançamentos.",
-    "Receitas Previstas inclui recebidas e a receber sem dupla contagem; os indicadores acompanham alterações e filtros."
+    "Etapa 37: amplia o Resumo Executivo com Receitas Previstas e Total de Despesas, preservando os quatro cards existentes.",
+    "Novos totais por vencimento, com os filtros do resumo e composição sem dupla contagem."
   ],
   "distribuicao": [
-    "Etapa 36: adiciona Novo Lançamento e quatro indicadores filtrados ao Painel de Lançamentos.",
-    "Receitas Previstas inclui recebidas e a receber sem dupla contagem; os indicadores acompanham alterações e filtros."
+    "Etapa 37: amplia o Resumo Executivo com Receitas Previstas e Total de Despesas, preservando os quatro cards existentes.",
+    "Novos totais por vencimento, com os filtros do resumo e composição sem dupla contagem."
   ]
 }
